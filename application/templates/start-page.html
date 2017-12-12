@@ -1,0 +1,76 @@
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+
+
+
+{% block inner_content %}
+
+
+<main id="content" role="main">
+    <div class="grid-row">
+        <div class="column-two-thirds">
+
+            <h1 class="heading-xlarge">
+                Apply to be a childminder (England)
+            </h1>
+
+            <p>Apply to be a childminder to look after children in your home.</p>
+
+            <h2 class="heading-large">Before you start</h2>
+            <p>You will have to get  criminal record checks for everyone aged 16 or over in your home.</p>
+            <div class="panel panel-border-narrow">
+                <p>Criminal record checks are also known as 'DBS checks'.</p>
+            </div>
+
+            <p>We will need details of:</p>
+            <ul class="list list-bullet">
+                <li>your criminal record check</li>
+                <li>household members&#39; checks</li>
+                <li>your first aid training</li>
+                <li>2 references</li>
+                <li>your address history</li>
+                <li>any health problems</li>
+            </ul>
+
+            <p>You will need to have a good understanding of the Early Years Foundation Stage if you are caring for children under 5.</p>
+
+            <h2 class="heading-large">How long it takes</h2>
+            <p>It can take about 6 months to register with Ofsted.</p>
+            <p>It should take you 30 minutes to fill in this form.</p>
+
+            <h2 class="heading-large">How much it costs</h2>
+            <p>It can cost a few hundred pounds to become a childminder.</p>
+            <p>It usually costs &#163;35 per year to register with Ofsted.</p>
+            <p>You will also have to pay for things like criminal record checks and training courses.</p>
+
+			<form action ="/task-list" method="get">
+            	<div class="form-group" style="margin-top: 20px;">
+                	<input type = submit class="button button-start" value = {{id}} name="id">
+            	</div>
+            </form>
+            
+
+            <div class="form-group">
+                <h2 class="heading-large">Already started to apply?</h2>
+                    <p><a href="/existing-application">Log back in</a></p>
+            </div>
+
+        </div>
+
+        <div class="column-third">
+
+            <aside class="govuk-related-items" role="complementary">
+                <h2 class="heading-medium" id="subsection-title">Help and advice</h2>
+                <nav role="navigation" aria-labelledby="subsection-title">
+                    <ul class="font-xsmall">
+                        <li><a href="https://www.gov.uk/guidance/how-to-register-as-a-childminder-or-nanny-quick-guide" target="_blank" class="external-link">How to register as a childminder</a></li>
+                        <li><a href="https://www.facebook.com/ChildcareRegistration/" target="_blank" class="external-link">Join our Facebook childcare registration group</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+        </div>
+    </div>
+</main>
+{% endblock %}

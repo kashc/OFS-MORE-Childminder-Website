@@ -1,0 +1,180 @@
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+
+
+
+{% block inner_content %}
+<main id="content" role="main">
+
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <header class="page-heading page-heading-with-context">
+                <h1 class="heading-xlarge">Apply to register as a childminder</h1>
+                <p>Fill in these sections in any order to apply.</p>
+
+                <p>You don&#39;t have to do them all in one go.</p>
+            </header>
+        </div>
+    </div>
+
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <div class="form-group">
+
+                <table id="your-details">
+                    <tbody>
+                    <tr id="children">
+                        <td class="task" style="padding-right: 10px">
+                            <a href="/childcare?id={{application_id}}">
+                                <span class="task-name">Type of childcare</span>
+                            </a>
+                        </td>                        
+                        {% if login_details_status == 'NOT_STARTED' %}
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-in-progress">To do</strong>
+                        </td>
+                        {% elif login_details_status == 'IN_PROGRESS' %}   
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-to-do">Started</strong>
+                        </td>
+                        {% elif login_details_status == 'COMPLETE' %}
+                        <td class="numeric" id="task-status">
+                        	<strong class="task-finished">Done</strong> 
+                        </td>  
+                        {% endif %}                                                                                                                  
+                    </tr>
+                    <tr id="account_details">
+                        <td class="task" style="padding-right: 10px">
+                            <a href="/contact-email?id={{application_id}}" >
+                                <span class="task-name">Your login and contact details</span>
+                            </a>
+                        </td>
+                        {% if personal_details_status == 'NOT_STARTED' %}
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-in-progress">To do</strong>
+                        </td>
+                        {% elif personal_details_status == 'IN_PROGRESS' %}   
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-to-do">Started</strong>
+                        </td>
+                        {% elif personal_details_status == 'COMPLETE' %}
+                        <td class="numeric" id="task-status">
+                        	<strong class="task-finished">Done</strong>
+                        </td> 
+                        {% endif %}    
+
+                    </tr>
+                    <tr id="personal_details">
+                        <td class="task" style="padding-right: 10px">
+                            <a href="/personal-details?id={{application_id}}" id="{{application_id}}">
+                                <span class="task-name">Your personal details</span>
+                            </a>
+                        </td>
+                        {% if childcare_type_status == 'NOT_STARTED' %}
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-in-progress">To do</strong>
+                        {% elif childcare_type_status == 'IN_PROGRESS' %}   
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-to-do">Started</strong>
+                        {% elif childcare_type_status == 'COMPLETE' %}
+                        <td class="numeric" id="task-status">
+                        	<strong class="task-finished">Done</strong>   
+                        {% endif %}  
+                        </td>
+                    </tr>
+                    <tr id="first_aid">
+                        <td class="task" style="padding-right: 10px">
+                            <a href="/first-aid?id={{application_id}}" id="{{application_id}}">
+                                <span class="task-name">First aid training</span>
+                            </a>
+                        </td>
+                        {% if first_aid_training_status == 'NOT_STARTED' %}
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-in-progress">To do</strong>
+                        {% elif first_aid_training_status == 'IN_PROGRESS' %}   
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-to-do">Started</strong>
+                        {% elif first_aid_training_status == 'COMPLETE' %}
+                        <td class="numeric" id="task-status">
+                        	<strong class="task-finished">Done</strong>   
+                        {% endif %} 
+                    	</td>
+                    </tr>                    
+                    <tr id="dbs">
+                        <td class="task" style="padding-right: 10px">
+                            <a href="/dbs-check/reference?id={{application_id}}" id="{{application_id}}">
+                                <span class="task-name">Your criminal record (DBS) check</span>
+                            </a>
+                        </td>
+                        {% if criminal_record_check_status == 'NOT_STARTED' %}
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-in-progress">To do</strong>
+                        {% elif criminal_record_check_status == 'IN_PROGRESS' %}   
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-to-do">Started</strong>
+                        {% elif criminal_record_check_status == 'COMPLETE' %}
+                        <td class="numeric" id="task-status">
+                        	<strong class="task-finished">Done</strong>   
+                        {% endif %}
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr id="other_people">
+                        <td class="task" style="padding-right: 10px">
+                            <a href="/other-people2?id={{application_id}}" id="{{application_id}}">
+                                <span class="task-name">People in your home</span>
+                            </a>
+                        </td>
+                        {% if people_in_home_status == 'NOT_STARTED' %}
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-in-progress">To do</strong>
+                        {% elif people_in_home_status == 'IN_PROGRESS' %}   
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-to-do">Started</strong>
+                        {% elif people_in_home_status == 'COMPLETE' %}
+                        <td class="numeric" id="task-status">
+                        	<strong class="task-finished">Done</strong>   
+                        {% endif %}
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr id="reviewInactive">
+                        <td class="task" style="padding-right: 10px">
+                            <p>
+                                <span class="task-name" style="color: #6F777B; text-decoration: none">Declaration</span>
+                            </p><p>
+                        </p></td>
+                        <td class="numeric" id="task-status11">
+                            <strong class="task-finished task-do-last">Do last</strong>
+                        </td>
+                    </tr>
+                    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="column-two-thirds">
+            <div class="form-group" style="margin-top:20px;">
+                
+                <p>You can apply when everything is complete.</p>
+                
+            </div>
+        </div>
+
+
+        <div class="column-two-thirds">
+            <div class="form-group">
+                
+                <a href="/save-and-exit" class="button-save-and-exit" style="margin-left: 0px;">Save and exit</a>
+                
+            </div>
+        </div>
+
+    </div>
+
+</main>
+{% endblock %}
