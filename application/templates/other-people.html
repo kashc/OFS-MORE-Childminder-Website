@@ -30,7 +30,7 @@
             <p>This includes all adults who live there, or who work there.</p>
         </div>
 
-        <form class="form" method="post" action="/other-people2/hasMorePeople">
+        <form class="form" method="post" action="/other-people/">{% csrf_token %}
 
             <div class="form-group">
                 <div class="grid-row">
@@ -47,6 +47,7 @@
                                 <input id="other-people-no" type="radio" name="radio-other-people-group" value="No">
                                 <label for="other-people-no">No</label>
                             </div>
+                            <input type="hidden" value="{{application_id}}" name = "id" />
                     </fieldset>
                 </div>
             </div>
@@ -55,9 +56,10 @@
                 <input class="button" type="submit" value="Save and continue">
                 
             </div>
+            <input type="hidden" value="{{application_id}}" name = "id" />
             <div class="form-group grid-row">
                 <div class="form-group">
-    <a href="/task-list?otherPeopleInProgress=true">Return to list</a>
+    <a href="/task-list?id={{application_id}}">Return to list</a>
 </div>
             </div>
 

@@ -1,5 +1,4 @@
 """morebeta URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
 Examples:
@@ -26,8 +25,11 @@ urlpatterns = [
     url(r'^personal-details/', views.PersonalDetailsView, name='Personal-Details-View'),
     url(r'^dbs-check/', views.DBSCheckView, name='DBS-Check-View'),
     url(r'^first-aid/', views.FirstAidTrainingView, name='First-Aid-Training-View'),
-    url(r'^other-people/', TemplateView.as_view(template_name='other-people.html'), name='morebeta'),
+    url(r'^eyfs/', views.EYFSView, name='EYFS-View'),
+    url(r'^health/', views.HealthView, name='Health-View'),
+    url(r'^other-people/', views.OtherPeopleView, name='Other-People-View'),
+    url(r'^references/', views.ReferencesView, name='References-View'),
     url(r'^declaration/', TemplateView.as_view(template_name='declaration.html'), name='morebeta'),
     url(r'^admin/', admin.site.urls),
+    url(r'^reset/', views.ResetView),
     ]
-    

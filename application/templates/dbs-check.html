@@ -44,13 +44,13 @@
 
 			
             {{form}}
-            
+            <input type="hidden" value="{{application_id}}" name = "id" />
             <div class="form-group grid-row">
     <input type="submit" class="button" value="Save and continue">
 </div>
 <div class="grid-row">
     <div class="form-group">
-    <a href="/task-list?dbsInProgress=true">Return to list</a>
+    <a href="/task-list?id={{application_id}}">Return to list</a>
 </div>
 </div>
         </form>

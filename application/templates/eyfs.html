@@ -5,8 +5,8 @@
 
 
 {% block inner_content %}
+<form action="eyfs" method="post" class="form">{% csrf_token %}
 
-<form action="personal-details" method="post" class="form">{% csrf_token %}
 	<div class="form-group grid-row" style="padding-top: 30px;">
     	<a href="javascript:history.back()" style="margin-right: 10px; line-height: 28px">
         	<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
@@ -15,22 +15,18 @@
         	Back
     	</a>
 	</div>
-
                 <div class="grid-row">
                     <h1 class="form-title heading-large">
-                        Your name
+                        Early Years Foundation Stage
                     </h1>
-                    <p>Please give us your full name, including any middle names.</p>
-                    <p>The names must match the ones in your criminal record check (DBS check).</p>
+                    <p>Some text on this page to illustrate that you need to have EYFS knowledge.</p>
                 </div>
 
 				{{form}}
 				<input type="hidden" value="{{application_id}}" name = "id" />
-
                 <div class="form-group grid-row">
     <input type="submit" class="button" value="Save and continue">
 </div>
-<input type="hidden" value="{{application_id}}" name = "id" />
 <div class="grid-row">
     <div class="form-group">
     <a href="/task-list?id={{application_id}}">Return to list</a>

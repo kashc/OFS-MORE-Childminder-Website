@@ -18,7 +18,7 @@
     </a>
 </div>
 
-        <form action="/training/first-aid/provider" method="post" class="form"> {% csrf_token %}
+        <form action="/first-aid/" method="post" class="form"> {% csrf_token %}
 
             <div class="grid-row">
                 <h1 class="form-title heading-large">
@@ -47,6 +47,8 @@
                     
                 </details>
                 {{form}}
+                <input type="hidden" value="{{application_id}}" name = "id" />
+                
             </div>
 
             
@@ -58,7 +60,7 @@
 </div>
 <div class="form-group grid-row">
     <div class="form-group">
-    <a href="/task-list?trainingInProgress=true">Return to list</a>
+    <a href="/task-list?id={{application_id}}">Return to list</a>
 </div>
 </div>
 
