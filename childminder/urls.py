@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^other-people/', views.OtherPeopleView, name='Other-People-View'),
     url(r'^references/', views.ReferencesView, name='References-View'),
     url(r'^declaration/', TemplateView.as_view(template_name='declaration.html'), name='morebeta'),
+    url(r'^confirm-your-answers/', TemplateView.as_view(template_name='confirm.html'), name='morebeta'),
     url(r'^admin/', admin.site.urls),
     url(r'^reset/', views.ResetView),
     ]
