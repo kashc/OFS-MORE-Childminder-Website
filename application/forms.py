@@ -4,7 +4,7 @@ Created on 7 Dec 2017
 '''
 from django import forms
 
-from .models import Application, Criminal_Record_Check, Login_And_Contact_Details, Health_Declaration_Booklet, References, Applicant_Names, Applicant_Personal_Details, First_Aid_Training
+from .models import Application, Criminal_Record_Check, Login_And_Contact_Details, Health_Declaration_Booklet, References, Applicant_Names, Applicant_Personal_Details, First_Aid_Training, Childcare_Type
 
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
@@ -24,7 +24,45 @@ class TypeOfChildcare(forms.Form):
         widget=InlineCheckboxSelectMultiple,
         choices=CHILDCARE_AGE_CHOICES,
         label = '',
-        )
+    )
+    
+    def __init__(self, *args, **kwargs):
+        self.application_id_local = kwargs.pop('id')
+        super(TypeOfChildcare, self).__init__(*args, **kwargs)
+        
+        if Childcare_Type.objects.filter(application_id=self.application_id_local).count() > 0:
+            
+            zero_to_five_status = Childcare_Type.objects.get(application_id=self.application_id_local).zero_to_five
+            five_to_eight_status = Childcare_Type.objects.get(application_id=self.application_id_local).five_to_eight
+            eight_plus_status = Childcare_Type.objects.get(application_id=self.application_id_local).eight_plus
+            
+            print(zero_to_five_status)
+            print(five_to_eight_status)
+            print(eight_plus_status)
+            
+            if (zero_to_five_status == True) & (five_to_eight_status == True) & (eight_plus_status == True):
+                self.fields['type_of_childcare'].initial = ['0-5', '5-8', '8over']
+            
+            elif (zero_to_five_status == True) & (five_to_eight_status == True) & (eight_plus_status == False):
+                self.fields['type_of_childcare'].initial = ['0-5', '5-8']
+            
+            elif (zero_to_five_status == True) & (five_to_eight_status == False) & (eight_plus_status == True):
+                self.fields['type_of_childcare'].initial = ['0-5', '8over']
+
+            elif (zero_to_five_status == False) & (five_to_eight_status == True) & (eight_plus_status == True):
+                self.fields['type_of_childcare'].initial = ['5-8', '8over']
+
+            elif (zero_to_five_status == True) & (five_to_eight_status == False) & (eight_plus_status == False):
+                self.fields['type_of_childcare'].initial = ['0-5']
+
+            elif (zero_to_five_status == False) & (five_to_eight_status == True) & (eight_plus_status == False):
+                self.fields['type_of_childcare'].initial = ['5-8']
+                
+            elif (zero_to_five_status == False) & (five_to_eight_status == False) & (eight_plus_status == True):
+                self.fields['type_of_childcare'].initial = ['8over']
+
+            elif (zero_to_five_status == False) & (five_to_eight_status == False) & (eight_plus_status == False):
+                self.fields['type_of_childcare'].initial = []
     
 class ContactEmail(GOVUKForm):
     field_label_classes = 'form-label-bold'

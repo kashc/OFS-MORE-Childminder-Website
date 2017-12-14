@@ -26,6 +26,17 @@ class Application(models.Model):
     def __str__(self):
         return self.login_details_status, self.personal_details_status, self.childcare_type_status, self.first_aid_training_status, self.eyfs_training_status, self.criminal_record_check_status, self.health_status, self.references_status, self.people_in_home_status, self.declarations_status
 
+# CHILDCARE_TYPE entity
+class Childcare_Type(models.Model):
+    childcare_id = models.UUIDField(primary_key=True, default=uuid4)
+    application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
+    zero_to_five = models.BooleanField(blank=True)
+    five_to_eight = models.BooleanField(blank=True)
+    eight_plus = models.BooleanField(blank=True)
+    
+    class Meta:
+        db_table = 'CHILDCARE_TYPE'
+
 # LOGIN_AND_CONTACT_DETAILS entity
 class Login_And_Contact_Details(models.Model):
     login_id = models.UUIDField(primary_key=True, default=uuid4)

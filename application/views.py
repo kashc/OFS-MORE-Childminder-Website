@@ -4,7 +4,7 @@ Created on 7 Dec 2017
 '''
 
 from application.models import Application, Criminal_Record_Check, Login_And_Contact_Details, Applicant_Personal_Details, Applicant_Names, First_Aid_Training,\
-    Health_Declaration_Booklet, References
+    Health_Declaration_Booklet, References, Childcare_Type
 
 from application import status
 
@@ -13,6 +13,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 
 from .forms import TypeOfChildcare, ContactEmail, DBSCheck, PersonalDetails, FirstAidTraining, EYFS, HealthDeclarationBooklet, OtherPeople, ReferenceForm
+from email.mime import application
 
 def StartPageView(request):
     application = Application.objects.create(
@@ -66,18 +67,38 @@ def LogInView(request):
 def TypeOfChildcareView(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = TypeOfChildcare(request.POST)
+        form = TypeOfChildcare(request.POST, id = application_id_local)
+        
+        print(Childcare_Type.objects.filter(application_id=application_id_local).count())
         
         if form.is_valid():
             
             status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
+            zero_to_five_status = '0-5' in form.cleaned_data.get('type_of_childcare')
+            five_to_eight_status = '5-8' in form.cleaned_data.get('type_of_childcare')
+            eight_plus_status = '8over' in form.cleaned_data.get('type_of_childcare')
+            
+            print(Childcare_Type.objects.filter(application_id=application_id_local).count())
+            
+            if Childcare_Type.objects.filter(application_id=application_id_local).count() == 0:
+                
+                childcare_type_record = Childcare_Type(zero_to_five=zero_to_five_status, five_to_eight=five_to_eight_status, eight_plus=eight_plus_status, application_id=Application.objects.get(application_id=application_id_local))
+                childcare_type_record.save()
+            
+            if Childcare_Type.objects.filter(application_id=application_id_local).count() > 0:
+            
+                childcare_type_record = Childcare_Type.objects.get(application_id=application_id_local)
+                childcare_type_record.zero_to_five = zero_to_five_status
+                childcare_type_record.five_to_eight = five_to_eight_status
+                childcare_type_record.eight_plus = eight_plus_status
+                childcare_type_record.save()
+            
             return HttpResponseRedirect('/task-list?id=' + application_id_local)
-    else:
-        application_id_local = request.GET["id"]
-        status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
-        form = TypeOfChildcare()
-         
-        return render(request, 'childcare.html', {'form': form, 'application_id': application_id_local})
+        
+    application_id_local = request.GET["id"]
+    status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
+    form = TypeOfChildcare(id = application_id_local)
+    return render(request, 'childcare.html', {'form': form, 'application_id': application_id_local})
     
 #def ApplicationStatusView(request):
 #    if request.method == 'GET':
