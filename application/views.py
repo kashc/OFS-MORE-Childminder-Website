@@ -1,10 +1,10 @@
 '''
 Created on 7 Dec 2017
+
+OFS-MORE: Apply to be a Childminder Beta
+
 @author: Informed Solutions
 '''
-
-from application.models import Application, Criminal_Record_Check, Login_And_Contact_Details, Applicant_Personal_Details, Applicant_Names, First_Aid_Training,\
-    Health_Declaration_Booklet, References, Childcare_Type
 
 from application import status
 
@@ -13,9 +13,13 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 
 from .forms import TypeOfChildcare, ContactEmail, DBSCheck, PersonalDetails, FirstAidTraining, EYFS, HealthDeclarationBooklet, OtherPeople, ReferenceForm, Declaration, Confirm
-from email.mime import application
 
+from .models import Application, Criminal_Record_Check, Login_And_Contact_Details, Applicant_Personal_Details, Applicant_Names, First_Aid_Training, Health_Declaration_Booklet, References, Childcare_Type
+
+# View for the start page
 def StartPageView(request):
+    
+    # Create a new application
     application = Application.objects.create(
         login_details_status = 'NOT_STARTED',
         personal_details_status = 'NOT_STARTED',
@@ -27,16 +31,22 @@ def StartPageView(request):
         references_status = 'NOT_STARTED',
         people_in_home_status = 'NOT_STARTED',
         declarations_status = 'NOT_STARTED'
-        )
+    )
     
     return render(request, 'start-page.html', ({'id': application.application_id}))
 
-
+# View for the task list
 def LogInView(request):
            
     if request.method == 'GET':
+        
+        # Retrieve the application's ID
         application_id = request.GET["id"]
+        
+        # Retrieve application from database
         application = Application.objects.get(pk=application_id)
+        
+        # Generate a context for task statuses
         application_status_context = dict({
             'application_id': application_id,
             'login_details_status': application.login_details_status,
@@ -51,25 +61,136 @@ def LogInView(request):
             'declaration_status': application.declarations_status,
             'all_complete': False,
             'confirm_details': False
-            })
+        })
         
+        # Temporarily disable Declarations task if other tasks are still in progress
         temp_context = application_status_context
         del temp_context['declaration_status']
-        print (temp_context)
         
         if ('NOT_STARTED' in temp_context.values()) or ('IN_PROGRESS' in temp_context.values()):
+            
             application_status_context['all_complete'] = False
+            
         else:
+            
+            # Enable Declarations task when all other tasks are complete
             application_status_context['all_complete'] = True
             application_status_context['declaration_status'] = application.declarations_status
-        
+            
+            # When the Declarations task is complete, enable link to confirm details
             if (application_status_context['declaration_status'] == 'COMPLETED'):
+                
                 application_status_context['confirm_details'] = True
+                
             else:
+                
                 application_status_context['confirm_details'] = False
 
     return render(request, 'task-list.html', application_status_context)
+
+# View for the Type of childcare task
+def TypeOfChildcareView(request):
+    
+    if request.method == 'POST':
         
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Type of childcare form
+        form = TypeOfChildcare(request.POST, id = application_id_local)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'COMPLETED'
+            status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
+            
+            # Get entered data to insert into database
+            zero_to_five_status = '0-5' in form.cleaned_data.get('type_of_childcare')
+            five_to_eight_status = '5-8' in form.cleaned_data.get('type_of_childcare')
+            eight_plus_status = '8over' in form.cleaned_data.get('type_of_childcare')
+            this_application = Application.objects.get(application_id=application_id_local)
+            
+            # If the user entered information for this task for the first time
+            if Childcare_Type.objects.filter(application_id=application_id_local).count() == 0:
+                
+                # Create a new Type of childcare record with the entered data
+                childcare_type_record = Childcare_Type(zero_to_five=zero_to_five_status, five_to_eight=five_to_eight_status, eight_plus=eight_plus_status, application_id=this_application)
+                childcare_type_record.save()
+            
+            # If the user previously entered information for this task
+            if Childcare_Type.objects.filter(application_id=application_id_local).count() > 0:
+            
+                # Retrieve the Type of childcare record corresponding to the application
+                childcare_type_record = Childcare_Type.objects.get(application_id=application_id_local)
+                # Update the record
+                childcare_type_record.zero_to_five = zero_to_five_status
+                childcare_type_record.five_to_eight = five_to_eight_status
+                childcare_type_record.eight_plus = eight_plus_status
+                childcare_type_record.save()
+            
+        # Return to the application's task list
+        return HttpResponseRedirect('/task-list?id=' + application_id_local)
+    
+    # If the Type of childcare form is not completed    
+    application_id_local = request.GET["id"]
+    # Update the status of the task to 'IN_PROGRESS'
+    status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
+    form = TypeOfChildcare(id = application_id_local)
+    
+    # Return to the application's task list
+    return render(request, 'childcare.html', {'form': form, 'application_id': application_id_local})
+
+# View for the Your login and contact details task
+def ContactEmailView(request):
+    
+    
+    if request.method =='POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Your login and contact details form
+        form = ContactEmail(request.POST,id = application_id_local)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'COMPLETED'
+            status.update(application_id_local, 'login_details_status', 'COMPLETED')
+            
+            # Get entered data to insert into database
+            email_address = form.cleaned_data.get('email_address')
+            this_application = Application.objects.get(application_id=application_id_local)
+            
+            # If the user entered information for this task for the first time
+            if Login_And_Contact_Details.objects.filter(application_id=application_id_local).count() == 0:
+            
+                # Create a new Your login and contact details record corresponding to the application
+                login_and_contact_details_record = Login_And_Contact_Details(email=email_address, application_id=this_application)
+                login_and_contact_details_record.save()
+            
+             # If the user previously entered information for this task
+            if Login_And_Contact_Details.objects.filter(application_id=application_id_local).count() > 0:
+                
+                # Retrieve the Your login and contact details record corresponding to the application
+                login_and_contact_details_record = Login_And_Contact_Details.objects.get(application_id=application_id_local)
+                # Update the record
+                login_and_contact_details_record.email = email_address
+                login_and_contact_details_record.save()
+            
+        # Return to the application's task list    
+        return HttpResponseRedirect('/task-list?id=' + application_id_local)
+
+    # If the Your login and contact details form is not completed
+    application_id_local = request.GET["id"]
+    # Update the status of the task to 'IN_PROGRESS'
+    status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
+    form = ContactEmail(id = application_id_local)       
+    
+    # Return to the application's task list
+    return render(request, 'contact-email.html', {'form': form,'application_id': application_id_local})
+
 
 def DeclarationView(request):
 
@@ -91,72 +212,6 @@ def DeclarationView(request):
     
     return render(request, 'declaration.html', {'application_id': application_id_local})
 
-
-def TypeOfChildcareView(request):
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = TypeOfChildcare(request.POST, id = application_id_local)
-        
-        if form.is_valid():
-            
-            status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
-            zero_to_five_status = '0-5' in form.cleaned_data.get('type_of_childcare')
-            five_to_eight_status = '5-8' in form.cleaned_data.get('type_of_childcare')
-            eight_plus_status = '8over' in form.cleaned_data.get('type_of_childcare')
-            
-            if Childcare_Type.objects.filter(application_id=application_id_local).count() == 0:
-                
-                childcare_type_record = Childcare_Type(zero_to_five=zero_to_five_status, five_to_eight=five_to_eight_status, eight_plus=eight_plus_status, application_id=Application.objects.get(application_id=application_id_local))
-                childcare_type_record.save()
-            
-            if Childcare_Type.objects.filter(application_id=application_id_local).count() > 0:
-            
-                childcare_type_record = Childcare_Type.objects.get(application_id=application_id_local)
-                childcare_type_record.zero_to_five = zero_to_five_status
-                childcare_type_record.five_to_eight = five_to_eight_status
-                childcare_type_record.eight_plus = eight_plus_status
-                childcare_type_record.save()
-            
-            return HttpResponseRedirect('/task-list?id=' + application_id_local)
-        
-    application_id_local = request.GET["id"]
-    status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
-    form = TypeOfChildcare(id = application_id_local)
-    return render(request, 'childcare.html', {'form': form, 'application_id': application_id_local})
-    
-#def ApplicationStatusView(request):
-#    if request.method == 'GET':
-#        
-#        form = ApplicationStatus(request.POST)
-
-def ContactEmailView(request):
-    if request.method =='POST':
-        application_id_local = request.POST["id"]
-        form = ContactEmail(request.POST,id = application_id_local)
-        
-        if form.is_valid():
-            
-            status.update(application_id_local, 'login_details_status', 'COMPLETED')
-            # If no record exists, create a new one
-            if Login_And_Contact_Details.objects.filter(application_id=application_id_local).count() == 0:
-            
-                login_and_contact_details_record = Login_And_Contact_Details(email=form.cleaned_data.get('email_address'), application_id=Application.objects.get(application_id=application_id_local))
-                login_and_contact_details_record.save()
-            
-            # If a record exists, update it
-            if Login_And_Contact_Details.objects.filter(application_id=application_id_local).count() > 0:
-                
-                login_and_contact_details_record = Login_And_Contact_Details.objects.get(application_id=application_id_local)
-                login_and_contact_details_record.email = form.cleaned_data.get('email_address')
-                login_and_contact_details_record.save()
-            
-            return HttpResponseRedirect('/task-list?id=' + application_id_local)
-
-    #print(request)
-    application_id_local = request.GET["id"]
-    status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
-    form = ContactEmail(id = application_id_local)       
-    return render(request, 'contact-email.html', {'form': form,'application_id': application_id_local})
 
 def PersonalDetailsView(request):
     if request.method =='POST':
