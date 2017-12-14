@@ -3,7 +3,7 @@
 {% load static %}
 {% load govuk_template_base %}
 
-{% block page_title %}{% get_service_settings as service_settings %}GOV.UK – {{ service_settings.localised_name }}{% endblock %}
+{% block page_title %}{% get_service_settings as service_settings %}GOV.UK – Apply to be a childminder{% endblock %}
 
 {% block head %}
   {{ block.super }}
@@ -29,7 +29,7 @@
       {% endif %}
       <nav id="proposition-menu">
         <a href="{{ service_settings.header_link_url|default:'/' }}" id="proposition-name">
-          {% block proposition %}{{ service_settings.localised_name }}{% endblock %}
+          {% block proposition %}Apply to be a childminder{% endblock %}
         </a>
         {% block proposition_menu %}
           {% if service_settings.has_header_links %}
@@ -52,8 +52,8 @@
       {% if service_settings.phase != 'live' %}
         <div class="phase-banner">
           <p>
-            <strong class="phase-tag">{{ service_settings.phase_name }}</strong>
-            <span>{% block phase_banner_message %}{% trans 'This is a new service.' %}{% endblock %}</span>
+            <strong class="phase-tag">Beta</strong>
+            <span>{% block phase_banner_message %}{% trans 'This is a test site.' %}{% endblock %}</span>
           </p>
         </div>
       {% endif %}
