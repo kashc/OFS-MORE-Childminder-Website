@@ -92,9 +92,11 @@
                     </div>
                 </fieldset>
             </div>
+            
+			<input type="hidden" value="{{application_id}}" name = "id" />
 
             <div class="form-group grid-row">
-                <a href="/payment" class="button">Confirm and pay your fee</a>
+                <a href="/task-list?id={{application_id}}" class="button">Confirm and pay your fee</a>
             </div>
         </form>
     </div>

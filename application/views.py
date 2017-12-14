@@ -12,7 +12,7 @@ from django.template import Context
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 
-from .forms import TypeOfChildcare, ContactEmail, DBSCheck, PersonalDetails, FirstAidTraining, EYFS, HealthDeclarationBooklet, OtherPeople, ReferenceForm
+from .forms import TypeOfChildcare, ContactEmail, DBSCheck, PersonalDetails, FirstAidTraining, EYFS, HealthDeclarationBooklet, OtherPeople, ReferenceForm, Declaration, Confirm
 from email.mime import application
 
 def StartPageView(request):
@@ -50,6 +50,7 @@ def LogInView(request):
             'people_in_home_status': application.people_in_home_status,
             'declaration_status': application.declarations_status,
             'all_complete': False,
+            'confirm_details': False
             })
         
         temp_context = application_status_context
@@ -60,16 +61,41 @@ def LogInView(request):
             application_status_context['all_complete'] = False
         else:
             application_status_context['all_complete'] = True
+            application_status_context['declaration_status'] = application.declarations_status
+        
+            if (application_status_context['declaration_status'] == 'COMPLETED'):
+                application_status_context['confirm_details'] = True
+            else:
+                application_status_context['confirm_details'] = False
 
     return render(request, 'task-list.html', application_status_context)
         
+
+def DeclarationView(request):
+
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = Declaration(request.POST)
+        
+        print(form.is_valid())
+        
+        if form.is_valid():
+            
+            status.update(application_id_local, 'declarations_status', 'COMPLETED')
+            
+            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+    
+    application_id_local = request.GET["id"]
+    status.update(application_id_local, 'declarations_status', 'COMPLETED')
+    form = Declaration()
+    
+    return render(request, 'declaration.html', {'application_id': application_id_local})
+
 
 def TypeOfChildcareView(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = TypeOfChildcare(request.POST, id = application_id_local)
-        
-        print(Childcare_Type.objects.filter(application_id=application_id_local).count())
         
         if form.is_valid():
             
@@ -77,8 +103,6 @@ def TypeOfChildcareView(request):
             zero_to_five_status = '0-5' in form.cleaned_data.get('type_of_childcare')
             five_to_eight_status = '5-8' in form.cleaned_data.get('type_of_childcare')
             eight_plus_status = '8over' in form.cleaned_data.get('type_of_childcare')
-            
-            print(Childcare_Type.objects.filter(application_id=application_id_local).count())
             
             if Childcare_Type.objects.filter(application_id=application_id_local).count() == 0:
                 
@@ -250,6 +274,20 @@ def EYFSView(request):
     form = EYFS()
     
     return render(request, 'eyfs.html', {'application_id': application_id_local})
+
+def ConfirmationView(request):
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = Confirm(request.POST)
+        
+        if form.is_valid():
+            
+            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+    
+    application_id_local = request.GET["id"]
+    form = Confirm()
+    
+    return render(request, 'confirm.html', {'application_id': application_id_local})
 
 def OtherPeopleView(request):
     if request.method == 'POST':

@@ -213,9 +213,17 @@
                                 <span class="task-name">Declaration</span>
                             </a>
                         </td>
+                        {% if declaration_status == 'NOT_STARTED' %}
                         <td class="numeric" id="task-status">
                             <strong class="task-finished task-in-progress">To do</strong>
+                        {% elif declaration_status == 'IN_PROGRESS' %}
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-to-do">Started</strong>
+                        {% elif declaration_status == 'COMPLETED' %}
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished">Done</strong>
                         </td>
+                        {% endif %}
                     </tr>
                     {% endif %}
                     			
@@ -233,7 +241,17 @@
             </div>
         </div>
         {% endif %}
-
+        
+        {% if confirm_details %}
+        <form action ="/confirm-your-answers" method="get">
+        	<div class="column-two-thirds">
+            	<div class="form-group" style="margin-top: 20px;">
+                	<input type=submit class="button button-start" value="Confirm your details" />
+                	<input type="hidden" value="{{application_id}}" name = "id" />
+            	</div>
+            </div>	
+        </form>
+		{% endif %}
 
         <div class="column-two-thirds">
             <div class="form-group">

@@ -29,8 +29,8 @@ urlpatterns = [
     url(r'^health/', views.HealthView, name='Health-View'),
     url(r'^other-people/', views.OtherPeopleView, name='Other-People-View'),
     url(r'^references/', views.ReferencesView, name='References-View'),
-    url(r'^declaration/', TemplateView.as_view(template_name='declaration.html'), name='morebeta'),
-    url(r'^confirm-your-answers/', TemplateView.as_view(template_name='confirm.html'), name='morebeta'),
+    url(r'^declaration/', views.DeclarationView, name='Declaration-View'),
+    url(r'^confirm-your-answers/', views.ConfirmationView, name='Confirmation-View'),
     url(r'^admin/', admin.site.urls),
     url(r'^reset/', views.ResetView),
     ]

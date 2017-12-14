@@ -11,6 +11,7 @@ from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, \
     SeparatedCheckboxSelectMultiple, SeparatedRadioSelect
 
+
 class TypeOfChildcare(forms.Form):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -177,4 +178,10 @@ class HealthDeclarationBooklet(GOVUKForm):
             self.fields['mental_health'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).mental_health_problems
             self.fields['alcohol_drugs'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).alcohol_drug_problems 
 
-    
+class Declaration(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+class Confirm(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
