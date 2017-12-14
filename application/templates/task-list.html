@@ -194,7 +194,7 @@
                             
                         </td>
                     </tr>
-                    
+                    {% if all_complete == False %}
                     <tr id="reviewInactive">
                         <td class="task" style="padding-right: 10px">
                             <p>
@@ -205,11 +205,26 @@
                             <strong class="task-finished task-do-last">Do last</strong>
                         </td>
                     </tr>
+                    {% endif %}
+                    {% if all_complete == True  %}
+                    <tr id="review">
+                        <td class="task" style="padding-right: 10px">
+                            <a href="/declaration/?id={{application_id}}">
+                                <span class="task-name">Declaration</span>
+                            </a>
+                        </td>
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-in-progress">To do</strong>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    			
                     
                     </tbody>
                 </table>
             </div>
         </div>
+        {% if not all_complete %}
         <div class="column-two-thirds">
             <div class="form-group" style="margin-top:20px;">
                 
@@ -217,6 +232,7 @@
                 
             </div>
         </div>
+        {% endif %}
 
 
         <div class="column-two-thirds">

@@ -48,7 +48,17 @@ def LogInView(request):
             'reference_status': application.references_status,
             'people_in_home_status': application.people_in_home_status,
             'declaration_status': application.declarations_status,
-            }) 
+            'all_complete': False,
+            })
+        
+        temp_context = application_status_context
+        del temp_context['declaration_status']
+        print (temp_context)
+        
+        if ('NOT_STARTED' in temp_context.values()) or ('IN_PROGRESS' in temp_context.values()):
+            application_status_context['all_complete'] = False
+        else:
+            application_status_context['all_complete'] = True
 
     return render(request, 'task-list.html', application_status_context)
         
