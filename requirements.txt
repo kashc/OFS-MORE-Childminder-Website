@@ -1,4 +1,4 @@
 django==2.0
 psycopg2==2.7.3.2
-django-gov-uk-template==0.3
-django-gov-uk-forms==0.4
+django-govuk-template==0.4
+django-govuk-forms==0.4
