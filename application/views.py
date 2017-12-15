@@ -8,7 +8,7 @@ OFS-MORE: Apply to be a Childminder Beta
 
 from application import status
 
-from .business_logic import Childcare_Type_Logic, Login_Contact_Logic
+from .business_logic import Childcare_Type_Logic, First_Aid_Logic, Login_Contact_Logic, Personal_Logic
 
 from django.template import Context
 from django.shortcuts import render, redirect
@@ -170,41 +170,85 @@ def ContactEmailView(request):
     return render(request, 'contact-email.html', {'form': form,'application_id': application_id_local})
 
 
+# View for the Your personal details task
 def PersonalDetailsView(request):
+    
     if request.method =='POST':
+        
+        #Retrieve the application's ID
         application_id_local = request.POST["id"]
+        
+        # Initialise the Your personal details form
         form = PersonalDetails(request.POST, id = application_id_local)
         
+        # If the form is successfully submitted (with valid details)
         if form.is_valid():            
             
+            # Update the status of the task to 'COMPLETED'
             status.update(application_id_local, 'personal_details_status', 'COMPLETED')
             
-            # If no record exists, create a new one
-            if Applicant_Personal_Details.objects.filter(application_id=application_id_local).count() == 0:
-                
-                personal_details_record = Applicant_Personal_Details(birth_day=0, birth_month=0, birth_year=0, application_id=Application.objects.get(application_id=application_id_local))
-                personal_details_record.save()
-                
-                applicant_names_record = Applicant_Names(current_name='True', first_name=form.cleaned_data.get('first_name'), middle_names=form.cleaned_data.get('middle_names'), last_name=form.cleaned_data.get('last_name'), personal_detail_id=Applicant_Personal_Details.objects.get(application_id=application_id_local))
-                applicant_names_record.save()
+            # Get entered data to insert into the database
+            first_name = applicant_names_record.first_name = form.cleaned_data.get('first_name')
+            middle_names = applicant_names_record.middle_names = form.cleaned_data.get('middle_names')
+            last_name = applicant_names_record.last_name = form.cleaned_data.get('last_name')
             
-            # If a record exists, update it
-            elif Applicant_Personal_Details.objects.filter(application_id=application_id_local).count() > 0:
-                
-                personal_detail_id_local = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
-                applicant_names_record = Applicant_Names.objects.get(personal_detail_id=personal_detail_id_local)
-                applicant_names_record.first_name = form.cleaned_data.get('first_name')
-                applicant_names_record.middle_names = form.cleaned_data.get('middle_names')
-                applicant_names_record.last_name = form.cleaned_data.get('last_name')
-                applicant_names_record.save()
-            
-            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+            # Perform business logic to create or update Your personal details record in database
+            applicant_names_record = Personal_Logic(application_id_local, first_name, middle_names, last_name)
+            applicant_names_record.save()
+        
+        # Return to the application's task list
+        return HttpResponseRedirect('/task-list?id=' + application_id_local)
 
-
+    # If the Your personal detaails form is not completed
     application_id_local = request.GET["id"]
+    # Update the status of the task to 'IN_PROGRESS'
     status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-    form = PersonalDetails(id = application_id_local)       
+    form = PersonalDetails(id = application_id_local)
+    
+    # Return to the application's task list
     return render(request, 'personal-details.html', {'form': form,'application_id': application_id_local})
+
+
+# View for the First aid training task
+def FirstAidTrainingView(request):
+    
+    if request.method =='POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the First aid training form
+        form = FirstAidTraining(request.POST,id = application_id_local)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'COMPLETED'
+            status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
+            
+            # Get entered data to insert into the database
+            training_organisation = form.cleaned_data.get('first_aid_training_organisation') 
+            course_title = form.cleaned_data.get('title_of_training_course')
+            course_day = form.cleaned_data.get('course_date').day
+            course_month = form.cleaned_data.get('course_date').month
+            course_year = form.cleaned_data.get('course_date').year
+            
+            # Perform business logic to create or update First aid training record in database
+            first_aid_training_record = First_Aid_Logic(application_id_local, training_organisation, course_title, course_day, course_month, course_year)
+            first_aid_training_record.save()
+    
+        # Return to the application's task list   
+        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+    
+    # If the First aid training form is not completed
+    application_id_local = request.GET["id"]
+    # Update the status of the task to 'IN_PROGRESS'
+    status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+    form = FirstAidTraining(id = application_id_local)
+    
+    # Return to the application's task list    
+    return render(request, 'first-aid.html', {'form': form,'application_id': application_id_local})
+
 
 
 def DeclarationView(request):
@@ -258,39 +302,6 @@ def DBSCheckView(request):
 
     form = DBSCheck(id = application_id_local)       
     return render(request, 'dbs-check.html', {'form': form,'application_id': application_id_local})
-
-def FirstAidTrainingView(request):
-    if request.method =='POST':
-        application_id_local = request.POST["id"]
-        form = FirstAidTraining(request.POST,id = application_id_local)
-        
-        if form.is_valid():
-            
-            status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
-            
-            # If no record exists, create a new one
-            if First_Aid_Training.objects.filter(application_id=application_id_local).count() == 0:
-                
-                f = First_Aid_Training(training_organisation=form.cleaned_data.get('first_aid_training_organisation'),course_title=form.cleaned_data.get('title_of_training_course'), course_day=form.cleaned_data.get('course_date').day, course_month=form.cleaned_data.get('course_date').month, course_year=form.cleaned_data.get('course_date').year, application_id=Application.objects.get(application_id=application_id_local))
-                f.save()
-            
-            # If a record exists, update it
-            elif First_Aid_Training.objects.filter(application_id=application_id_local).count() > 0:
-                
-                f = First_Aid_Training.objects.get(application_id=application_id_local)
-                f.training_organisation = form.cleaned_data.get('first_aid_training_organisation')
-                f.course_title = form.cleaned_data.get('title_of_training_course')
-                f.course_day = form.cleaned_data.get('course_date').day
-                f.course_month = form.cleaned_data.get('course_date').month
-                f.course_year = form.cleaned_data.get('course_date').year
-                f.save()
-            
-            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
-
-    application_id_local = request.GET["id"]
-    status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
-    form = FirstAidTraining(id = application_id_local)       
-    return render(request, 'first-aid.html', {'form': form,'application_id': application_id_local})
 
 def EYFSView(request):
     if request.method == 'POST':
