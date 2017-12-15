@@ -8,6 +8,8 @@ OFS-MORE: Apply to be a Childminder Beta
 
 from application import status
 
+from .business_logic import Childcare_Type_Logic, Login_Contact_Logic
+
 from django.template import Context
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
@@ -15,6 +17,8 @@ from django.http import HttpResponseRedirect
 from .forms import TypeOfChildcare, ContactEmail, DBSCheck, PersonalDetails, FirstAidTraining, EYFS, HealthDeclarationBooklet, OtherPeople, ReferenceForm, Declaration, Confirm
 
 from .models import Application, Criminal_Record_Check, Login_And_Contact_Details, Applicant_Personal_Details, Applicant_Names, First_Aid_Training, Health_Declaration_Booklet, References, Childcare_Type
+
+
 
 # View for the start page
 def StartPageView(request):
@@ -34,6 +38,7 @@ def StartPageView(request):
     )
     
     return render(request, 'start-page.html', ({'id': application.application_id}))
+
 
 # View for the task list
 def LogInView(request):
@@ -88,6 +93,7 @@ def LogInView(request):
 
     return render(request, 'task-list.html', application_status_context)
 
+
 # View for the Type of childcare task
 def TypeOfChildcareView(request):
     
@@ -109,25 +115,10 @@ def TypeOfChildcareView(request):
             zero_to_five_status = '0-5' in form.cleaned_data.get('type_of_childcare')
             five_to_eight_status = '5-8' in form.cleaned_data.get('type_of_childcare')
             eight_plus_status = '8over' in form.cleaned_data.get('type_of_childcare')
-            this_application = Application.objects.get(application_id=application_id_local)
             
-            # If the user entered information for this task for the first time
-            if Childcare_Type.objects.filter(application_id=application_id_local).count() == 0:
-                
-                # Create a new Type of childcare record with the entered data
-                childcare_type_record = Childcare_Type(zero_to_five=zero_to_five_status, five_to_eight=five_to_eight_status, eight_plus=eight_plus_status, application_id=this_application)
-                childcare_type_record.save()
-            
-            # If the user previously entered information for this task
-            if Childcare_Type.objects.filter(application_id=application_id_local).count() > 0:
-            
-                # Retrieve the Type of childcare record corresponding to the application
-                childcare_type_record = Childcare_Type.objects.get(application_id=application_id_local)
-                # Update the record
-                childcare_type_record.zero_to_five = zero_to_five_status
-                childcare_type_record.five_to_eight = five_to_eight_status
-                childcare_type_record.eight_plus = eight_plus_status
-                childcare_type_record.save()
+            # Perform business logic to create or update Type of childcare record in database
+            childcare_type_record = Childcare_Type_Logic(application_id_local, zero_to_five_status, five_to_eight_status, eight_plus_status)
+            childcare_type_record.save()
             
         # Return to the application's task list
         return HttpResponseRedirect('/task-list?id=' + application_id_local)
@@ -141,9 +132,9 @@ def TypeOfChildcareView(request):
     # Return to the application's task list
     return render(request, 'childcare.html', {'form': form, 'application_id': application_id_local})
 
+
 # View for the Your login and contact details task
 def ContactEmailView(request):
-    
     
     if request.method =='POST':
         
@@ -161,23 +152,10 @@ def ContactEmailView(request):
             
             # Get entered data to insert into database
             email_address = form.cleaned_data.get('email_address')
-            this_application = Application.objects.get(application_id=application_id_local)
             
-            # If the user entered information for this task for the first time
-            if Login_And_Contact_Details.objects.filter(application_id=application_id_local).count() == 0:
-            
-                # Create a new Your login and contact details record corresponding to the application
-                login_and_contact_details_record = Login_And_Contact_Details(email=email_address, application_id=this_application)
-                login_and_contact_details_record.save()
-            
-             # If the user previously entered information for this task
-            if Login_And_Contact_Details.objects.filter(application_id=application_id_local).count() > 0:
-                
-                # Retrieve the Your login and contact details record corresponding to the application
-                login_and_contact_details_record = Login_And_Contact_Details.objects.get(application_id=application_id_local)
-                # Update the record
-                login_and_contact_details_record.email = email_address
-                login_and_contact_details_record.save()
+            # Perform business logic to create or update Your login and contact details record in database
+            login_and_contact_details_record = Login_Contact_Logic(application_id_local, email_address)
+            login_and_contact_details_record.save()
             
         # Return to the application's task list    
         return HttpResponseRedirect('/task-list?id=' + application_id_local)
@@ -190,27 +168,6 @@ def ContactEmailView(request):
     
     # Return to the application's task list
     return render(request, 'contact-email.html', {'form': form,'application_id': application_id_local})
-
-
-def DeclarationView(request):
-
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = Declaration(request.POST)
-        
-        print(form.is_valid())
-        
-        if form.is_valid():
-            
-            status.update(application_id_local, 'declarations_status', 'COMPLETED')
-            
-            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
-    
-    application_id_local = request.GET["id"]
-    status.update(application_id_local, 'declarations_status', 'COMPLETED')
-    form = Declaration()
-    
-    return render(request, 'declaration.html', {'application_id': application_id_local})
 
 
 def PersonalDetailsView(request):
@@ -248,6 +205,28 @@ def PersonalDetailsView(request):
     status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
     form = PersonalDetails(id = application_id_local)       
     return render(request, 'personal-details.html', {'form': form,'application_id': application_id_local})
+
+
+def DeclarationView(request):
+
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = Declaration(request.POST)
+        
+        print(form.is_valid())
+        
+        if form.is_valid():
+            
+            status.update(application_id_local, 'declarations_status', 'COMPLETED')
+            
+            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+    
+    application_id_local = request.GET["id"]
+    status.update(application_id_local, 'declarations_status', 'COMPLETED')
+    form = Declaration()
+    
+    return render(request, 'declaration.html', {'application_id': application_id_local})
+
 
 def DBSCheckView(request):
     if request.method =='POST':
