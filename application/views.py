@@ -8,8 +8,7 @@ OFS-MORE: Apply to be a Childminder Beta
 
 from application import status
 
-from .business_logic import Childcare_Type_Logic, First_Aid_Logic, Login_Contact_Logic, Personal_Logic
-
+from .business_logic import Childcare_Type_Logic, First_Aid_Logic, Login_Contact_Logic, Personal_Logic, dbs_check_logic
 from django.template import Context
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
@@ -17,6 +16,8 @@ from django.http import HttpResponseRedirect
 from .forms import TypeOfChildcare, ContactEmail, DBSCheck, PersonalDetails, FirstAidTraining, EYFS, HealthDeclarationBooklet, OtherPeople, ReferenceForm, Declaration, Confirm
 
 from .models import Application, Criminal_Record_Check, Login_And_Contact_Details, Applicant_Personal_Details, Applicant_Names, First_Aid_Training, Health_Declaration_Booklet, References, Childcare_Type
+from application.business_logic import references_check_logic,\
+    health_check_logic
 
 
 
@@ -281,19 +282,8 @@ def DBSCheckView(request):
             
             status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
             
-            # If no record exists, create a new one
-            if Criminal_Record_Check.objects.filter(application_id=application_id_local).count() == 0:
-            
-                c = Criminal_Record_Check(dbs_certificate_number=form.cleaned_data.get('dbs_certificate_number'), cautions_convictions=form.cleaned_data.get('convictions'), application_id=Application.objects.get(application_id=application_id_local))
-                c.save()
-            
-            # If a record exists, update it
-            elif Criminal_Record_Check.objects.filter(application_id=application_id_local).count() > 0:
-                
-                c = Criminal_Record_Check.objects.get(application_id=application_id_local)
-                c.dbs_certificate_number = form.cleaned_data.get('dbs_certificate_number')
-                c.cautions_convictions = form.cleaned_data.get('convictions')
-                c.save()
+            dbs_check_record = dbs_check_logic(application_id_local, form)
+            dbs_check_record.save()
             
             return HttpResponseRedirect('/task-list/?id=' + application_id_local)
     application_id_local = request.GET["id"]
@@ -362,20 +352,8 @@ def ReferencesView(request):
             
             status.update(application_id_local, 'references_status', 'COMPLETED')
             
-            # If no record exists, create a new one
-            if References.objects.filter(application_id=application_id_local).count() == 0:
-                
-                r = References(first_name=form.cleaned_data.get('first_name'),last_name=form.cleaned_data.get('last_name'),relationship=form.cleaned_data.get('relationship'),years_known=0,months_known=0,street_line1='',street_line2='',town='',county='',country='',postcode='',phone_number='',email='',application_id=Application.objects.get(application_id=application_id_local))
-                r.save()
-            
-            # If a record exists, update it
-            elif References.objects.filter(application_id=application_id_local).count() > 0:
-                
-                r = References.objects.get(application_id=application_id_local)
-                r.first_name = form.cleaned_data.get('first_name')
-                r.last_name = form.cleaned_data.get('last_name')
-                r.relationship = form.cleaned_data.get('relationship')
-                r.save()
+            references_record = references_check_logic(application_id_local, form)
+            references_record.save()
             
             return HttpResponseRedirect('/task-list/?id=' + application_id_local)
     
@@ -394,23 +372,8 @@ def HealthView(request):
             
             status.update(application_id_local, 'health_status', 'COMPLETED')
             
-            # If no record exists, create a new one
-            if Health_Declaration_Booklet.objects.filter(application_id=application_id_local).count() == 0:
-                
-                h = Health_Declaration_Booklet(movement_problems=form.cleaned_data.get('walking_bending'), breathing_problems=form.cleaned_data.get('asthma_breathing'), heart_disease=form.cleaned_data.get('heart_disease'), blackout_epilepsy=form.cleaned_data.get('blackout_epilepsy'), mental_health_problems=form.cleaned_data.get('mental_health'), alcohol_drug_problems=form.cleaned_data.get('alcohol_drugs'), application_id=Application.objects.get(application_id=application_id_local))
-                h.save()
-            
-            # If a record exists, update it
-            elif Health_Declaration_Booklet.objects.filter(application_id=application_id_local).count() > 0:
-                
-                h = Health_Declaration_Booklet.objects.get(application_id=application_id_local)
-                h.movement_problems = form.cleaned_data.get('walking_bending')
-                h.breathing_problems = form.cleaned_data.get('asthma_breathing')
-                h.heart_disease = form.cleaned_data.get('heart_disease')
-                h.blackout_epilepsy = form.cleaned_data.get('blackout_epilepsy')
-                h.mental_health_problems = form.cleaned_data.get('mental_health')
-                h.alcohol_drug_problems = form.cleaned_data.get('alcohol_drugs')
-                h.save()
+            health_record = health_check_logic(application_id_local, form)
+            health_record.save()
             
             return HttpResponseRedirect('/task-list/?id=' + application_id_local)
     

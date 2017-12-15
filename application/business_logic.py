@@ -6,7 +6,8 @@ OFS-MORE: Apply to be a Childminder Beta
 @author: Informed Solutions
 '''
 
-from .models import Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, First_Aid_Training, Login_And_Contact_Details
+from .models import Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, First_Aid_Training, Login_And_Contact_Details, Criminal_Record_Check, References, Health_Declaration_Booklet
+from childminder.wsgi import application
 
 
 # Business logic to create or update a Type of childcare record
@@ -114,3 +115,57 @@ def First_Aid_Logic(application_id_local, training_organisation, course_title, c
         first_aid_training_record.course_year = course_year
     
     return first_aid_training_record
+
+def dbs_check_logic(application_id_local, form):
+    
+    # If no record exists, create a new one
+    if Criminal_Record_Check.objects.filter(application_id=application_id_local).count() == 0:
+    
+        c = Criminal_Record_Check(dbs_certificate_number=form.cleaned_data.get('dbs_certificate_number'), cautions_convictions=form.cleaned_data.get('convictions'), application_id=Application.objects.get(application_id=application_id_local))
+    
+    # If a record exists, update it
+    elif Criminal_Record_Check.objects.filter(application_id=application_id_local).count() > 0:
+        
+        c = Criminal_Record_Check.objects.get(application_id=application_id_local)
+        c.dbs_certificate_number = form.cleaned_data.get('dbs_certificate_number')
+        c.cautions_convictions = form.cleaned_data.get('convictions')
+        
+    return(c)
+                
+def references_check_logic(application_id_local, form):
+    
+    # If no record exists, create a new one
+    if References.objects.filter(application_id=application_id_local).count() == 0:
+        
+        r = References(first_name=form.cleaned_data.get('first_name'),last_name=form.cleaned_data.get('last_name'),relationship=form.cleaned_data.get('relationship'),years_known=0,months_known=0,street_line1='',street_line2='',town='',county='',country='',postcode='',phone_number='',email='',application_id=Application.objects.get(application_id=application_id_local))
+    
+    # If a record exists, update it
+    elif References.objects.filter(application_id=application_id_local).count() > 0:
+        
+        r = References.objects.get(application_id=application_id_local)
+        r.first_name = form.cleaned_data.get('first_name')
+        r.last_name = form.cleaned_data.get('last_name')
+        r.relationship = form.cleaned_data.get('relationship')
+
+    return(r)
+
+def health_check_logic(application_id_local, form):
+    
+    # If no record exists, create a new one
+    if Health_Declaration_Booklet.objects.filter(application_id=application_id_local).count() == 0:
+                
+        h = Health_Declaration_Booklet(movement_problems=form.cleaned_data.get('walking_bending'), breathing_problems=form.cleaned_data.get('asthma_breathing'), heart_disease=form.cleaned_data.get('heart_disease'), blackout_epilepsy=form.cleaned_data.get('blackout_epilepsy'), mental_health_problems=form.cleaned_data.get('mental_health'), alcohol_drug_problems=form.cleaned_data.get('alcohol_drugs'), application_id=Application.objects.get(application_id=application_id_local))
+
+            
+    # If a record exists, update it
+    elif Health_Declaration_Booklet.objects.filter(application_id=application_id_local).count() > 0:
+                
+        h = Health_Declaration_Booklet.objects.get(application_id=application_id_local)
+        h.movement_problems = form.cleaned_data.get('walking_bending')
+        h.breathing_problems = form.cleaned_data.get('asthma_breathing')
+        h.heart_disease = form.cleaned_data.get('heart_disease')
+        h.blackout_epilepsy = form.cleaned_data.get('blackout_epilepsy')
+        h.mental_health_problems = form.cleaned_data.get('mental_health')
+        h.alcohol_drug_problems = form.cleaned_data.get('alcohol_drugs')
+
+    return(h)
