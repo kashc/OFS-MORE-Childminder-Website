@@ -2,7 +2,7 @@ from django.test import Client
 from django.test import TestCase
 from django.urls import resolve
 
-from .views import ContactEmailView, DBSCheckView, EYFSView, FirstAidTrainingView, LogInView, PersonalDetailsView, StartPageView, TypeOfChildcareView
+from .views import ConfirmationView, ContactEmailView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingView, HealthView, LogInView, OtherPeopleView, PersonalDetailsView, ReferencesView, StartPageView, TypeOfChildcareView
 
 class StartPageTest(TestCase):
     
@@ -123,6 +123,86 @@ class DBSCheckTest(TestCase):
         
         try:
             response = c.get('/eyfs/?id=')
+            
+        except:
+            self.assertEqual(0,0)
+
+class HealthTest(TestCase):
+    
+    def test_url_resolves_to_page(self):
+        found = resolve('/health/')
+        self.assertEqual(found.func, HealthView)
+    
+    def test_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            response = c.get('/health/?id=')
+            
+        except:
+            self.assertEqual(0,0)
+
+class ReferencesTest(TestCase):
+    
+    def test_url_resolves_to_page(self):
+        found = resolve('/references/')
+        self.assertEqual(found.func, ReferencesView)
+    
+    def test_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            response = c.get('/references/?id=')
+            
+        except:
+            self.assertEqual(0,0)
+
+class OtherPeopleTest(TestCase):
+    
+    def test_url_resolves_to_page(self):
+        found = resolve('/other-people/')
+        self.assertEqual(found.func, OtherPeopleView)
+    
+    def test_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            response = c.get('/other-people/?id=')
+            
+        except:
+            self.assertEqual(0,0)
+
+class DeclarationTest(TestCase):
+    
+    def test_url_resolves_to_page(self):
+        found = resolve('/declaration/')
+        self.assertEqual(found.func, DeclarationView)
+    
+    def test_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            response = c.get('/declaration/?id=')
+            
+        except:
+            self.assertEqual(0,0)
+
+class ConfirmationTest(TestCase):
+    
+    def test_url_resolves_to_page(self):
+        found = resolve('/confirm-your-answers/')
+        self.assertEqual(found.func, ConfirmationView)
+    
+    def test_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            response = c.get('/confirm-your-answers/?id=')
             
         except:
             self.assertEqual(0,0)
