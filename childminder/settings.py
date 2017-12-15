@@ -30,7 +30,7 @@ SECRET_KEY = '-r&u(maq#j68ngj=_ch#l6#mhak%8rbh$px8e&9c6b9@c7df=m'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['130.130.52.132','127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -86,11 +86,11 @@ WSGI_APPLICATION = 'childminder.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'applications',
+        'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': '',
         'HOST': '130.130.52.132',
-        'PORT': '5460',
+        'PORT': '5462',
     }
 }
 
