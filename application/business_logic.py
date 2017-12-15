@@ -6,7 +6,7 @@ OFS-MORE: Apply to be a Childminder Beta
 @author: Informed Solutions
 '''
 
-from .models import Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, Login_And_Contact_Details
+from .models import Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, First_Aid_Training, Login_And_Contact_Details
 
 
 # Business logic to create or update a Type of childcare record
@@ -69,7 +69,7 @@ def Personal_Logic(application_id_local, first_name, middle_names, last_name):
         # Create a new Applicant_Personal_Details record corresponding to the application, of which the generated personal_details_id will be used        
         personal_details_record = Applicant_Personal_Details(birth_day=0, birth_month=0, birth_year=0, application_id=this_application)
         personal_details_record.save()
-        personal_detail_id_local = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
+        personal_detail_id_local = Applicant_Personal_Details.objects.get(application_id=application_id_local)
         
         # Create a new Your personal details record corresponding to the application    
         applicant_names_record = Applicant_Names(current_name='True', first_name=first_name, middle_names=middle_names, last_name=last_name, personal_detail_id=personal_detail_id_local)
@@ -107,7 +107,7 @@ def First_Aid_Logic(application_id_local, training_organisation, course_title, c
         # Retrieve the First aid training record corresponding to the application      
         first_aid_training_record = First_Aid_Training.objects.get(application_id=application_id_local)
         # Return the record
-        first_aid_training.training_organisation = training_organisation
+        first_aid_training_record.training_organisation = training_organisation
         first_aid_training_record.course_title = course_title
         first_aid_training_record.course_day = course_day
         first_aid_training_record.course_month = course_month

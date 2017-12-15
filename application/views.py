@@ -188,9 +188,9 @@ def PersonalDetailsView(request):
             status.update(application_id_local, 'personal_details_status', 'COMPLETED')
             
             # Get entered data to insert into the database
-            first_name = applicant_names_record.first_name = form.cleaned_data.get('first_name')
-            middle_names = applicant_names_record.middle_names = form.cleaned_data.get('middle_names')
-            last_name = applicant_names_record.last_name = form.cleaned_data.get('last_name')
+            first_name = form.cleaned_data.get('first_name')
+            middle_names = form.cleaned_data.get('middle_names')
+            last_name = form.cleaned_data.get('last_name')
             
             # Perform business logic to create or update Your personal details record in database
             applicant_names_record = Personal_Logic(application_id_local, first_name, middle_names, last_name)
@@ -227,7 +227,7 @@ def FirstAidTrainingView(request):
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
             
             # Get entered data to insert into the database
-            training_organisation = form.cleaned_data.get('first_aid_training_organisation') 
+            training_organisation = form.cleaned_data.get('first_aid_training_organisation')
             course_title = form.cleaned_data.get('title_of_training_course')
             course_day = form.cleaned_data.get('course_date').day
             course_month = form.cleaned_data.get('course_date').month

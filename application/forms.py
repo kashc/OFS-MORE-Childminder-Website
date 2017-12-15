@@ -111,7 +111,7 @@ class FirstAidTraining(GOVUKForm):
         if First_Aid_Training.objects.filter(application_id=self.application_id_local).count() > 0:
             self.fields['first_aid_training_organisation'].initial = First_Aid_Training.objects.get(application_id=self.application_id_local).training_organisation
             self.fields['title_of_training_course'].initial = First_Aid_Training.objects.get(application_id=self.application_id_local).course_title
-            self.fields['course_date'].initial = [First_Aid_Training.objects.get(application_id=self.application_id_local).course_day,First_Aid_Training.objects.get(application_id='48629508-b1d6-481f-b528-23538f4022d3').course_month,First_Aid_Training.objects.get(application_id='48629508-b1d6-481f-b528-23538f4022d3').course_year]
+            self.fields['course_date'].initial = [First_Aid_Training.objects.get(application_id=self.application_id_local).course_day,First_Aid_Training.objects.get(application_id=self.application_id_local).course_month,First_Aid_Training.objects.get(application_id=self.application_id_local).course_year]
     
 class DBSCheck(GOVUKForm):
     options = (('True', 'Yes'), ('False', 'No'))
