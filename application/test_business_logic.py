@@ -10,7 +10,7 @@ from django.test import Client
 from django.test import TestCase
 from django.urls import resolve
 
-from .models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, References
+from .models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, Login_And_Contact_Details, References
 
 from uuid import UUID
 
@@ -339,6 +339,71 @@ class Test_DBS_Check_Logic(TestCase):
     def delete(self):
         
         Criminal_Record_Check.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+
+
+# Test business logic to create or update a Your health record
+class Test_Health_Logic(TestCase):
+    
+    # Test the business case where a new record needs to be created
+    def test_logic_to_create_new_record(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+        
+        # Delete test Health_Declaration_Booklet object if it already exists
+        Health_Declaration_Booklet.objects.filter(application_id=test_application_id).delete()
+        
+        # Verify that the Health_Declaration_Booklet object corresponding with the test application does not exist
+        assert(Health_Declaration_Booklet.objects.filter(application_id=test_application_id).count() == 0)
+    
+    # Test the business case where a record already exists
+    def test_logic_to_update_record(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+        
+        # Delete test Health_Declaration_Booklet object if it already exists
+        Health_Declaration_Booklet.objects.filter(application_id=test_application_id).delete()
+        
+        # Create a test application
+        Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'NOT_STARTED',
+            personal_details_status = 'NOT_STARTED',
+            childcare_type_status = 'NOT_STARTED',
+            first_aid_training_status = 'NOT_STARTED',
+            eyfs_training_status = 'NOT_STARTED',
+            criminal_record_check_status = 'NOT_STARTED',
+            health_status = 'NOT_STARTED',
+            references_status = 'NOT_STARTED',
+            people_in_home_status = 'NOT_STARTED',
+            declarations_status = 'NOT_STARTED',
+        )
+        
+        # Create a test HDB ID
+        test_hdb_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
+        
+        # Create a test Health_Declaration_Booklet object
+        Health_Declaration_Booklet.objects.create(
+            hdb_id = (UUID(test_hdb_id)),
+            application_id = Application.objects.get(application_id=test_application_id),
+            movement_problems = 'True',
+            breathing_problems = 'True',
+            heart_disease = 'True',
+            blackout_epilepsy = 'True',
+            mental_health_problems = 'True',
+            alcohol_drug_problems = 'True',
+            health_details = ''
+        )
+        
+        # Verify that the Health_Declaration_Booklet object corresponding with the test application exists
+        assert(Health_Declaration_Booklet.objects.filter(application_id=test_application_id).count() > 0)
+    
+    # Delete test application
+    def delete(self):
+        
+        Health_Declaration_Booklet.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
 
 
