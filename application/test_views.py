@@ -8,6 +8,10 @@ from django.test import Client
 from django.test import TestCase
 from django.urls import resolve
 
+from .models import Application
+
+from uuid import UUID
+
 from .views import ConfirmationView, ContactEmailView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingView, HealthView, LogInView, OtherPeopleView, PersonalDetailsView, ReferencesView, StartPageView, TypeOfChildcareView
 
 # Test suite for start page
@@ -259,3 +263,260 @@ class ConfirmationTest(TestCase):
             
         except:
             self.assertEqual(0,0)
+
+
+# Test task list progress status update logic
+class TaskStatusTest(TestCase):
+
+    # Test logic for when tasks are still not started
+    def test_status_update_with_tasks_not_started(self):
+    
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'NOT_STARTED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
+        )
+        
+        # Generate a context for task statuses
+        application_status_context = dict({
+            'application_id': test_application_id,
+            'login_details_status': application.login_details_status,
+            'personal_details_status': application.personal_details_status,
+            'childcare_type_status': application.childcare_type_status,
+            'first_aid_training_status': application.first_aid_training_status,
+            'eyfs_training_status': application.eyfs_training_status,
+            'criminal_record_check_status': application.criminal_record_check_status,
+            'health_status': application.health_status,
+            'reference_status': application.references_status,
+            'people_in_home_status': application.people_in_home_status,
+            'declaration_status': application.declarations_status,
+            'all_complete': False,
+            'confirm_details': False
+        })
+        
+        # Temporarily disable Declarations task if other tasks are still not started
+        temp_context = application_status_context
+        del temp_context['declaration_status']
+        
+        assert(('NOT_STARTED' in temp_context.values()) == True)
+
+    # Test logic for when tasks are still in progress
+    def test_status_update_with_tasks_in_progress(self):
+    
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'IN_PROGRESS',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
+        )
+        
+        # Generate a context for task statuses
+        application_status_context = dict({
+            'application_id': test_application_id,
+            'login_details_status': application.login_details_status,
+            'personal_details_status': application.personal_details_status,
+            'childcare_type_status': application.childcare_type_status,
+            'first_aid_training_status': application.first_aid_training_status,
+            'eyfs_training_status': application.eyfs_training_status,
+            'criminal_record_check_status': application.criminal_record_check_status,
+            'health_status': application.health_status,
+            'reference_status': application.references_status,
+            'people_in_home_status': application.people_in_home_status,
+            'declaration_status': application.declarations_status,
+            'all_complete': False,
+            'confirm_details': False
+        })
+        
+        # Temporarily disable Declarations task if other tasks are still in progress
+        temp_context = application_status_context
+        del temp_context['declaration_status']
+        
+        assert(('IN_PROGRESS' in temp_context.values()) == True)
+
+    # Test logic for when all tasks are complete, except for Declarations
+    def test_status_update_with_tasks_completed_except_declarations(self):
+    
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
+        )
+        
+        # Generate a context for task statuses
+        application_status_context = dict({
+            'application_id': test_application_id,
+            'login_details_status': application.login_details_status,
+            'personal_details_status': application.personal_details_status,
+            'childcare_type_status': application.childcare_type_status,
+            'first_aid_training_status': application.first_aid_training_status,
+            'eyfs_training_status': application.eyfs_training_status,
+            'criminal_record_check_status': application.criminal_record_check_status,
+            'health_status': application.health_status,
+            'reference_status': application.references_status,
+            'people_in_home_status': application.people_in_home_status,
+            'declaration_status': application.declarations_status,
+            'all_complete': False,
+            'confirm_details': False
+        })
+        
+        # Temporarily disable Declarations task if other tasks are still in progress
+        temp_context = application_status_context
+        del temp_context['declaration_status']
+        
+        assert(('IN_PROGRESS' in temp_context.values()) == False)
+        assert(('NOT_STARTED' in temp_context.values()) == False)
+        
+    # Test logic for when all tasks are complete, but Declarations is still to be started
+    def test_status_update_with_tasks_completed_with_declarations_to_do(self):
+    
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
+        )
+        
+        # Generate a context for task statuses
+        application_status_context = dict({
+            'application_id': test_application_id,
+            'login_details_status': application.login_details_status,
+            'personal_details_status': application.personal_details_status,
+            'childcare_type_status': application.childcare_type_status,
+            'first_aid_training_status': application.first_aid_training_status,
+            'eyfs_training_status': application.eyfs_training_status,
+            'criminal_record_check_status': application.criminal_record_check_status,
+            'health_status': application.health_status,
+            'reference_status': application.references_status,
+            'people_in_home_status': application.people_in_home_status,
+            'declaration_status': application.declarations_status,
+            'all_complete': True,
+            'confirm_details': False
+        })
+        
+        assert((application_status_context['declaration_status'] == 'NOT_STARTED'))
+        
+    # Test logic for when all tasks are complete, but Declarations is still in progress
+    def test_status_update_with_tasks_completed_with_declarations_in_progress(self):
+    
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'IN_PROGRESS',
+        )
+        
+        # Generate a context for task statuses
+        application_status_context = dict({
+            'application_id': test_application_id,
+            'login_details_status': application.login_details_status,
+            'personal_details_status': application.personal_details_status,
+            'childcare_type_status': application.childcare_type_status,
+            'first_aid_training_status': application.first_aid_training_status,
+            'eyfs_training_status': application.eyfs_training_status,
+            'criminal_record_check_status': application.criminal_record_check_status,
+            'health_status': application.health_status,
+            'reference_status': application.references_status,
+            'people_in_home_status': application.people_in_home_status,
+            'declaration_status': application.declarations_status,
+            'all_complete': True,
+            'confirm_details': False
+        })
+        
+        assert((application_status_context['declaration_status'] == 'IN_PROGRESS'))
+
+    # Test logic for when all tasks are complete, including Delcarations
+    def test_status_update_with_tasks_completed_with_declarations_complete(self):
+    
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'COMPLETED',
+        )
+        
+        # Generate a context for task statuses
+        application_status_context = dict({
+            'application_id': test_application_id,
+            'login_details_status': application.login_details_status,
+            'personal_details_status': application.personal_details_status,
+            'childcare_type_status': application.childcare_type_status,
+            'first_aid_training_status': application.first_aid_training_status,
+            'eyfs_training_status': application.eyfs_training_status,
+            'criminal_record_check_status': application.criminal_record_check_status,
+            'health_status': application.health_status,
+            'reference_status': application.references_status,
+            'people_in_home_status': application.people_in_home_status,
+            'declaration_status': application.declarations_status,
+            'all_complete': True,
+            'confirm_details': True
+        })
+        
+        assert((application_status_context['declaration_status'] == 'COMPLETED'))
