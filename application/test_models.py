@@ -11,7 +11,8 @@ from django.test import TestCase
 from uuid import UUID
 
 
-class ApplicantTestCase (TestCase):
+# Test suite for Application records
+class ApplicationTestCase (TestCase):
 
     # Set up a test application
     def setUp(self):
