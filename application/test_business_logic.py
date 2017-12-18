@@ -10,7 +10,7 @@ from django.test import Client
 from django.test import TestCase
 from django.urls import resolve
 
-from .models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, First_Aid_Training, Login_And_Contact_Details
+from .models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, References
 
 from uuid import UUID
 
@@ -279,4 +279,135 @@ class Test_First_Aid_Training_Logic(TestCase):
     def delete(self):
         
         First_Aid_Training.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+
+
+# Test business logic to create or update a Your criminal record (DBS) check record
+class Test_DBS_Check_Logic(TestCase):
+    
+    # Test the business case where a new record needs to be created
+    def test_logic_to_create_new_record(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+        
+        # Delete test Criminal_Record_Check object if it already exists
+        Criminal_Record_Check.objects.filter(application_id=test_application_id).delete()
+        
+        # Verify that the Criminal_Record_Check object corresponding with the test application does not exist
+        assert(Criminal_Record_Check.objects.filter(application_id=test_application_id).count() == 0)
+    
+    # Test the business case where a record already exists
+    def test_logic_to_update_record(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+        
+        # Delete test Criminal_Record_Check object if it already exists
+        Criminal_Record_Check.objects.filter(application_id=test_application_id).delete()
+        
+        # Create a test application
+        Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'NOT_STARTED',
+            personal_details_status = 'NOT_STARTED',
+            childcare_type_status = 'NOT_STARTED',
+            first_aid_training_status = 'NOT_STARTED',
+            eyfs_training_status = 'NOT_STARTED',
+            criminal_record_check_status = 'NOT_STARTED',
+            health_status = 'NOT_STARTED',
+            references_status = 'NOT_STARTED',
+            people_in_home_status = 'NOT_STARTED',
+            declarations_status = 'NOT_STARTED',
+        )
+        
+        # Create a test criminal record ID
+        test_criminal_record_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
+        
+        # Create a test Criminal_Record_Check object
+        Criminal_Record_Check.objects.create(
+            criminal_record_id = (UUID(test_criminal_record_id)),
+            application_id = Application.objects.get(application_id=test_application_id),
+            dbs_certificate_number = '123456789012',
+            cautions_convictions = 'True'
+        )
+        
+        # Verify that the Criminal_Record_Check object corresponding with the test application exists
+        assert(Criminal_Record_Check.objects.filter(application_id=test_application_id).count() > 0)
+    
+    # Delete test application
+    def delete(self):
+        
+        Criminal_Record_Check.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+
+
+# Test business logic to create or update a 2 references record
+class Test_References_Logic(TestCase):
+    
+    # Test the business case where a new record needs to be created
+    def test_logic_to_create_new_record(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+        
+        # Delete test References object if it already exists
+        References.objects.filter(application_id=test_application_id).delete()
+        
+        # Verify that the References object corresponding with the test application does not exist
+        assert(References.objects.filter(application_id=test_application_id).count() == 0)
+    
+    # Test the business case where a record already exists
+    def test_logic_to_update_record(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+        
+        # Delete test References object if it already exists
+        References.objects.filter(application_id=test_application_id).delete()
+        
+        # Create a test application
+        Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'NOT_STARTED',
+            personal_details_status = 'NOT_STARTED',
+            childcare_type_status = 'NOT_STARTED',
+            first_aid_training_status = 'NOT_STARTED',
+            eyfs_training_status = 'NOT_STARTED',
+            criminal_record_check_status = 'NOT_STARTED',
+            health_status = 'NOT_STARTED',
+            references_status = 'NOT_STARTED',
+            people_in_home_status = 'NOT_STARTED',
+            declarations_status = 'NOT_STARTED',
+        )
+        
+        # Create a test reference ID
+        test_reference_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
+        
+        # Create a test References object
+        References.objects.create(
+            reference_id = (UUID(test_reference_id)),
+            application_id = Application.objects.get(application_id=test_application_id),
+            first_name = 'Hugo',
+            last_name = 'Geeves',
+            relationship = 'Colleague',
+            years_known = '00',
+            months_known = '00',
+            street_line1 = '',
+            street_line2 = '',
+            town = '',
+            county = '',
+            country = '',
+            postcode = '',
+            phone_number = '',
+            email = ''
+        )
+        
+        # Verify that the References object corresponding with the test application exists
+        assert(References.objects.filter(application_id=test_application_id).count() > 0)
+    
+    # Delete test application
+    def delete(self):
+        
+        References.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
