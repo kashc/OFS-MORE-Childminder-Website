@@ -112,13 +112,8 @@ def TypeOfChildcareView(request):
             # Update the status of the task to 'COMPLETED'
             status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
             
-            # Get entered data to insert into database
-            zero_to_five_status = '0-5' in form.cleaned_data.get('type_of_childcare')
-            five_to_eight_status = '5-8' in form.cleaned_data.get('type_of_childcare')
-            eight_plus_status = '8over' in form.cleaned_data.get('type_of_childcare')
-            
             # Perform business logic to create or update Type of childcare record in database
-            childcare_type_record = Childcare_Type_Logic(application_id_local, zero_to_five_status, five_to_eight_status, eight_plus_status)
+            childcare_type_record = Childcare_Type_Logic(application_id_local, form)
             childcare_type_record.save()
             
         # Return to the application's task list
@@ -151,11 +146,8 @@ def ContactEmailView(request):
             # Update the status of the task to 'COMPLETED'
             status.update(application_id_local, 'login_details_status', 'COMPLETED')
             
-            # Get entered data to insert into database
-            email_address = form.cleaned_data.get('email_address')
-            
             # Perform business logic to create or update Your login and contact details record in database
-            login_and_contact_details_record = Login_Contact_Logic(application_id_local, email_address)
+            login_and_contact_details_record = Login_Contact_Logic(application_id_local, form)
             login_and_contact_details_record.save()
             
         # Return to the application's task list    
@@ -188,13 +180,8 @@ def PersonalDetailsView(request):
             # Update the status of the task to 'COMPLETED'
             status.update(application_id_local, 'personal_details_status', 'COMPLETED')
             
-            # Get entered data to insert into the database
-            first_name = form.cleaned_data.get('first_name')
-            middle_names = form.cleaned_data.get('middle_names')
-            last_name = form.cleaned_data.get('last_name')
-            
             # Perform business logic to create or update Your personal details record in database
-            applicant_names_record = Personal_Logic(application_id_local, first_name, middle_names, last_name)
+            applicant_names_record = Personal_Logic(application_id_local, form)
             applicant_names_record.save()
         
         # Return to the application's task list
@@ -227,15 +214,8 @@ def FirstAidTrainingView(request):
             # Update the status of the task to 'COMPLETED'
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
             
-            # Get entered data to insert into the database
-            training_organisation = form.cleaned_data.get('first_aid_training_organisation')
-            course_title = form.cleaned_data.get('title_of_training_course')
-            course_day = form.cleaned_data.get('course_date').day
-            course_month = form.cleaned_data.get('course_date').month
-            course_year = form.cleaned_data.get('course_date').year
-            
             # Perform business logic to create or update First aid training record in database
-            first_aid_training_record = First_Aid_Logic(application_id_local, training_organisation, course_title, course_day, course_month, course_year)
+            first_aid_training_record = First_Aid_Logic(application_id_local, form)
             first_aid_training_record.save()
     
         # Return to the application's task list   

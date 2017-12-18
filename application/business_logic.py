@@ -11,14 +11,19 @@ from childminder.wsgi import application
 
 
 # Business logic to create or update a Type of childcare record
-def Childcare_Type_Logic(application_id_local, zero_to_five_status, five_to_eight_status, eight_plus_status):
+def Childcare_Type_Logic(application_id_local, form):
     
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
     
+    # Get entered data to insert into database
+    zero_to_five_status = '0-5' in form.cleaned_data.get('type_of_childcare')
+    five_to_eight_status = '5-8' in form.cleaned_data.get('type_of_childcare')
+    eight_plus_status = '8over' in form.cleaned_data.get('type_of_childcare')
+    
     # If the user entered information for this task for the first time
     if Childcare_Type.objects.filter(application_id=application_id_local).count() == 0:
-                
+        
         # Create a new Type of childcare record with the entered data
         childcare_type_record = Childcare_Type(zero_to_five=zero_to_five_status, five_to_eight=five_to_eight_status, eight_plus=eight_plus_status, application_id=this_application)
             
@@ -36,10 +41,13 @@ def Childcare_Type_Logic(application_id_local, zero_to_five_status, five_to_eigh
 
 
 # Business logic to create or update a Your login and contact details record
-def Login_Contact_Logic(application_id_local, email_address):
+def Login_Contact_Logic(application_id_local, form):
 
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
+
+    # Get entered data to insert into database
+    email_address = form.cleaned_data.get('email_address')
 
     # If the user entered information for this task for the first time
     if Login_And_Contact_Details.objects.filter(application_id=application_id_local).count() == 0:
@@ -59,10 +67,15 @@ def Login_Contact_Logic(application_id_local, email_address):
 
 
 # Business logic to create or update a Your personal details record
-def Personal_Logic(application_id_local, first_name, middle_names, last_name):
+def Personal_Logic(application_id_local, form):
 
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
+    
+    # Get entered data to insert into the database
+    first_name = form.cleaned_data.get('first_name')
+    middle_names = form.cleaned_data.get('middle_names')
+    last_name = form.cleaned_data.get('last_name')
     
     # If the user entered information for this task for the first time
     if Applicant_Personal_Details.objects.filter(application_id=application_id_local).count() == 0:
@@ -91,10 +104,17 @@ def Personal_Logic(application_id_local, first_name, middle_names, last_name):
 
 
 # Business logic to create or update a First aid training record
-def First_Aid_Logic(application_id_local, training_organisation, course_title, course_day, course_month, course_year):
+def First_Aid_Logic(application_id_local, form):
     
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
+
+    # Get entered data to insert into the database
+    training_organisation = form.cleaned_data.get('first_aid_training_organisation')
+    course_title = form.cleaned_data.get('title_of_training_course')
+    course_day = form.cleaned_data.get('course_date').day
+    course_month = form.cleaned_data.get('course_date').month
+    course_year = form.cleaned_data.get('course_date').year
     
     # If the user entered information for this task for the first time
     if First_Aid_Training.objects.filter(application_id=application_id_local).count() == 0:
@@ -116,56 +136,94 @@ def First_Aid_Logic(application_id_local, training_organisation, course_title, c
     
     return first_aid_training_record
 
+
+# Business logic to create or update a Your criminal record (DBS) check record
 def dbs_check_logic(application_id_local, form):
     
-    # If no record exists, create a new one
-    if Criminal_Record_Check.objects.filter(application_id=application_id_local).count() == 0:
+    # Retrieve the application's ID
+    this_application = Application.objects.get(application_id=application_id_local)
     
-        c = Criminal_Record_Check(dbs_certificate_number=form.cleaned_data.get('dbs_certificate_number'), cautions_convictions=form.cleaned_data.get('convictions'), application_id=Application.objects.get(application_id=application_id_local))
+    # Get entered data to insert into database
+    dbs_certificate_number = form.cleaned_data.get('dbs_certificate_number')
+    cautions_convictions = form.cleaned_data.get('convictions')
+    
+    # If the user entered information for this task for the first time
+    if Criminal_Record_Check.objects.filter(application_id=application_id_local).count() == 0:
+        
+        # Create a new Your criminal record (DBS) check record corresponding to the application
+        dbs_record = Criminal_Record_Check(dbs_certificate_number=dbs_certificate_number, cautions_convictions=cautions_convictions, application_id=this_application)
     
     # If a record exists, update it
     elif Criminal_Record_Check.objects.filter(application_id=application_id_local).count() > 0:
         
-        c = Criminal_Record_Check.objects.get(application_id=application_id_local)
-        c.dbs_certificate_number = form.cleaned_data.get('dbs_certificate_number')
-        c.cautions_convictions = form.cleaned_data.get('convictions')
+        # Retrieve the Your criminal record (DBS) check record corresponding to the application
+        dbs_record = Criminal_Record_Check.objects.get(application_id=application_id_local)
+        # Return the record
+        dbs_record.dbs_certificate_number = dbs_certificate_number
+        dbs_record.cautions_convictions = cautions_convictions
         
-    return(c)
-                
+    return dbs_record
+
+
+# Business logic to create or update a 2 references record                
 def references_check_logic(application_id_local, form):
     
-    # If no record exists, create a new one
+    # Retrieve the application's ID
+    this_application = Application.objects.get(application_id=application_id_local)
+    
+    # Get entered data to insert into database
+    first_name = form.cleaned_data.get('first_name')
+    last_name = form.cleaned_data.get('last_name')
+    relationship = form.cleaned_data.get('relationship')
+    
+    # If the user entered information for this task for the first time
     if References.objects.filter(application_id=application_id_local).count() == 0:
         
-        r = References(first_name=form.cleaned_data.get('first_name'),last_name=form.cleaned_data.get('last_name'),relationship=form.cleaned_data.get('relationship'),years_known=0,months_known=0,street_line1='',street_line2='',town='',county='',country='',postcode='',phone_number='',email='',application_id=Application.objects.get(application_id=application_id_local))
+        # Create a new 2 references record corresponding to the application
+        reference_record = References(first_name=first_name,last_name=last_name,relationship=relationship,years_known=0,months_known=0,street_line1='',street_line2='',town='',county='',country='',postcode='',phone_number='',email='',application_id=this_application)
     
     # If a record exists, update it
     elif References.objects.filter(application_id=application_id_local).count() > 0:
         
-        r = References.objects.get(application_id=application_id_local)
-        r.first_name = form.cleaned_data.get('first_name')
-        r.last_name = form.cleaned_data.get('last_name')
-        r.relationship = form.cleaned_data.get('relationship')
+        # Retrieve the 2 references record corresponding to the application
+        reference_record = References.objects.get(application_id=application_id_local)
+        reference_record.first_name = first_name
+        reference_record.last_name = last_name
+        reference_record.relationship = relationship
 
-    return(r)
+    return reference_record
 
+
+# Business logic to create or update a Your health record
 def health_check_logic(application_id_local, form):
+    
+    # Retrieve the application's ID
+    this_application = Application.objects.get(application_id=application_id_local)
+    
+    # Get entered data to insert into database
+    movement_problems = form.cleaned_data.get('walking_bending')
+    breathing_problems = form.cleaned_data.get('asthma_breathing')
+    heart_disease = form.cleaned_data.get('heart_disease')
+    blackout_epilepsy = form.cleaned_data.get('blackout_epilepsy')
+    mental_health_problems = form.cleaned_data.get('mental_health')
+    alcohol_drug_problems = form.cleaned_data.get('alcohol_drugs')
     
     # If no record exists, create a new one
     if Health_Declaration_Booklet.objects.filter(application_id=application_id_local).count() == 0:
-                
-        h = Health_Declaration_Booklet(movement_problems=form.cleaned_data.get('walking_bending'), breathing_problems=form.cleaned_data.get('asthma_breathing'), heart_disease=form.cleaned_data.get('heart_disease'), blackout_epilepsy=form.cleaned_data.get('blackout_epilepsy'), mental_health_problems=form.cleaned_data.get('mental_health'), alcohol_drug_problems=form.cleaned_data.get('alcohol_drugs'), application_id=Application.objects.get(application_id=application_id_local))
-
-            
+        
+        # Create a new Your health record corresponding to the application        
+        hdb_record = Health_Declaration_Booklet(movement_problems=movement_problems, breathing_problems=breathing_problems, heart_disease=heart_disease, blackout_epilepsy=blackout_epilepsy, mental_health_problems=mental_health_problems, alcohol_drug_problems=alcohol_drug_problems, application_id=this_application)
+      
     # If a record exists, update it
     elif Health_Declaration_Booklet.objects.filter(application_id=application_id_local).count() > 0:
-                
-        h = Health_Declaration_Booklet.objects.get(application_id=application_id_local)
-        h.movement_problems = form.cleaned_data.get('walking_bending')
-        h.breathing_problems = form.cleaned_data.get('asthma_breathing')
-        h.heart_disease = form.cleaned_data.get('heart_disease')
-        h.blackout_epilepsy = form.cleaned_data.get('blackout_epilepsy')
-        h.mental_health_problems = form.cleaned_data.get('mental_health')
-        h.alcohol_drug_problems = form.cleaned_data.get('alcohol_drugs')
+        
+        # Retrieve the Your health record corresponding to the application        
+        hdb_record = Health_Declaration_Booklet.objects.get(application_id=application_id_local)
+        hdb_record.movement_problems = movement_problems
+        hdb_record.breathing_problems = breathing_problems
+        hdb_record.heart_disease = heart_disease
+        hdb_record.blackout_epilepsy = blackout_epilepsy
+        hdb_record.mental_health_problems = mental_health_problems
+        hdb_record.alcohol_drug_problems = alcohol_drug_problems
 
-    return(h)
+    return hdb_record
