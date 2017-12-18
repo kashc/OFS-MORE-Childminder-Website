@@ -10,7 +10,7 @@ from django.test import Client
 from django.test import TestCase
 from django.urls import resolve
 
-from .models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Login_And_Contact_Details
+from .models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, First_Aid_Training, Login_And_Contact_Details
 
 from uuid import UUID
 
@@ -189,9 +189,9 @@ class Test_Personal_Logic(TestCase):
         Applicant_Personal_Details.objects.create(
             personal_detail_id = (UUID(test_personal_detail_id)),
             application_id = Application.objects.get(application_id=test_application_id),
-            birth_day = 00,
-            birth_month = 00,
-            birth_year = 0000
+            birth_day = '00',
+            birth_month = '00',
+            birth_year = '0000'
         )
         
         # Create a test name ID
@@ -216,4 +216,67 @@ class Test_Personal_Logic(TestCase):
         
         Applicant_Names_Details.objects.filter(name_id='6e09fe41-2b07-4177-a5e4-347b2515ea8e').delete()
         Applicant_Personal_Details.objects.filter(personal_detail_id='166f77f7-c2ee-4550-9461-45b9d2f28d34').delete()
+        Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+
+
+# Test business logic to create or update a First aid training record
+class Test_First_Aid_Training_Logic(TestCase):
+    
+    # Test the business case where a new record needs to be created
+    def test_logic_to_create_new_record(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+        
+        # Delete test First_Aid_Training object if it already exists
+        First_Aid_Training.objects.filter(application_id=test_application_id).delete()
+        
+        # Verify that the First_Aid_Training object corresponding with the test application does not exist
+        assert(First_Aid_Training.objects.filter(application_id=test_application_id).count() == 0)
+    
+    # Test the business case where a record already exists
+    def test_logic_to_update_record(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+        
+        # Delete test First_Aid_Training object if it already exists
+        First_Aid_Training.objects.filter(application_id=test_application_id).delete()
+        
+        # Create a test application
+        Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'NOT_STARTED',
+            personal_details_status = 'NOT_STARTED',
+            childcare_type_status = 'NOT_STARTED',
+            first_aid_training_status = 'NOT_STARTED',
+            eyfs_training_status = 'NOT_STARTED',
+            criminal_record_check_status = 'NOT_STARTED',
+            health_status = 'NOT_STARTED',
+            references_status = 'NOT_STARTED',
+            people_in_home_status = 'NOT_STARTED',
+            declarations_status = 'NOT_STARTED',
+        )
+        
+        # Create a test first aid ID
+        test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
+        
+        # Create a test First_Aid_Training object
+        First_Aid_Training.objects.create(
+            first_aid_id = (UUID(test_first_aid_id)),
+            application_id = Application.objects.get(application_id=test_application_id),
+            training_organisation = 'Red Cross',
+            course_title = 'Infant First Aid',
+            course_day = '01',
+            course_month = '02',
+            course_year = '2003'
+        )
+        
+        # Verify that the First_Aid_Training object corresponding with the test application exists
+        assert(First_Aid_Training.objects.filter(application_id=test_application_id).count() > 0)
+    
+    # Delete test application
+    def delete(self):
+        
+        First_Aid_Training.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
