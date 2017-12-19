@@ -89,7 +89,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'ofsted',
         'PASSWORD': 'OfstedB3ta',
-        'HOST': 'ofsted-postgres',
+        'HOST': '130.130.52.132',
         'PORT': '5462',
     }
 }

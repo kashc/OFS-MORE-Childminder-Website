@@ -9,7 +9,7 @@ from .models import Application, Criminal_Record_Check, Login_And_Contact_Detail
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, \
-    SeparatedCheckboxSelectMultiple, SeparatedRadioSelect
+    SeparatedCheckboxSelectMultiple, SeparatedRadioSelect, RadioSelect
 
 
 class TypeOfChildcare(forms.Form):
@@ -185,3 +185,9 @@ class Declaration(GOVUKForm):
 class Confirm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
+
+class Payment(GOVUKForm):
+    options = (('Credit', 'Credit or debit card'), ('PayPal', 'PayPal'))
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    payment_method = forms.ChoiceField(label='How would you like to pay?', choices=options, widget=RadioSelect)

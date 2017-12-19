@@ -33,4 +33,5 @@ urlpatterns = [
     url(r'^confirm-your-answers/', views.ConfirmationView, name='Confirmation-View'),
     url(r'^admin/', admin.site.urls),
     url(r'^reset/', views.ResetView),
+    url(r'^payment/', views.PaymentView, name='Payment-View')
     ]

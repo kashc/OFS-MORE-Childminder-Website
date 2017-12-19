@@ -396,7 +396,10 @@
 
             
             <div class="form-group grid-row">
-    			<input type="submit" class="button" value="Save and continue">
+    			<form action ="/payment" method="get">
+    				<input type="submit" class="button" value="Save and continue" />
+    				<input type="hidden" value="{{application_id}}" name = "id" />
+    			</form>
 			</div>
 			<input type="hidden" value="{{application_id}}" name = "id" />
 			<div class="form-group grid-row">

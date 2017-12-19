@@ -13,7 +13,7 @@ from django.template import Context
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 
-from .forms import TypeOfChildcare, ContactEmail, DBSCheck, PersonalDetails, FirstAidTraining, EYFS, HealthDeclarationBooklet, OtherPeople, ReferenceForm, Declaration, Confirm
+from .forms import TypeOfChildcare, ContactEmail, DBSCheck, PersonalDetails, FirstAidTraining, EYFS, HealthDeclarationBooklet, OtherPeople, ReferenceForm, Declaration, Confirm, Payment
 
 from .models import Application, Criminal_Record_Check, Login_And_Contact_Details, Applicant_Personal_Details, Applicant_Names, First_Aid_Training, Health_Declaration_Booklet, References, Childcare_Type
 from application.business_logic import references_check_logic,\
@@ -373,3 +373,17 @@ def ResetView(request):
         status.update(application_id_local, section, 'NOT_STARTED')
         
     return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+
+def PaymentView(request):
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = Payment(request.POST)
+        
+        if form.is_valid():
+            
+            return HttpResponseRedirect('/payment/?id=' + application_id_local)
+    
+    application_id_local = request.GET["id"]
+    form = Payment()
+    
+    return render(request, 'payment.html', {'form': form, 'application_id': application_id_local})
