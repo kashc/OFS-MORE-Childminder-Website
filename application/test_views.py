@@ -50,6 +50,7 @@ class TypeOfChildcareTest(TestCase):
 
     # Test to check if URL resolves to correct view    
     def test_url_resolves_to_page(self):
+        
         found = resolve('/childcare/')
         self.assertEqual(found.func, TypeOfChildcareView)
 
@@ -62,7 +63,35 @@ class TypeOfChildcareTest(TestCase):
             response = c.get('/childcare/?id=')
             
         except:
-            self.assertEqual(0,0) 
+            self.assertEqual(0,0)
+    
+    # Test progress status does not update to Started when a returning to the task list after completing a task
+    def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'NOT_STARTED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'COMPLETED',
+        )
+        
+        assert(Application.objects.get(pk = test_application_id).childcare_type_status != 'COMPLETED')
+
+    # Delete test Application object    
+    def delete(self):
+        
+        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()     
 
 
 # Test suite for Your Login and Contact Details page
@@ -70,6 +99,7 @@ class LoginAndContactDetailsTest(TestCase):
 
     # Test to check if URL resolves to correct view    
     def test_url_resolves_to_page(self):
+        
         found = resolve('/contact-email/')
         self.assertEqual(found.func, ContactEmailView)
 
@@ -83,6 +113,34 @@ class LoginAndContactDetailsTest(TestCase):
             
         except:
             self.assertEqual(0,0)  
+    
+    # Test progress status does not update to Started when a returning to the task list after completing a task
+    def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'NOT_STARTED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'COMPLETED',
+        )
+        
+        assert(Application.objects.get(pk = test_application_id).login_details_status != 'COMPLETED')
+
+    # Delete test Application object    
+    def delete(self):
+        
+        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete() 
 
 
 # Test suite for Your Personal Details page          
@@ -90,6 +148,7 @@ class PersonalDetailsTest(TestCase):
 
     # Test to check if URL resolves to correct view    
     def test_url_resolves_to_page(self):
+        
         found = resolve('/personal-details/')
         self.assertEqual(found.func, PersonalDetailsView)
    
@@ -103,6 +162,34 @@ class PersonalDetailsTest(TestCase):
             
         except:
             self.assertEqual(0,0)
+            
+    # Test progress status does not update to Started when a returning to the task list after completing a task
+    def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'NOT_STARTED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'COMPLETED',
+        )
+        
+        assert(Application.objects.get(pk = test_application_id).personal_details_status != 'COMPLETED')
+
+    # Delete test Application object    
+    def delete(self):
+        
+        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
 
 
 # Test suite for First aid training page
@@ -110,6 +197,7 @@ class FirstAidTrainingTest(TestCase):
 
     # Test to check if URL resolves to correct view  
     def test_url_resolves_to_page(self):
+        
         found = resolve('/first-aid/')
         self.assertEqual(found.func, FirstAidTrainingView)
     
@@ -124,12 +212,41 @@ class FirstAidTrainingTest(TestCase):
         except:
             self.assertEqual(0,0)
 
+    # Test progress status does not update to Started when a returning to the task list after completing a task
+    def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'NOT_STARTED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'COMPLETED',
+        )
+        
+        assert(Application.objects.get(pk = test_application_id).first_aid_training_status != 'COMPLETED')
+
+    # Delete test Application object   
+    def delete(self):
+        
+        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+
 
 # Test suite for Early Years knowledge page          
 class EYFSTest(TestCase):
 
     # Test to check if URL resolves to correct view 
     def test_url_resolves_to_page(self):
+        
         found = resolve('/eyfs/')
         self.assertEqual(found.func, EYFSView)
     
@@ -144,12 +261,41 @@ class EYFSTest(TestCase):
         except:
             self.assertEqual(0,0)
 
+    # Test progress status does not update to Started when a returning to the task list after completing a task
+    def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'NOT_STARTED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'COMPLETED',
+        )
+        
+        assert(Application.objects.get(pk = test_application_id).eyfs_training_status != 'COMPLETED')
+
+    # Delete test Application object    
+    def delete(self):
+        
+        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+
 
 # Test suite for Your criminal record (DBS) check page
 class DBSCheckTest(TestCase):
 
     # Test to check if URL resolves to correct view
     def test_url_resolves_to_page(self):
+        
         found = resolve('/dbs-check/')
         self.assertEqual(found.func, DBSCheckView)
     
@@ -163,6 +309,34 @@ class DBSCheckTest(TestCase):
             
         except:
             self.assertEqual(0,0)
+            
+    # Test progress status does not update to Started when a returning to the task list after completing a task
+    def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'NOT_STARTED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'COMPLETED',
+        )
+        
+        assert(Application.objects.get(pk = test_application_id).criminal_record_check_status != 'COMPLETED')
+
+    # Delete test Application object    
+    def delete(self):
+        
+        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
 
 
 # Test suite for Your health page
@@ -170,6 +344,7 @@ class HealthTest(TestCase):
 
     # Test to check if URL resolves to correct view
     def test_url_resolves_to_page(self):
+        
         found = resolve('/health/')
         self.assertEqual(found.func, HealthView)
     
@@ -184,12 +359,41 @@ class HealthTest(TestCase):
         except:
             self.assertEqual(0,0)
 
+    # Test progress status does not update to Started when a returning to the task list after completing a task
+    def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'NOT_STARTED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'COMPLETED',
+        )
+        
+        assert(Application.objects.get(pk = test_application_id).health_status != 'COMPLETED')
+
+    # Delete test Application object   
+    def delete(self):
+        
+        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+
 
 # Test suite for 2 references page
 class ReferencesTest(TestCase):
 
     # Test to check if URL resolves to correct view
     def test_url_resolves_to_page(self):
+        
         found = resolve('/references/')
         self.assertEqual(found.func, ReferencesView)
     
@@ -204,12 +408,41 @@ class ReferencesTest(TestCase):
         except:
             self.assertEqual(0,0)
 
+    # Test progress status does not update to Started when a returning to the task list after completing a task
+    def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'NOT_STARTED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'COMPLETED',
+        )
+        
+        assert(Application.objects.get(pk = test_application_id).references_status != 'COMPLETED')
+
+    # Delete test Application object    
+    def delete(self):
+        
+        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+
 
 # Test suite for People in your home page
 class OtherPeopleTest(TestCase):
 
     # Test to check if URL resolves to correct view
     def test_url_resolves_to_page(self):
+        
         found = resolve('/other-people/')
         self.assertEqual(found.func, OtherPeopleView)
     
@@ -223,6 +456,34 @@ class OtherPeopleTest(TestCase):
             
         except:
             self.assertEqual(0,0)
+            
+    # Test progress status does not update to Started when a returning to the task list after completing a task
+    def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'NOT_STARTED',
+            declarations_status = 'COMPLETED',
+        )
+        
+        assert(Application.objects.get(pk = test_application_id).people_in_home_status != 'COMPLETED')
+
+    # Delete test Application object    
+    def delete(self):
+        
+        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
 
 
 # Test suite for Declarations page
@@ -230,6 +491,7 @@ class DeclarationTest(TestCase):
     
     # Test to check if URL resolves to correct view
     def test_url_resolves_to_page(self):
+        
         found = resolve('/declaration/')
         self.assertEqual(found.func, DeclarationView)
     
@@ -244,12 +506,41 @@ class DeclarationTest(TestCase):
         except:
             self.assertEqual(0,0)
 
+    # Test progress status does not update to Started when a returning to the task list after completing a task
+    def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c' 
+          
+        # Create a test application
+        application = Application.objects.create(
+            application_id = (UUID(test_application_id)),   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
+        )
+        
+        assert(Application.objects.get(pk = test_application_id).declarations_status != 'COMPLETED')
+    
+    # Delete test Application object
+    def delete(self):
+        
+        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+
 
 # Test suite for Confirm your answers page
 class ConfirmationTest(TestCase):
     
     # Test to check if URL resolves to correct view
     def test_url_resolves_to_page(self):
+        
         found = resolve('/confirm-your-answers/')
         self.assertEqual(found.func, ConfirmationView)
     
@@ -270,6 +561,7 @@ class PaymentTest(TestCase):
     
     # Test to check if URL resolves to correct view
     def test_url_resolves_to_page(self):
+        
         found = resolve('/payment/')
         self.assertEqual(found.func, PaymentView)
     
@@ -290,6 +582,7 @@ class ApplicationSavedTest(TestCase):
     
     # Test to check if URL resolves to correct view
     def test_url_resolves_to_page(self):
+        
         found = resolve('/application-saved/')
         self.assertEqual(found.func, ApplicationSavedView)
     
@@ -561,3 +854,7 @@ class TaskStatusTest(TestCase):
         })
         
         assert((application_status_context['declaration_status'] == 'COMPLETED'))
+    
+    def delete(self):
+        
+        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()

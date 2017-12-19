@@ -1,23 +1,23 @@
 '''
 Created on 7 Dec 2017
 
-OFS-MORE: Apply to be a Childminder Beta
+OFS-MORE-CCN3: Apply to be a Childminder Beta
+Views
 
 @author: Informed Solutions
 '''
 
 from application import status
 
-from .business_logic import Childcare_Type_Logic, First_Aid_Logic, Login_Contact_Logic, Personal_Logic, dbs_check_logic
-from django.template import Context
-from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from .business_logic import Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic, Login_Contact_Logic, Personal_Logic, references_check_logic
 
-from .forms import TypeOfChildcare, ContactEmail, DBSCheck, PersonalDetails, FirstAidTraining, EYFS, HealthDeclarationBooklet, OtherPeople, ReferenceForm, Declaration, Confirm, Payment, ApplicationSaved
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.template import Context
+
+from .forms import ApplicationSaved, Confirm, ContactEmail, DBSCheck, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PersonalDetails, ReferenceForm, TypeOfChildcare
 
 from .models import Application, Criminal_Record_Check, Login_And_Contact_Details, Applicant_Personal_Details, Applicant_Names, First_Aid_Training, Health_Declaration_Booklet, References, Childcare_Type
-from application.business_logic import references_check_logic,\
-    health_check_logic
 
 
 
@@ -38,6 +38,7 @@ def StartPageView(request):
         declarations_status = 'NOT_STARTED'
     )
     
+    # Access the task page
     return render(request, 'start-page.html', ({'id': application.application_id}))
 
 
@@ -83,15 +84,17 @@ def LogInView(request):
             application_status_context['all_complete'] = True
             application_status_context['declaration_status'] = application.declarations_status
             
-            # When the Declarations task is complete, enable link to confirm details
+            # When the Declarations task is complete, enable button to confirm details
             if (application_status_context['declaration_status'] == 'COMPLETED'):
                 
                 application_status_context['confirm_details'] = True
-                
+            
+            # Otherwise, disable the button to confirm details    
             else:
                 
                 application_status_context['confirm_details'] = False
 
+    # Access the task page
     return render(request, 'task-list.html', application_status_context)
 
 
@@ -121,11 +124,15 @@ def TypeOfChildcareView(request):
     
     # If the Type of childcare form is not completed    
     application_id_local = request.GET["id"]
-    # Update the status of the task to 'IN_PROGRESS'
-    status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
+    
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).childcare_type_status != 'COMPLETED':
+        
+        status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
+        
     form = TypeOfChildcare(id = application_id_local)
     
-    # Return to the application's task list
+    # Access the task page
     return render(request, 'childcare.html', {'form': form, 'application_id': application_id_local})
 
 
@@ -155,11 +162,15 @@ def ContactEmailView(request):
 
     # If the Your login and contact details form is not completed
     application_id_local = request.GET["id"]
-    # Update the status of the task to 'IN_PROGRESS'
-    status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
+    
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
+        
+        status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
+        
     form = ContactEmail(id = application_id_local)       
     
-    # Return to the application's task list
+    # Access the task page
     return render(request, 'contact-email.html', {'form': form,'application_id': application_id_local})
 
 
@@ -189,11 +200,15 @@ def PersonalDetailsView(request):
 
     # If the Your personal detaails form is not completed
     application_id_local = request.GET["id"]
-    # Update the status of the task to 'IN_PROGRESS'
-    status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
+        
+        status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
+    
     form = PersonalDetails(id = application_id_local)
     
-    # Return to the application's task list
+    # Access the task page
     return render(request, 'personal-details.html', {'form': form,'application_id': application_id_local})
 
 
@@ -223,13 +238,88 @@ def FirstAidTrainingView(request):
     
     # If the First aid training form is not completed
     application_id_local = request.GET["id"]
-    # Update the status of the task to 'IN_PROGRESS'
-    status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).first_aid_training_status != 'COMPLETED':
+        
+        status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+        
     form = FirstAidTraining(id = application_id_local)
     
-    # Return to the application's task list    
+    # Access the task page    
     return render(request, 'first-aid.html', {'form': form,'application_id': application_id_local})
 
+
+# View for the Early Years knowledge task
+def EYFSView(request):
+    
+    if request.method == 'POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Early Years knowledge form
+        form = EYFS(request.POST)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'COMPLETED'
+            status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
+            
+        # Return to the application's task list    
+        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+    
+    # If the Early Years knowledge form is not completed
+    application_id_local = request.GET["id"]
+
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).eyfs_training_status != 'COMPLETED':
+        
+        status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
+    
+    form = EYFS()
+    
+    # Access the task page
+    return render(request, 'eyfs.html', {'application_id': application_id_local})
+
+
+# View for the Your criminal record (DBS) check task
+def DBSCheckView(request):
+    
+    if request.method =='POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Your criminal record (DBS) check form
+        form = DBSCheck(request.POST, id = application_id_local)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'COMPLETED'
+            status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
+            
+            # Perform business logic to create or update Your criminal record (DBS) check record in database
+            dbs_check_record = dbs_check_logic(application_id_local, form)
+            dbs_check_record.save()
+            
+        # Return to the application's task list
+        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+    
+    # If the Your criminal record (DBS) check form is not completed
+    application_id_local = request.GET["id"]
+    
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).criminal_record_check_status != 'COMPLETED':
+        
+        status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
+    
+    form = DBSCheck(id = application_id_local)
+    
+    # Access the task page
+    return render(request, 'dbs-check.html', {'form': form,'application_id': application_id_local})
 
 
 def DeclarationView(request):
@@ -247,48 +337,16 @@ def DeclarationView(request):
             return HttpResponseRedirect('/task-list/?id=' + application_id_local)
     
     application_id_local = request.GET["id"]
-    status.update(application_id_local, 'declarations_status', 'COMPLETED')
+    
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).declarations_status != 'COMPLETED':
+    
+        status.update(application_id_local, 'declarations_status', 'COMPLETED')
+    
     form = Declaration()
     
     return render(request, 'declaration.html', {'application_id': application_id_local})
 
-
-def DBSCheckView(request):
-    if request.method =='POST':
-        application_id_local = request.POST["id"]
-        form = DBSCheck(request.POST, id = application_id_local)
-        
-        if form.is_valid():
-            
-            status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
-            
-            dbs_check_record = dbs_check_logic(application_id_local, form)
-            dbs_check_record.save()
-            
-            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
-    application_id_local = request.GET["id"]
-    
-    status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
-
-    form = DBSCheck(id = application_id_local)       
-    return render(request, 'dbs-check.html', {'form': form,'application_id': application_id_local})
-
-def EYFSView(request):
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = EYFS(request.POST)
-        
-        if form.is_valid():
-            
-            status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
-            
-            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
-    
-    application_id_local = request.GET["id"]
-    status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
-    form = EYFS()
-    
-    return render(request, 'eyfs.html', {'application_id': application_id_local})
 
 def ConfirmationView(request):
     if request.method == 'POST':
@@ -316,7 +374,12 @@ def OtherPeopleView(request):
             return HttpResponseRedirect('/task-list/?id=' + application_id_local)
     
     application_id_local = request.GET["id"]
-    status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+    
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).people_in_home_status != 'COMPLETED':
+        
+        status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+    
     form = OtherPeople()
     
     
@@ -338,7 +401,12 @@ def ReferencesView(request):
             return HttpResponseRedirect('/task-list/?id=' + application_id_local)
     
     application_id_local = request.GET["id"]
-    status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).references_status != 'COMPLETED':
+        
+        status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+    
     form = ReferenceForm(id = application_id_local)
     
     return render(request, 'references.html', {'form': form,'application_id': application_id_local})   
@@ -358,7 +426,12 @@ def HealthView(request):
             return HttpResponseRedirect('/task-list/?id=' + application_id_local)
     
     application_id_local = request.GET["id"]
-    status.update(application_id_local, 'health_status', 'IN_PROGRESS')
+    
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).health_status != 'COMPLETED':
+        
+        status.update(application_id_local, 'health_status', 'IN_PROGRESS')
+    
     form = HealthDeclarationBooklet(id = application_id_local)
     
     return render(request, 'health.html', {'form': form,'application_id': application_id_local})
