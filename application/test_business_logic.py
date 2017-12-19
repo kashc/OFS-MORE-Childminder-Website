@@ -6,6 +6,7 @@ OFS-MORE: Apply to be a Childminder Beta
 @author: Informed Solutions
 '''
 
+
 from django.test import Client
 from django.test import TestCase
 from django.urls import resolve
@@ -13,6 +14,7 @@ from django.urls import resolve
 from .models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, Login_And_Contact_Details, References
 
 from uuid import UUID
+
 
 
 # Test business logic to create or update a Type of childcare record
