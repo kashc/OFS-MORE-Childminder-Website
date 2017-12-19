@@ -204,7 +204,7 @@ def PersonalDetailsView(request):
     # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
     if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
         
-        status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
+        status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
     
     form = PersonalDetails(id = application_id_local)
     
