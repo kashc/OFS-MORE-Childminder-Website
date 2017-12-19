@@ -9,7 +9,7 @@ from .models import Application, Criminal_Record_Check, Login_And_Contact_Detail
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, \
-    SeparatedCheckboxSelectMultiple, SeparatedRadioSelect, RadioSelect
+    SeparatedCheckboxSelectMultiple, RadioSelect
 
 
 class TypeOfChildcare(forms.Form):
