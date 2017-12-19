@@ -32,7 +32,7 @@ urlpatterns = [
     url(r'^declaration/', views.DeclarationView, name='Declaration-View'),
     url(r'^confirm-your-answers/', views.ConfirmationView, name='Confirmation-View'),
     url(r'^payment/', views.PaymentView, name='Payment-View'),
-    url(r'^application-saved/', views.ApplicationSavedView, name='Application-Saved-View')
+    url(r'^application-saved/', views.ApplicationSavedView, name='Application-Saved-View'),
     url(r'^admin/', admin.site.urls),
     url(r'^reset/', views.ResetView),
 ]
