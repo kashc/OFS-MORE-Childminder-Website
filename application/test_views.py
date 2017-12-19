@@ -12,7 +12,7 @@ from .models import Application
 
 from uuid import UUID
 
-from .views import ConfirmationView, ContactEmailView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingView, HealthView, LogInView, OtherPeopleView, PersonalDetailsView, ReferencesView, StartPageView, TypeOfChildcareView
+from .views import ApplicationSavedView, ConfirmationView, ContactEmailView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingView, HealthView, LogInView, OtherPeopleView, PaymentView, PersonalDetailsView, ReferencesView, StartPageView, TypeOfChildcareView
 
 # Test suite for start page
 class StartPageTest(TestCase):
@@ -263,6 +263,47 @@ class ConfirmationTest(TestCase):
             
         except:
             self.assertEqual(0,0)
+
+
+# Test suite for Payment page
+class PaymentTest(TestCase):
+    
+    # Test to check if URL resolves to correct view
+    def test_url_resolves_to_page(self):
+        found = resolve('/payment/')
+        self.assertEqual(found.func, PaymentView)
+    
+    # Test to check that a user cannot navigate to the page without an application ID
+    def test_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            response = c.get('/payment/?id=')
+            
+        except:
+            self.assertEqual(0,0)
+            
+
+# Test suite for Application Saved page
+class ApplicationSavedTest(TestCase):
+    
+    # Test to check if URL resolves to correct view
+    def test_url_resolves_to_page(self):
+        found = resolve('/application-saved/')
+        self.assertEqual(found.func, ApplicationSavedView)
+    
+    # Test to check that a user cannot navigate to the page without an application ID
+    def test_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            response = c.get('/application-saved/?id=')
+            
+        except:
+            self.assertEqual(0,0)
+            
 
 
 # Test task list progress status update logic

@@ -191,3 +191,7 @@ class Payment(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     payment_method = forms.ChoiceField(label='How would you like to pay?', choices=options, widget=RadioSelect)
+
+class ApplicationSaved(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True

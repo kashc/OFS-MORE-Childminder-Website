@@ -255,9 +255,8 @@
 
         <div class="column-two-thirds">
             <div class="form-group">
-                
-                <a href="/save-and-exit" class="button-save-and-exit" style="margin-left: 0px;">Save and exit</a>
-                
+            		<input type="hidden" value="{{application_id}}" name = "id" />
+                	<a href="/application-saved/?id={{application_id}}" class="button-save-and-exit" style="margin-left: 0px;" disabled>Save and exit</a>
             </div>
         </div>
 
