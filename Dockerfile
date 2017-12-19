@@ -6,4 +6,4 @@ ADD . /source/
 RUN pip install -r requirements.txt
 RUN chmod +x /source/docker-entrypoint.sh
 EXPOSE 8000
-RUN ["sh /source/docker-entrypoint.sh"]
+CMD ["/source/docker-entrypoint.sh"]
