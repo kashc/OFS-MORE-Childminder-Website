@@ -2,11 +2,9 @@
 {% load static %}
 {% load govuk_template_base %}
 
-
-
 {% block inner_content %}
-<main id="content" role="main">
 
+<main id="content" role="main">
     <div class="grid-row">
         <div class="column-two-thirds">
             <header class="page-heading page-heading-with-context">
@@ -17,11 +15,9 @@
             </header>
         </div>
     </div>
-
     <div class="grid-row">
         <div class="column-two-thirds">
             <div class="form-group">
-
                 <table id="your-details">
                     <tbody>
                     <tr id="children">
@@ -226,8 +222,6 @@
                         {% endif %}
                     </tr>
                     {% endif %}
-                    			
-                    
                     </tbody>
                 </table>
             </div>
@@ -241,7 +235,6 @@
             </div>
         </div>
         {% endif %}
-        
         {% if confirm_details %}
         <form action ="/confirm-your-answers" method="get">
         	<div class="column-two-thirds">
@@ -252,15 +245,13 @@
             </div>	
         </form>
 		{% endif %}
-
         <div class="column-two-thirds">
             <div class="form-group">
             		<input type="hidden" value="{{application_id}}" name = "id" />
                 	<a href="/application-saved/?id={{application_id}}" class="button-save-and-exit" style="margin-left: 0px;" disabled>Save and exit</a>
             </div>
         </div>
-
     </div>
-
 </main>
+
 {% endblock %}

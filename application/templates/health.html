@@ -2,24 +2,19 @@
 {% load static %}
 {% load govuk_template_base %}
 
-
-
 {% block inner_content %}
 
 <main id="content" role="main">
     <div class="column-full">
-
-        <div class="form-group grid-row" style="padding-top: 30px;">
-    <a href="javascript:history.back()" style="margin-right: 10px; line-height: 28px">
-        <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
-                            <polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
-                    </svg>
-        Back
-    </a>
-</div>
-
+		<div class="form-group grid-row" style="padding-top: 30px;">
+    		<a href="javascript:history.back()" style="margin-right: 10px; line-height: 28px">
+        		<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
+                	<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
+                </svg>
+        	Back
+    		</a>
+		</div>
         <form action="/health/" method="post" class="form"> {% csrf_token %}
-
             <div class="grid-row">
                 <h1 class="form-title heading-large">
                     Your health
@@ -28,7 +23,6 @@
                 <p>This is to check you are well enough to care for children.</p>
                 <p>This information won't normally stop you from registering.</p>
             </div>
-
             <div class="form-group grid-row">
                 <details role="group">
                     <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">How will this affect my application?</span></summary>
@@ -42,21 +36,15 @@
                 </br>
                 {{form}}
             </div>
-
-            
-
-
-            
             <div class="form-group grid-row">
-    <input type="submit" class="button" value="Save and continue">
-</div>
-<input type="hidden" value="{{application_id}}" name = "id" />
-<div class="form-group grid-row">
-    <div class="form-group">
-    <a href="/task-list?id={{application_id}}">Return to list</a>
-</div>
-</div>
-
+    			<input type="submit" class="button" value="Save and continue">
+			</div>
+			<input type="hidden" value="{{application_id}}" name = "id" />
+			<div class="form-group grid-row">
+    			<div class="form-group">
+    				<a href="/task-list?id={{application_id}}">Return to list</a>
+				</div>
+			</div>
         </form>
     </div>
 </main>

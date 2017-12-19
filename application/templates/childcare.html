@@ -2,13 +2,11 @@
 {% load static %}
 {% load govuk_template_base %}
 
-
-
 {% block inner_content %}
 
 <main id="content" role="main">
-    <div class="column-full">
 
+    <div class="column-full">
         <div class="form-group grid-row" style="padding-top: 30px;">
     		<a href="javascript:history.back()" style="margin-right: 10px; line-height: 28px">
         		<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
@@ -17,30 +15,21 @@
         		Back
     		</a>
 		</div>
-
         <form action="/childcare/" method="post" class="form">{% csrf_token %}
-
             <div class="grid-row">
-                <h1 class="form-title heading-large">
-                    Who you'll be caring for
-                </h1>
+                <h1 class="form-title heading-large">Who you'll be caring for</h1>
                 <p>We need to understand which ages of children you wish to childmind.</p>
                 <p>This is so that we ensure that you submit only the relevant information, and sign up to the correct register.</p>
             </div>
-
             <div class="form-group grid-row">
                 <fieldset>
-
                     <legend style="margin-bottom: 15px">
                         <h2 class="heading-medium">Which ages of children do you intend to childmind?</h2>
                     </legend>
-
                     {{form}}
-				<input type="hidden" value="{{application_id}}" name = "id" />
+					<input type="hidden" value="{{application_id}}" name = "id" />
                 </fieldset>
             </div>
-
-            
             <div class="form-group grid-row">
     			<input type="submit" class="button" value="Save and continue">
 			</div>
@@ -51,4 +40,5 @@
 		</form>
 	</div>        
 </main>
+
 {% endblock %}

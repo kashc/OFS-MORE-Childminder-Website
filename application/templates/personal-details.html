@@ -2,8 +2,6 @@
 {% load static %}
 {% load govuk_template_base %}
 
-
-
 {% block inner_content %}
 
 <form action="personal-details" method="post" class="form">{% csrf_token %}
@@ -15,27 +13,24 @@
         	Back
     	</a>
 	</div>
-
-                <div class="grid-row">
-                    <h1 class="form-title heading-large">
-                        Your name
-                    </h1>
-                    <p>Please give us your full name, including any middle names.</p>
-                    <p>The names must match the ones in your criminal record check (DBS check).</p>
-                </div>
-
-				{{form}}
-				<input type="hidden" value="{{application_id}}" name = "id" />
-
-                <div class="form-group grid-row">
-    <input type="submit" class="button" value="Save and continue">
-</div>
-<input type="hidden" value="{{application_id}}" name = "id" />
-<div class="grid-row">
-    <div class="form-group">
-    <a href="/task-list?id={{application_id}}">Return to list</a>
-</div>
-</div>
+    <div class="grid-row">
+    	<h1 class="form-title heading-large">
+        Your name
+        </h1>
+        <p>Please give us your full name, including any middle names.</p>
+        <p>The names must match the ones in your criminal record check (DBS check).</p>
+    </div>
+	{{form}}
+	<input type="hidden" value="{{application_id}}" name = "id" />
+	<div class="form-group grid-row">
+    	<input type="submit" class="button" value="Save and continue">
+	</div>
+	<input type="hidden" value="{{application_id}}" name = "id" />
+	<div class="grid-row">
+    	<div class="form-group">
+    		<a href="/task-list?id={{application_id}}">Return to list</a>
+		</div>
+	</div>
 </form>
             
 {% endblock %}

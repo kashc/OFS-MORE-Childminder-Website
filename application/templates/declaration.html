@@ -2,35 +2,30 @@
 {% load static %}
 {% load govuk_template_base %}
 
-
-
 {% block inner_content %}
-
 
 <main id="content" role="main">
     <div class="column-two-thirds">
-
         <div class="form-group grid-row" style="padding-top: 30px;">
-    <a href="javascript:history.back()" style="margin-right: 10px; line-height: 28px">
-        <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
-                            <polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
-                    </svg>
-        Back
-    </a>
-</div>
-
+    		<a href="javascript:history.back()" style="margin-right: 10px; line-height: 28px">
+        		<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
+                	<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
+                </svg>
+        		Back
+    		</a>
+	</div>
         <div class="grid-row">
             <h1 class="form-title heading-large">
                 Declaration and consent
             </h1>
             <p>Ofsted will have to check your details, inspect your home and interview you after you apply.</p>
-
             <p>The interview will include questions on the Early Years Foundation Stage (EYFS).</p>
         </div>
-
         <div class="grid-row">
             <details role="group">
-                <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">What is the EYFS?</span></summary>
+                <summary role="button" aria-controls="details-content-0" aria-expanded="false">
+                	<span class="summary">What is the EYFS?</span>
+                </summary>
                 <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
                     <p>The EYFS contains the standards for caring for young children.</p>
                     <p>An inspector will ask how you will keep children safe and help them learn.</p>
@@ -41,7 +36,6 @@
                         <li><a href="https://www.pacey.org.uk/training-and-qualifications/training-from-pacey/pre-registration-courses/" class="external-link" target="_blank">Professional Association for Childcare and Early Years (PACEY)</a></li>
                         <li><a href="http://www.ndna.org.uk/NDNA/Training/EYFS.aspx" class="external-link" target="_blank">National Day Nurseries Association</a></li>
                     </ul>
-
                 </div>
             </details>
         </div>
@@ -52,11 +46,9 @@
             </div>
             <div class="form-group grid-row">
                 <fieldset>
-
                     <legend style="margin-bottom: 15px">
                         <h3 class="heading-small">I am happy for Ofsted to:</h3>
                     </legend>
-
                     <div class="multiple-choice">
                         <input id="checkbox-1" name="checkboxs" type="checkbox">
                         <label for="checkbox-1">carry out background checks</label>
@@ -73,28 +65,20 @@
                         <input id="checkbox-5" name="checkboxs" type="checkbox">
                         <label for="checkbox-5">ask me questions about the EYFS</label>
                     </div>
-
                 </fieldset>
             </div>
-
-
-
             <div class="form-group grid-row">
                 <fieldset>
-
                     <legend style="margin-bottom: 15px">
                         <h3 class="heading-small">I declare that:</h3>
                     </legend>
-
                     <div class="multiple-choice">
                         <input id="checkbox-6" name="checkboxs" type="checkbox">
                         <label for="checkbox-6">the information I have given in this form is correct</label>
                     </div>
                 </fieldset>
             </div>
-            
 			<input type="hidden" value="{{application_id}}" name = "id" />
-
             <div class="form-group grid-row">
                 <a href="/task-list?id={{application_id}}" class="button">Confirm and pay your fee</a>
             </div>

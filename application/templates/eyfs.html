@@ -2,11 +2,9 @@
 {% load static %}
 {% load govuk_template_base %}
 
-
-
 {% block inner_content %}
-<form action="eyfs" method="post" class="form">{% csrf_token %}
 
+<form action="eyfs" method="post" class="form">{% csrf_token %}
 	<div class="form-group grid-row" style="padding-top: 30px;">
     	<a href="javascript:history.back()" style="margin-right: 10px; line-height: 28px">
         	<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
@@ -15,23 +13,22 @@
         	Back
     	</a>
 	</div>
-                <div class="grid-row">
-                    <h1 class="form-title heading-large">
-                        Early Years Foundation Stage
-                    </h1>
-                    <p>Some text on this page to illustrate that you need to have EYFS knowledge.</p>
-                </div>
-
-				{{form}}
-				<input type="hidden" value="{{application_id}}" name = "id" />
-                <div class="form-group grid-row">
-    <input type="submit" class="button" value="Save and continue">
-</div>
-<div class="grid-row">
-    <div class="form-group">
-    <a href="/task-list?id={{application_id}}">Return to list</a>
-</div>
-</div>
+    <div class="grid-row">
+        <h1 class="form-title heading-large">
+        Early Years Foundation Stage
+        </h1>
+        <p>Some text on this page to illustrate that you need to have EYFS knowledge.</p>
+    </div>
+	{{form}}
+	<input type="hidden" value="{{application_id}}" name = "id" />
+    <div class="form-group grid-row">
+    	<input type="submit" class="button" value="Save and continue">
+	</div>
+	<div class="grid-row">
+    	<div class="form-group">
+    		<a href="/task-list?id={{application_id}}">Return to list</a>
+		</div>
+	</div>
 </form>
             
 {% endblock %}
