@@ -2,7 +2,7 @@
 Created on 7 Dec 2017
 
 OFS-MORE-CCN3: Apply to be a Childminder Beta
-Views
+-- Views --
 
 @author: Informed Solutions
 '''
@@ -322,109 +322,31 @@ def DBSCheckView(request):
     return render(request, 'dbs-check.html', {'form': form,'application_id': application_id_local})
 
 
-def DeclarationView(request):
-
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = Declaration(request.POST)
-        
-        print(form.is_valid())
-        
-        if form.is_valid():
-            
-            status.update(application_id_local, 'declarations_status', 'COMPLETED')
-            
-            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
-    
-    application_id_local = request.GET["id"]
-    
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if  Application.objects.get(pk = application_id_local).declarations_status != 'COMPLETED':
-    
-        status.update(application_id_local, 'declarations_status', 'COMPLETED')
-    
-    form = Declaration()
-    
-    return render(request, 'declaration.html', {'application_id': application_id_local})
-
-
-def ConfirmationView(request):
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = Confirm(request.POST)
-        
-        if form.is_valid():
-            
-            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
-    
-    application_id_local = request.GET["id"]
-    form = Confirm()
-    
-    return render(request, 'confirm.html', {'application_id': application_id_local})
-
-def OtherPeopleView(request):
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = OtherPeople(request.POST)
-        
-        if form.is_valid():
-            
-            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
-            
-            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
-    
-    application_id_local = request.GET["id"]
-    
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if  Application.objects.get(pk = application_id_local).people_in_home_status != 'COMPLETED':
-        
-        status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
-    
-    form = OtherPeople()
-    
-    
-    return render(request, 'other-people.html', {'application_id': application_id_local})
-
-def ReferencesView(request):
-    
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = ReferenceForm(request.POST,id = application_id_local)
-        
-        if form.is_valid():
-            
-            status.update(application_id_local, 'references_status', 'COMPLETED')
-            
-            references_record = references_check_logic(application_id_local, form)
-            references_record.save()
-            
-            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
-    
-    application_id_local = request.GET["id"]
-
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if  Application.objects.get(pk = application_id_local).references_status != 'COMPLETED':
-        
-        status.update(application_id_local, 'references_status', 'IN_PROGRESS')
-    
-    form = ReferenceForm(id = application_id_local)
-    
-    return render(request, 'references.html', {'form': form,'application_id': application_id_local})   
-
+# View for the Your health task
 def HealthView(request):
+    
     if request.method == 'POST':
+        
+        # Retrieve the application's ID
         application_id_local = request.POST["id"]
+        
+        # Initialise the Your health form
         form = HealthDeclarationBooklet(request.POST, id = application_id_local)
         
+        # If the form is successfully submitted (with valid details)
         if form.is_valid():
             
+            # Update the status of the task to 'COMPLETED'            
             status.update(application_id_local, 'health_status', 'COMPLETED')
             
+            # Perform business logic to create or update Your health record in database            
             health_record = health_check_logic(application_id_local, form)
             health_record.save()
             
-            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+        # Return to the application's task list
+        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
     
+    # If the Your health form is not completed    
     application_id_local = request.GET["id"]
     
     # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
@@ -434,43 +356,205 @@ def HealthView(request):
     
     form = HealthDeclarationBooklet(id = application_id_local)
     
+    # Access the task page
     return render(request, 'health.html', {'form': form,'application_id': application_id_local})
 
-def ResetView(request):
-    SECTION_LIST = ['login_details_status', 'personal_details_status', 'childcare_type_status', 
-                    'first_aid_training_status', 'eyfs_training_status', 'criminal_record_check_status'
-                    , 'health_status', 'references_status', 'people_in_home_status', 'declarations_status']    
-    application_id_local = request.GET["id"]
-    
-    for section in SECTION_LIST:
-        status.update(application_id_local, section, 'NOT_STARTED')
-        
-    return HttpResponseRedirect('/task-list/?id=' + application_id_local)
 
-def PaymentView(request):
+# View for the 2 references task
+def ReferencesView(request):
+    
     if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = Payment(request.POST)
         
+        # Retrieve the application's ID        
+        application_id_local = request.POST["id"]
+        
+        # Initialise the 2 references form
+        form = ReferenceForm(request.POST,id = application_id_local)
+        
+        # If the form is successfully submitted (with valid details) 
         if form.is_valid():
             
+            # Update the status of the task to 'COMPLETED'              
+            status.update(application_id_local, 'references_status', 'COMPLETED')
+
+            # Perform business logic to create or update 2 references record in database              
+            references_record = references_check_logic(application_id_local, form)
+            references_record.save()
+
+        # Return to the application's task list            
+        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+    
+    # If the 2 references form is not completed 
+    application_id_local = request.GET["id"]
+
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).references_status != 'COMPLETED':
+        
+        status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+    
+    form = ReferenceForm(id = application_id_local)
+    
+    # Access the task page
+    return render(request, 'references.html', {'form': form,'application_id': application_id_local})  
+
+
+# View for the People in your home task
+def OtherPeopleView(request):
+    
+    if request.method == 'POST':
+        
+        # Retrieve the application's ID         
+        application_id_local = request.POST["id"]
+        
+        # Initialise the People in your home form        
+        form = OtherPeople(request.POST)
+        
+        # If the form is successfully submitted (with valid details)         
+        if form.is_valid():
+            
+            # Update the status of the task to 'COMPLETED' 
+            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
+        
+        # Return to the application's task list              
+        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+    
+    # If the People in your home form is not completed 
+    application_id_local = request.GET["id"]
+    
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).people_in_home_status != 'COMPLETED':
+        
+        status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+    
+    form = OtherPeople()
+    
+    # Access the task page
+    return render(request, 'other-people.html', {'application_id': application_id_local}) 
+
+
+# View for the Declaration task
+def DeclarationView(request):
+
+    if request.method == 'POST':
+        
+        # Retrieve the application's ID         
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Declaration form
+        form = Declaration(request.POST)
+        
+        # If the form is successfully submitted (with valid details) 
+        if form.is_valid():
+            
+            # Update the status of the task to 'COMPLETED'            
+            status.update(application_id_local, 'declarations_status', 'COMPLETED')
+            
+        # Return to the application's task list         
+        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+    
+    # If the People in your home form is not completed    
+    application_id_local = request.GET["id"]
+    
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).declarations_status != 'COMPLETED':
+    
+        status.update(application_id_local, 'declarations_status', 'COMPLETED')
+    
+    form = Declaration()
+    
+    # Access the task page
+    return render(request, 'declaration.html', {'application_id': application_id_local})
+
+
+# View for the Confirm your details page
+def ConfirmationView(request):
+    
+    if request.method == 'POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Confirm your details form        
+        form = Confirm(request.POST)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Return to the application's task list 
+            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+
+    # If the Confirm your details form is not completed     
+    application_id_local = request.GET["id"]
+    form = Confirm()
+    
+    # Access the page
+    return render(request, 'confirm.html', {'application_id': application_id_local})
+
+
+# View the Payment page
+def PaymentView(request):
+    
+    if request.method == 'POST':
+        
+        # Retrieve the application's ID        
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Payment form        
+        form = Payment(request.POST)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Stay on the same page
             return HttpResponseRedirect('/payment/?id=' + application_id_local)
     
+    # If the Payment form is not completed  
     application_id_local = request.GET["id"]
     form = Payment()
     
+    # Access the page
     return render(request, 'payment.html', {'form': form, 'application_id': application_id_local})
 
+
+# View the Application saved page
 def ApplicationSavedView(request):
+    
     if request.method == 'POST':
+        
+        # Retrieve the application's ID         
         application_id_local = request.POST["id"]
+        
+        # Initialise the Application saved form        
         form = ApplicationSaved(request.POST)
         
+        # If the form is successfully submitted (with valid details)        
         if form.is_valid():
             
+            # Stay on the same page
             return HttpResponseRedirect('/application-saved/?id=' + application_id_local)
     
+    # If the Application saved form is not completed
     application_id_local = request.GET["id"]
     form = ApplicationSaved()
     
+    # Access the page
     return render(request, 'application-saved.html', {'form': form, 'application_id': application_id_local})
+
+
+# Reset view, to set all tasks to To Do
+def ResetView(request):
+    
+    # Create a list of task statuses
+    SECTION_LIST = ['login_details_status', 'personal_details_status', 'childcare_type_status', 'first_aid_training_status', 'eyfs_training_status', 'criminal_record_check_status', 'health_status', 'references_status', 'people_in_home_status', 'declarations_status']    
+    
+    # Retrieve the application's ID     
+    application_id_local = request.GET["id"]
+    
+    # For each task in the list of task statuses
+    for section in SECTION_LIST:
+        
+        # Set the progress status to To Do
+        status.update(application_id_local, section, 'NOT_STARTED')
+     
+     # Access the task list   
+    return HttpResponseRedirect('/task-list/?id=' + application_id_local)
