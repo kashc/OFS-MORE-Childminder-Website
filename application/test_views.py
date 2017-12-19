@@ -43,7 +43,6 @@ class TaskListTest(TestCase):
     def test_task_list_not_displayed_without_id(self):
         
         c = Client()
-        response = c.get('/task-list/?id=')
         
         try:
             response = c.get('/task-list/?id=')
