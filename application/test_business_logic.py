@@ -1,7 +1,8 @@
 '''
 Created on 18 Dec 2017
 
-OFS-MORE: Apply to be a Childminder Beta
+OFS-MORE-CCN3: Apply to be a Childminder Beta
+-- Business Logic Unit Tests --
 
 @author: Informed Solutions
 '''

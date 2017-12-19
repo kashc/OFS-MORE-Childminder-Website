@@ -1,8 +1,12 @@
 '''
 Created on 15 Dec 2017
 
+OFS-MORE-CCN3: Apply to be a Childminder Beta
+-- Views Unit Tests --
+
 @author: Informed Solutions
 '''
+
 
 from django.test import Client
 from django.test import TestCase
@@ -13,6 +17,8 @@ from .models import Application
 from uuid import UUID
 
 from .views import ApplicationSavedView, ConfirmationView, ContactEmailView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingView, HealthView, LogInView, OtherPeopleView, PaymentView, PersonalDetailsView, ReferencesView, StartPageView, TypeOfChildcareView
+
+
 
 # Test suite for start page
 class StartPageTest(TestCase):
