@@ -17,7 +17,7 @@ from django.template import Context
 
 from .forms import ApplicationSaved, Confirm, ContactEmail, DBSCheck, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PersonalDetails, ReferenceForm, TypeOfChildcare
 
-from .models import Application, Criminal_Record_Check, Login_And_Contact_Details, Applicant_Personal_Details, Applicant_Names, First_Aid_Training, Health_Declaration_Booklet, References, Childcare_Type
+from .models import Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, Login_And_Contact_Details, References
 
 
 
