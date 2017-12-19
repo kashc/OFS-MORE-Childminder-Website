@@ -23,16 +23,16 @@ urlpatterns = [
     url(r'^childcare/', views.TypeOfChildcareView, name='Type-Of-Childcare-View'),
     url(r'^contact-email/', views.ContactEmailView, name='Contact-Email-View'),
     url(r'^personal-details/', views.PersonalDetailsView, name='Personal-Details-View'),
-    url(r'^dbs-check/', views.DBSCheckView, name='DBS-Check-View'),
     url(r'^first-aid/', views.FirstAidTrainingView, name='First-Aid-Training-View'),
     url(r'^eyfs/', views.EYFSView, name='EYFS-View'),
+    url(r'^dbs-check/', views.DBSCheckView, name='DBS-Check-View'),
     url(r'^health/', views.HealthView, name='Health-View'),
-    url(r'^other-people/', views.OtherPeopleView, name='Other-People-View'),
     url(r'^references/', views.ReferencesView, name='References-View'),
+    url(r'^other-people/', views.OtherPeopleView, name='Other-People-View'),
     url(r'^declaration/', views.DeclarationView, name='Declaration-View'),
     url(r'^confirm-your-answers/', views.ConfirmationView, name='Confirmation-View'),
-    url(r'^admin/', admin.site.urls),
-    url(r'^reset/', views.ResetView),
     url(r'^payment/', views.PaymentView, name='Payment-View'),
     url(r'^application-saved/', views.ApplicationSavedView, name='Application-Saved-View')
-    ]
+    url(r'^admin/', admin.site.urls),
+    url(r'^reset/', views.ResetView),
+]
