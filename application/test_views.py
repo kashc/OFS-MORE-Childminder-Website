@@ -119,6 +119,7 @@ class LoginAndContactDetailsTest(TestCase):
         
         try:
             response = c.get('/contact-email/?id=')
+            self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)  
@@ -168,6 +169,7 @@ class PersonalDetailsTest(TestCase):
         
         try:
             response = c.get('/personal-details/?id=')
+            self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)
@@ -217,6 +219,7 @@ class FirstAidTrainingTest(TestCase):
         
         try:
             response = c.get('/first-aid/?id=')
+            self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)
@@ -266,6 +269,7 @@ class EYFSTest(TestCase):
         
         try:
             response = c.get('/eyfs/?id=')
+            self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)
@@ -315,6 +319,7 @@ class DBSCheckTest(TestCase):
         
         try:
             response = c.get('/eyfs/?id=')
+            self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)
@@ -364,6 +369,7 @@ class HealthTest(TestCase):
         
         try:
             response = c.get('/health/?id=')
+            self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)
@@ -413,6 +419,7 @@ class ReferencesTest(TestCase):
         
         try:
             response = c.get('/references/?id=')
+            self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)
@@ -462,6 +469,7 @@ class OtherPeopleTest(TestCase):
         
         try:
             response = c.get('/other-people/?id=')
+            self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)
@@ -511,6 +519,7 @@ class DeclarationTest(TestCase):
         
         try:
             response = c.get('/declaration/?id=')
+            self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)
@@ -560,6 +569,7 @@ class ConfirmationTest(TestCase):
         
         try:
             response = c.get('/confirm-your-answers/?id=')
+            self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)
@@ -581,6 +591,7 @@ class PaymentTest(TestCase):
         
         try:
             response = c.get('/payment/?id=')
+            self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)
@@ -602,6 +613,7 @@ class ApplicationSavedTest(TestCase):
         
         try:
             response = c.get('/application-saved/?id=')
+            self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)
