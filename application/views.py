@@ -9,15 +9,16 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 from application import status
 
-from .business_logic import Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic, Login_Contact_Logic, Personal_Logic, references_check_logic
+from .business_logic import Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic, Login_Contact_Logic, Login_Contact_Logic_Phone, Personal_Logic, references_check_logic
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.template import Context
 
-from .forms import ApplicationSaved, Confirm, ContactEmail, DBSCheck, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PersonalDetails, ReferenceForm, TypeOfChildcare
+from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, DBSCheck, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PersonalDetails, Question, ReferenceForm, TypeOfChildcare
 
 from .models import Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, Login_And_Contact_Details, References
+from django.http.response import HttpResponseNotModified
 
 
 
@@ -136,8 +137,23 @@ def TypeOfChildcareView(request):
     return render(request, 'childcare.html', {'form': form, 'application_id': application_id_local})
 
 
-# View for the Your login and contact details task
+# View for the Your login and contact details task: e-mail address
 def ContactEmailView(request):
+        
+    if request.method =='GET':
+          
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+        
+        # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+        if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
+            
+            status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
+            
+        form = ContactEmail(id = application_id_local)       
+        
+        # Access the task page
+        return render(request, 'contact-email.html', {'form': form,'application_id': application_id_local})
     
     if request.method =='POST':
         
@@ -157,22 +173,118 @@ def ContactEmailView(request):
             login_and_contact_details_record = Login_Contact_Logic(application_id_local, form)
             login_and_contact_details_record.save()
             
-        # Return to the application's task list    
-        return HttpResponseRedirect('/task-list?id=' + application_id_local)
-
-    # If the Your login and contact details form is not completed
-    application_id_local = request.GET["id"]
-    
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
+            # Go to the phone numbers page   
+            return HttpResponseRedirect('/contact-phone?id=' + application_id_local)
         
-        status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
-        
-    form = ContactEmail(id = application_id_local)       
-    
-    # Access the task page
-    return render(request, 'contact-email.html', {'form': form,'application_id': application_id_local})
+        # If there are invalid details
+        else:
+            
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            
+            # Return to the same page
+            return render(request, 'contact-email.html', variables)
 
+
+# View for the Your login and contact details task: phone numbers
+def ContactPhoneView(request):
+    
+    if request.method == 'GET':
+        
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+        
+        # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+        if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
+            
+            status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
+            
+        form = ContactPhone(id = application_id_local)       
+    
+        # Access the task page
+        return render(request, 'contact-phone.html', {'form': form,'application_id': application_id_local})
+    
+    if request.method == 'POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Your login and contact details form
+        form = ContactPhone(request.POST,id = application_id_local)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'COMPLETED'
+            status.update(application_id_local, 'login_details_status', 'COMPLETED')
+            
+            # Perform business logic to create or update Your login and contact details record in database
+            login_and_contact_details_record = Login_Contact_Logic_Phone(application_id_local, form)
+            login_and_contact_details_record.save()
+            
+            # Return to the application's task list    
+            return HttpResponseRedirect('/question?id=' + application_id_local)
+    
+        # If there are invalid details
+        else:
+            
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            
+            # Return to the same page
+            return render(request, 'contact-phone.html', variables)
+
+
+# View for the Your login and contact details task: knowledge-based question
+def QuestionView(request):
+    
+    if request.method == 'GET':
+        
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+        
+        # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+        if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
+            
+            status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
+            
+        form = Question(id = application_id_local)       
+    
+        # Access the task page
+        return render(request, 'question.html', {'form': form,'application_id': application_id_local})
+    
+    if request.method == 'POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Your login and contact details form
+        form = Question(request.POST,id = application_id_local)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'COMPLETED'
+            status.update(application_id_local, 'login_details_status', 'COMPLETED')
+            
+            # Return to the application's task list    
+            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+    
+        # If there are invalid details
+        else:
+            
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            
+            # Return to the same page
+            return render(request, 'question.html', variables)
+        
 
 # View for the Your personal details task
 def PersonalDetailsView(request):

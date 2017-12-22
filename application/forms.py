@@ -14,8 +14,9 @@ from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
-from .models import Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, Health_Declaration_Booklet, References
+from .models import Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, Health_Declaration_Booklet, References
 
+import re 
 
 
 # Type of childcare form
@@ -74,7 +75,7 @@ class TypeOfChildcare(forms.Form):
                 self.fields['type_of_childcare'].initial = []
 
 
-# Your login and contact details form    
+# Your login and contact details form: e-mail address   
 class ContactEmail(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
@@ -87,10 +88,79 @@ class ContactEmail(GOVUKForm):
         self.application_id_local = kwargs.pop('id')
         super(ContactEmail, self).__init__(*args, **kwargs)
         
+        self.error_summary = {
+            'email_address': 'Please enter a valid e-mail address.'
+        }
+        
+        # If information was previously entered, display it on the form
+        if Login_And_Contact_Details.objects.filter(application_id=self.application_id_local).count() > 0:
+        
+            self.fields['email_address'].initial = Login_And_Contact_Details.objects.get(application_id=self.application_id_local).email
+    
+    def clean_email_address(self):
+        
+        email_address = self.cleaned_data['email_address']
+            
+        if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
+            
+            raise forms.ValidationError('Please enter a valid e-mail address.')
+        
+        return email_address
+
+
+# Your login and contact details form: phone numbers   
+class ContactPhone(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    
+    mobile_number = forms.CharField(label = 'Mobile phone number')
+    add_phone_number = forms.CharField(label = 'Additional phone number (optional)', required = False)
+    
+    def __init__(self, *args, **kwargs):
+        
+        self.application_id_local = kwargs.pop('id')
+        super(ContactPhone, self).__init__(*args, **kwargs)
+        
         # If information was previously entered, display it on the form
         if Login_And_Contact_Details.objects.filter(application_id=self.application_id_local).count() > 0:
             
-            self.fields['email_address'].initial = Login_And_Contact_Details.objects.get(application_id=self.application_id_local).email
+            self.fields['mobile_number'].initial = Login_And_Contact_Details.objects.get(application_id=self.application_id_local).mobile_number
+            self.fields['add_phone_number'].initial = Login_And_Contact_Details.objects.get(application_id=self.application_id_local).add_phone_number
+
+    def clean_mobile_number(self):
+        
+        mobile_number = self.cleaned_data['mobile_number']
+        
+        if re.match("^(07\d{8,12}|447\d{7,11})$", mobile_number) is None:
+            
+            raise forms.ValidationError('Please enter a valid mobile number.')
+        
+        return mobile_number
+
+    def clean_add_phone_number(self):
+        
+        add_phone_number = self.cleaned_data['add_phone_number']
+            
+        if re.match("^(0\d{8,12}|447\d{7,11})$", add_phone_number) is None:
+            
+            raise forms.ValidationError('Please enter a valid phone number.')
+        
+        return add_phone_number
+
+
+# Your login and contact details form: knowledge-based question 
+class Question(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    
+    question = forms.CharField(label = 'Knowledge based question', required = False)
+
+    def __init__(self, *args, **kwargs):
+        
+        self.application_id_local = kwargs.pop('id')
+        super(Question, self).__init__(*args, **kwargs)
 
 
 # Your personal details form    
@@ -102,7 +172,7 @@ class PersonalDetails(GOVUKForm):
     options = (('yes', 'Yes'), ('no', 'No'))
 
     first_name = forms.CharField(label = 'First name')
-    middle_names = forms.CharField(label = 'Middle names (optional)',required = False)
+    middle_names = forms.CharField(label = 'Middle names (optional)', required = False)
     last_name = forms.CharField(label = 'Last name')
     name_change = forms.ChoiceField(label = 'Have you ever changed your name?', choices = options, widget = InlineRadioSelect)
     

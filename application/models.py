@@ -62,8 +62,8 @@ class Login_And_Contact_Details(models.Model):
     login_id = models.UUIDField(primary_key = True, default = uuid4)
     application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
     email = models.CharField(max_length = 100, blank = True)
-    mobile_number = models.CharField(max_length = 50, blank = True)
-    add_phone_number = models.CharField(max_length = 50, blank = True)
+    mobile_number = models.CharField(max_length = 11, blank = True)
+    add_phone_number = models.CharField(max_length = 11, blank = True)
     
     # Set table name
     class Meta:
