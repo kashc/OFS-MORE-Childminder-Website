@@ -15,7 +15,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.template import Context
 
-from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, DBSCheck, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PersonalDetails, Question, ReferenceForm, TypeOfChildcare
+from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PersonalDetails, Question, ReferenceForm, TypeOfChildcare
 
 from .models import Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, Login_And_Contact_Details, References
 from django.http.response import HttpResponseNotModified
@@ -179,13 +179,8 @@ def ContactEmailView(request):
         # If there are invalid details
         else:
             
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            
             # Return to the same page
-            return render(request, 'contact-email.html', variables)
+            return render(request, 'contact-email.html', {'form': form,'application_id': application_id_local})
 
 
 # View for the Your login and contact details task: phone numbers
@@ -272,7 +267,7 @@ def QuestionView(request):
             status.update(application_id_local, 'login_details_status', 'COMPLETED')
             
             # Return to the application's task list    
-            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+            return HttpResponseRedirect('/contact-summary?id=' + application_id_local)
     
         # If there are invalid details
         else:
@@ -285,6 +280,58 @@ def QuestionView(request):
             # Return to the same page
             return render(request, 'question.html', variables)
         
+
+# View for the Your login and contact details task: phone numbers
+def ContactSummaryView(request):
+    
+    if request.method == 'GET':
+        
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+        
+        # Retrieve answers
+        email = Login_And_Contact_Details.objects.get(application_id = application_id_local).email
+        mobile_number = Login_And_Contact_Details.objects.get(application_id = application_id_local).mobile_number
+        add_phone_number = Login_And_Contact_Details.objects.get(application_id = application_id_local).add_phone_number
+        
+        # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+        if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
+            
+            status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
+            
+        form = ContactSummary()       
+    
+        # Access the task page
+        return render(request, 'contact-summary.html', {'form': form,'application_id': application_id_local,'email': email,'mobile_number': mobile_number,'add_phone_number': add_phone_number})
+    
+    if request.method == 'POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Your login and contact details form
+        form = ContactSummary()
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'COMPLETED'
+            status.update(application_id_local, 'login_details_status', 'COMPLETED')
+            
+            # Return to the application's task list    
+            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+    
+        # If there are invalid details
+        else:
+            
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            
+            # Return to the same page
+            return render(request, 'contact-summary.html', variables)
+
 
 # View for the Your personal details task
 def PersonalDetailsView(request):

@@ -88,10 +88,6 @@ class ContactEmail(GOVUKForm):
         self.application_id_local = kwargs.pop('id')
         super(ContactEmail, self).__init__(*args, **kwargs)
         
-        self.error_summary = {
-            'email_address': 'Please enter a valid e-mail address.'
-        }
-        
         # If information was previously entered, display it on the form
         if Login_And_Contact_Details.objects.filter(application_id=self.application_id_local).count() > 0:
         
@@ -147,7 +143,14 @@ class ContactPhone(GOVUKForm):
             raise forms.ValidationError('Please enter a valid phone number.')
         
         return add_phone_number
+    
 
+# Your login and contact details form: summary page  
+class ContactSummary(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    
 
 # Your login and contact details form: knowledge-based question 
 class Question(GOVUKForm):

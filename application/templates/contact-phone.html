@@ -4,8 +4,10 @@
 
 {% block inner_content %}
 
+{{form.error_summary}}
+
 <main id="content" role="main">
-	<div class="column-full">
+   <div class="column-full">
         <div class="form-group grid-row" style="padding-top: 30px;">
 	    	<a href="/contact-email?id={{application_id}}" style="margin-right: 10px; line-height: 28px">
 	        	<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
@@ -13,27 +15,24 @@
 	        	</svg>
 	        	Back
 	    	</a>
-	</div>
-	<form action="/contact-phone/" method="post" class="form">{% csrf_token %}
-        {{form.error_summary}}
-        <div class="grid-row">
-            <h1 class="form-title heading-large">
-                Your phone number
-            </h1>
-            <p>Please let us know the best phone number to ring or text you on.</p>
-            <p>We will send a code to your mobile when you log back in.</p>
-        	{{form.as_div}}
-        	<input type="hidden" id="id" value="{{application_id}}" />
-        </div>
-        <div class="form-group grid-row">
-            <input type="submit" class="button" value="Save and continue">
-        </div> 
-        <input type="hidden" value="{{application_id}}" name = "id" />      
-    </form>
-	<div class="form-group grid-row">
-    	<a href="/task-list?id={{application_id}}">Return to list</a>
-	</div>
-	</div>
-</main>
+	</div>	
+	
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+    <div class="grid-row">
+           <h1 class="form-title heading-large">
+               Your phone number
+           </h1>
+           <p>Please let us know the best phone number to ring or text you on.</p>
+           <p>We will send a code to your mobile when you log back in.</p>
+    </div>
     
+    <div class="form-group grid-row">
+	    {{form.as_div}}
+  	    {% csrf_token %}
+	    <input type="submit" class="button" value="Save and continue">
+	    <input type="hidden" name="id" value="{{application_id}}" />
+	</div> 
+	   
+</form>
+</main>
 {% endblock %}
