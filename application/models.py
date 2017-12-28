@@ -231,11 +231,23 @@ class Children_In_Home(models.Model):
     class Meta:
         
         db_table = 'CHILDREN_IN_HOME'
-        
+
+
+#Double check both the models below and ensure the match expectations        
 class MagicLink(models.Model):
     application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
     expiry_date = models.DateField()
     link = models.CharField(max_length = 100, blank = True)
+    email = models.CharField(max_length = 100, blank = True)
     class Meta:
         
         db_table = 'Magic_Link'
+        
+class SMSLink(models.Model):
+    application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
+    expiry_date = models.DateField()
+    code = models.CharField(max_length = 100, blank = True)
+    mobile_number = models.CharField(max_length = 12, blank = True)
+    class Meta:
+        
+        db_table = 'Magic_Link??'
