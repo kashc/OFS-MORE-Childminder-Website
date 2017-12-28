@@ -9,7 +9,6 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 
 from django import forms
-
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
@@ -74,6 +73,11 @@ class TypeOfChildcare(forms.Form):
             elif (zero_to_five_status == False) & (five_to_eight_status == False) & (eight_plus_status == False):
                 self.fields['type_of_childcare'].initial = []
 
+class EmailLogin(forms.ModelForm):
+    class Meta:
+        model = Login_And_Contact_Details
+        fields = ('email',)
+        email_address = forms.EmailField()
 
 # Your login and contact details form: e-mail address   
 class ContactEmail(GOVUKForm):
@@ -102,7 +106,6 @@ class ContactEmail(GOVUKForm):
             raise forms.ValidationError('Please enter a valid e-mail address.')
         
         return email_address
-
 
 # Your login and contact details form: phone numbers   
 class ContactPhone(GOVUKForm):

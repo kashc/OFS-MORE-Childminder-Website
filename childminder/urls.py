@@ -44,4 +44,5 @@ urlpatterns = [
     url(r'^application-saved/', views.ApplicationSavedView, name='Application-Saved-View'),
     url(r'^admin/', admin.site.urls),
     url(r'^reset/', views.ResetView),
+    url(r'^existing-application/',views.existingApplicationView, name='Existing-Application')
 ]
