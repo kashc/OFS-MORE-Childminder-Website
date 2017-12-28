@@ -231,3 +231,11 @@ class Children_In_Home(models.Model):
     class Meta:
         
         db_table = 'CHILDREN_IN_HOME'
+        
+class MagicLink(models.Model):
+    application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
+    expiry_date = models.DateField()
+    link = models.CharField(max_length = 100, blank = True)
+    class Meta:
+        
+        db_table = 'Magic_Link'

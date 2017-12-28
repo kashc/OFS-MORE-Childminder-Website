@@ -22,12 +22,18 @@
                Your email address
            </h1>
            <p>Enter your email address so you can save your application.</p>
-           <form method="POST" class="post-form">{% csrf_token %}
+           <form method="POST" class="post-form">
+           {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="save btn btn-default">Save</button>
     </form>
     </div>
-    
+    <div class="form-group grid-row">
+	    {{form.as_div}}
+  	    {% csrf_token %}
+	    <input type="submit" class="button" value="Save and continue">
+	    <input type="hidden" name="id" value="Save and continue" />
+	    
+	</div> 
 	   
 </form>
 </main>

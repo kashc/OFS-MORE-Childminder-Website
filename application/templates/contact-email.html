@@ -24,14 +24,13 @@
            </h1>
            <p>Enter your email address so you can save your application.</p>
            <p>We will send you a link so you can come back at any time.</p>
-    </div>
-    
-    <div class="form-group grid-row">
-	    {{form.as_div}}
+           {{form.as_div}}
   	    {% csrf_token %}
 	    <input type="submit" class="button" value="Save and continue">
 	    <input type="hidden" name="id" value="{{application_id}}" />
-	</div> 
+    </div>
+    
+
 	   
 </form>
 </main>
