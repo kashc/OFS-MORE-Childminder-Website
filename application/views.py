@@ -20,13 +20,22 @@ from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, Contac
 from .models import Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, Login_And_Contact_Details, References
 from django.http.response import HttpResponseNotModified
 
+import datetime
+
 
 
 # View for the start page
 def StartPageView(request):
     
+    # Create a blank user
+    user = Login_And_Contact_Details.objects.create()
+    
     # Create a new application
     application = Application.objects.create(
+        application_type = 'CHILDMINDER',
+        login_id = user,
+        application_status = 'DRAFTING',
+        cygnum_urn = '',
         login_details_status = 'NOT_STARTED',
         personal_details_status = 'NOT_STARTED',
         childcare_type_status = 'NOT_STARTED',
@@ -36,7 +45,10 @@ def StartPageView(request):
         health_status = 'NOT_STARTED',
         references_status = 'NOT_STARTED',
         people_in_home_status = 'NOT_STARTED',
-        declarations_status = 'NOT_STARTED'
+        declarations_status = 'NOT_STARTED',
+        date_created = datetime.datetime.today(),
+        date_updated = datetime.datetime.today(),
+        date_accepted = None
     )
     
     # Access the task page
@@ -139,6 +151,8 @@ def TypeOfChildcareView(request):
 
 # View for the Your login and contact details task: e-mail address
 def ContactEmailView(request):
+    
+    current_date = datetime.datetime.today()
         
     if request.method =='GET':
           
@@ -147,7 +161,7 @@ def ContactEmailView(request):
             
         form = ContactEmail(id = application_id_local)
         
-        # Retrieve application from database for Back button logic
+        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
         
         # Access the task page
@@ -161,15 +175,18 @@ def ContactEmailView(request):
         # Initialise the Your login and contact details form
         form = ContactEmail(request.POST,id = application_id_local)
         
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
-            
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'login_details_status', 'COMPLETED')
             
             # Perform business logic to create or update Your login and contact details record in database
             login_and_contact_details_record = Login_Contact_Logic(application_id_local, form)
             login_and_contact_details_record.save()
+            
+            application.date_updated = current_date
+            application.save()
             
             # Go to the phone numbers page   
             return HttpResponseRedirect('/contact-phone?id=' + application_id_local)
@@ -184,20 +201,20 @@ def ContactEmailView(request):
 # View for the Your login and contact details task: phone numbers
 def ContactPhoneView(request):
     
+    current_date = datetime.datetime.today()
+    
     if request.method == 'GET':
         
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
+            
+        form = ContactPhone(id = application_id_local)
         
-        # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-        if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
-            
-            status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
-            
-        form = ContactPhone(id = application_id_local)       
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local) 
     
         # Access the task page
-        return render(request, 'contact-phone.html', {'form': form,'application_id': application_id_local})
+        return render(request, 'contact-phone.html', {'form': form,'application_id': application_id_local, 'login_details_status': application.login_details_status})
     
     if request.method == 'POST':
         
@@ -207,15 +224,18 @@ def ContactPhoneView(request):
         # Initialise the Your login and contact details form
         form = ContactPhone(request.POST,id = application_id_local)
         
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
-            
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'login_details_status', 'COMPLETED')
             
             # Perform business logic to create or update Your login and contact details record in database
             login_and_contact_details_record = Login_Contact_Logic_Phone(application_id_local, form)
             login_and_contact_details_record.save()
+            
+            application.date_updated = current_date
+            application.save()
             
             # Return to the application's task list    
             return HttpResponseRedirect('/question?id=' + application_id_local)
@@ -239,16 +259,14 @@ def QuestionView(request):
         
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
+            
+        form = Question(id = application_id_local)  
         
-        # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-        if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
-            
-            status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
-            
-        form = Question(id = application_id_local)       
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)      
     
         # Access the task page
-        return render(request, 'question.html', {'form': form,'application_id': application_id_local})
+        return render(request, 'question.html', {'form': form,'application_id': application_id_local, 'login_details_status': application.login_details_status})
     
     if request.method == 'POST':
         
@@ -260,9 +278,6 @@ def QuestionView(request):
         
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
-            
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'login_details_status', 'COMPLETED')
             
             # Return to the application's task list    
             return HttpResponseRedirect('/contact-summary?id=' + application_id_local)
@@ -287,20 +302,26 @@ def ContactSummaryView(request):
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
         
-        # Retrieve answers
-        email = Login_And_Contact_Details.objects.get(application_id = application_id_local).email
-        mobile_number = Login_And_Contact_Details.objects.get(application_id = application_id_local).mobile_number
-        add_phone_number = Login_And_Contact_Details.objects.get(application_id = application_id_local).add_phone_number
+        # Get associated user login ID
+        login_id = Application.objects.get(pk=application_id_local).login_id.login_id
         
-        # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+        # Retrieve answers
+        email = Login_And_Contact_Details.objects.get(login_id=login_id).email
+        mobile_number = Login_And_Contact_Details.objects.get(login_id=login_id).mobile_number
+        add_phone_number = Login_And_Contact_Details.objects.get(login_id=login_id).add_phone_number
+        
+        # Update the status of the task to 'COMPLETED'
         if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
             
-            status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
+            status.update(application_id_local, 'login_details_status', 'COMPLETED')
             
-        form = ContactSummary()       
+        form = ContactSummary()
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)      
     
         # Access the task page
-        return render(request, 'contact-summary.html', {'form': form,'application_id': application_id_local,'email': email,'mobile_number': mobile_number,'add_phone_number': add_phone_number})
+        return render(request, 'contact-summary.html', {'form': form,'application_id': application_id_local,'email': email,'mobile_number': mobile_number,'add_phone_number': add_phone_number, 'login_details_status': application.login_details_status})
     
     if request.method == 'POST':
         

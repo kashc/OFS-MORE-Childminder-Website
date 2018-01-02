@@ -13,32 +13,77 @@ from uuid import uuid4
 
 
 
-
-# APPLICATIONS entity
-class Application(models.Model):
+# USER_DETAILS entity
+class Login_And_Contact_Details(models.Model):
     
-    STATUS = (
-        ('NOT_STARTED', 'NOT_STARTED'),
-        ('IN_PROGRESS', 'IN_PROGRESS'),
-        ('COMPLETE', 'COMPLETE'),
-    )
-    
-    application_id = models.UUIDField(primary_key = True, default = uuid4)
-    login_details_status = models.CharField(choices = STATUS, max_length = 50)
-    personal_details_status = models.CharField(choices = STATUS, max_length = 50)
-    childcare_type_status = models.CharField(choices = STATUS, max_length = 50)
-    first_aid_training_status = models.CharField(choices = STATUS, max_length = 50)
-    eyfs_training_status = models.CharField(choices = STATUS, max_length = 50)
-    criminal_record_check_status = models.CharField(choices = STATUS, max_length = 50)
-    health_status = models.CharField(choices = STATUS, max_length = 50)
-    references_status = models.CharField(choices = STATUS, max_length = 50)
-    people_in_home_status = models.CharField(choices = STATUS, max_length = 50)
-    declarations_status = models.CharField(choices = STATUS, max_length = 50)
+    login_id = models.UUIDField(primary_key = True, default = uuid4)
+    email = models.CharField(max_length = 100, blank = True)
+    mobile_number = models.CharField(max_length = 11, blank = True)
+    add_phone_number = models.CharField(max_length = 11, blank = True)
+    email_expiry_date = models.DateField(blank = True, null = True)
+    sms_expiry_date = models.DateField(blank = True, null = True)
+    magic_link_email = models.CharField(max_length = 100, blank = True, null = True)
+    magic_link_sms = models.CharField(max_length = 100, blank = True, null = True)
     
     # Set table name
     class Meta:
         
-        db_table = 'APPLICATIONS'
+        db_table = 'USER_DETAILS'
+
+
+# APPLICATION entity
+class Application(models.Model):
+    
+    APP_STATUS = (
+        ('ARC_REVIEW', 'ARC_REVIEW'),
+        ('CANCELLED', 'CANCELLED'),
+        ('CYGNUM_REVIEW', 'CYGNUM_REVIEW'),
+        ('DRAFTING', 'DRAFTING'),
+        ('FURTHER_INFORMATION', 'FURTHER_INFORMATION'),
+        ('NOT_REGISTERED', 'NOT_REGISTERED'),
+        ('REGISTERED', 'REGISTERED'),
+        ('REJECTED', 'REJECTED'),
+        ('SUBMITTED', 'SUBMITTED'),
+        ('WITHDRAWN', 'WITHDRAWN')
+    )
+    
+    APP_TYPE = (
+        ('CHILDMINDER', 'CHILDMINDER'),
+        ('NANNY', 'NANNY'),
+        ('NURSERY', 'NURSERY'),
+        ('SOCIAL_CARE', 'SOCIAL_CARE')
+    )
+    
+    TASK_STATUS = (
+        ('NOT_STARTED', 'NOT_STARTED'),
+        ('IN_PROGRESS', 'IN_PROGRESS'),
+        ('COMPLETE', 'COMPLETE'),
+        ('FURTHER_INFORMATION', 'FURTHER_INFORMATION')
+    )
+    
+    application_id = models.UUIDField(primary_key = True, default = uuid4)
+    login_id = models.ForeignKey(Login_And_Contact_Details, on_delete = models.CASCADE, db_column = 'login_id', blank = True, null = True)
+    application_type = models.CharField(choices = APP_TYPE, max_length = 50, blank = True)
+    application_status = models.CharField(choices = APP_STATUS, max_length = 50, blank = True)
+    cygnum_urn = models.CharField(max_length = 50, blank = True)
+    login_details_status = models.CharField(choices = TASK_STATUS, max_length = 50)
+    personal_details_status = models.CharField(choices = TASK_STATUS, max_length = 50)
+    childcare_type_status = models.CharField(choices = TASK_STATUS, max_length = 50)
+    first_aid_training_status = models.CharField(choices = TASK_STATUS, max_length = 50)
+    eyfs_training_status = models.CharField(choices = TASK_STATUS, max_length = 50)
+    criminal_record_check_status = models.CharField(choices = TASK_STATUS, max_length = 50)
+    health_status = models.CharField(choices = TASK_STATUS, max_length = 50)
+    references_status = models.CharField(choices = TASK_STATUS, max_length = 50)
+    people_in_home_status = models.CharField(choices = TASK_STATUS, max_length = 50)
+    declarations_status = models.CharField(choices = TASK_STATUS, max_length = 50)
+    date_created = models.DateTimeField(blank = True, null = True)
+    date_updated = models.DateTimeField(blank = True, null = True)
+    date_accepted = models.DateTimeField(blank = True, null = True)
+    
+    # Set table name
+    class Meta:
+        
+        db_table = 'APPLICATION'
         
 
 # CHILDCARE_TYPE entity
@@ -56,21 +101,6 @@ class Childcare_Type(models.Model):
         db_table = 'CHILDCARE_TYPE'
 
 
-# LOGIN_AND_CONTACT_DETAILS entity
-class Login_And_Contact_Details(models.Model):
-    
-    login_id = models.UUIDField(primary_key = True, default = uuid4)
-    application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
-    email = models.CharField(max_length = 100, blank = True)
-    mobile_number = models.CharField(max_length = 12, blank = True)
-    add_phone_number = models.CharField(max_length = 12, blank = True)
-    
-    # Set table name
-    class Meta:
-        
-        db_table = 'LOGIN_AND_CONTACT_DETAILS'
-
-
 # APPLICANT_PERSONAL_DETAILS entity
 class Applicant_Personal_Details(models.Model):
     
@@ -86,7 +116,7 @@ class Applicant_Personal_Details(models.Model):
         db_table = 'APPLICANT_PERSONAL_DETAILS'
 
 
-# APPLICANT_NAMES entity
+# APPLICANT_NAME entity
 class Applicant_Names(models.Model):
     
     name_id = models.UUIDField(primary_key = True, default = uuid4)
@@ -99,7 +129,7 @@ class Applicant_Names(models.Model):
     # Set table name
     class Meta:
         
-        db_table = 'APPLICANT_NAMES'
+        db_table = 'APPLICANT_NAME'
 
 
 # APPLICANT_HOME_ADDRESS entity
@@ -169,7 +199,7 @@ class Health_Declaration_Booklet(models.Model):
         db_table = 'HEALTH_DECLARATION_BOOKLET'
 
 
-# REFERENCES entity
+# REFERENCE entity
 class References(models.Model):
     
     reference_id = models.UUIDField(primary_key = True, default = uuid4)
@@ -191,10 +221,10 @@ class References(models.Model):
     # Set table name
     class Meta:
         
-        db_table = 'REFERENCES'
+        db_table = 'REFERENCE'
 
 
-# ADULTS_IN_HOME entity
+# ADULT_IN_HOME entity
 class Adults_In_Home(models.Model):
     
     adult_id = models.UUIDField(primary_key = True, default = uuid4)
@@ -211,10 +241,10 @@ class Adults_In_Home(models.Model):
     
     # Set table name
     class Meta:
-        db_table = 'ADULTS_IN_HOME'
+        db_table = 'ADULT_IN_HOME'
         
 
-# CHILDREN_IN_HOME entity
+# CHILD_IN_HOME entity
 class Children_In_Home(models.Model):
     
     child_id = models.UUIDField(primary_key = True, default = uuid4)
@@ -230,4 +260,4 @@ class Children_In_Home(models.Model):
     # Set table name
     class Meta:
         
-        db_table = 'CHILDREN_IN_HOME'
+        db_table = 'CHILD_IN_HOME'

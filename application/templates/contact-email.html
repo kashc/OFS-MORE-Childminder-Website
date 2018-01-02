@@ -41,7 +41,13 @@
   	    {% csrf_token %}
 	    <input type="submit" class="button" value="Save and continue">
 	    <input type="hidden" name="id" value="{{application_id}}" />
-	</div> 
+	</div>
+	
+	{% if login_details_status == 'COMPLETED' %}
+	<div class="form-group grid-row">
+    	<a href="/task-list?id={{application_id}}">Return to list</a>
+	</div>
+	{% endif %}
 	   
 </form>
 </main>
