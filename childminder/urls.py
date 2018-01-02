@@ -15,7 +15,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.contrib import admin
-from application import views, magic_link
+from application import views, magic_link, payment
 #from application.forms import ContactEmail
 from django.views.generic.edit import FormView
 from functools import partial
@@ -45,5 +45,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^reset/', views.ResetView),
     url(r'^existing-application/',views.existingApplicationView, name='Existing-Application'),
-    url(r'^test/', magic_link.send_email, name='testing'),
+    url(r'^test/', magic_link.start, name='testing'),
+    url(r'^test2/', payment.start)
 ]
