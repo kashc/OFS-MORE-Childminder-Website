@@ -9,15 +9,19 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 from application import status
 
-from .business_logic import Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic, Login_Contact_Logic, Login_Contact_Logic_Phone, Personal_Logic, references_check_logic
+from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic, Login_Contact_Logic, Login_Contact_Logic_Phone,
+                            Personal_Logic, references_check_logic)
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.template import Context
 
-from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PersonalDetails, Question, ReferenceForm, TypeOfChildcare, EmailLogin
+from .forms import (ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTraining,
+                   HealthDeclarationBooklet, OtherPeople, Payment, PersonalDetails, Question, ReferenceForm, TypeOfChildcare, PaymentDetails)
 
-from .models import Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, Login_And_Contact_Details, References
+from .models import (Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, Criminal_Record_Check, First_Aid_Training,
+                    Health_Declaration_Booklet, Login_And_Contact_Details, References)
+
 from django.http.response import HttpResponseNotModified
 
 
@@ -136,11 +140,7 @@ def TypeOfChildcareView(request):
     # Access the task page
     return render(request, 'childcare.html', {'form': form, 'application_id': application_id_local})
 
-def existingApplicationView(request):
-    form = EmailLogin()
-    if request.method =='POST':
-        print (request)
-    return render(request, 'existing-application.html', {'form': form})
+
 # View for the Your login and contact details task: e-mail address
 def ContactEmailView(request):
         
@@ -669,7 +669,7 @@ def PaymentView(request):
         if form.is_valid():
             
             # Stay on the same page
-            return HttpResponseRedirect('/payment/?id=' + application_id_local)
+            return HttpResponseRedirect('/payment-details/?id=' + application_id_local)
     
     # If the Payment form is not completed  
     application_id_local = request.GET["id"]
@@ -678,6 +678,22 @@ def PaymentView(request):
     # Access the page
     return render(request, 'payment.html', {'form': form, 'application_id': application_id_local})
 
+def CardPaymentDetailsView(request):
+    
+    if request.method == 'POST':
+        
+        application_id_local = request.POST["id"]
+        
+        form = PaymentDetails(request.POST)
+        
+        if form.is_valid():
+            
+            return HttpResponseRedirect('/paymentconfirmation/?id=' + application_id_local)
+        
+    application_id_local = request.GET["id"]
+    form = PaymentDetails()
+    
+    return render(request, 'payment-details.html', {'form': form, 'application_id': application_id_local})
 
 # View the Application saved page
 def ApplicationSavedView(request):
@@ -719,5 +735,16 @@ def ResetView(request):
         # Set the progress status to To Do
         status.update(application_id_local, section, 'NOT_STARTED')
      
-     # Access the task list   
+    # Access the task list   
     return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+
+
+
+
+
+#Test View, will change
+def existingApplicationView(request):
+    form = EmailLogin()
+    if request.method =='POST':
+        print (request)
+    return render(request, 'existing-application.html', {'form': form})

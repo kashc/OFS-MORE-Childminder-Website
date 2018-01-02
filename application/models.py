@@ -38,7 +38,7 @@ class Application(models.Model):
     # Set table name
     class Meta:
         
-        db_table = 'APPLICATIONS'
+        db_table = 'APPLICATION'
         
 
 # CHILDCARE_TYPE entity
@@ -99,7 +99,7 @@ class Applicant_Names(models.Model):
     # Set table name
     class Meta:
         
-        db_table = 'APPLICANT_NAMES'
+        db_table = 'APPLICANT_NAME'
 
 
 # APPLICANT_HOME_ADDRESS entity
@@ -191,7 +191,7 @@ class References(models.Model):
     # Set table name
     class Meta:
         
-        db_table = 'REFERENCES'
+        db_table = 'REFERENCE'
 
 
 # ADULTS_IN_HOME entity
@@ -211,7 +211,7 @@ class Adults_In_Home(models.Model):
     
     # Set table name
     class Meta:
-        db_table = 'ADULTS_IN_HOME'
+        db_table = 'ADULT_IN_HOME'
         
 
 # CHILDREN_IN_HOME entity
@@ -230,7 +230,7 @@ class Children_In_Home(models.Model):
     # Set table name
     class Meta:
         
-        db_table = 'CHILDREN_IN_HOME'
+        db_table = 'CHILD_IN_HOME'
 
 
 #Double check both the models below and ensure the match expectations        

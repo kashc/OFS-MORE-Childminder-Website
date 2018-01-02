@@ -339,6 +339,20 @@ class Payment(GOVUKForm):
     
     payment_method = forms.ChoiceField(label='How would you like to pay?', choices=options, widget=RadioSelect)
 
+class PaymentDetails(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    
+    card_type_options = (('visa', 'Visa'), ('mastercard', 'Mastercard'), ('american_express', 'American Express'), ('maestro', 'Maestro'))
+    
+    card_type = forms.ChoiceField(label='Card type', choices=card_type_options)
+    card_number = forms.IntegerField(label = 'Card number')
+    expiry_date = SplitDateField(label='Expiry date')
+    cardholders_name = forms.CharField(label="Cardholders name")
+    card_security_code = forms.IntegerField(label='Card security code')
+    
+
 
 # Application saved form
 class ApplicationSaved(GOVUKForm):
