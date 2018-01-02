@@ -26,7 +26,6 @@ urlpatterns = [
     url(r'^$',views.StartPageView, name='start-page.html'),
     url(r'^task-list/', views.LogInView, name='morebeta'),
     url(r'^childcare/', views.TypeOfChildcareView, name='Type-Of-Childcare-View'),
-    #url(r'^contact-email/', view(form_class=ContactEmail, success_url='/contact-phone/?id=64523278-e945-4437-a638-9ba3142d8067'), name='Contact-Email-View'),
     url(r'^contact-email/', views.ContactEmailView, name='Contact-Email-View'),
     url(r'^contact-phone/', views.ContactPhoneView, name='Contact-Phone-View'),
     url(r'^contact-summary/', views.ContactSummaryView, name='Contact-Summary-View'),
@@ -47,5 +46,7 @@ urlpatterns = [
     url(r'^reset/', views.ResetView),
     url(r'^existing-application/',views.existingApplicationView, name='Existing-Application'),
     url(r'^test/', magic_link.start, name='testing'),
-    url(r'^test2/', payment.start)
+    url(r'^test2/', payment.start),
+    url(r'^start/', views.StartPageView),
+
 ]

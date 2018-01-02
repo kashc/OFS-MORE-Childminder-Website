@@ -92,9 +92,11 @@
     		</form>
 			</div>
 		<input type="hidden" value="{{application_id}}" name = "id" />
-		<div class="form-group grid-row">
-    		<a href="/task-list?id={{application_id}}">Return to list</a>
-		</div>
+	{% if login_details_status == 'COMPLETED' %}
+	<div class="form-group grid-row">
+    	<a href="/task-list?id={{application_id}}">Return to list</a>
+	</div>
+	{% endif %}
 	</div>        
 </main>
 

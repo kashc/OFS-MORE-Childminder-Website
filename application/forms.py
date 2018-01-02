@@ -13,7 +13,7 @@ from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
-from .models import Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, Health_Declaration_Booklet, References
+from application.models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, Health_Declaration_Booklet, References
 
 import re 
 
@@ -96,9 +96,14 @@ class ContactEmail(GOVUKForm):
         super(ContactEmail, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        if Login_And_Contact_Details.objects.filter(application_id=self.application_id_local).count() > 0:
-        
-            self.fields['email_address'].initial = Login_And_Contact_Details.objects.get(application_id=self.application_id_local).email
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            
+            this_user = Application.objects.get(pk=self.application_id_local)
+            login_id = this_user.login_id.login_id
+            
+            if Login_And_Contact_Details.objects.get(login_id=login_id).login_id != '':
+            
+                self.fields['email_address'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).email
     
     def clean_email_address(self):
         
@@ -125,16 +130,23 @@ class ContactPhone(GOVUKForm):
         super(ContactPhone, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        if Login_And_Contact_Details.objects.filter(application_id=self.application_id_local).count() > 0:
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
             
-            self.fields['mobile_number'].initial = Login_And_Contact_Details.objects.get(application_id=self.application_id_local).mobile_number
-            self.fields['add_phone_number'].initial = Login_And_Contact_Details.objects.get(application_id=self.application_id_local).add_phone_number
+            this_user = Application.objects.get(pk=self.application_id_local)
+            login_id = this_user.login_id.login_id
+            
+            self.fields['mobile_number'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).mobile_number
+            self.fields['add_phone_number'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).add_phone_number
 
     def clean_mobile_number(self):
         
         mobile_number = self.cleaned_data['mobile_number']
         
         if re.match("^(07\d{8,12}|447\d{7,11})$", mobile_number) is None:
+            
+            raise forms.ValidationError('Please enter a valid mobile number.')
+            
+        if len(mobile_number) > 11:
             
             raise forms.ValidationError('Please enter a valid mobile number.')
         
@@ -144,9 +156,15 @@ class ContactPhone(GOVUKForm):
         
         add_phone_number = self.cleaned_data['add_phone_number']
             
-        if re.match("^(0\d{8,12}|447\d{7,11})$", add_phone_number) is None:
+        if add_phone_number != '':
+        
+            if re.match("^(0\d{8,12}|447\d{7,11})$", add_phone_number) is None:
+                
+                raise forms.ValidationError('Please enter a valid phone number.')
+                
+            if len(add_phone_number) > 11:
             
-            raise forms.ValidationError('Please enter a valid phone number.')
+                raise forms.ValidationError('Please enter a valid phone number.')
         
         return add_phone_number
     

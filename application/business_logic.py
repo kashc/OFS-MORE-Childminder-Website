@@ -52,19 +52,9 @@ def Login_Contact_Logic(application_id_local, form):
     # Get entered data to insert into database
     email_address = form.cleaned_data.get('email_address')
 
-    # If the user entered information for this task for the first time
-    if Login_And_Contact_Details.objects.filter(application_id=application_id_local).count() == 0:
-            
-        # Create a new Your login and contact details record corresponding to the application
-        login_and_contact_details_record = Login_And_Contact_Details(email=email_address, application_id=this_application)
-            
-    # If the user previously entered information for this task
-    elif Login_And_Contact_Details.objects.filter(application_id=application_id_local).count() > 0:
-                
-        # Retrieve the Your login and contact details record corresponding to the application
-        login_and_contact_details_record = Login_And_Contact_Details.objects.get(application_id=application_id_local)
-        # Update the record
-        login_and_contact_details_record.email = email_address
+    # Update user details record
+    login_and_contact_details_record = this_application.login_id
+    login_and_contact_details_record.email = email_address
 
     return login_and_contact_details_record
 
@@ -79,20 +69,10 @@ def Login_Contact_Logic_Phone(application_id_local, form):
     mobile_number = form.cleaned_data.get('mobile_number')
     add_phone_number = form.cleaned_data.get('add_phone_number')
 
-    # If the user entered information for this task for the first time
-    if Login_And_Contact_Details.objects.filter(application_id=application_id_local).count() == 0:
-            
-        # Create a new Your login and contact details record corresponding to the application
-        login_and_contact_details_record = Login_And_Contact_Details(mobile_number=mobile_number, add_phone_number=add_phone_number, application_id=this_application)
-            
-    # If the user previously entered information for this task
-    elif Login_And_Contact_Details.objects.filter(application_id=application_id_local).count() > 0:
-                
-        # Retrieve the Your login and contact details record corresponding to the application
-        login_and_contact_details_record = Login_And_Contact_Details.objects.get(application_id=application_id_local)
-        # Update the record
-        login_and_contact_details_record.mobile_number = mobile_number
-        login_and_contact_details_record.add_phone_number = add_phone_number
+    # Update user details record
+    login_and_contact_details_record = this_application.login_id
+    login_and_contact_details_record.mobile_number = mobile_number
+    login_and_contact_details_record.add_phone_number = add_phone_number
 
     return login_and_contact_details_record
 
