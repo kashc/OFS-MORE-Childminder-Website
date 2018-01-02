@@ -68,7 +68,7 @@ class Login_And_Contact_Details(models.Model):
     # Set table name
     class Meta:
         
-        db_table = 'LOGIN_AND_CONTACT_DETAILS'
+        db_table = 'USER_DETAILS'
 
 
 # APPLICANT_PERSONAL_DETAILS entity
@@ -238,16 +238,14 @@ class MagicLink(models.Model):
     application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
     expiry_date = models.DateField()
     link = models.CharField(max_length = 100, blank = True)
-    email = models.CharField(max_length = 100, blank = True)
     class Meta:
         
-        db_table = 'Magic_Link'
-        
+        db_table = 'USER_DETAILS'
+#Combine both of these models        
 class SMSLink(models.Model):
     application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
     expiry_date = models.DateField()
     code = models.CharField(max_length = 100, blank = True)
-    mobile_number = models.CharField(max_length = 12, blank = True)
     class Meta:
         
         db_table = 'Magic_Link??'
