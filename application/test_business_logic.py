@@ -89,10 +89,10 @@ class Test_Login_Contact_Logic(TestCase):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         
         # Delete test Login_And_Contact_Details object if it already exists
-        Login_And_Contact_Details.objects.filter(application_id=test_application_id).delete()
+        Application.objects.filter(application_id=test_application_id).delete()
         
         # Verify that the Login_And_Contact_Details object corresponding with the test application does not exist
-        assert(Login_And_Contact_Details.objects.filter(application_id=test_application_id).count() == 0)
+        assert(Application.objects.filter(application_id=test_application_id).count() == 0)
     
     # Test the business case where a record already exists
     def test_logic_to_update_record(self):
@@ -101,7 +101,7 @@ class Test_Login_Contact_Logic(TestCase):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         
         # Delete test Login_And_Contact_Details object if it already exists
-        Login_And_Contact_Details.objects.filter(application_id=test_application_id).delete()
+        Application.objects.filter(application_id=test_application_id).delete()
         
         # Create a test application
         Application.objects.create(
@@ -124,20 +124,23 @@ class Test_Login_Contact_Logic(TestCase):
         # Create a test Login_And_Contact_Details object
         Login_And_Contact_Details.objects.create(
             login_id = (UUID(test_login_id)),
-            application_id = Application.objects.get(application_id=test_application_id),
             email = 'test@gmail.com',
             mobile_number = '',
-            add_phone_number = ''
+            add_phone_number = '',
+            #email_expiry_date = '',
+            #sms_expiry_date = '',
+            #magic_link_email = '',
+            #magic_link_sms = '',
         )
         
         # Verify that the Login_And_Contact_Details object corresponding with the test application exists
-        assert(Login_And_Contact_Details.objects.filter(application_id=test_application_id).count() > 0)
+        assert(Login_And_Contact_Details.objects.filter(login_id=test_login_id).count() > 0)
     
     # Delete test application
     def delete(self):
         
-        Login_And_Contact_Details.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        Login_And_Contact_Details.objects.filter(login_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        Application.objects.filter(login_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
 
 
 # Test business logic to create or update a Your Personal Details record

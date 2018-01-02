@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'childminder.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
+        'NAME': 'postgres_models',
         'USER': 'ofsted',
         'PASSWORD': 'OfstedB3ta',
         'HOST': '130.130.52.132',
