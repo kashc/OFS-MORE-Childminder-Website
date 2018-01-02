@@ -20,6 +20,26 @@
             <div class="form-group">
                 <table id="your-details">
                     <tbody>
+					<tr id="account_details">
+                        <td class="task" style="padding-right: 10px">
+                            <a href="/account/email?id={{application_id}}" >
+                                <span class="task-name">Your login and contact details</span>
+                            </a>
+                        </td>
+                        {% if login_details_status == 'NOT_STARTED' %}
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-in-progress">To do</strong>
+                        </td>
+                        {% elif login_details_status == 'IN_PROGRESS' %}   
+                        <td class="numeric" id="task-status">
+                            <strong class="task-finished task-to-do">Started</strong>
+                        </td>
+                        {% elif login_details_status == 'COMPLETED' %}
+                        <td class="numeric" id="task-status">
+                        	<strong class="task-finished">Done</strong>
+                        </td> 
+                        {% endif %}    
+                    </tr>
                     <tr id="children">
                         <td class="task" style="padding-right: 10px">
                             <a href="/childcare?id={{application_id}}">
@@ -39,27 +59,6 @@
                         	<strong class="task-finished">Done</strong> 
                         </td>  
                         {% endif %}                                                                                                                  
-                    </tr>
-                    <tr id="account_details">
-                        <td class="task" style="padding-right: 10px">
-                            <a href="/contact-email?id={{application_id}}" >
-                                <span class="task-name">Your login and contact details</span>
-                            </a>
-                        </td>
-                        {% if login_details_status == 'NOT_STARTED' %}
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-in-progress">To do</strong>
-                        </td>
-                        {% elif login_details_status == 'IN_PROGRESS' %}   
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-to-do">Started</strong>
-                        </td>
-                        {% elif login_details_status == 'COMPLETED' %}
-                        <td class="numeric" id="task-status">
-                        	<strong class="task-finished">Done</strong>
-                        </td> 
-                        {% endif %}    
-
                     </tr>
                     <tr id="personal_details">
                         <td class="task" style="padding-right: 10px">

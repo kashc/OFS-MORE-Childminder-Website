@@ -193,7 +193,7 @@ def ContactEmailView(request):
             application.save()
             
             # Go to the phone numbers page   
-            return HttpResponseRedirect('/contact-phone?id=' + application_id_local)
+            return HttpResponseRedirect('/account/phone?id=' + application_id_local)
         
         # If there are invalid details
         else:
@@ -242,7 +242,7 @@ def ContactPhoneView(request):
             application.save()
             
             # Return to the application's task list    
-            return HttpResponseRedirect('/question?id=' + application_id_local)
+            return HttpResponseRedirect('/account/question?id=' + application_id_local)
     
         # If there are invalid details
         else:
@@ -284,7 +284,7 @@ def QuestionView(request):
         if form.is_valid():
             
             # Return to the application's task list    
-            return HttpResponseRedirect('/contact-summary?id=' + application_id_local)
+            return HttpResponseRedirect('/account/summary?id=' + application_id_local)
     
         # If there are invalid details
         else:
@@ -342,7 +342,7 @@ def ContactSummaryView(request):
             status.update(application_id_local, 'login_details_status', 'COMPLETED')
             
             # Return to the application's task list    
-            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+            return HttpResponseRedirect('/childcare?id=' + application_id_local)
     
         # If there are invalid details
         else:
