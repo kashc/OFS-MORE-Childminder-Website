@@ -144,16 +144,14 @@ def ContactEmailView(request):
           
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
+            
+        form = ContactEmail(id = application_id_local)
         
-        # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-        if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
-            
-            status.update(application_id_local, 'login_details_status', 'IN_PROGRESS')
-            
-        form = ContactEmail(id = application_id_local)       
+        # Retrieve application from database for Back button logic
+        application = Application.objects.get(pk=application_id_local)
         
         # Access the task page
-        return render(request, 'contact-email.html', {'form': form,'application_id': application_id_local})
+        return render(request, 'contact-email.html', {'form': form,'application_id': application_id_local, 'login_details_status': application.login_details_status})
     
     if request.method =='POST':
         
