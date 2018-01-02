@@ -14,7 +14,7 @@
         	Back
     		</a>
 		</div>
-        <form action="/payment" method="post" class="form">{% csrf_token %}
+        <form action="/payment/" method="post" class="form">{% csrf_token %}
             <div class="grid-row">
                 <h1 class="form-title heading-large">
                     Pay your fee
@@ -28,7 +28,7 @@
             </div>
             <input type="hidden" value="{{application_id}}" name = "id" />
 	            <div class="form-group grid-row">
-	    			<input type="submit" class="button" value="Make payment and apply" disabled>
+	    			<input type="submit" class="button" value="Make payment and apply">
 				</div>
 			<div class="grid-row">
     			<div class="form-group">
