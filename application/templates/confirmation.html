@@ -1,0 +1,84 @@
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+
+<main id="content" role="main">
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <div class="govuk-box-highlight">
+        <h1 class="bold-large">Thank you for applying</h1>
+        <p>
+          Your reference number is<br>
+          <strong class="heading-medium">TO BE ENTERED</strong>
+        </p>
+      </div>
+      <h2 class="heading-medium">Payment summary</h2>
+
+      <div class="form-group">
+        <table class="check-your-answers">
+          <thead>
+          <tr>
+            <th>Item</th>
+            <th>Price</th>
+          </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Register to be a childminder application fee</td>
+              <td>&#163;35.00</td>
+            </tr>
+          </tbody>
+          <tfoot>
+          <tr>
+            <td><span class="bold-small">Total</span> </td>
+            <td><span class="bold-small">&#163;35.00</span> </td>
+          </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <p>We have sent you an email with details of your payment and application.</p>
+      <ul class="list-bullet">
+        <li><a href="">Print this page</a></li>
+        <li><a href="">Print your application</a></li>
+        <li><a href="">Download your application</a></li>
+      </ul>
+
+      <h2 class="heading-medium">What happens next</h2>
+
+      <p>We will start processing your application, and will:</p>
+      <ul class="list-bullet" style="margin-bottom: 20px;">
+        <li>check the information on the form</li>
+        <li>ask for references</li>
+        <li>run background checks with council social services departments</li>
+      </ul>
+
+      <p>This can take several months. It sometimes takes longer.</p>
+
+      <p>We will give you a few days&#39; notice of when an inspector can visit your home.</p>
+
+      <p>The visit usually happens at the very end of the process.</p>
+
+      <h2 class="heading-medium">More about next steps</h2>
+      <ul class="list-bullet">
+        <li><a href="#">Get ready for your registration visit</a></li>
+      </ul>
+
+      <h2 class="heading-medium">Contact us</h2>
+      <p>Contact us if you are still waiting after a few months.</p>
+      <div class="panel panel-border-narrow">
+        <div>Ofsted</div>
+        <div><a href="mailto:enquiries@ofsted.gov.uk">enquiries@ofsted.gov.uk</a></div>
+        <p>Phone: 0300 123 1231</p>
+        <div>Monday to Friday, 8am to 6pm</div>
+        <div><a href="https://www.gov.uk/call-charges" class="external-link">Find out about call charges</a></div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+{% endblock %}

@@ -19,6 +19,7 @@ from application import views, magic_link, payment
 #from application.forms import ContactEmail
 from django.views.generic.edit import FormView
 from functools import partial
+from django.views.generic.base import TemplateView
 
 #view = partial(FormView.as_view, template_name='contact-email.html')
 
@@ -48,5 +49,6 @@ urlpatterns = [
     url(r'^test/', magic_link.start, name='testing'),
     url(r'^test2/', payment.start),
     url(r'^start/', views.StartPageView),
+    url('^confirmation/', TemplateView.as_view(template_name = 'confirmation.html')),
 
 ]

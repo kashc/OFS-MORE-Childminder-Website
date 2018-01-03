@@ -220,7 +220,7 @@ class Test_Personal_Logic(TestCase):
     # Delete test application
     def delete(self):
         
-        Applicant_Names_Details.objects.filter(name_id='6e09fe41-2b07-4177-a5e4-347b2515ea8e').delete()
+        Applicant_Names.objects.filter(name_id='6e09fe41-2b07-4177-a5e4-347b2515ea8e').delete()
         Applicant_Personal_Details.objects.filter(personal_detail_id='166f77f7-c2ee-4550-9461-45b9d2f28d34').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
 

@@ -699,20 +699,46 @@ def PaymentView(request):
 
 def CardPaymentDetailsView(request):
     
+    if request.method == 'GET':
+        
+        # As not data is saved of this, a blank payment form is generated each get request
+        
+        #Get the application
+        application_id_local = request.GET["id"]
+
+                
+        form = PaymentDetails()
+          
+    
+        # Access the task page
+        return render(request, 'payment-details.html', {'form': form,'application_id': application_id_local})
+    
     if request.method == 'POST':
         
+        #Get the application
         application_id_local = request.POST["id"]
-        
+               
+        # Initialise the Your login and contact details form
         form = PaymentDetails(request.POST)
         
+        # If the form is successfully submitted (with valid details)
         if form.is_valid():
             
-            return HttpResponseRedirect('/paymentconfirmation/?id=' + application_id_local)
-        
-    application_id_local = request.GET["id"]
-    form = PaymentDetails()
+            
+            # Return to the application's task list    
+            return HttpResponseRedirect('/confirmation?id=' + application_id_local)
     
-    return render(request, 'payment-details.html', {'form': form, 'application_id': application_id_local})
+        # If there are invalid details
+        else:
+            
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            
+            # Return to the same page
+            return render(request, 'payment-details.html', variables)
+    
 
 # View the Application saved page
 def ApplicationSavedView(request):

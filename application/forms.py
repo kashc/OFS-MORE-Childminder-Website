@@ -7,15 +7,18 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 '''
 
-
+from application.customfields import ExpirySplitDateWidget, ExpirySplitDateField
 from django import forms
+from application.business_logic import get_card_expiry_years
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
-
 from application.models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, Health_Declaration_Booklet, References
 
 import re 
+import string
+
+
 
 
 # Type of childcare form
@@ -361,19 +364,80 @@ class PaymentDetails(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
+    options = (('a', 'Alpha'), ('b', 'Beta'))
+    grouped_options = (
+    ('First', options),
+    ('Second', (('c', 'Gamma'), ('d', 'Delta'))),
+)    
+    
     
     card_type_options = (('visa', 'Visa'), ('mastercard', 'Mastercard'), ('american_express', 'American Express'), ('maestro', 'Maestro'))
     
     card_type = forms.ChoiceField(label='Card type', choices=card_type_options)
-    card_number = forms.IntegerField(label = 'Card number')
-    expiry_date = SplitDateField(label='Expiry date')
+    card_number = forms.CharField(label = 'Card number')
+    expiry_date = ExpirySplitDateField(label = 'Expiry date', widget=ExpirySplitDateWidget)
     cardholders_name = forms.CharField(label="Cardholders name")
-    card_security_code = forms.IntegerField(label='Card security code')
+    card_security_code = forms.CharField(label='Card security code')
+       
+    #Glorious validation
     
-
+    def clean_card_number(self):
+        
+        #Need both of these for below validation
+        card_type = self.cleaned_data['card_type']
+        card_number = self.cleaned_data['card_number']
+        
+        #Strips all spaces and dashes from the card number for regex purposes      
+        card_number = re.sub('[ -]+', '', card_number)
+        
+        #Casts card_number as an integer (it was a string) to see if the user has entered non-numeric characters            
+        try:
+            int(card_number)
+        except:
+            #At the moment this is a catch all error, in the case of there being multiple error types this must be revisited
+            raise forms.ValidationError('Please enter a valid card number')
+    
+        #Card number regex checking by type
+        if card_type == 'visa':    
+            #Actual regex    
+            if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:                                    
+                raise forms.ValidationError('The card number you have entered is not a valid Visa card number')
+        
+        elif card_type == 'mastercard':
+            if re.match("^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$", card_number) is None:
+                raise forms.ValidationError('The card number you have entered is not a valid MasterCard card number')
+        
+        elif card_type == 'american_express':
+            if re.match( "^3[47][0-9]{13}$", card_number) is None:
+                raise forms.ValidationError('The card number you have entered is not a valid American Express card number')
+            
+        elif card_type == 'maestro' :
+            if re.match("^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$", card_number) is None:
+                raise forms.ValidationError('The card number you have entered is not a valid Maestro card number')
+        
+        #Any additions of extra cards can follow the same format
+            
+        return card_number
+        
+    def clean_card_security_code(self):
+        
+        #Get value to be validated
+        card_security_code = self.cleaned_data['card_security_code']
+        
+        try:
+            int(card_security_code)
+        except:
+            raise forms.ValidationError('The card security code you have entered is invalid')
+        if re.match("^[0-9]{3,4}$", card_security_code) is None:
+            raise forms.ValidationError('The card security code you have entered is invalid')
+            
+                
+        
+        
 
 # Application saved form
 class ApplicationSaved(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
+    
