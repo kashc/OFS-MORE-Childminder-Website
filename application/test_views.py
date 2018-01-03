@@ -14,7 +14,7 @@ from .models import Application, Login_And_Contact_Details
 
 from uuid import UUID
 
-from .views import ApplicationSavedView, ConfirmationView, ContactEmailView, ContactPhoneView, ContactSummaryView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingView, HealthView, LogInView, OtherPeopleView, PaymentView, PersonalDetailsView, QuestionView, ReferencesView, StartPageView, TypeOfChildcareView
+from .views import ApplicationSavedView, ConfirmationView, ContactEmailView, ContactPhoneView, ContactSummaryView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingView, HealthView, LogInView, OtherPeopleView, PaymentView, PersonalDetailsNameView, QuestionView, ReferencesView, StartPageView, TypeOfChildcareView
 import datetime
 from application.views import PersonalDetailsGuidanceView
 
@@ -258,12 +258,48 @@ class PersonalDetailsTest(TestCase):
         self.assertEqual(found.func, PersonalDetailsGuidanceView)
    
     # Test to check that a user cannot navigate to the page without an application ID 
-    def test_page_not_displayed_without_id(self):
+    def test_guidance_page_not_displayed_without_id(self):
         
         c = Client()
         
         try:
             c.get('/personal-details/guidance/?id=')
+            self.assertEqual(1,0)
+            
+        except:
+            self.assertEqual(0,0)
+    
+    # Test to check if URL resolves to correct view    
+    def test_name_url_resolves_to_page(self):
+        
+        found = resolve('/personal-details/name/')
+        self.assertEqual(found.func, PersonalDetailsNameView)
+   
+    # Test to check that a user cannot navigate to the page without an application ID 
+    def test_name_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            c.get('/personal-details/name/?id=')
+            self.assertEqual(1,0)
+            
+        except:
+            self.assertEqual(0,0)
+
+    # Test to check if URL resolves to correct view    
+    def test_dob_url_resolves_to_page(self):
+        
+        found = resolve('/personal-details/dob/')
+        self.assertEqual(found.func, PersonalDetailsNameView)
+   
+    # Test to check that a user cannot navigate to the page without an application ID 
+    def test_dob_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            c.get('/personal-details/dob/?id=')
             self.assertEqual(1,0)
             
         except:

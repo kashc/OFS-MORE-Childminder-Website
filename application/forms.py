@@ -13,7 +13,8 @@ from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
-from application.models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, Health_Declaration_Booklet, References
+from application.models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, Health_Declaration_Booklet, References,\
+    Applicant_Home_Address
 
 import re 
 
@@ -202,7 +203,7 @@ class PersonalDetailsGuidance(GOVUKForm):
     auto_replace_widgets = True
 
 
-# Your personal details form    
+# Your personal details form: names   
 class PersonalDetailsName(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
@@ -225,6 +226,48 @@ class PersonalDetailsName(GOVUKForm):
             self.fields['first_name'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).first_name
             self.fields['middle_names'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).middle_names
             self.fields['last_name'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).last_name
+
+
+# Your personal details form: date of birth 
+class PersonalDetailsDOB(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    date_of_birth = SplitDateField(label='Date of birth', help_text='For example, 31 03 1980')
+    
+    def __init__(self, *args, **kwargs):
+        
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsDOB, self).__init__(*args, **kwargs)
+        
+        # If information was previously entered, display it on the form        
+        if Applicant_Personal_Details.objects.filter(application_id=self.application_id_local).count() > 0:
+            
+            self.fields['date_of_birth'].initial = [Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_day,Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_month,Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_year]
+
+
+# Your personal details form: home address   
+class PersonalDetailsHomeAddress(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    postcode = forms.CharField(label = 'Postcode')
+    
+    def __init__(self, *args, **kwargs):
+        
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsHomeAddress, self).__init__(*args, **kwargs)
+        
+        # If information was previously entered, display it on the form
+        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+            
+        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id).count() > 0:
+            
+            personal_detail_id = Applicant_Personal_Details.objects.get(application_id = self.application_id_local).personal_detail_id
+            
+            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id).postcode
 
 
 # First aid training form
