@@ -7,7 +7,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 '''
 
-from application import status
+from application import status, payment
 
 from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic, Login_Contact_Logic, Login_Contact_Logic_Phone,
                             Personal_Logic, references_check_logic)
@@ -25,6 +25,10 @@ from .models import (Applicant_Names, Applicant_Personal_Details, Application, C
 from django.http.response import HttpResponseNotModified
 
 import datetime
+import re
+import json
+
+ 
 
 
 
@@ -724,9 +728,34 @@ def CardPaymentDetailsView(request):
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
             
+            card_number = re.sub('[ -]+', '', request.POST["card_number"]) 
+            cardholders_name = request.POST["cardholders_name"]
+            card_security_code = request.POST["card_security_code"]
+            expiry_month = request.POST["expiry_date_0"]
+            expiry_year = request.POST["expiry_date_1"]
+            payment_response = payment.make_payment(35, cardholders_name, card_number, card_security_code, expiry_month, expiry_year, 'GBP', 'Test', 'Ofsted Test')
+            parsed_payment_response = json.loads(payment_response.text)
+            if payment_response.status_code == 200:
+                #email_response = payment.payment_email('matthew.styles@informed.com', 'Test')
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'order_code': parsed_payment_response["orderCode"],
+                }
+            
+                                                
+                return render(request, 'confirmation.html', variables)
+            else:
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'error_flag': 1,
+                    'error_message': parsed_payment_response["message"],
+                }
+            
             
             # Return to the application's task list    
-            return HttpResponseRedirect('/confirmation?id=' + application_id_local)
+            return render(request, '/payment-details', variables)
     
         # If there are invalid details
         else:
