@@ -268,6 +268,50 @@ class PersonalDetailsHomeAddress(GOVUKForm):
             personal_detail_id = Applicant_Personal_Details.objects.get(application_id = self.application_id_local).personal_detail_id
             
             self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id).postcode
+            
+
+# Your personal details form: home address   
+class PersonalDetailsHomeAddressManual(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    street_name_and_number = forms.CharField(label = 'Street name and number')
+    street_name_and_number2 = forms.CharField(label = 'Street name and number 2')
+    town = forms.CharField(label = 'Town or city')
+    county = forms.CharField(label = 'County (optional)', required=False)
+    postcode = forms.CharField(label = 'Postcode')
+    
+    def __init__(self, *args, **kwargs):
+        
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsHomeAddressManual, self).__init__(*args, **kwargs)
+        
+        # If information was previously entered, display it on the form
+        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+            
+        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id).count() > 0:
+            
+            personal_detail_id = Applicant_Personal_Details.objects.get(application_id = self.application_id_local).personal_detail_id
+            
+            self.fields['street_name_and_number'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id).street_line1
+            self.fields['street_name_and_number2'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id).street_line2
+            self.fields['town'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id).town
+            self.fields['county'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id).county
+            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id).postcode
+    
+    # County validation
+    def clean_county(self):
+        
+        county = self.cleaned_data['county']
+            
+        if county != '':
+        
+            if re.match("^[A-Za-z-]+$", county) is None:
+                
+                raise forms.ValidationError('Please enter a valid county.')
+        
+        return county
 
 
 # First aid training form

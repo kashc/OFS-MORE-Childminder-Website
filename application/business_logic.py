@@ -153,27 +153,32 @@ def Personal_Home_Address_Logic(application_id_local, form):
     this_application = Application.objects.get(application_id=application_id_local)
     
     # Get entered data to insert into the database
+    street_line1 = form.cleaned_data.get('street_name_and_number')
+    street_line2 = form.cleaned_data.get('street_name_and_number2')
+    town = form.cleaned_data.get('town')
+    county = form.cleaned_data.get('county')
     postcode = form.cleaned_data.get('postcode')
     
+    personal_detail_record = Applicant_Personal_Details.objects.get(application_id=this_application)
+    personal_detail_id = personal_detail_record.personal_detail_id
+    
     # If the user entered information for this task for the first time
-    if Applicant_Personal_Details.objects.filter(application_id=application_id_local).count() == 0:
+    if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
         
         # Create a new Applicant_Personal_Details record corresponding to the application, of which the generated personal_details_id will be used        
-        personal_details_record = Applicant_Personal_Details(birth_day=None, birth_month=None, birth_year=None, application_id=this_application)
-        personal_details_record.save()
-        personal_detail_id_local = Applicant_Personal_Details.objects.get(application_id=application_id_local)
-        
-        # Create a new Your personal details record corresponding to the application    
-        home_address_record = Applicant_Home_Address(street_line1='', street_line2='', town='', county ='', country='', childcare_address=False, move_in_month=0, move_in_year=0, postcode=postcode, personal_detail_id=personal_detail_id_local)
+        home_address_record = Applicant_Home_Address(street_line1=street_line1, street_line2=street_line2, town=town, county=county, country='United Kingdom', postcode=postcode, childcare_address=False, move_in_month=0, move_in_year=0, personal_detail_id=personal_detail_record)
+        home_address_record.save()
             
     # If a record exists, update it
-    elif Applicant_Personal_Details.objects.filter(application_id=application_id_local).count() > 0:
+    elif Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id).count() > 0:
         
-        # Retrieve the personal_details_id corresponding to the application       
-        personal_detail_id_local = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
         # Retrieve the Your personal details record corresponding to the application
-        home_address_record = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id_local)
+        home_address_record = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id)
         # Update the record
+        home_address_record.street_line1 = street_line1
+        home_address_record.street_line2 = street_line2
+        home_address_record.town = town
+        home_address_record.county = county
         home_address_record.postcode = postcode
     
     return home_address_record

@@ -10,6 +10,9 @@
 
 {% block inner_content %}
 
+<!-- Initialise error summary for page -->
+{{form.error_summary}}
+
 <main id="content" role="main">
 	<div class="column-full">
 		<div class="form-group grid-row" style="padding-top: 30px;">
@@ -30,17 +33,33 @@
            		<h1 class="form-title heading-large">
                		Your home address
            		</h1>
-           		<legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
+           		<legend id='{{form.street_name_and_number.id_for_label}}-label' class="form-label-bold">{{form.street_name_and_number.label}}</legend>
+           		{{form.street_name_and_number}}
+           		</br>
+           		</br>
+           		<legend id='{{form.street_name_and_number2.id_for_label}}-label' class="form-label-bold"></legend>
+           		{{form.street_name_and_number2}}
+           		</br>
+           		</br>
+           		<legend id='{{form.town.id_for_label}}-label' class="form-label-bold">{{form.town.label}}</legend>
+           		{{form.town}}
+           		</br>
+           		</br>
+           		<legend id='{{form.county.id_for_label}}-label' class="form-label-bold">{{form.county.label}}</legend>
+           		{{form.county}}
+           		</br>
+           		</br>
+           		<legend id='{{form.street_name_and_number.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
            		{{form.postcode}}
   	    		{% csrf_token %}
-				</br>
-  	    		</br>
-  	    		<a href="/personal-details/home-address?id={{application_id}}&manual=True" name="manual" id="manual">Enter address manually</a>
   	    		</br>
   	    		</br>
-  	    		<input type="submit" class="button button-search" value="Find postcode" alt='Continue to declaration'>
+  	    		<a href="/personal-details/home-address?id={{application_id}}&manual=False" name="manual" id="manual">Use postcode search</a>
+  	    		</br>
+  	    		</br>
+	    		<input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
 	    		<input type="hidden" id="id" name="id" value="{{application_id}}" />
-	    		<input type="hidden" id="manual" name="manual" value="False" />
+	    		<input type="hidden" id="manual" name="manual" value="True" />
     		</div>
     		</br>
     		<!-- Return to task list -->

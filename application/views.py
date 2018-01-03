@@ -13,7 +13,7 @@ from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Lo
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetailsDOB, PersonalDetailsName, PersonalDetailsGuidance, PersonalDetailsHomeAddress, Question, ReferenceForm, TypeOfChildcare
+from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetailsDOB, PersonalDetailsName, PersonalDetailsGuidance, PersonalDetailsHomeAddress, PersonalDetailsHomeAddressManual, Question, ReferenceForm, TypeOfChildcare
 
 from .models import Application, Login_And_Contact_Details
 
@@ -504,7 +504,7 @@ def PersonalDetailsDOBView(request):
             application.save()
             
             # Return to the application's task list    
-            return HttpResponseRedirect('/personal-details/home-address?id=' + application_id_local)
+            return HttpResponseRedirect('/personal-details/home-address?id=' + application_id_local + '&manual=False')
     
         # If there are invalid details
         else:
@@ -528,55 +528,85 @@ def PersonalDetailsHomeAddressView(request):
         
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
-            
-        form = PersonalDetailsHomeAddress(id = application_id_local)
+        manual = request.GET["manual"]
         
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-    
-        # Access the task page
-        return render(request, 'personal-details-home-address.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+        if manual == 'False':    
+            
+            form = PersonalDetailsHomeAddress(id = application_id_local)
+            
+            # Retrieve application from database for Back button/Return to list link logic
+            application = Application.objects.get(pk=application_id_local)
+        
+            # Access the task page
+            return render(request, 'personal-details-home-address.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+        
+        elif manual == 'True':    
+            
+            form = PersonalDetailsHomeAddressManual(id = application_id_local)
+            
+            # Retrieve application from database for Back button/Return to list link logic
+            application = Application.objects.get(pk=application_id_local)
+        
+            # Access the task page
+            return render(request, 'personal-details-home-address-manual.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
     
     if request.method == 'POST':
         
         # Retrieve the application's ID
         application_id_local = request.POST["id"]
+        manual = request.POST["manual"]
         
-        # Initialise the Your login and contact details form
-        form = PersonalDetailsHomeAddress(request.POST,id = application_id_local)
+        if manual == 'False':
         
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-        
-        # If the form is successfully submitted (with valid details)
-        if form.is_valid():
+            # Initialise the Your login and contact details form
+            form = PersonalDetailsHomeAddress(request.POST,id = application_id_local)
             
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'personal_details_status', 'COMPLETED')
-            
-            # Perform business logic to create or update Your personal details record in database
-            home_address_record = Personal_Home_Address_Logic(application_id_local, form)
-            home_address_record.save()
-
-            # Update application date updated
+            # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
-            application.date_updated = current_date
-            application.save()
             
-            # Return to the application's task list    
-            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+            # If the form is successfully submitted (with valid details)
+            if form.is_valid():
+                
+                # Return to the application's task list    
+                return HttpResponseRedirect('/personal-details/home-address/?id=' + application_id_local + '&manual=False')
+            
+            else: 
+            
+                # Access the task page
+                return render(request, 'personal-details-home-address.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+            
+        if manual == 'True':
+        
+            # Initialise the Your login and contact details form
+            form = PersonalDetailsHomeAddressManual(request.POST,id = application_id_local)
+            
+            # Retrieve application from database for Back button/Return to list link logic
+            application = Application.objects.get(pk=application_id_local)
+            
+            # If the form is successfully submitted (with valid details)
+            if form.is_valid():
+                
+                # Update the status of the task to 'COMPLETED'
+                status.update(application_id_local, 'personal_details_status', 'COMPLETED')
+                
+                # Perform business logic to create or update Your personal details record in database
+                home_address_record = Personal_Home_Address_Logic(application_id_local, form)
+                home_address_record.save()
     
-        # If there are invalid details
-        else:
+                # Update application date updated
+                application = Application.objects.get(pk=application_id_local)
+                application.date_updated = current_date
+                application.save()
+                
+                # Return to the application's task list    
+                return HttpResponseRedirect('/task-list?id=' + application_id_local)
             
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
+            else: 
             
-            # Return to the same page
-            return render(request, 'personal-details-home-address.html', variables)
-
+                # Access the task page
+                return render(request, 'personal-details-home-address-manual.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})   
+        
+            
 
 # View for the First aid training task
 def FirstAidTrainingView(request):
