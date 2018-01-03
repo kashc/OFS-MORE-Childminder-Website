@@ -1,6 +1,4 @@
 '''
-Created on 7 Dec 2017
-
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Views --
 
@@ -13,16 +11,11 @@ from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Lo
                             Personal_Logic, references_check_logic)
 
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
-from django.template import Context
+from django.shortcuts import render
 
-from .forms import (ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTraining,
-                   HealthDeclarationBooklet, OtherPeople, Payment, PersonalDetails, Question, ReferenceForm, TypeOfChildcare, PaymentDetails)
+from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetails, Question, ReferenceForm, TypeOfChildcare
 
-from .models import (Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, Criminal_Record_Check, First_Aid_Training,
-                    Health_Declaration_Booklet, Login_And_Contact_Details, References)
-
-from django.http.response import HttpResponseNotModified
+from .models import Application, Login_And_Contact_Details
 
 import datetime
 
@@ -156,6 +149,7 @@ def TypeOfChildcareView(request):
 # View for the Your login and contact details task: e-mail address
 def ContactEmailView(request):
     
+    # Get current date and time
     current_date = datetime.datetime.today()
         
     if request.method =='GET':
@@ -189,6 +183,7 @@ def ContactEmailView(request):
             login_and_contact_details_record = Login_Contact_Logic(application_id_local, form)
             login_and_contact_details_record.save()
             
+            # Update application date updated
             application.date_updated = current_date
             application.save()
             
@@ -205,6 +200,7 @@ def ContactEmailView(request):
 # View for the Your login and contact details task: phone numbers
 def ContactPhoneView(request):
     
+    # Get current date and time
     current_date = datetime.datetime.today()
     
     if request.method == 'GET':
@@ -238,6 +234,7 @@ def ContactPhoneView(request):
             login_and_contact_details_record = Login_Contact_Logic_Phone(application_id_local, form)
             login_and_contact_details_record.save()
             
+            # Update application date updated
             application.date_updated = current_date
             application.save()
             
@@ -258,6 +255,9 @@ def ContactPhoneView(request):
 
 # View for the Your login and contact details task: knowledge-based question
 def QuestionView(request):
+    
+    # Get current date and time
+    current_date = datetime.datetime.today()
     
     if request.method == 'GET':
         
@@ -358,7 +358,10 @@ def ContactSummaryView(request):
 
 # View for the Your personal details task
 def PersonalDetailsView(request):
-    
+
+    # Get current date and time
+    current_date = datetime.datetime.today()
+
     if request.method =='POST':
         
         #Retrieve the application's ID
@@ -376,6 +379,11 @@ def PersonalDetailsView(request):
             # Perform business logic to create or update Your personal details record in database
             applicant_names_record = Personal_Logic(application_id_local, form)
             applicant_names_record.save()
+
+            # Update application date updated
+            application = Application.objects.get(pk=application_id_local)
+            application.date_updated = current_date
+            application.save()
         
         # Return to the application's task list
         return HttpResponseRedirect('/task-list?id=' + application_id_local)
@@ -396,6 +404,9 @@ def PersonalDetailsView(request):
 
 # View for the First aid training task
 def FirstAidTrainingView(request):
+
+    # Get current date and time
+    current_date = datetime.datetime.today()
     
     if request.method =='POST':
         
@@ -414,6 +425,11 @@ def FirstAidTrainingView(request):
             # Perform business logic to create or update First aid training record in database
             first_aid_training_record = First_Aid_Logic(application_id_local, form)
             first_aid_training_record.save()
+
+            # Update application date updated
+            application = Application.objects.get(pk=application_id_local)
+            application.date_updated = current_date
+            application.save()
     
         # Return to the application's task list   
         return HttpResponseRedirect('/task-list/?id=' + application_id_local)
@@ -434,7 +450,7 @@ def FirstAidTrainingView(request):
 
 # View for the Early Years knowledge task
 def EYFSView(request):
-    
+   
     if request.method == 'POST':
         
         # Retrieve the application's ID
@@ -468,7 +484,10 @@ def EYFSView(request):
 
 # View for the Your criminal record (DBS) check task
 def DBSCheckView(request):
-    
+
+    # Get current date and time
+    current_date = datetime.datetime.today()
+   
     if request.method =='POST':
         
         # Retrieve the application's ID
@@ -486,6 +505,11 @@ def DBSCheckView(request):
             # Perform business logic to create or update Your criminal record (DBS) check record in database
             dbs_check_record = dbs_check_logic(application_id_local, form)
             dbs_check_record.save()
+
+            # Update application date updated
+            application = Application.objects.get(pk=application_id_local)
+            application.date_updated = current_date
+            application.save()
             
         # Return to the application's task list
         return HttpResponseRedirect('/task-list/?id=' + application_id_local)
@@ -507,6 +531,9 @@ def DBSCheckView(request):
 # View for the Your health task
 def HealthView(request):
     
+    # Get current date and time
+    current_date = datetime.datetime.today()
+    
     if request.method == 'POST':
         
         # Retrieve the application's ID
@@ -524,6 +551,11 @@ def HealthView(request):
             # Perform business logic to create or update Your health record in database            
             health_record = health_check_logic(application_id_local, form)
             health_record.save()
+
+            # Update application date updated
+            application = Application.objects.get(pk=application_id_local)
+            application.date_updated = current_date
+            application.save()
             
         # Return to the application's task list
         return HttpResponseRedirect('/task-list/?id=' + application_id_local)
@@ -544,6 +576,9 @@ def HealthView(request):
 
 # View for the 2 references task
 def ReferencesView(request):
+
+    # Get current date and time
+    current_date = datetime.datetime.today()
     
     if request.method == 'POST':
         
@@ -562,6 +597,11 @@ def ReferencesView(request):
             # Perform business logic to create or update 2 references record in database              
             references_record = references_check_logic(application_id_local, form)
             references_record.save()
+
+            # Update application date updated
+            application = Application.objects.get(pk=application_id_local)
+            application.date_updated = current_date
+            application.save()
 
         # Return to the application's task list            
         return HttpResponseRedirect('/task-list/?id=' + application_id_local)
@@ -697,6 +737,8 @@ def PaymentView(request):
     # Access the page
     return render(request, 'payment.html', {'form': form, 'application_id': application_id_local})
 
+
+
 def CardPaymentDetailsView(request):
     
     if request.method == 'POST':
@@ -713,6 +755,7 @@ def CardPaymentDetailsView(request):
     form = PaymentDetails()
     
     return render(request, 'payment-details.html', {'form': form, 'application_id': application_id_local})
+
 
 # View the Application saved page
 def ApplicationSavedView(request):

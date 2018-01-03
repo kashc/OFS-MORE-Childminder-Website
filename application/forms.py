@@ -73,6 +73,7 @@ class TypeOfChildcare(forms.Form):
             elif (zero_to_five_status == False) & (five_to_eight_status == False) & (eight_plus_status == False):
                 self.fields['type_of_childcare'].initial = []
 
+
 class EmailLogin(forms.ModelForm):
     
     field_label_classes = 'form-label-bold'
@@ -81,6 +82,7 @@ class EmailLogin(forms.ModelForm):
         model = Login_And_Contact_Details
         fields = ('email',)
         email_address = forms.EmailField()
+
 
 # Your login and contact details form: e-mail address   
 class ContactEmail(GOVUKForm):
@@ -105,6 +107,7 @@ class ContactEmail(GOVUKForm):
             
                 self.fields['email_address'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).email
     
+    # Email address validation
     def clean_email_address(self):
         
         email_address = self.cleaned_data['email_address']
@@ -138,6 +141,7 @@ class ContactPhone(GOVUKForm):
             self.fields['mobile_number'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).mobile_number
             self.fields['add_phone_number'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).add_phone_number
 
+    # Mobile number validation
     def clean_mobile_number(self):
         
         mobile_number = self.cleaned_data['mobile_number']
@@ -152,6 +156,7 @@ class ContactPhone(GOVUKForm):
         
         return mobile_number
 
+    # Phone number validation
     def clean_add_phone_number(self):
         
         add_phone_number = self.cleaned_data['add_phone_number']
@@ -169,13 +174,6 @@ class ContactPhone(GOVUKForm):
         return add_phone_number
     
 
-# Your login and contact details form: summary page  
-class ContactSummary(GOVUKForm):
-    
-    field_label_classes = 'form-label-bold'
-    auto_replace_widgets = True
-    
-
 # Your login and contact details form: knowledge-based question 
 class Question(GOVUKForm):
     
@@ -188,6 +186,13 @@ class Question(GOVUKForm):
         
         self.application_id_local = kwargs.pop('id')
         super(Question, self).__init__(*args, **kwargs)
+        
+
+# Your login and contact details form: summary page  
+class ContactSummary(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
 
 
 # Your personal details form    
