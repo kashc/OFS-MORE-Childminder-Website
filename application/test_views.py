@@ -16,6 +16,7 @@ from uuid import UUID
 
 from .views import ApplicationSavedView, ConfirmationView, ContactEmailView, ContactPhoneView, ContactSummaryView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingView, HealthView, LogInView, OtherPeopleView, PaymentView, PersonalDetailsView, QuestionView, ReferencesView, StartPageView, TypeOfChildcareView
 import datetime
+from application.views import PersonalDetailsGuidanceView
 
 
 
@@ -251,10 +252,10 @@ class LoginAndContactDetailsTest(TestCase):
 class PersonalDetailsTest(TestCase):
 
     # Test to check if URL resolves to correct view    
-    def test_url_resolves_to_page(self):
+    def test_guidance_url_resolves_to_page(self):
         
-        found = resolve('/personal-details/')
-        self.assertEqual(found.func, PersonalDetailsView)
+        found = resolve('/personal-details/guidance/')
+        self.assertEqual(found.func, PersonalDetailsGuidanceView)
    
     # Test to check that a user cannot navigate to the page without an application ID 
     def test_page_not_displayed_without_id(self):
@@ -262,7 +263,7 @@ class PersonalDetailsTest(TestCase):
         c = Client()
         
         try:
-            c.get('/personal-details/?id=')
+            c.get('/personal-details/guidance/?id=')
             self.assertEqual(1,0)
             
         except:

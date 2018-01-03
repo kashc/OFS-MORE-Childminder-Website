@@ -13,14 +13,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from django.views.generic import TemplateView
 from django.contrib import admin
 from application import views, magic_link, payment
-#from application.forms import ContactEmail
-from django.views.generic.edit import FormView
-from functools import partial
 
-#view = partial(FormView.as_view, template_name='contact-email.html')
 
 urlpatterns = [
     url(r'^$',views.StartPageView, name='start-page.html'),
@@ -31,7 +26,7 @@ urlpatterns = [
     url(r'^account/summary/', views.ContactSummaryView, name='Contact-Summary-View'),
     url(r'^account/question/', views.QuestionView, name='Question-View'),
     url(r'^personal-details/guidance/', views.PersonalDetailsGuidanceView, name='Personal-Details-Guidance-View'),
-    url(r'^personal-details/', views.PersonalDetailsView, name='Personal-Details-View'),
+    url(r'^personal-details/name/', views.PersonalDetailsNameView, name='Personal-Details-Name-View'),
     url(r'^first-aid/', views.FirstAidTrainingView, name='First-Aid-Training-View'),
     url(r'^eyfs/', views.EYFSView, name='EYFS-View'),
     url(r'^dbs-check/', views.DBSCheckView, name='DBS-Check-View'),

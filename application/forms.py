@@ -203,22 +203,19 @@ class PersonalDetailsGuidance(GOVUKForm):
 
 
 # Your personal details form    
-class PersonalDetails(GOVUKForm):
+class PersonalDetailsName(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    
-    options = (('yes', 'Yes'), ('no', 'No'))
 
     first_name = forms.CharField(label = 'First name')
-    middle_names = forms.CharField(label = 'Middle names (optional)', required = False)
+    middle_names = forms.CharField(label = 'Middle names (if you have any)', required = False)
     last_name = forms.CharField(label = 'Last name')
-    name_change = forms.ChoiceField(label = 'Have you ever changed your name?', choices = options, widget = InlineRadioSelect)
     
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(PersonalDetails, self).__init__(*args, **kwargs)
+        super(PersonalDetailsName, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form        
         if Applicant_Personal_Details.objects.filter(application_id=self.application_id_local).count() > 0:
@@ -228,7 +225,6 @@ class PersonalDetails(GOVUKForm):
             self.fields['first_name'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).first_name
             self.fields['middle_names'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).middle_names
             self.fields['last_name'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).last_name
-            self.fields['name_change'].initial = 'yes'
 
 
 # First aid training form

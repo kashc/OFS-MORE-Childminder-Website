@@ -13,7 +13,7 @@ from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Lo
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetails, PersonalDetailsGuidance, Question, ReferenceForm, TypeOfChildcare
+from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetailsName, PersonalDetailsGuidance, Question, ReferenceForm, TypeOfChildcare
 
 from .models import Application, Login_And_Contact_Details
 
@@ -256,9 +256,6 @@ def ContactPhoneView(request):
 # View for the Your login and contact details task: knowledge-based question
 def QuestionView(request):
     
-    # Get current date and time
-    current_date = datetime.datetime.today()
-    
     if request.method == 'GET':
         
         # If the Your login and contact details form is not completed
@@ -358,54 +355,80 @@ def ContactSummaryView(request):
 
 # View for the Your personal details task: guidance
 def PersonalDetailsGuidanceView(request):
-   
+        
+    if request.method =='GET':
+          
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+            
+        form = PersonalDetailsGuidance()
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
+        # Access the task page
+        return render(request, 'personal-details-guidance.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+    
+    if request.method =='POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Your login and contact details form
+        form = PersonalDetailsGuidance(request.POST)
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed    
+            if  Application.objects.get(pk = application_id_local).personal_details_status != 'COMPLETED':
+                status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+            
+            # Go to the phone numbers page   
+            return HttpResponseRedirect('/personal-details/name?id=' + application_id_local)
+        
+        # If there are invalid details
+        else:
+            
+            # Return to the same page
+            return render(request, 'personal-details-guidance.html', {'form': form,'application_id': application_id_local})
+
+
+# View for the Your personal details task
+def PersonalDetailsNameView(request):
+
+    # Get current date and time
+    current_date = datetime.datetime.today()
+    
+    if request.method == 'GET':
+        
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+            
+        form = PersonalDetailsName(id = application_id_local)
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+    
+        # Access the task page
+        return render(request, 'personal-details-name.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+    
     if request.method == 'POST':
         
         # Retrieve the application's ID
         application_id_local = request.POST["id"]
         
-        # Initialise the Personal Details Guidance form
-        form = PersonalDetailsGuidance(request.POST)
+        # Initialise the Your login and contact details form
+        form = PersonalDetailsName(request.POST,id = application_id_local)
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
         
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
-            
-            # Update the status of the task to 'IN_PROGRESS'
-            status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-            
-        # Return to the application's task list    
-        return HttpResponseRedirect('/personal-details/name?id=' + application_id_local)
-    
-    # If the Personal Details Guidance form is not completed
-    application_id_local = request.GET["id"]
-
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if  Application.objects.get(pk = application_id_local).personal_details_status != 'COMPLETED':
-        
-        status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-    
-    form = PersonalDetailsGuidance()
-    
-    # Access the task page
-    return render(request, 'personal-details-guidance.html', {'application_id': application_id_local})
-
-
-# View for the Your personal details task
-def PersonalDetailsView(request):
-
-    # Get current date and time
-    current_date = datetime.datetime.today()
-
-    if request.method =='POST':
-        
-        #Retrieve the application's ID
-        application_id_local = request.POST["id"]
-        
-        # Initialise the Your personal details form
-        form = PersonalDetails(request.POST, id = application_id_local)
-        
-        # If the form is successfully submitted (with valid details)
-        if form.is_valid():            
             
             # Update the status of the task to 'COMPLETED'
             status.update(application_id_local, 'personal_details_status', 'COMPLETED')
@@ -418,22 +441,21 @@ def PersonalDetailsView(request):
             application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
-        
-        # Return to the application's task list
-        return HttpResponseRedirect('/task-list?id=' + application_id_local)
-
-    # If the Your personal detaails form is not completed
-    application_id_local = request.GET["id"]
-
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
-        
-        status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+            
+            # Return to the application's task list    
+            return HttpResponseRedirect('/task-list?id=' + application_id_local)
     
-    form = PersonalDetails(id = application_id_local)
-    
-    # Access the task page
-    return render(request, 'personal-details.html', {'form': form,'application_id': application_id_local})
+        # If there are invalid details
+        else:
+            
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            
+            # Return to the same page
+            return render(request, 'personal-details-name.html', variables)
+
 
 
 # View for the First aid training task
