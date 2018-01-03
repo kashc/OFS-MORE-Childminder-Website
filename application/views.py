@@ -13,7 +13,7 @@ from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Lo
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetails, Question, ReferenceForm, TypeOfChildcare
+from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetails, PersonalDetailsGuidance, Question, ReferenceForm, TypeOfChildcare
 
 from .models import Application, Login_And_Contact_Details
 
@@ -325,7 +325,7 @@ def ContactSummaryView(request):
         application = Application.objects.get(pk=application_id_local)      
     
         # Access the task page
-        return render(request, 'contact-summary.html', {'form': form,'application_id': application_id_local,'email': email,'mobile_number': mobile_number,'add_phone_number': add_phone_number, 'login_details_status': application.login_details_status})
+        return render(request, 'contact-summary.html', {'form': form,'application_id': application_id_local,'email': email,'mobile_number': mobile_number,'add_phone_number': add_phone_number, 'login_details_status': application.login_details_status, 'childcare_type_status': application.childcare_type_status})
     
     if request.method == 'POST':
         
@@ -354,6 +354,40 @@ def ContactSummaryView(request):
             
             # Return to the same page
             return render(request, 'contact-summary.html', variables)
+
+
+# View for the Your personal details task: guidance
+def PersonalDetailsGuidanceView(request):
+   
+    if request.method == 'POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Personal Details Guidance form
+        form = PersonalDetailsGuidance(request.POST)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'IN_PROGRESS'
+            status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+            
+        # Return to the application's task list    
+        return HttpResponseRedirect('/personal-details/name?id=' + application_id_local)
+    
+    # If the Personal Details Guidance form is not completed
+    application_id_local = request.GET["id"]
+
+    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+    if  Application.objects.get(pk = application_id_local).personal_details_status != 'COMPLETED':
+        
+        status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+    
+    form = PersonalDetailsGuidance()
+    
+    # Access the task page
+    return render(request, 'personal-details-guidance.html', {'application_id': application_id_local})
 
 
 # View for the Your personal details task

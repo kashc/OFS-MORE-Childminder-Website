@@ -92,10 +92,18 @@
 		</table>
 		<br>
 		<div class="form-group grid-row">
-			<form action ="/childcare?id={{application_id}}" method="get">
-				<input type="submit" class="button" value="Confirm and continue" />
-				<input type="hidden" value="{{application_id}}" name = "id" />
-    		</form>
+			{% if childcare_type_status == 'COMPLETED' %}
+				<form action ="/task-list?id={{application_id}}" method="get">
+					<input type="submit" class="button" value="Confirm and continue" />
+					<input type="hidden" value="{{application_id}}" name = "id" />
+	    		</form>
+	    	{% endif %}
+	    	{% if childcare_type_status != 'COMPLETED' %}
+				<form action ="/childcare?id={{application_id}}" method="get">
+					<input type="submit" class="button" value="Confirm and continue" />
+					<input type="hidden" value="{{application_id}}" name = "id" />
+	    		</form>
+	    	{% endif %}
 		</div>
 		<br>
 	</div>      

@@ -193,6 +193,13 @@ class ContactSummary(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
+    
+
+# Your personal details form: guidance page  
+class PersonalDetailsGuidance(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
 
 
 # Your personal details form    

@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^account/phone/', views.ContactPhoneView, name='Contact-Phone-View'),
     url(r'^account/summary/', views.ContactSummaryView, name='Contact-Summary-View'),
     url(r'^account/question/', views.QuestionView, name='Question-View'),
+    url(r'^personal-details/guidance/', views.PersonalDetailsGuidanceView, name='Personal-Details-Guidance-View'),
     url(r'^personal-details/', views.PersonalDetailsView, name='Personal-Details-View'),
     url(r'^first-aid/', views.FirstAidTrainingView, name='First-Aid-Training-View'),
     url(r'^eyfs/', views.EYFSView, name='EYFS-View'),
