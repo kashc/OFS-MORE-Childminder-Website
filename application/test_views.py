@@ -1,6 +1,4 @@
 '''
-Created on 15 Dec 2017
-
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Views Unit Tests --
 
@@ -16,7 +14,7 @@ from .models import Application, Login_And_Contact_Details
 
 from uuid import UUID
 
-from .views import ApplicationSavedView, ConfirmationView, ContactEmailView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingView, HealthView, LogInView, OtherPeopleView, PaymentView, PersonalDetailsView, ReferencesView, StartPageView, TypeOfChildcareView
+from .views import ApplicationSavedView, ConfirmationView, ContactEmailView, ContactPhoneView, ContactSummaryView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingView, HealthView, LogInView, OtherPeopleView, PaymentView, PersonalDetailsView, QuestionView, ReferencesView, StartPageView, TypeOfChildcareView
 import datetime
 
 
@@ -46,7 +44,7 @@ class TaskListTest(TestCase):
         c = Client()
         
         try:
-            response = c.get('/task-list/?id=')
+            c.get('/task-list/?id=')
             self.assertEqual(1,0)
             
         except:
@@ -68,7 +66,7 @@ class TypeOfChildcareTest(TestCase):
         c = Client()
         
         try:
-            response = c.get('/childcare/?id=')
+            c.get('/childcare/?id=')
             self.assertEqual(1,0)
             
         except:
@@ -94,7 +92,7 @@ class TypeOfChildcareTest(TestCase):
         )
         
         # Create a test application
-        application = Application.objects.create(
+        Application.objects.create(
             application_id = (UUID(test_application_id)),
             login_id = user,
             application_type = 'CHILDMINDER',
@@ -109,7 +107,7 @@ class TypeOfChildcareTest(TestCase):
             health_status = 'COMPLETED',
             references_status = 'COMPLETED',
             people_in_home_status = 'COMPLETED',
-            declarations_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
             date_created = datetime.datetime.today(),
             date_updated = datetime.datetime.today(),
             date_accepted = None
@@ -128,22 +126,76 @@ class TypeOfChildcareTest(TestCase):
 class LoginAndContactDetailsTest(TestCase):
 
     # Test to check if URL resolves to correct view    
-    def test_url_resolves_to_page(self):
+    def test_url_resolves_to_email_page(self):
         
         found = resolve('/account/email/')
         self.assertEqual(found.func, ContactEmailView)
 
     # Test to check that a user cannot navigate to the page without an application ID  
-    def test_page_not_displayed_without_id(self):
+    def test_email_page_not_displayed_without_id(self):
         
         c = Client()
         
         try:
-            response = c.get('/contact-email/?id=')
+            c.get('/account/email/?id=')
             self.assertEqual(1,0)
             
         except:
-            self.assertEqual(0,0)  
+            self.assertEqual(0,0)
+
+    # Test to check if URL resolves to correct view    
+    def test_url_resolves_to_phone_page(self):
+        
+        found = resolve('/account/phone/')
+        self.assertEqual(found.func, ContactPhoneView)
+
+    # Test to check that a user cannot navigate to the page without an application ID  
+    def test_phone_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            c.get('/account/phone/?id=')
+            self.assertEqual(1,0)
+            
+        except:
+            self.assertEqual(0,0) 
+
+    # Test to check if URL resolves to correct view    
+    def test_url_resolves_to_question_page(self):
+        
+        found = resolve('/account/question/')
+        self.assertEqual(found.func, QuestionView)
+
+    # Test to check that a user cannot navigate to the page without an application ID  
+    def test_question_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            c.get('/account/question/?id=')
+            self.assertEqual(1,0)
+            
+        except:
+            self.assertEqual(0,0)
+
+    # Test to check if URL resolves to correct view    
+    def test_url_resolves_to_summary_page(self):
+        
+        found = resolve('/account/summary/')
+        self.assertEqual(found.func, ContactSummaryView)
+
+    # Test to check that a user cannot navigate to the page without an application ID  
+    def test_summary_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            c.get('/account/summary/?id=')
+            self.assertEqual(1,0)
+            
+        except:
+            self.assertEqual(0,0) 
     
     # Test progress status does not update to Started when a returning to the task list after completing a task
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
@@ -165,7 +217,7 @@ class LoginAndContactDetailsTest(TestCase):
         )
         
         # Create a test application
-        application = Application.objects.create(
+        Application.objects.create(
             application_id = (UUID(test_application_id)),
             login_id = user,
             application_type = 'CHILDMINDER',
@@ -180,7 +232,7 @@ class LoginAndContactDetailsTest(TestCase):
             health_status = 'COMPLETED',
             references_status = 'COMPLETED',
             people_in_home_status = 'COMPLETED',
-            declarations_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
             date_created = datetime.datetime.today(),
             date_updated = datetime.datetime.today(),
             date_accepted = None
@@ -210,7 +262,7 @@ class PersonalDetailsTest(TestCase):
         c = Client()
         
         try:
-            response = c.get('/personal-details/?id=')
+            c.get('/personal-details/?id=')
             self.assertEqual(1,0)
             
         except:
@@ -236,7 +288,7 @@ class PersonalDetailsTest(TestCase):
         )
         
         # Create a test application
-        application = Application.objects.create(
+        Application.objects.create(
             application_id = (UUID(test_application_id)),
             login_id = user,
             application_type = 'CHILDMINDER',
@@ -251,7 +303,7 @@ class PersonalDetailsTest(TestCase):
             health_status = 'COMPLETED',
             references_status = 'COMPLETED',
             people_in_home_status = 'COMPLETED',
-            declarations_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
             date_created = datetime.datetime.today(),
             date_updated = datetime.datetime.today(),
             date_accepted = None
@@ -281,7 +333,7 @@ class FirstAidTrainingTest(TestCase):
         c = Client()
         
         try:
-            response = c.get('/first-aid/?id=')
+            c.get('/first-aid/?id=')
             self.assertEqual(1,0)
             
         except:
@@ -307,7 +359,7 @@ class FirstAidTrainingTest(TestCase):
         )
         
         # Create a test application
-        application = Application.objects.create(
+        Application.objects.create(
             application_id = (UUID(test_application_id)),
             login_id = user,
             application_type = 'CHILDMINDER',
@@ -322,7 +374,7 @@ class FirstAidTrainingTest(TestCase):
             health_status = 'COMPLETED',
             references_status = 'COMPLETED',
             people_in_home_status = 'COMPLETED',
-            declarations_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
             date_created = datetime.datetime.today(),
             date_updated = datetime.datetime.today(),
             date_accepted = None
@@ -352,7 +404,7 @@ class EYFSTest(TestCase):
         c = Client()
         
         try:
-            response = c.get('/eyfs/?id=')
+            c.get('/eyfs/?id=')
             self.assertEqual(1,0)
             
         except:
@@ -378,7 +430,7 @@ class EYFSTest(TestCase):
         )
         
         # Create a test application
-        application = Application.objects.create(
+        Application.objects.create(
             application_id = (UUID(test_application_id)),
             login_id = user,
             application_type = 'CHILDMINDER',
@@ -393,7 +445,7 @@ class EYFSTest(TestCase):
             health_status = 'COMPLETED',
             references_status = 'COMPLETED',
             people_in_home_status = 'COMPLETED',
-            declarations_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
             date_created = datetime.datetime.today(),
             date_updated = datetime.datetime.today(),
             date_accepted = None
@@ -423,7 +475,7 @@ class DBSCheckTest(TestCase):
         c = Client()
         
         try:
-            response = c.get('/dbs-check/?id=')
+            c.get('/dbs-check/?id=')
             self.assertEqual(1,0)
             
         except:
@@ -449,7 +501,7 @@ class DBSCheckTest(TestCase):
         )
         
         # Create a test application
-        application = Application.objects.create(
+        Application.objects.create(
             application_id = (UUID(test_application_id)),
             login_id = user,
             application_type = 'CHILDMINDER',
@@ -464,7 +516,7 @@ class DBSCheckTest(TestCase):
             health_status = 'COMPLETED',
             references_status = 'COMPLETED',
             people_in_home_status = 'COMPLETED',
-            declarations_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
             date_created = datetime.datetime.today(),
             date_updated = datetime.datetime.today(),
             date_accepted = None
@@ -494,7 +546,7 @@ class HealthTest(TestCase):
         c = Client()
         
         try:
-            response = c.get('/health/?id=')
+            c.get('/health/?id=')
             self.assertEqual(1,0)
             
         except:
@@ -520,7 +572,7 @@ class HealthTest(TestCase):
         )
         
         # Create a test application
-        application = Application.objects.create(
+        Application.objects.create(
             application_id = (UUID(test_application_id)),
             login_id = user,
             application_type = 'CHILDMINDER',
@@ -535,7 +587,7 @@ class HealthTest(TestCase):
             health_status = 'NOT_STARTED',
             references_status = 'COMPLETED',
             people_in_home_status = 'COMPLETED',
-            declarations_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
             date_created = datetime.datetime.today(),
             date_updated = datetime.datetime.today(),
             date_accepted = None
@@ -565,7 +617,7 @@ class ReferencesTest(TestCase):
         c = Client()
         
         try:
-            response = c.get('/references/?id=')
+            c.get('/references/?id=')
             self.assertEqual(1,0)
             
         except:
@@ -591,7 +643,7 @@ class ReferencesTest(TestCase):
         )
         
         # Create a test application
-        application = Application.objects.create(
+        Application.objects.create(
             application_id = (UUID(test_application_id)),
             login_id = user,
             application_type = 'CHILDMINDER',
@@ -606,7 +658,7 @@ class ReferencesTest(TestCase):
             health_status = 'COMPLETED',
             references_status = 'NOT_STARTED',
             people_in_home_status = 'COMPLETED',
-            declarations_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
             date_created = datetime.datetime.today(),
             date_updated = datetime.datetime.today(),
             date_accepted = None
@@ -636,7 +688,7 @@ class OtherPeopleTest(TestCase):
         c = Client()
         
         try:
-            response = c.get('/other-people/?id=')
+            c.get('/other-people/?id=')
             self.assertEqual(1,0)
             
         except:
@@ -645,7 +697,7 @@ class OtherPeopleTest(TestCase):
     # Test progress status does not update to Started when a returning to the task list after completing a task
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         
-         # Create a test application and login IDs
+        # Create a test application and login IDs
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
@@ -662,7 +714,7 @@ class OtherPeopleTest(TestCase):
         )
         
         # Create a test application
-        application = Application.objects.create(
+        Application.objects.create(
             application_id = (UUID(test_application_id)),
             login_id = user,
             application_type = 'CHILDMINDER',
@@ -677,7 +729,7 @@ class OtherPeopleTest(TestCase):
             health_status = 'COMPLETED',
             references_status = 'COMPLETED',
             people_in_home_status = 'NOT_STARTED',
-            declarations_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
             date_created = datetime.datetime.today(),
             date_updated = datetime.datetime.today(),
             date_accepted = None
@@ -707,7 +759,7 @@ class DeclarationTest(TestCase):
         c = Client()
         
         try:
-            response = c.get('/declaration/?id=')
+            c.get('/declaration/?id=')
             self.assertEqual(1,0)
             
         except:
@@ -716,7 +768,7 @@ class DeclarationTest(TestCase):
     # Test progress status does not update to Started when a returning to the task list after completing a task
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         
-         # Create a test application and login IDs
+        # Create a test application and login IDs
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
@@ -733,7 +785,7 @@ class DeclarationTest(TestCase):
         )
         
         # Create a test application
-        application = Application.objects.create(
+        Application.objects.create(
             application_id = (UUID(test_application_id)),
             login_id = user,
             application_type = 'CHILDMINDER',
@@ -778,7 +830,7 @@ class ConfirmationTest(TestCase):
         c = Client()
         
         try:
-            response = c.get('/confirm-your-answers/?id=')
+            c.get('/confirm-your-answers/?id=')
             self.assertEqual(1,0)
             
         except:
@@ -800,7 +852,7 @@ class PaymentTest(TestCase):
         c = Client()
         
         try:
-            response = c.get('/payment/?id=')
+            c.get('/payment/?id=')
             self.assertEqual(1,0)
             
         except:
@@ -822,7 +874,7 @@ class ApplicationSavedTest(TestCase):
         c = Client()
         
         try:
-            response = c.get('/application-saved/?id=')
+            c.get('/application-saved/?id=')
             self.assertEqual(1,0)
             
         except:
@@ -836,7 +888,7 @@ class TaskStatusTest(TestCase):
     # Test logic for when tasks are still not started
     def test_status_update_with_tasks_not_started(self):
     
-         # Create a test application and login IDs
+        # Create a test application and login IDs
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
@@ -900,7 +952,7 @@ class TaskStatusTest(TestCase):
     # Test logic for when tasks are still in progress
     def test_status_update_with_tasks_in_progress(self):
     
-         # Create a test application and login IDs
+        # Create a test application and login IDs
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
@@ -964,7 +1016,7 @@ class TaskStatusTest(TestCase):
     # Test logic for when all tasks are complete, except for Declarations
     def test_status_update_with_tasks_completed_except_declarations(self):
     
-         # Create a test application and login IDs
+        # Create a test application and login IDs
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
@@ -1029,7 +1081,7 @@ class TaskStatusTest(TestCase):
     # Test logic for when all tasks are complete, but Declarations is still to be started
     def test_status_update_with_tasks_completed_with_declarations_to_do(self):
     
-         # Create a test application and login IDs
+        # Create a test application and login IDs
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
@@ -1089,7 +1141,7 @@ class TaskStatusTest(TestCase):
     # Test logic for when all tasks are complete, but Declarations is still in progress
     def test_status_update_with_tasks_completed_with_declarations_in_progress(self):
     
-         # Create a test application and login IDs
+        # Create a test application and login IDs
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
@@ -1149,7 +1201,7 @@ class TaskStatusTest(TestCase):
     # Test logic for when all tasks are complete, including Delcarations
     def test_status_update_with_tasks_completed_with_declarations_complete(self):
     
-         # Create a test application and login IDs
+        # Create a test application and login IDs
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
