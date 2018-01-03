@@ -226,6 +226,39 @@ class PersonalDetailsName(GOVUKForm):
             self.fields['first_name'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).first_name
             self.fields['middle_names'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).middle_names
             self.fields['last_name'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).last_name
+    
+    # First name validation
+    def clean_first_name(self):
+        
+        first_name = self.cleaned_data['first_name']
+            
+        if re.match("^[A-Za-z-]+$", first_name) is None:
+                
+            raise forms.ValidationError('Please enter a valid name.')
+        
+        return first_name
+    
+    # Middle names validation
+    def clean_middle_names(self):
+        
+        middle_names = self.cleaned_data['middle_names']
+            
+        if re.match("^[A-Za-z-]+$", middle_names) is None:
+                
+            raise forms.ValidationError('Please enter a valid name.')
+        
+        return middle_names
+    
+    # Last name validation
+    def clean_last_name(self):
+        
+        last_name = self.cleaned_data['last_name']
+            
+        if re.match("^[A-Za-z-]+$", last_name) is None:
+                
+            raise forms.ValidationError('Please enter a valid name.')
+        
+        return last_name
 
 
 # Your personal details form: date of birth 
@@ -246,6 +279,27 @@ class PersonalDetailsDOB(GOVUKForm):
             
             self.fields['date_of_birth'].initial = [Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_day,Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_month,Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_year]
 
+    # First name validation
+    def clean_date_of_birth(self):
+        
+        birth_day = self.cleaned_data['date_of_birth'].day
+        birth_month = self.cleaned_data['date_of_birth'].month
+        birth_year = self.cleaned_data['date_of_birth'].year
+            
+        if re.match("^(0[1-9]|[12]\d|3[01])$", birth_day) is None:
+                
+            raise forms.ValidationError('Please enter a valid date.')
+        
+        elif re.match("^(0?[1-9]|1[012])$", birth_month) is None:
+                
+            raise forms.ValidationError('Please enter a valid date.')
+
+        elif re.match("^\d{4}$", birth_year) is None:
+                
+            raise forms.ValidationError('Please enter a valid date.')
+        
+        return birth_day, birth_month, birth_year
+    
 
 # Your personal details form: home address   
 class PersonalDetailsHomeAddress(GOVUKForm):
@@ -277,7 +331,7 @@ class PersonalDetailsHomeAddressManual(GOVUKForm):
     auto_replace_widgets = True
 
     street_name_and_number = forms.CharField(label = 'Street name and number')
-    street_name_and_number2 = forms.CharField(label = 'Street name and number 2')
+    street_name_and_number2 = forms.CharField(label = 'Street name and number 2', required=False)
     town = forms.CharField(label = 'Town or city')
     county = forms.CharField(label = 'County (optional)', required=False)
     postcode = forms.CharField(label = 'Postcode')
@@ -300,6 +354,17 @@ class PersonalDetailsHomeAddressManual(GOVUKForm):
             self.fields['county'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id).county
             self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id).postcode
     
+    # Town validation
+    def clean_town(self):
+        
+        town = self.cleaned_data['town']
+            
+        if re.match("^[A-Za-z-]+$", town) is None:
+                
+            raise forms.ValidationError('Please enter a valid town.')
+        
+        return town   
+    
     # County validation
     def clean_county(self):
         
@@ -312,6 +377,17 @@ class PersonalDetailsHomeAddressManual(GOVUKForm):
                 raise forms.ValidationError('Please enter a valid county.')
         
         return county
+    
+    # Postcode validation
+    def clean_postcode(self):
+        
+        postcode = self.cleaned_data['postcode']
+            
+        if re.match("^[A-Za-z0-9 ]+$", postcode) is None:
+                
+            raise forms.ValidationError('Please enter a valid postcode.')
+        
+        return postcode
 
 
 # First aid training form
