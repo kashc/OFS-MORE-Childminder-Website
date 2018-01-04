@@ -122,9 +122,9 @@ def Personal_DOB_Logic(application_id_local, form):
     this_application = Application.objects.get(application_id=application_id_local)
     
     # Get entered data to insert into the database
-    birth_day = form.cleaned_data.get('date_of_birth').day
-    birth_month = form.cleaned_data.get('date_of_birth').month
-    birth_year = form.cleaned_data.get('date_of_birth').year
+    birth_day = form.cleaned_data.get('date_of_birth')[0]
+    birth_month = form.cleaned_data.get('date_of_birth')[1]
+    birth_year = form.cleaned_data.get('date_of_birth')[2]
     
     # If the user entered information for this task for the first time
     if Applicant_Personal_Details.objects.filter(application_id=application_id_local).count() == 0:
