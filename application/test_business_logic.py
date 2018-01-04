@@ -13,6 +13,7 @@ from .models import Application, Applicant_Names, Applicant_Personal_Details, Ch
 from uuid import UUID
 
 import datetime
+from application.models import Applicant_Home_Address
 
 
 
@@ -265,14 +266,386 @@ class Test_Personal_Logic(TestCase):
         # Verify that the Applicant_Personal_Details and Applicant_Names objects corresponding with the test application exist
         assert(Applicant_Personal_Details.objects.filter(application_id=test_application_id).count() > 0)
         assert(Applicant_Names.objects.filter(personal_detail_id=test_personal_detail_id).count() > 0)
+ 
+    # Test the business case where a new record needs to be created
+    def test_logic_to_create_new_home_address_record(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+        
+        # Create a test home address ID
+        test_home_address_id = '11a3aef5-9e23-4216-b646-e6adccda4270'
+        
+        # Delete test Applicant_Personal_Details and Applicant_Names objects if they already exist
+        Applicant_Personal_Details.objects.filter(application_id=test_application_id).delete()
+        Applicant_Home_Address.objects.filter(home_address_id=test_home_address_id, current_address=True).delete()
+        
+        # Verify that the Applicant_Personal_Details and Applicant_Names objects corresponding with the test application do not exist
+        assert(Applicant_Personal_Details.objects.filter(application_id=test_application_id).count() == 0)
+        assert(Applicant_Home_Address.objects.filter(home_address_id=test_home_address_id, current_address=True).count() == 0)
     
+    # Test the business case where a record already exists
+    def test_logic_to_update_home_address_record(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+
+        # Create a test personal detail ID
+        test_personal_detail_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
+        
+        # Create a test login ID
+        test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
+        
+        # Delete test Applicant_Personal_Details, Applicant_Names and Login_And_Contact_Details objects if they already exist
+        Applicant_Personal_Details.objects.filter(application_id=test_application_id).delete()
+        Applicant_Home_Address.objects.filter(personal_detail_id=test_personal_detail_id).delete()
+        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        
+        # Create a test user
+        user = Login_And_Contact_Details.objects.create(
+            login_id = (UUID(test_login_id)),
+            email = '',
+            mobile_number = '',
+            add_phone_number = '',
+            email_expiry_date = None,
+            sms_expiry_date = None,
+            magic_link_email = '',
+            magic_link_sms = ''
+        )
+        
+        # Create a test application
+        Application.objects.create(
+            application_id = (UUID(test_application_id)),
+            login_id = user,
+            application_type = 'CHILDMINDER',
+            application_status = 'DRAFTING',
+            cygnum_urn = '',   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'NOT_STARTED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
+            date_created = datetime.datetime.today(),
+            date_updated = datetime.datetime.today(),
+            date_accepted = None
+        )
+        
+        # Create a test Applicant_Personal_Details object
+        Applicant_Personal_Details.objects.create(
+            personal_detail_id = (UUID(test_personal_detail_id)),
+            application_id = Application.objects.get(application_id=test_application_id),
+            birth_day = '00',
+            birth_month = '00',
+            birth_year = '0000'
+        )
+        
+        # Create a test address ID
+        test_home_address_id = '11a3aef5-9e23-4216-b646-e6adccda4270'
+        
+        # Create a test Applicant_Home_Address object
+        Applicant_Home_Address.objects.create(
+            home_address_id = (UUID(test_home_address_id)),
+            personal_detail_id = Applicant_Personal_Details.objects.get(personal_detail_id=test_personal_detail_id),
+            street_line1 = '',
+            street_line2 = '',
+            town = '',
+            county = '',
+            country = '',
+            postcode = '',
+            childcare_address = None,
+            current_address = True,
+            move_in_month = 0,
+            move_in_year = 0
+        )
+        
+        # Verify that the Applicant_Personal_Details and Applicant_Names objects corresponding with the test application exist
+        assert(Applicant_Personal_Details.objects.filter(application_id=test_application_id).count() > 0)
+        assert(Applicant_Home_Address.objects.filter(personal_detail_id=test_personal_detail_id, current_address=True).count() > 0)
+
+    # Test the business case where a new record needs to be created
+    def test_logic_to_create_new_childcare_address_record(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+
+        # Create a test personal detail ID
+        test_personal_detail_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
+        
+        # Create a test login ID
+        test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
+        
+        # Delete test Applicant_Personal_Details, Applicant_Names and Login_And_Contact_Details objects if they already exist
+        Applicant_Personal_Details.objects.filter(application_id=test_application_id).delete()
+        Applicant_Home_Address.objects.filter(personal_detail_id=test_personal_detail_id).delete()
+        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        
+        # Create a test user
+        user = Login_And_Contact_Details.objects.create(
+            login_id = (UUID(test_login_id)),
+            email = '',
+            mobile_number = '',
+            add_phone_number = '',
+            email_expiry_date = None,
+            sms_expiry_date = None,
+            magic_link_email = '',
+            magic_link_sms = ''
+        )
+        
+        # Create a test application
+        Application.objects.create(
+            application_id = (UUID(test_application_id)),
+            login_id = user,
+            application_type = 'CHILDMINDER',
+            application_status = 'DRAFTING',
+            cygnum_urn = '',   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'NOT_STARTED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
+            date_created = datetime.datetime.today(),
+            date_updated = datetime.datetime.today(),
+            date_accepted = None
+        )
+        
+        # Create a test Applicant_Personal_Details object
+        Applicant_Personal_Details.objects.create(
+            personal_detail_id = (UUID(test_personal_detail_id)),
+            application_id = Application.objects.get(application_id=test_application_id),
+            birth_day = '00',
+            birth_month = '00',
+            birth_year = '0000'
+        )
+        
+        # Create a test address ID
+        test_home_address_id = '11a3aef5-9e23-4216-b646-e6adccda4270'
+        
+        # Create a test Applicant_Home_Address object
+        Applicant_Home_Address.objects.create(
+            home_address_id = (UUID(test_home_address_id)),
+            personal_detail_id = Applicant_Personal_Details.objects.get(personal_detail_id=test_personal_detail_id),
+            street_line1 = '',
+            street_line2 = '',
+            town = '',
+            county = '',
+            country = '',
+            postcode = '',
+            childcare_address = False,
+            current_address = True,
+            move_in_month = 0,
+            move_in_year = 0
+        )
+        
+        # Delete test Applicant_Personal_Details and Applicant_Names objects if they already exist
+        Applicant_Personal_Details.objects.filter(application_id=test_application_id).delete()
+        Applicant_Home_Address.objects.filter(home_address_id=test_home_address_id, childcare_address=True).delete()
+        
+        # Verify that the Applicant_Personal_Details and Applicant_Names objects corresponding with the test application do not exist
+        assert(Applicant_Personal_Details.objects.filter(application_id=test_application_id).count() == 0)
+        assert(Applicant_Home_Address.objects.filter(home_address_id=test_home_address_id, childcare_address=True).count() == 0)
+    
+    # Test the business case where a record already exists
+    def test_logic_to_update_childcare_address_record(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+
+        # Create a test personal detail ID
+        test_personal_detail_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
+        
+        # Create a test login ID
+        test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
+        
+        # Delete test Applicant_Personal_Details, Applicant_Names and Login_And_Contact_Details objects if they already exist
+        Applicant_Personal_Details.objects.filter(application_id=test_application_id).delete()
+        Applicant_Home_Address.objects.filter(personal_detail_id=test_personal_detail_id).delete()
+        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        
+        # Create a test user
+        user = Login_And_Contact_Details.objects.create(
+            login_id = (UUID(test_login_id)),
+            email = '',
+            mobile_number = '',
+            add_phone_number = '',
+            email_expiry_date = None,
+            sms_expiry_date = None,
+            magic_link_email = '',
+            magic_link_sms = ''
+        )
+        
+        # Create a test application
+        Application.objects.create(
+            application_id = (UUID(test_application_id)),
+            login_id = user,
+            application_type = 'CHILDMINDER',
+            application_status = 'DRAFTING',
+            cygnum_urn = '',   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'NOT_STARTED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
+            date_created = datetime.datetime.today(),
+            date_updated = datetime.datetime.today(),
+            date_accepted = None
+        )
+        
+        # Create a test Applicant_Personal_Details object
+        Applicant_Personal_Details.objects.create(
+            personal_detail_id = (UUID(test_personal_detail_id)),
+            application_id = Application.objects.get(application_id=test_application_id),
+            birth_day = '00',
+            birth_month = '00',
+            birth_year = '0000'
+        )
+        
+        # Create a test address ID
+        test_home_address_id = '11a3aef5-9e23-4216-b646-e6adccda4270'
+        
+        # Create a test Applicant_Home_Address object
+        Applicant_Home_Address.objects.create(
+            home_address_id = (UUID(test_home_address_id)),
+            personal_detail_id = Applicant_Personal_Details.objects.get(personal_detail_id=test_personal_detail_id),
+            street_line1 = '',
+            street_line2 = '',
+            town = '',
+            county = '',
+            country = '',
+            postcode = '',
+            childcare_address = True,
+            current_address = False,
+            move_in_month = 0,
+            move_in_year = 0
+        )
+        
+        # Verify that the Applicant_Personal_Details and Applicant_Names objects corresponding with the test application exist
+        assert(Applicant_Personal_Details.objects.filter(application_id=test_application_id).count() > 0)
+        assert(Applicant_Home_Address.objects.filter(personal_detail_id=test_personal_detail_id, childcare_address=True).count() > 0)
+    
+    # Test logic to remove multiple childcare addresses
+    def test_multiple_childcare_address_logic(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+
+        # Create a test personal detail ID
+        test_personal_detail_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
+        
+        # Create a test login ID
+        test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
+        
+        # Delete test Applicant_Personal_Details, Applicant_Names and Login_And_Contact_Details objects if they already exist
+        Applicant_Personal_Details.objects.filter(application_id=test_application_id).delete()
+        Applicant_Home_Address.objects.filter(personal_detail_id=test_personal_detail_id).delete()
+        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        
+        # Create a test user
+        user = Login_And_Contact_Details.objects.create(
+            login_id = (UUID(test_login_id)),
+            email = '',
+            mobile_number = '',
+            add_phone_number = '',
+            email_expiry_date = None,
+            sms_expiry_date = None,
+            magic_link_email = '',
+            magic_link_sms = ''
+        )
+        
+        # Create a test application
+        Application.objects.create(
+            application_id = (UUID(test_application_id)),
+            login_id = user,
+            application_type = 'CHILDMINDER',
+            application_status = 'DRAFTING',
+            cygnum_urn = '',   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'NOT_STARTED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'COMPLETED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
+            date_created = datetime.datetime.today(),
+            date_updated = datetime.datetime.today(),
+            date_accepted = None
+        )
+        
+        # Create a test Applicant_Personal_Details object
+        Applicant_Personal_Details.objects.create(
+            personal_detail_id = (UUID(test_personal_detail_id)),
+            application_id = Application.objects.get(application_id=test_application_id),
+            birth_day = '00',
+            birth_month = '00',
+            birth_year = '0000'
+        )
+        
+        # Create a test address ID
+        test_home_address_id = '11a3aef5-9e23-4216-b646-e6adccda4270'
+        
+        # Create a test Applicant_Home_Address object
+        Applicant_Home_Address.objects.create(
+            home_address_id = (UUID(test_home_address_id)),
+            personal_detail_id = Applicant_Personal_Details.objects.get(personal_detail_id=test_personal_detail_id),
+            street_line1 = '',
+            street_line2 = '',
+            town = '',
+            county = '',
+            country = '',
+            postcode = '',
+            childcare_address = True,
+            current_address = False,
+            move_in_month = 0,
+            move_in_year = 0
+        )
+
+        # Create another test address ID
+        test_home_address_id2 = 'd51b854d-30b0-4889-88d4-804b2c6215e4'
+        
+        # Create a another test Applicant_Home_Address object
+        Applicant_Home_Address.objects.create(
+            home_address_id = (UUID(test_home_address_id2)),
+            personal_detail_id = Applicant_Personal_Details.objects.get(personal_detail_id=test_personal_detail_id),
+            street_line1 = '',
+            street_line2 = '',
+            town = '',
+            county = '',
+            country = '',
+            postcode = '',
+            childcare_address = True,
+            current_address = True,
+            move_in_month = 0,
+            move_in_year = 0
+        )        
+        
+        assert(Applicant_Home_Address.objects.filter(personal_detail_id=test_personal_detail_id, childcare_address=True).count() > 1)
+        assert(Applicant_Home_Address.objects.filter(personal_detail_id=test_personal_detail_id, childcare_address=True, current_address=True).count() > 0)
+        assert(Applicant_Home_Address.objects.filter(personal_detail_id=test_personal_detail_id, childcare_address=True, current_address=False).count() > 0)
+
     # Delete test application
     def delete(self):
         
-        Applicant_Names.objects.filter(name_id='6e09fe41-2b07-4177-a5e4-347b2515ea8e').delete()
+        Applicant_Home_Address.objects.filter(name_id='11a3aef5-9e23-4216-b646-e6adccda4270').delete()
         Applicant_Personal_Details.objects.filter(personal_detail_id='166f77f7-c2ee-4550-9461-45b9d2f28d34').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete() 
+        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test business logic to create or update a First aid training record

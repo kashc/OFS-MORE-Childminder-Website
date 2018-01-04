@@ -7,17 +7,19 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 from application import status
 
-from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic, Login_Contact_Logic, Login_Contact_Logic_Phone, Personal_DOB_Logic, Personal_Home_Address_Logic,
-                            Personal_Name_Logic, references_check_logic)
+from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic, Login_Contact_Logic, Login_Contact_Logic_Phone, Multiple_Childcare_Address_Logic, Personal_Childcare_Address_Logic, Personal_DOB_Logic, Personal_Home_Address_Logic,
+                            Personal_Location_Of_Care_Logic, Personal_Name_Logic, references_check_logic)
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetailsDOB, PersonalDetailsName, PersonalDetailsGuidance, PersonalDetailsHomeAddress, PersonalDetailsHomeAddressManual, Question, ReferenceForm, TypeOfChildcare
+from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetailsChildcareAddress, PersonalDetailsChildcareAddressManual, PersonalDetailsDOB, PersonalDetailsName, PersonalDetailsGuidance, PersonalDetailsHomeAddress, PersonalDetailsHomeAddressManual, PersonalDetailsLocationOfCare, PersonalDetailsSummary, Question, ReferenceForm, TypeOfChildcare
 
 from .models import Application, Login_And_Contact_Details
 
 import datetime
+from application.models import Applicant_Personal_Details,\
+    Applicant_Home_Address, Applicant_Names
 
 
 
@@ -491,8 +493,9 @@ def PersonalDetailsDOBView(request):
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
             
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'personal_details_status', 'COMPLETED')
+            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed    
+            if  Application.objects.get(pk = application_id_local).personal_details_status != 'COMPLETED':
+                status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
             
             # Perform business logic to create or update Your personal details record in database
             personal_details_record = Personal_DOB_Logic(application_id_local, form)
@@ -530,6 +533,7 @@ def PersonalDetailsHomeAddressView(request):
         application_id_local = request.GET["id"]
         manual = request.GET["manual"]
         
+        # If the user wants to use the postcode search
         if manual == 'False':    
             
             form = PersonalDetailsHomeAddress(id = application_id_local)
@@ -540,6 +544,7 @@ def PersonalDetailsHomeAddressView(request):
             # Access the task page
             return render(request, 'personal-details-home-address.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
         
+        # If the user wants to manually enter their address
         elif manual == 'True':    
             
             form = PersonalDetailsHomeAddressManual(id = application_id_local)
@@ -556,6 +561,7 @@ def PersonalDetailsHomeAddressView(request):
         application_id_local = request.POST["id"]
         manual = request.POST["manual"]
         
+        # If the user wants to use the postcode search        
         if manual == 'False':
         
             # Initialise the Your login and contact details form
@@ -574,7 +580,8 @@ def PersonalDetailsHomeAddressView(request):
             
                 # Access the task page
                 return render(request, 'personal-details-home-address.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
-            
+        
+        # If the user wants to manually enter their address    
         if manual == 'True':
         
             # Initialise the Your login and contact details form
@@ -586,8 +593,9 @@ def PersonalDetailsHomeAddressView(request):
             # If the form is successfully submitted (with valid details)
             if form.is_valid():
                 
-                # Update the status of the task to 'COMPLETED'
-                status.update(application_id_local, 'personal_details_status', 'COMPLETED')
+                # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed    
+                if  Application.objects.get(pk = application_id_local).personal_details_status != 'COMPLETED':
+                    status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
                 
                 # Perform business logic to create or update Your personal details record in database
                 home_address_record = Personal_Home_Address_Logic(application_id_local, form)
@@ -599,14 +607,268 @@ def PersonalDetailsHomeAddressView(request):
                 application.save()
                 
                 # Return to the application's task list    
-                return HttpResponseRedirect('/task-list?id=' + application_id_local)
+                return HttpResponseRedirect('/personal-details/location-of-care?id=' + application_id_local)
             
             else: 
             
                 # Access the task page
                 return render(request, 'personal-details-home-address-manual.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})   
+
+
+# View for the Your personal details task: location of care
+def PersonalDetailsLocationOfCareView(request):
+
+    # Get current date and time
+    current_date = datetime.datetime.today()
+       
+    if request.method == 'GET':
         
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+        
+        # Get associated personal detail ID
+        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
+        
+        Multiple_Childcare_Address_Logic(personal_detail_id)
+        
+        # Retrieve answers
+        street_line1 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
+        street_line2 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
+        town = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
+        county = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
+        postcode = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
+        
+        # Update the status of the task to 'COMPLETED'
+        if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
             
+            status.update(application_id_local, 'login_details_status', 'COMPLETED')
+            
+        form = PersonalDetailsLocationOfCare(id = application_id_local)
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)      
+    
+        # Access the task page
+        return render(request, 'personal-details-location-of-care.html', {'form': form,'application_id': application_id_local,'street_line1': street_line1,'street_line2': street_line2,'town': town, 'county': county, 'postcode': postcode, 'personal_details_status': application.login_details_status})
+    
+    if request.method == 'POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+
+        # Get associated personal detail ID
+        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
+        
+        # Initialise the Your login and contact details form
+        form = PersonalDetailsLocationOfCare(request.POST,id = application_id_local)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed    
+            if  Application.objects.get(pk = application_id_local).personal_details_status != 'COMPLETED':
+                status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+            
+            # Perform business logic to create or update Your personal details record in database
+            home_address_record = Personal_Location_Of_Care_Logic(application_id_local, form)
+            home_address_record.save()
+
+            # Update application date updated
+            application = Application.objects.get(pk=application_id_local)
+            application.date_updated = current_date
+            application.save()
+
+            Multiple_Childcare_Address_Logic(personal_detail_id)
+            
+            if home_address_record.childcare_address == 'True':
+            
+                # Return to the application's task list    
+                return HttpResponseRedirect('/personal-details/summary?id=' + application_id_local)
+            
+            elif home_address_record.childcare_address == 'False':
+                
+                # Return to the application's task list    
+                return HttpResponseRedirect('/personal-details/childcare-address?id=' + application_id_local + '&manual=False')
+    
+        # If there are invalid details
+        else:
+            
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            
+            # Return to the same page
+            return render(request, 'personal-details-location-of-care.html', variables)       
+
+
+# View for the Your personal details task: childcare address
+def PersonalDetailsChildcareAddressView(request):
+
+    # Get current date and time
+    current_date = datetime.datetime.today()
+    
+    if request.method == 'GET':
+        
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+        manual = request.GET["manual"]
+        
+        # If the user wants to use the postcode search
+        if manual == 'False':  
+            
+            form = PersonalDetailsChildcareAddress(id = application_id_local)
+            
+            # Retrieve application from database for Back button/Return to list link logic
+            application = Application.objects.get(pk=application_id_local)
+        
+            # Access the task page
+            return render(request, 'personal-details-childcare-address.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+        
+        # If the user wants to manually enter their address
+        elif manual == 'True':    
+            
+            form = PersonalDetailsChildcareAddressManual(id = application_id_local)
+            
+            # Retrieve application from database for Back button/Return to list link logic
+            application = Application.objects.get(pk=application_id_local)
+        
+            # Access the task page
+            return render(request, 'personal-details-childcare-address-manual.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+    
+    if request.method == 'POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        manual = request.POST["manual"]
+        
+        # If the user wants to use the postcode search        
+        if manual == 'False':
+        
+            # Initialise the Your login and contact details form
+            form = PersonalDetailsChildcareAddress(request.POST,id = application_id_local)
+            
+            # Retrieve application from database for Back button/Return to list link logic
+            application = Application.objects.get(pk=application_id_local)
+            
+            # If the form is successfully submitted (with valid details)
+            if form.is_valid():
+
+                # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed    
+                if  Application.objects.get(pk = application_id_local).personal_details_status != 'COMPLETED':
+                    status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+                
+                # Return to the application's task list    
+                return HttpResponseRedirect('/personal-details/childcare-address/?id=' + application_id_local + '&manual=False')
+            
+            else: 
+            
+                # Access the task page
+                return render(request, 'personal-details-childcare-address.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+        
+        # If the user wants to manually enter their address    
+        if manual == 'True':
+        
+            # Initialise the Your login and contact details form
+            form = PersonalDetailsChildcareAddressManual(request.POST,id = application_id_local)
+            
+            # Retrieve application from database for Back button/Return to list link logic
+            application = Application.objects.get(pk=application_id_local)
+            
+            # If the form is successfully submitted (with valid details)
+            if form.is_valid():
+                
+                # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed    
+                if  Application.objects.get(pk = application_id_local).personal_details_status != 'COMPLETED':
+                    status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+                
+                # Perform business logic to create or update Your personal details record in database
+                childcare_address_record = Personal_Childcare_Address_Logic(application_id_local, form)
+                childcare_address_record.save()
+    
+                # Update application date updated
+                application = Application.objects.get(pk=application_id_local)
+                application.date_updated = current_date
+                application.save()
+                
+                # Return to the application's task list    
+                return HttpResponseRedirect('/personal-details/summary?id=' + application_id_local)
+            
+            else: 
+            
+                # Access the task page
+                return render(request, 'personal-details-childcare-address-manual.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status}) 
+
+
+# View for the Your personal details task: summary
+def PersonalDetailsSummaryView(request):
+    
+    if request.method == 'GET':
+        
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+        
+        # Get associated personal detail ID
+        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=application_id_local)
+        
+        # Retrieve answers
+        birth_day = personal_detail_id.birth_day
+        birth_month = personal_detail_id.birth_month
+        birth_year = personal_detail_id.birth_year
+        first_name = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).first_name
+        middle_names = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).middle_names
+        last_name = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).last_name
+        street_line1 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
+        street_line2 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
+        town = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
+        county = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
+        postcode = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
+        location_of_childcare = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).childcare_address           
+        childcare_street_line1 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).street_line1
+        childcare_street_line2 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).street_line2
+        childcare_town = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).town
+        childcare_county = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).county
+        childcare_postcode = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).postcode        
+            
+        form = PersonalDetailsSummary()
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
+        # Update the status of the task to 'COMPLETED'
+        status.update(application_id_local, 'personal_details_status', 'COMPLETED')      
+    
+        # Access the task page
+        return render(request, 'personal-details-summary.html', {'form': form,'application_id': application_id_local,'first_name': first_name,'middle_names': middle_names,'last_name': last_name, 'birth_day': birth_day, 'birth_month': birth_month, 'birth_year': birth_year, 'street_line1': street_line1, 'street_line2': street_line2, 'town': town, 'county': county, 'postcode': postcode, 'location_of_childcare': location_of_childcare, 'childcare_street_line1': childcare_street_line1, 'childcare_street_line2': childcare_street_line2, 'childcare_town': childcare_town, 'childcare_county': childcare_county, 'childcare_postcode': childcare_postcode, 'personal_details_status': application.personal_details_status})
+    
+    if request.method == 'POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Your login and contact details form
+        form = PersonalDetailsSummary()
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'COMPLETED'
+            status.update(application_id_local, 'personal_details_status', 'COMPLETED')
+            
+            # Return to the application's task list    
+            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+    
+        # If there are invalid details
+        else:
+            
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            
+            # Return to the same page
+            return render(request, 'personal-details-summary.html', variables)
+                      
 
 # View for the First aid training task
 def FirstAidTrainingView(request):

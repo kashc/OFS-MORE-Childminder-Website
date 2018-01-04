@@ -73,10 +73,22 @@
                         {% endif %}                                                                                                                  
                     </tr>
                     <tr id="personal_details">
-                        <td class="task" style="padding-right: 10px">
-                            <a href="/personal-details/guidance?id={{application_id}}" id="{{application_id}}">
-                                <span class="task-name">Your personal details</span>
-                            </a>
+						<td class="task" style="padding-right: 10px">
+                        	{% if personal_details_status == 'NOT_STARTED' %}
+	                            <a href="/personal-details/guidance?id={{application_id}}" >
+	                                <span class="task-name">Your login and contact details</span>
+	                            </a>
+	                        {% endif %}
+	                        {% if personal_details_status == 'IN_PROGRESS' %}
+	                            <a href="/personal-details/guidance?id={{application_id}}" >
+	                                <span class="task-name">Your login and contact details</span>
+	                            </a>
+	                        {% endif %}
+	                        {% if personal_details_status == 'COMPLETED' %}
+	                            <a href="/personal-details/summary?id={{application_id}}" >
+	                                <span class="task-name">Your login and contact details</span>
+	                            </a>
+	                        {% endif %}
                         </td>
                         {% if personal_details_status == 'NOT_STARTED' %}
 	                        <td class="numeric" id="task-status">

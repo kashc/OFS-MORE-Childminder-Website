@@ -20,8 +20,8 @@ class Login_And_Contact_Details(models.Model):
     email = models.CharField(max_length = 100, blank = True)
     mobile_number = models.CharField(max_length = 11, blank = True)
     add_phone_number = models.CharField(max_length = 11, blank = True)
-    email_expiry_date = models.DateField(blank = True, null = True)
-    sms_expiry_date = models.DateField(blank = True, null = True)
+    email_expiry_date = models.IntegerField(blank = True, null = True)
+    sms_expiry_date = models.IntegerField(blank = True, null = True)
     magic_link_email = models.CharField(max_length = 100, blank = True, null = True)
     magic_link_sms = models.CharField(max_length = 100, blank = True, null = True)
     
@@ -145,7 +145,8 @@ class Applicant_Home_Address(models.Model):
     county = models.CharField(max_length = 100, blank = True)
     country = models.CharField(max_length = 100, blank = True)
     postcode = models.CharField(max_length = 8, blank = True)
-    childcare_address = models.BooleanField(blank = True)
+    childcare_address = models.NullBooleanField(blank = True, null=True)
+    current_address = models.NullBooleanField(blank = True, null=True)
     move_in_month = models.IntegerField(blank = True)
     move_in_year = models.IntegerField(blank = True)
     

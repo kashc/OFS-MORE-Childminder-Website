@@ -14,7 +14,7 @@ from .models import Application, Login_And_Contact_Details
 
 from uuid import UUID
 
-from .views import ApplicationSavedView, ConfirmationView, ContactEmailView, ContactPhoneView, ContactSummaryView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingView, HealthView, LogInView, OtherPeopleView, PaymentView, PersonalDetailsNameView, QuestionView, ReferencesView, StartPageView, TypeOfChildcareView
+from .views import ApplicationSavedView, ConfirmationView, ContactEmailView, ContactPhoneView, ContactSummaryView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingView, HealthView, LogInView, OtherPeopleView, PaymentView, PersonalDetailsDOBView, PersonalDetailsNameView, PersonalDetailsHomeAddressView, PersonalDetailsLocationOfCareView, QuestionView, ReferencesView, StartPageView, TypeOfChildcareView
 import datetime
 from application.views import PersonalDetailsGuidanceView
 
@@ -291,7 +291,7 @@ class PersonalDetailsTest(TestCase):
     def test_dob_url_resolves_to_page(self):
         
         found = resolve('/personal-details/dob/')
-        self.assertEqual(found.func, PersonalDetailsNameView)
+        self.assertEqual(found.func, PersonalDetailsDOBView)
    
     # Test to check that a user cannot navigate to the page without an application ID 
     def test_dob_page_not_displayed_without_id(self):
@@ -300,6 +300,42 @@ class PersonalDetailsTest(TestCase):
         
         try:
             c.get('/personal-details/dob/?id=')
+            self.assertEqual(1,0)
+            
+        except:
+            self.assertEqual(0,0)
+    
+    # Test to check if URL resolves to correct view    
+    def test_home_address_url_resolves_to_page(self):
+        
+        found = resolve('/personal-details/home-address/')
+        self.assertEqual(found.func, PersonalDetailsHomeAddressView)
+   
+    # Test to check that a user cannot navigate to the page without an application ID 
+    def test_home_address_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            c.get('/personal-details/home-address/?id=')
+            self.assertEqual(1,0)
+            
+        except:
+            self.assertEqual(0,0)
+
+    # Test to check if URL resolves to correct view    
+    def test_location_of_care_url_resolves_to_page(self):
+        
+        found = resolve('/personal-details/location-of-care/')
+        self.assertEqual(found.func, PersonalDetailsLocationOfCareView)
+   
+    # Test to check that a user cannot navigate to the page without an application ID 
+    def test_location_of_care_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            c.get('/personal-details/location-of-care/?id=')
             self.assertEqual(1,0)
             
         except:
