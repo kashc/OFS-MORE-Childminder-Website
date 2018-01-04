@@ -12,14 +12,13 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.views.generic import TemplateView
 from django.contrib import admin
 from application import views, magic_link, payment
 #from application.forms import ContactEmail
 from django.views.generic.edit import FormView
 from functools import partial
-from django.views.generic.base import TemplateView
 
 #view = partial(FormView.as_view, template_name='contact-email.html')
 
@@ -49,6 +48,6 @@ urlpatterns = [
     url(r'^test/', magic_link.start, name='testing'),
     url(r'^test2/', payment.start),
     url(r'^start/', views.StartPageView),
-    url('^confirmation/', TemplateView.as_view(template_name = 'confirmation.html')),
-
+    url(r'^confirmation/', TemplateView.as_view(template_name = 'confirmation.html')),
+    url(r'^OfstedOnlineWS/', include('test_harness.urls')),
 ]

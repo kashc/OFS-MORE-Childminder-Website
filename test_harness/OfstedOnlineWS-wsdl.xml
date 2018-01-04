@@ -1,0 +1,779 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://127.0.0.1/OfstedOnlineWS" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://127.0.0.1/OfstedOnlineWS" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Ofsted Online Web Service</wsdl:documentation>
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://127.0.0.1/OfstedOnlineWS">
+      <s:element name="SendApplicationForms">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendApplicationFormsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendApplicationFormsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIndividualsFromSearchCriteria">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIndividualsFromSearchCriteriaResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetIndividualsFromSearchCriteriaResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIndividualsRegistrations">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIndividualsRegistrationsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetIndividualsRegistrationsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIndividualDetails">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIndividualDetailsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetIndividualDetailsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendIndividualDetails">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendIndividualDetailsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendIndividualDetailsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetELSProviderDetails">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetELSProviderDetailsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetELSProviderDetailsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetNewURN">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetNewURNResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetNewURNResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReferenceData">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReferenceDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetReferenceDataResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendMessages">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendMessagesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendMessagesResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetOrganisationsFromSearchCriteria">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetOrganisationsFromSearchCriteriaResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetOrganisationsFromSearchCriteriaResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetOrganisationDetails">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetOrganisationDetailsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetOrganisationDetailsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetInvoiceDetails">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetInvoiceDetailsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetInvoiceDetailsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendAdhocPayment">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendAdhocPaymentResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendAdhocPaymentResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendPayment">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendPaymentResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendPaymentResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRegistrationsFromSearchCriteria">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRegistrationsFromSearchCriteriaResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetRegistrationsFromSearchCriteriaResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRegistrationDetails">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRegistrationDetailsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetRegistrationDetailsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendRegistrationDetails">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strInvokerID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strParameters" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendRegistrationDetailsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendRegistrationDetailsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="SendApplicationFormsSoapIn">
+    <wsdl:part name="parameters" element="tns:SendApplicationForms" />
+  </wsdl:message>
+  <wsdl:message name="SendApplicationFormsSoapOut">
+    <wsdl:part name="parameters" element="tns:SendApplicationFormsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetIndividualsFromSearchCriteriaSoapIn">
+    <wsdl:part name="parameters" element="tns:GetIndividualsFromSearchCriteria" />
+  </wsdl:message>
+  <wsdl:message name="GetIndividualsFromSearchCriteriaSoapOut">
+    <wsdl:part name="parameters" element="tns:GetIndividualsFromSearchCriteriaResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetIndividualsRegistrationsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetIndividualsRegistrations" />
+  </wsdl:message>
+  <wsdl:message name="GetIndividualsRegistrationsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetIndividualsRegistrationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetIndividualDetailsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetIndividualDetails" />
+  </wsdl:message>
+  <wsdl:message name="GetIndividualDetailsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetIndividualDetailsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendIndividualDetailsSoapIn">
+    <wsdl:part name="parameters" element="tns:SendIndividualDetails" />
+  </wsdl:message>
+  <wsdl:message name="SendIndividualDetailsSoapOut">
+    <wsdl:part name="parameters" element="tns:SendIndividualDetailsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetELSProviderDetailsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetELSProviderDetails" />
+  </wsdl:message>
+  <wsdl:message name="GetELSProviderDetailsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetELSProviderDetailsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetNewURNSoapIn">
+    <wsdl:part name="parameters" element="tns:GetNewURN" />
+  </wsdl:message>
+  <wsdl:message name="GetNewURNSoapOut">
+    <wsdl:part name="parameters" element="tns:GetNewURNResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetReferenceDataSoapIn">
+    <wsdl:part name="parameters" element="tns:GetReferenceData" />
+  </wsdl:message>
+  <wsdl:message name="GetReferenceDataSoapOut">
+    <wsdl:part name="parameters" element="tns:GetReferenceDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendMessagesSoapIn">
+    <wsdl:part name="parameters" element="tns:SendMessages" />
+  </wsdl:message>
+  <wsdl:message name="SendMessagesSoapOut">
+    <wsdl:part name="parameters" element="tns:SendMessagesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetOrganisationsFromSearchCriteriaSoapIn">
+    <wsdl:part name="parameters" element="tns:GetOrganisationsFromSearchCriteria" />
+  </wsdl:message>
+  <wsdl:message name="GetOrganisationsFromSearchCriteriaSoapOut">
+    <wsdl:part name="parameters" element="tns:GetOrganisationsFromSearchCriteriaResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetOrganisationDetailsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetOrganisationDetails" />
+  </wsdl:message>
+  <wsdl:message name="GetOrganisationDetailsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetOrganisationDetailsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetInvoiceDetailsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetInvoiceDetails" />
+  </wsdl:message>
+  <wsdl:message name="GetInvoiceDetailsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetInvoiceDetailsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendAdhocPaymentSoapIn">
+    <wsdl:part name="parameters" element="tns:SendAdhocPayment" />
+  </wsdl:message>
+  <wsdl:message name="SendAdhocPaymentSoapOut">
+    <wsdl:part name="parameters" element="tns:SendAdhocPaymentResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendPaymentSoapIn">
+    <wsdl:part name="parameters" element="tns:SendPayment" />
+  </wsdl:message>
+  <wsdl:message name="SendPaymentSoapOut">
+    <wsdl:part name="parameters" element="tns:SendPaymentResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetRegistrationsFromSearchCriteriaSoapIn">
+    <wsdl:part name="parameters" element="tns:GetRegistrationsFromSearchCriteria" />
+  </wsdl:message>
+  <wsdl:message name="GetRegistrationsFromSearchCriteriaSoapOut">
+    <wsdl:part name="parameters" element="tns:GetRegistrationsFromSearchCriteriaResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetRegistrationDetailsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetRegistrationDetails" />
+  </wsdl:message>
+  <wsdl:message name="GetRegistrationDetailsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetRegistrationDetailsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendRegistrationDetailsSoapIn">
+    <wsdl:part name="parameters" element="tns:SendRegistrationDetails" />
+  </wsdl:message>
+  <wsdl:message name="SendRegistrationDetailsSoapOut">
+    <wsdl:part name="parameters" element="tns:SendRegistrationDetailsResponse" />
+  </wsdl:message>
+  <wsdl:portType name="OfstedOnlineWSSoap">
+    <wsdl:operation name="SendApplicationForms">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Used to send new applications to RSA/OfficeBase</wsdl:documentation>
+      <wsdl:input message="tns:SendApplicationFormsSoapIn" />
+      <wsdl:output message="tns:SendApplicationFormsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIndividualsFromSearchCriteria">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Used to retrieve a list of individuals from rsa based on search criteria</wsdl:documentation>
+      <wsdl:input message="tns:GetIndividualsFromSearchCriteriaSoapIn" />
+      <wsdl:output message="tns:GetIndividualsFromSearchCriteriaSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIndividualsRegistrations">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get individuals registrations</wsdl:documentation>
+      <wsdl:input message="tns:GetIndividualsRegistrationsSoapIn" />
+      <wsdl:output message="tns:GetIndividualsRegistrationsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIndividualDetails">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get individual details</wsdl:documentation>
+      <wsdl:input message="tns:GetIndividualDetailsSoapIn" />
+      <wsdl:output message="tns:GetIndividualDetailsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendIndividualDetails">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Update individual details</wsdl:documentation>
+      <wsdl:input message="tns:SendIndividualDetailsSoapIn" />
+      <wsdl:output message="tns:SendIndividualDetailsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetELSProviderDetails">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get ELS provider details</wsdl:documentation>
+      <wsdl:input message="tns:GetELSProviderDetailsSoapIn" />
+      <wsdl:output message="tns:GetELSProviderDetailsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetNewURN">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get new URN</wsdl:documentation>
+      <wsdl:input message="tns:GetNewURNSoapIn" />
+      <wsdl:output message="tns:GetNewURNSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetReferenceData">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get reference data</wsdl:documentation>
+      <wsdl:input message="tns:GetReferenceDataSoapIn" />
+      <wsdl:output message="tns:GetReferenceDataSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendMessages">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Send messages</wsdl:documentation>
+      <wsdl:input message="tns:SendMessagesSoapIn" />
+      <wsdl:output message="tns:SendMessagesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetOrganisationsFromSearchCriteria">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Used to retrieve a list of organisations from rsa based on search criteria</wsdl:documentation>
+      <wsdl:input message="tns:GetOrganisationsFromSearchCriteriaSoapIn" />
+      <wsdl:output message="tns:GetOrganisationsFromSearchCriteriaSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetOrganisationDetails">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get organisation details</wsdl:documentation>
+      <wsdl:input message="tns:GetOrganisationDetailsSoapIn" />
+      <wsdl:output message="tns:GetOrganisationDetailsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetInvoiceDetails">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get invoice details</wsdl:documentation>
+      <wsdl:input message="tns:GetInvoiceDetailsSoapIn" />
+      <wsdl:output message="tns:GetInvoiceDetailsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendAdhocPayment">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Stores an adhoc payment in the finance system</wsdl:documentation>
+      <wsdl:input message="tns:SendAdhocPaymentSoapIn" />
+      <wsdl:output message="tns:SendAdhocPaymentSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendPayment">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Stores an invoice payment in the finance system</wsdl:documentation>
+      <wsdl:input message="tns:SendPaymentSoapIn" />
+      <wsdl:output message="tns:SendPaymentSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRegistrationsFromSearchCriteria">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Used to retrieve a list of registrations from rsa based on search criteria</wsdl:documentation>
+      <wsdl:input message="tns:GetRegistrationsFromSearchCriteriaSoapIn" />
+      <wsdl:output message="tns:GetRegistrationsFromSearchCriteriaSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRegistrationDetails">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get registration details</wsdl:documentation>
+      <wsdl:input message="tns:GetRegistrationDetailsSoapIn" />
+      <wsdl:output message="tns:GetRegistrationDetailsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendRegistrationDetails">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Update registration details in RSA</wsdl:documentation>
+      <wsdl:input message="tns:SendRegistrationDetailsSoapIn" />
+      <wsdl:output message="tns:SendRegistrationDetailsSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="OfstedOnlineWSSoap" type="tns:OfstedOnlineWSSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SendApplicationForms">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/SendApplicationForms" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIndividualsFromSearchCriteria">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetIndividualsFromSearchCriteria" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIndividualsRegistrations">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetIndividualsRegistrations" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIndividualDetails">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetIndividualDetails" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendIndividualDetails">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/SendIndividualDetails" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetELSProviderDetails">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetELSProviderDetails" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetNewURN">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetNewURN" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetReferenceData">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetReferenceData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendMessages">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/SendMessages" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrganisationsFromSearchCriteria">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetOrganisationsFromSearchCriteria" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrganisationDetails">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetOrganisationDetails" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetInvoiceDetails">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetInvoiceDetails" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendAdhocPayment">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/SendAdhocPayment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendPayment">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/SendPayment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRegistrationsFromSearchCriteria">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetRegistrationsFromSearchCriteria" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRegistrationDetails">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetRegistrationDetails" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendRegistrationDetails">
+      <soap:operation soapAction="http://127.0.0.1/OfstedOnlineWS/SendRegistrationDetails" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="OfstedOnlineWSSoap12" type="tns:OfstedOnlineWSSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SendApplicationForms">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/SendApplicationForms" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIndividualsFromSearchCriteria">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetIndividualsFromSearchCriteria" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIndividualsRegistrations">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetIndividualsRegistrations" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIndividualDetails">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetIndividualDetails" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendIndividualDetails">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/SendIndividualDetails" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetELSProviderDetails">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetELSProviderDetails" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetNewURN">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetNewURN" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetReferenceData">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetReferenceData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendMessages">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/SendMessages" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrganisationsFromSearchCriteria">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetOrganisationsFromSearchCriteria" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrganisationDetails">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetOrganisationDetails" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetInvoiceDetails">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetInvoiceDetails" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendAdhocPayment">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/SendAdhocPayment" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendPayment">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/SendPayment" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRegistrationsFromSearchCriteria">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetRegistrationsFromSearchCriteria" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRegistrationDetails">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/GetRegistrationDetails" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendRegistrationDetails">
+      <soap12:operation soapAction="http://127.0.0.1/OfstedOnlineWS/SendRegistrationDetails" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="OfstedOnlineWS">
+    <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Ofsted Online Web Service</wsdl:documentation>
+    <wsdl:port name="OfstedOnlineWSSoap" binding="tns:OfstedOnlineWSSoap">
+      <soap:address location="http://127.0.0.1:8000/OfstedOnlineWS/" />
+    </wsdl:port>
+    <wsdl:port name="OfstedOnlineWSSoap12" binding="tns:OfstedOnlineWSSoap12">
+      <soap12:address location="http://127.0.0.1:8000/OfstedOnlineWS/" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
