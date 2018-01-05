@@ -15,6 +15,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from application import views, magic_link, payment
+from django.views.generic.base import TemplateView 
 
 
 urlpatterns = [
@@ -54,5 +55,5 @@ urlpatterns = [
     url(r'^test/', magic_link.start, name='testing'),
     url(r'^test2/', payment.start),
     url(r'^start/', views.StartPageView),
-
+    url(r'^confirmation/', TemplateView.as_view(template_name = 'payment-confirmation.html')),
 ]

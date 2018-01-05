@@ -5,7 +5,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 '''
 
-from application import status
+from application import status, payment
 
 from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic, Login_Contact_Logic, Login_Contact_Logic_Phone, Multiple_Childcare_Address_Logic, Personal_Childcare_Address_Logic, Personal_DOB_Logic, Personal_Home_Address_Logic,
                             Personal_Location_Of_Care_Logic, Personal_Name_Logic, references_check_logic)
@@ -18,6 +18,11 @@ from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, Contac
 from .models import Application, Login_And_Contact_Details
 
 import datetime
+
+import re
+
+import json
+
 from datetime import date
 from application.models import Applicant_Personal_Details,\
     Applicant_Home_Address, Applicant_Names, First_Aid_Training
@@ -1446,6 +1451,17 @@ def ConfirmationView(request):
 # View the Payment page
 def PaymentView(request):
     
+    if request.method == 'GET':
+        
+        #Get the application
+        application_id_local = request.GET["id"]
+
+        # As not data is saved for this, a blank payment form is generated with each get request       
+        form = Payment()
+    
+        # Access the task page
+        return render(request, 'payment.html', {'form': form,'application_id': application_id_local})        
+    
     if request.method == 'POST':
         
         # Retrieve the application's ID        
@@ -1457,34 +1473,99 @@ def PaymentView(request):
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
             
-            # Stay on the same page
-            return HttpResponseRedirect('/payment-details/?id=' + application_id_local)
-    
-    # If the Payment form is not completed  
-    application_id_local = request.GET["id"]
-    form = Payment()
-    
-    # Access the page
-    return render(request, 'payment.html', {'form': form, 'application_id': application_id_local})
+            # Get selected payment method
+            payment_method = form.cleaned_data['payment_method']
+            
+            if (payment_method == 'Credit'):
+            
+                # Navigate to the payment details page
+                return HttpResponseRedirect('/payment-details/?id=' + application_id_local)
+            
+            elif (payment_method == 'PayPal'):
+                
+                # Stay on the same page
+                return HttpResponseRedirect('https://www.paypal.com/uk/home')
+        
+        # If there are invalid details
+        else:
+            
+            # Return to the same page
+            return render(request, 'payment.html', {'form': form, 'application_id': application_id_local})
 
 
-
+# View the Payment Details page
 def CardPaymentDetailsView(request):
+    
+    if request.method == 'GET':
+        
+        #Get the application
+        application_id_local = request.GET["id"]
+
+        # As no data is saved for this, a blank payment form is generated with each get request       
+        form = PaymentDetails()
+    
+        # Access the task page
+        return render(request, 'payment-details.html', {'form': form,'application_id': application_id_local})
     
     if request.method == 'POST':
         
+        #Get the application
         application_id_local = request.POST["id"]
-        
+               
+        # Initialise the Payment Details form
         form = PaymentDetails(request.POST)
         
+        # If the form is successfully submitted (with valid details)
         if form.is_valid():
             
-            return HttpResponseRedirect('/paymentconfirmation/?id=' + application_id_local)
-        
-    application_id_local = request.GET["id"]
-    form = PaymentDetails()
+            # Retrieve data
+            card_number = re.sub('[ -]+', '', request.POST["card_number"]) 
+            cardholders_name = request.POST["cardholders_name"]
+            card_security_code = request.POST["card_security_code"]
+            expiry_month = request.POST["expiry_date_0"]
+            expiry_year = request.POST["expiry_date_1"]
+            
+            # Make payment
+            payment_response = payment.make_payment(3500, cardholders_name, card_number, card_security_code, expiry_month, expiry_year, 'GBP', 'Test', 'Ofsted Test')
+            # Parse payment response
+            parsed_payment_response = json.loads(payment_response.text)
+            
+            # If the payment is successful
+            if payment_response.status_code == 200:
+                
+                email_response = payment.payment_email('matthew.styles@informed.com', 'Test')
+                
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'order_code': parsed_payment_response["orderCode"],
+                }
+                
+                # Go to payment confirmation page                         
+                return render(request, 'payment-confirmation.html', variables)
+           
+            else:
+                
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'error_flag': 1,
+                    'error_message': parsed_payment_response["message"],
+                }
+            
+            # Return to the application's task list    
+            return render(request, '/payment-details', variables)
     
-    return render(request, 'payment-details.html', {'form': form, 'application_id': application_id_local})
+        # If there are invalid details
+        else:
+            
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            
+            # Return to the same page
+            return render(request, 'payment-details.html', variables)
 
 
 # View the Application saved page
