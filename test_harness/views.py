@@ -1,11 +1,64 @@
-from django.http.response import HttpResponse
+'''
+Created on 5 Jan 2018
+
+@author: Informed Solutions
+'''
+
+#Python Imports
+import re
+import sys
+#This style of import should not be standard, and I'll be happy to change on review. This is used to stop its use being too long
+import xml.etree.ElementTree as ET
+
+#Django Imports
 from django.views.decorators.csrf import csrf_exempt
-from uuid import uuid4
+from test_harness.data_exchange_methods import (SendApplicationForms, GetIndividualsFromSearchCriteria, GetIndividualsRegistrations,
+                                                GetIndividualDetails, SendIndividualDetails, GetELSProviderDetails,
+                                                GetNewURN, GetReferenceData, SendMessages, GetOrganisationsFromSearchCriteria,
+                                                GetOrganisationsDetails, GetInvoiceDetails, SendAdhocPayment, SendPayment,
+                                                GetRegistrationFromSearchCriteria, GetRegistrationDetails, SendRegistrationDetails,
+                                                error_response)
 
 @csrf_exempt
 def NOOHarnessView(request):
-    split_body = ((str(request.body)).split('ns0:'))[1]
-    result = (split_body.split(' '))[0]
+    
+    #Attempts to pull a valid xml tree out of the request.body byte string (which is in unicode)
+    try:
+        SOAP_xml = ET.ElementTree(ET.fromstring(request.body))
+    except:
+        return(error_response('Input format not valid XML!'))
+        
+    #Assuming format is correct, requested service name, InvokerID, and Parameters can be parsed easily
+    #Checks all 
+    try:
+        SOAP_envelope_node = SOAP_xml.getroot()
+        SOAP_body_node = SOAP_envelope_node[0]
+        SOAP_service_name_node = SOAP_envelope_node[0][0]
+        SOAP_invoker_id_node = SOAP_envelope_node[0][0][0]
+        SOAP_parameters_node = SOAP_envelope_node[0][0][1]
+        assert(re.sub('{[^>]+}','',(SOAP_envelope_node).tag) == 'Envelope')
+        assert(re.sub('{[^>]+}','',(SOAP_body_node).tag) == 'Body')
+        assert(type(re.sub('{[^>]+}','',SOAP_service_name_node.tag)) is str )
+        assert(type(re.sub('{[^>]+}','',SOAP_invoker_id_node.tag)) is str )
+        assert(type(re.sub('{[^>]+}','',SOAP_parameters_node.tag)) is str )
+    except AssertionError:
+        return(error_response('Request XML in invalid format, consult the web service catalogue'))
+    
+    except:
+        return(error_response('Uncaught error, please contact supporting quoting the following support id' + SOAP_invoker_id_node.text))
+    
+    
+    #Stored in a tuple for easier referencing/passing later
+    SOAP_service_name = (re.sub('{[^>]+}','',SOAP_service_name_node.tag))
+    print(SOAP_service_name)
+    paramater_tuple = (SOAP_invoker_id_node.text, SOAP_parameters_node.text)
+   
+    #Useful Debugging
+    #print(SOAP_result)
+    #print(request.body)
+
+    #Dictionary that when queried in the format dict[key](parameters) , will run the function linked with the provided key with
+    #the provided parameters
     possible_requests = {'SendApplicationForms': SendApplicationForms,
                          'GetIndividualsFromSearchCriteria': GetIndividualsFromSearchCriteria,
                          'GetIndividualsRegistrations': GetIndividualsRegistrations,
@@ -24,68 +77,12 @@ def NOOHarnessView(request):
                          'GetRegistrationDetails': GetRegistrationDetails,
                          'SendRegistrationDetails': SendRegistrationDetails      
         }
-    print(result)
-    if result in possible_requests:
-        return(HttpResponse(possible_requests[result](), content_type = 'text/xml'))
+    
+    #If the service found in the request exists, run it's function and return a HttpResponse
+    #of an xml string defined in the web service catalogue
+    if SOAP_service_name in possible_requests:
+        return(possible_requests[SOAP_service_name](paramater_tuple))
+    else:
+        return(error_response('Requested service does not exist!'))
     
     
-    
-def TestResultView(request):
-    pass
-    
-def SendApplicationForms():
-    pass
-
-def GetIndividualsFromSearchCriteria():
-    pass
-
-def GetIndividualsRegistrations():
-    pass
-
-def GetIndividualDetails():
-    pass
-
-def SendIndividualDetails():
-    pass
-
-def GetELSProviderDetails():
-    return(HttpResponse('''<s12:Envelope xmlns:s12='http://schemas.xmlsoap.org/soap/envelope/'>
-  <s12:Body>
-    <ns1:GetELSProviderDetails xmlns:ns1='http://127.0.0.1/OfstedOnlineWS'>
-      <ns1:GetELSProviderDetailsResult>''' + str(uuid4()) + '''</ns1:GetELSProviderDetailsResult>
-    </ns1:GetELSProviderDetails>
-  </s12:Body>
-</s12:Envelope>''', content_type = 'text/xml'))
-
-def GetNewURN():
-    pass
-
-def GetReferenceData():
-    pass
-
-def SendMessages():
-    pass
-
-def GetOrganisationsFromSearchCriteria():
-    pass
-
-def GetOrganisationsDetails():
-    pass
-
-def GetInvoiceDetails():
-    pass
-
-def SendAdhocPayment():
-    pass
-
-def SendPayment():
-    pass
-
-def GetRegistrationFromSearchCriteria():
-    pass
-
-def GetRegistrationDetails():
-    pass
-
-def SendRegistrationDetails():
-    pass
