@@ -14,7 +14,7 @@ from .models import Application, Login_And_Contact_Details
 
 from uuid import UUID
 
-from .views import ApplicationSavedView, ConfirmationView, ContactEmailView, ContactPhoneView, ContactSummaryView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingView, HealthView, LogInView, OtherPeopleView, PaymentView, PersonalDetailsDOBView, PersonalDetailsNameView, PersonalDetailsHomeAddressView, PersonalDetailsLocationOfCareView, QuestionView, ReferencesView, StartPageView, TypeOfChildcareView
+from .views import ApplicationSavedView, ConfirmationView, ContactEmailView, ContactPhoneView, ContactSummaryView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingDeclarationView, FirstAidTrainingDetailsView, FirstAidTrainingGuidanceView, FirstAidTrainingRenewView, FirstAidTrainingSummaryView, FirstAidTrainingTrainingView, HealthView, LogInView, OtherPeopleView, PaymentView, PersonalDetailsDOBView, PersonalDetailsNameView, PersonalDetailsHomeAddressView, PersonalDetailsLocationOfCareView, QuestionView, ReferencesView, StartPageView, TypeOfChildcareView
 import datetime
 from application.views import PersonalDetailsGuidanceView
 
@@ -395,22 +395,113 @@ class PersonalDetailsTest(TestCase):
 class FirstAidTrainingTest(TestCase):
 
     # Test to check if URL resolves to correct view  
-    def test_url_resolves_to_page(self):
+    def test_guidance_url_resolves_to_page(self):
         
-        found = resolve('/first-aid/')
-        self.assertEqual(found.func, FirstAidTrainingView)
+        found = resolve('/first-aid/guidance/')
+        self.assertEqual(found.func, FirstAidTrainingGuidanceView)
     
     # Test to check that a user cannot navigate to the page without an application ID
-    def test_page_not_displayed_without_id(self):
+    def test_guidance_page_not_displayed_without_id(self):
         
         c = Client()
         
         try:
-            c.get('/first-aid/?id=')
+            c.get('/first-aid/guidance?id=')
+            self.assertEqual(1,0)
+            
+        except:
+            self.assertEqual(0,0)#
+
+    # Test to check if URL resolves to correct view  
+    def test_details_url_resolves_to_page(self):
+        
+        found = resolve('/first-aid/details/')
+        self.assertEqual(found.func, FirstAidTrainingDetailsView)
+    
+    # Test to check that a user cannot navigate to the page without an application ID
+    def test_details_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            c.get('/first-aid/details?id=')
             self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)
+
+    # Test to check if URL resolves to correct view  
+    def test_declaration_url_resolves_to_page(self):
+        
+        found = resolve('/first-aid/declaration/')
+        self.assertEqual(found.func, FirstAidTrainingDeclarationView)
+    
+    # Test to check that a user cannot navigate to the page without an application ID
+    def test_declaration_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            c.get('/first-aid/declaration?id=')
+            self.assertEqual(1,0)
+            
+        except:
+            self.assertEqual(0,0)
+
+    # Test to check if URL resolves to correct view  
+    def test_renew_url_resolves_to_page(self):
+        
+        found = resolve('/first-aid/renew/')
+        self.assertEqual(found.func, FirstAidTrainingRenewView)
+    
+    # Test to check that a user cannot navigate to the page without an application ID
+    def test_renew_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            c.get('/first-aid/renew?id=')
+            self.assertEqual(1,0)
+            
+        except:
+            self.assertEqual(0,0)          
+
+    # Test to check if URL resolves to correct view  
+    def test_training_url_resolves_to_page(self):
+        
+        found = resolve('/first-aid/training/')
+        self.assertEqual(found.func, FirstAidTrainingTrainingView)
+    
+    # Test to check that a user cannot navigate to the page without an application ID
+    def test_training_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            c.get('/first-aid/training?id=')
+            self.assertEqual(1,0)
+            
+        except:
+            self.assertEqual(0,0)  
+
+    # Test to check if URL resolves to correct view  
+    def test_summary_url_resolves_to_page(self):
+        
+        found = resolve('/first-aid/summary/')
+        self.assertEqual(found.func, FirstAidTrainingSummaryView)
+    
+    # Test to check that a user cannot navigate to the page without an application ID
+    def test_summary_page_not_displayed_without_id(self):
+        
+        c = Client()
+        
+        try:
+            c.get('/first-aid/summary?id=')
+            self.assertEqual(1,0)
+            
+        except:
+            self.assertEqual(0,0)  
+
 
     # Test progress status does not update to Started when a returning to the task list after completing a task
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):

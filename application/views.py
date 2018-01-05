@@ -13,13 +13,14 @@ from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Lo
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTraining, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetailsChildcareAddress, PersonalDetailsChildcareAddressManual, PersonalDetailsDOB, PersonalDetailsName, PersonalDetailsGuidance, PersonalDetailsHomeAddress, PersonalDetailsHomeAddressManual, PersonalDetailsLocationOfCare, PersonalDetailsSummary, Question, ReferenceForm, TypeOfChildcare
+from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTrainingDetails, FirstAidTrainingDeclaration, FirstAidTrainingGuidance, FirstAidTrainingTraining, FirstAidTrainingRenew, FirstAidTrainingSummary, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetailsChildcareAddress, PersonalDetailsChildcareAddressManual, PersonalDetailsDOB, PersonalDetailsName, PersonalDetailsGuidance, PersonalDetailsHomeAddress, PersonalDetailsHomeAddressManual, PersonalDetailsLocationOfCare, PersonalDetailsSummary, Question, ReferenceForm, TypeOfChildcare
 
 from .models import Application, Login_And_Contact_Details
 
 import datetime
+from datetime import date
 from application.models import Applicant_Personal_Details,\
-    Applicant_Home_Address, Applicant_Names
+    Applicant_Home_Address, Applicant_Names, First_Aid_Training
 
 
 
@@ -868,27 +869,88 @@ def PersonalDetailsSummaryView(request):
             
             # Return to the same page
             return render(request, 'personal-details-summary.html', variables)
-                      
 
-# View for the First aid training task
-def FirstAidTrainingView(request):
 
-    # Get current date and time
-    current_date = datetime.datetime.today()
+# View for the First aid training task: guidance
+def FirstAidTrainingGuidanceView(request):
+        
+    if request.method =='GET':
+          
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+            
+        form = FirstAidTrainingGuidance()
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
+        # Access the task page
+        return render(request, 'first-aid-guidance.html', {'form': form,'application_id': application_id_local, 'first_aid_training_status': application.first_aid_training_status})
     
     if request.method =='POST':
         
         # Retrieve the application's ID
         application_id_local = request.POST["id"]
         
-        # Initialise the First aid training form
-        form = FirstAidTraining(request.POST,id = application_id_local)
+        # Initialise the Your login and contact details form
+        form = FirstAidTrainingGuidance(request.POST)
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
         
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
             
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
+            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed    
+            if  Application.objects.get(pk = application_id_local).first_aid_training_status != 'COMPLETED':
+                status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+            
+            # Go to the details page   
+            return HttpResponseRedirect('/first-aid/details?id=' + application_id_local)
+        
+        # If there are invalid details
+        else:
+            
+            # Return to the same page
+            return render(request, 'first-aid-training-guidance.html', {'form': form,'application_id': application_id_local})                     
+
+
+# View for the First aid training: details
+def FirstAidTrainingDetailsView(request):
+
+    # Get current date and time
+    current_date = datetime.datetime.today()
+    
+    if request.method == 'GET':
+        
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+            
+        form = FirstAidTrainingDetails(id = application_id_local)
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+    
+        # Access the task page
+        return render(request, 'first-aid-details.html', {'form': form,'application_id': application_id_local, 'first_aid_training_status': application.first_aid_training_status})
+    
+    if request.method == 'POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Your login and contact details form
+        form = FirstAidTrainingDetails(request.POST,id = application_id_local)
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed    
+            if  Application.objects.get(pk = application_id_local).first_aid_training_status != 'COMPLETED':
+                status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
             
             # Perform business logic to create or update First aid training record in database
             first_aid_training_record = First_Aid_Logic(application_id_local, form)
@@ -898,22 +960,222 @@ def FirstAidTrainingView(request):
             application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
+            
+            # Verify if first aid training certificate needs to be renewed
+            # Get certificate date
+            certificate_day = form.cleaned_data['course_date'].day
+            certificate_month = form.cleaned_data['course_date'].month
+            certificate_year = form.cleaned_data['course_date'].year
+            certificate_date = date(certificate_year, certificate_month, certificate_day)
+            
+            # Get today's date
+            today = date.today()
+            
+            # Calculate certificate age
+            certificate_age = today.year - certificate_date.year - ((today.month, today.day) < (certificate_date.month, certificate_date.day))
+        
+            # If the certificate is less than 2.5 years old
+            if (certificate_age < 2.5):
+            
+                # Go to the declaration page    
+                return HttpResponseRedirect('/first-aid/declaration?id=' + application_id_local)
+            
+            # If the certificate is between 2.5 and 3 years old
+            elif (2.5 <= certificate_age <= 3):
+                
+                # Go to the renew page    
+                return HttpResponseRedirect('/first-aid/renew?id=' + application_id_local)
+            
+            # If the certificate is older than 3 years
+            elif (certificate_age > 3):
+                
+                # Go to the renew page    
+                return HttpResponseRedirect('/first-aid/training?id=' + application_id_local)                               
     
-        # Return to the application's task list   
-        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
-    
-    # If the First aid training form is not completed
-    application_id_local = request.GET["id"]
+        # If there are invalid details
+        else:
+            
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            
+            # Return to the same page
+            return render(request, 'first-aid-details.html', variables)
 
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if  Application.objects.get(pk = application_id_local).first_aid_training_status != 'COMPLETED':
+
+# View for the First aid training task: declaration
+def FirstAidTrainingDeclarationView(request):
         
-        status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+    if request.method =='GET':
+          
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+            
+        form = FirstAidTrainingDeclaration()
         
-    form = FirstAidTraining(id = application_id_local)
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
+        # Access the task page
+        return render(request, 'first-aid-declaration.html', {'form': form,'application_id': application_id_local, 'first_aid_training_status': application.first_aid_training_status})
     
-    # Access the task page    
-    return render(request, 'first-aid.html', {'form': form,'application_id': application_id_local})
+    if request.method =='POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Your login and contact details form
+        form = FirstAidTrainingDeclaration(request.POST)
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
+            
+            # Go to the details page   
+            return HttpResponseRedirect('/first-aid/summary?id=' + application_id_local)
+        
+        # If there are invalid details
+        else:
+            
+            # Return to the same page
+            return render(request, 'first-aid-declaration.html', {'form': form,'application_id': application_id_local}) 
+
+
+# View for the First aid training task: renew
+def FirstAidTrainingRenewView(request):
+        
+    if request.method =='GET':
+          
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+            
+        form = FirstAidTrainingRenew()
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
+        # Access the task page
+        return render(request, 'first-aid-renew.html', {'form': form,'application_id': application_id_local, 'first_aid_training_status': application.first_aid_training_status})
+    
+    if request.method =='POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Your login and contact details form
+        form = FirstAidTrainingRenew(request.POST)
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
+            
+            # Go to the details page   
+            return HttpResponseRedirect('/first-aid/summary?id=' + application_id_local)
+        
+        # If there are invalid details
+        else:
+            
+            # Return to the same page
+            return render(request, 'first-aid-renew.html', {'form': form,'application_id': application_id_local}) 
+
+
+# View for the First aid training task: training
+def FirstAidTrainingTrainingView(request):
+        
+    if request.method =='GET':
+          
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+            
+        form = FirstAidTrainingTraining()
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
+        # Access the task page
+        return render(request, 'first-aid-training.html', {'form': form,'application_id': application_id_local, 'first_aid_training_status': application.first_aid_training_status})
+    
+    if request.method =='POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Your login and contact details form
+        form = FirstAidTrainingTraining(request.POST)
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Update the status of the task to 'NOT_STARTED'    
+            status.update(application_id_local, 'first_aid_training_status', 'NOT_STARTED')
+            
+            # Go to the details page   
+            return HttpResponseRedirect('/first-aid/summary?id=' + application_id_local)
+        
+        # If there are invalid details
+        else:
+            
+            # Return to the same page
+            return render(request, 'first-aid-training.html', {'form': form,'application_id': application_id_local}) 
+        
+        
+# View for the First aid training task: summary
+def FirstAidTrainingSummaryView(request):
+        
+    if request.method =='GET':
+          
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+        
+        # Retrieve answers
+        training_organisation = First_Aid_Training.objects.get(application_id=application_id_local).training_organisation
+        training_course = First_Aid_Training.objects.get(application_id=application_id_local).course_title
+        certificate_day = First_Aid_Training.objects.get(application_id=application_id_local).course_day
+        certificate_month = First_Aid_Training.objects.get(application_id=application_id_local).course_month
+        certificate_year = First_Aid_Training.objects.get(application_id=application_id_local).course_year
+            
+        form = FirstAidTrainingSummary()
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
+        # Access the task page
+        return render(request, 'first-aid-summary.html', {'form': form,'application_id': application_id_local, 'training_organisation': training_organisation, 'training_course': training_course, 'certificate_day': certificate_day, 'certificate_month': certificate_month, 'certificate_year': certificate_year, 'first_aid_training_status': application.first_aid_training_status})
+    
+    if request.method =='POST':
+        
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+        
+        # Initialise the Your login and contact details form
+        form = FirstAidTrainingSummary(request.POST)
+        
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+        
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            
+            # Go to the details page   
+            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+        
+        # If there are invalid details
+        else:
+            
+            # Return to the same page
+            return render(request, 'first-aid-summary.html', {'form': form,'application_id': application_id_local}) 
 
 
 # View for the Early Years knowledge task

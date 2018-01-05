@@ -10,7 +10,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 from django import forms
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
-from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
+from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect, SeparatedCheckboxSelectMultiple
 
 from application.models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, Health_Declaration_Booklet, References, \
     Applicant_Home_Address
@@ -576,22 +576,29 @@ class PersonalDetailsSummary(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-       
 
-# First aid training form
-class FirstAidTraining(GOVUKForm):
+
+# First aid training form: guidance
+class FirstAidTrainingGuidance(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True       
+
+
+# First aid training form: details
+class FirstAidTrainingDetails(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     
     first_aid_training_organisation = forms.CharField(label='First aid training organisation')
     title_of_training_course = forms.CharField(label='Title of training course')
-    course_date = SplitDateField(label='Course date', help_text='For example, 31 03 1980')
+    course_date = SplitDateField(label='Course date', help_text='For example, 31 03 2016')
     
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(FirstAidTraining, self).__init__(*args, **kwargs)
+        super(FirstAidTrainingDetails, self).__init__(*args, **kwargs)
 
         # If information was previously entered, display it on the form        
         if First_Aid_Training.objects.filter(application_id=self.application_id_local).count() > 0:
@@ -600,6 +607,38 @@ class FirstAidTraining(GOVUKForm):
             self.fields['title_of_training_course'].initial = First_Aid_Training.objects.get(application_id=self.application_id_local).course_title
             self.fields['course_date'].initial = [First_Aid_Training.objects.get(application_id=self.application_id_local).course_day, First_Aid_Training.objects.get(application_id=self.application_id_local).course_month, First_Aid_Training.objects.get(application_id=self.application_id_local).course_year]
  
+ 
+# First aid training form: declaration
+class FirstAidTrainingDeclaration(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    
+    declaration = forms.BooleanField(label='I will show my first aid certificate to the inspector', required=True)
+    
+
+# First aid training form: renew
+class FirstAidTrainingRenew(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    renew_a = forms.BooleanField(label='I will renew my first aid training in the next few months', required=True)
+    renew_b = forms.BooleanField(label='I will show my first aid certificate to the inspector', required=True)
+
+# First aid training form: training
+class FirstAidTrainingTraining(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+# First aid training form: summary
+class FirstAidTrainingSummary(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+        
 
 # Early Years knowledge form
 class EYFS(GOVUKForm):

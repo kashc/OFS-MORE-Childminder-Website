@@ -14,6 +14,7 @@ from uuid import UUID
 
 import datetime
 from application.models import Applicant_Home_Address
+from datetime import date
 
 
 
@@ -727,6 +728,225 @@ class Test_First_Aid_Training_Logic(TestCase):
         # Verify that the First_Aid_Training object corresponding with the test application exists
         assert(First_Aid_Training.objects.filter(application_id=test_application_id).count() > 0)
     
+    # Test logic to go to declaration page
+    def test_logic_to_go_to_declaration(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+
+        # Create a test login ID
+        test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
+        
+        # Delete test First_Aid_Training and Login_And_Contact_Details objects if they already exist
+        First_Aid_Training.objects.filter(application_id=test_application_id).delete()
+        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        
+        # Create a test user
+        user = Login_And_Contact_Details.objects.create(
+            login_id = (UUID(test_login_id)),
+            email = '',
+            mobile_number = '',
+            add_phone_number = '',
+            email_expiry_date = None,
+            sms_expiry_date = None,
+            magic_link_email = '',
+            magic_link_sms = ''
+        )
+        
+        # Create a test application
+        Application.objects.create(
+            application_id = (UUID(test_application_id)),
+            login_id = user,
+            application_type = 'CHILDMINDER',
+            application_status = 'DRAFTING',
+            cygnum_urn = '',   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'NOT_STARTED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
+            date_created = datetime.datetime.today(),
+            date_updated = datetime.datetime.today(),
+            date_accepted = None
+        )
+        
+        # Create a test first aid ID
+        test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
+        
+        # Create a test First_Aid_Training object
+        test_first_aid = First_Aid_Training.objects.create(
+            first_aid_id = (UUID(test_first_aid_id)),
+            application_id = Application.objects.get(application_id=test_application_id),
+            training_organisation = 'Red Cross',
+            course_title = 'Infant First Aid',
+            course_day = 1,
+            course_month = 2,
+            course_year = 2017
+        )
+        
+        test_date = date(2018, 1, 5)
+        
+        certificate_day = test_first_aid.course_day
+        certificate_month = test_first_aid.course_month
+        certificate_year = test_first_aid.course_year
+        certificate_date = date(certificate_year, certificate_month, certificate_day)
+            
+        # Calculate certificate age
+        certificate_age = test_date.year - certificate_date.year - ((test_date.month, test_date.day) < (certificate_date.month, certificate_date.day))
+        
+        assert(certificate_age < 2.5)
+        
+    # Test logic to go to renew page
+    def test_logic_to_go_to_renew(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+
+        # Create a test login ID
+        test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
+        
+        # Delete test First_Aid_Training and Login_And_Contact_Details objects if they already exist
+        First_Aid_Training.objects.filter(application_id=test_application_id).delete()
+        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        
+        # Create a test user
+        user = Login_And_Contact_Details.objects.create(
+            login_id = (UUID(test_login_id)),
+            email = '',
+            mobile_number = '',
+            add_phone_number = '',
+            email_expiry_date = None,
+            sms_expiry_date = None,
+            magic_link_email = '',
+            magic_link_sms = ''
+        )
+        
+        # Create a test application
+        Application.objects.create(
+            application_id = (UUID(test_application_id)),
+            login_id = user,
+            application_type = 'CHILDMINDER',
+            application_status = 'DRAFTING',
+            cygnum_urn = '',   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'NOT_STARTED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
+            date_created = datetime.datetime.today(),
+            date_updated = datetime.datetime.today(),
+            date_accepted = None
+        )
+        
+        # Create a test first aid ID
+        test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
+        
+        # Create a test First_Aid_Training object
+        test_first_aid = First_Aid_Training.objects.create(
+            first_aid_id = (UUID(test_first_aid_id)),
+            application_id = Application.objects.get(application_id=test_application_id),
+            training_organisation = 'Red Cross',
+            course_title = 'Infant First Aid',
+            course_day = 1,
+            course_month = 2,
+            course_year = 2014
+        )
+        
+        test_date = date(2018, 1, 5)
+        
+        certificate_day = test_first_aid.course_day
+        certificate_month = test_first_aid.course_month
+        certificate_year = test_first_aid.course_year
+        certificate_date = date(certificate_year, certificate_month, certificate_day)
+            
+        # Calculate certificate age
+        certificate_age = test_date.year - certificate_date.year - ((test_date.month, test_date.day) < (certificate_date.month, certificate_date.day))
+        
+        assert(2.5 <= certificate_age <= 3)     
+
+    # Test logic to go to training page
+    def test_logic_to_go_to_training(self):
+        
+        # Create a test application ID
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+
+        # Create a test login ID
+        test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
+        
+        # Delete test First_Aid_Training and Login_And_Contact_Details objects if they already exist
+        First_Aid_Training.objects.filter(application_id=test_application_id).delete()
+        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        
+        # Create a test user
+        user = Login_And_Contact_Details.objects.create(
+            login_id = (UUID(test_login_id)),
+            email = '',
+            mobile_number = '',
+            add_phone_number = '',
+            email_expiry_date = None,
+            sms_expiry_date = None,
+            magic_link_email = '',
+            magic_link_sms = ''
+        )
+        
+        # Create a test application
+        Application.objects.create(
+            application_id = (UUID(test_application_id)),
+            login_id = user,
+            application_type = 'CHILDMINDER',
+            application_status = 'DRAFTING',
+            cygnum_urn = '',   
+            login_details_status = 'COMPLETED',
+            personal_details_status = 'COMPLETED',
+            childcare_type_status = 'COMPLETED',
+            first_aid_training_status = 'NOT_STARTED',
+            eyfs_training_status = 'COMPLETED',
+            criminal_record_check_status = 'COMPLETED',
+            health_status = 'COMPLETED',
+            references_status = 'COMPLETED',
+            people_in_home_status = 'COMPLETED',
+            declarations_status = 'NOT_STARTED',
+            date_created = datetime.datetime.today(),
+            date_updated = datetime.datetime.today(),
+            date_accepted = None
+        )
+        
+        # Create a test first aid ID
+        test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
+        
+        # Create a test First_Aid_Training object
+        test_first_aid = First_Aid_Training.objects.create(
+            first_aid_id = (UUID(test_first_aid_id)),
+            application_id = Application.objects.get(application_id=test_application_id),
+            training_organisation = 'Red Cross',
+            course_title = 'Infant First Aid',
+            course_day = 1,
+            course_month = 2,
+            course_year = 1995
+        )
+        
+        test_date = date(2018, 1, 5)
+        
+        certificate_day = test_first_aid.course_day
+        certificate_month = test_first_aid.course_month
+        certificate_year = test_first_aid.course_year
+        certificate_date = date(certificate_year, certificate_month, certificate_day)
+            
+        # Calculate certificate age
+        certificate_age = test_date.year - certificate_date.year - ((test_date.month, test_date.day) < (certificate_date.month, certificate_date.day))
+        
+        assert(certificate_age > 3)
+           
     # Delete test application
     def delete(self):
         
