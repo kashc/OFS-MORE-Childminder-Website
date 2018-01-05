@@ -153,12 +153,14 @@ class ContactPhone(GOVUKForm):
     def clean_mobile_number(self):
         
         mobile_number = self.cleaned_data['mobile_number']
+        # Allow for spaces
+        no_space_mobile_number = mobile_number.replace(' ','')
         
-        if re.match("^(07\d{8,12}|447\d{7,11})$", mobile_number) is None:
+        if re.match("^(07\d{8,12}|447\d{7,11})$", no_space_mobile_number) is None:
             
             raise forms.ValidationError('Please enter a valid mobile number.')
             
-        if len(mobile_number) > 11:
+        if len(no_space_mobile_number) > 11:
             
             raise forms.ValidationError('Please enter a valid mobile number.')
         
@@ -168,14 +170,16 @@ class ContactPhone(GOVUKForm):
     def clean_add_phone_number(self):
         
         add_phone_number = self.cleaned_data['add_phone_number']
+        # Allow for spaces
+        no_space_add_phone_number = add_phone_number.replace(' ','')
             
         if add_phone_number != '':
         
-            if re.match("^(0\d{8,12}|447\d{7,11})$", add_phone_number) is None:
+            if re.match("^(0\d{8,12}|447\d{7,11})$", no_space_add_phone_number) is None:
                 
                 raise forms.ValidationError('Please enter a valid phone number.')
                 
-            if len(add_phone_number) > 11:
+            if len(no_space_add_phone_number) > 11:
             
                 raise forms.ValidationError('Please enter a valid phone number.')
         
@@ -239,7 +243,7 @@ class PersonalDetailsName(GOVUKForm):
         
         first_name = self.cleaned_data['first_name']
             
-        if re.match("^[A-Za-z-]+$", first_name) is None:
+        if re.match("^[A-Za-z- ]+$", first_name) is None:
                 
             raise forms.ValidationError('Please enter a valid name.')
 
@@ -256,7 +260,7 @@ class PersonalDetailsName(GOVUKForm):
         
         if middle_names != '':
             
-            if re.match("^[A-Za-z-]+$", middle_names) is None:
+            if re.match("^[A-Za-z- ]+$", middle_names) is None:
                     
                 raise forms.ValidationError('Please enter a valid name.')
     
@@ -271,7 +275,7 @@ class PersonalDetailsName(GOVUKForm):
         
         last_name = self.cleaned_data['last_name']
             
-        if re.match("^[A-Za-z-]+$", last_name) is None:
+        if re.match("^[A-Za-z- ]+$", last_name) is None:
                 
             raise forms.ValidationError('Please enter a valid name.')
         
@@ -393,7 +397,7 @@ class PersonalDetailsHomeAddressManual(GOVUKForm):
         
         town = self.cleaned_data['town']
             
-        if re.match("^[A-Za-z-]+$", town) is None:
+        if re.match("^[A-Za-z- ]+$", town) is None:
                 
             raise forms.ValidationError('Please enter a valid town.')
         
@@ -410,7 +414,7 @@ class PersonalDetailsHomeAddressManual(GOVUKForm):
             
         if county != '':
         
-            if re.match("^[A-Za-z-]+$", county) is None:
+            if re.match("^[A-Za-z- ]+$", county) is None:
                 
                 raise forms.ValidationError('Please enter a valid county.')
             
