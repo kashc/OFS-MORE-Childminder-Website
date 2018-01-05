@@ -1540,6 +1540,7 @@ def CardPaymentDetailsView(request):
                     'application_id': application_id_local,
                     'order_code': parsed_payment_response["orderCode"],
                 }
+                print('Hello:' + parsed_payment_response["orderCode"])
                 
                 # Go to payment confirmation page                         
                 return render(request, 'payment-confirmation.html', variables)
@@ -1554,7 +1555,7 @@ def CardPaymentDetailsView(request):
                 }
             
             # Return to the application's task list    
-            return render(request, '/payment-details', variables)
+            return HttpResponseRedirect(request, '/payment-details/?id=' + application_id_local, variables)
     
         # If there are invalid details
         else:

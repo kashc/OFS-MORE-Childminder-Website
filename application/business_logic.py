@@ -10,6 +10,8 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 from .models import Applicant_Home_Address, Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, References
 
+import datetime
+
 
 
 # Business logic to create or update a Type of childcare record
@@ -383,3 +385,18 @@ def health_check_logic(application_id_local, form):
         hdb_record.alcohol_drug_problems = alcohol_drug_problems
 
     return hdb_record
+
+
+# Get the expiry year of the card
+def get_card_expiry_years():
+    
+    #Output list
+    year_list = []
+    
+    #Iterates 0 through 10, affixing each value to current year and appending to yearlist
+    for year_iterable in range(0,11):
+        
+        now = datetime.datetime.now()
+        year_list.append((now.year+year_iterable,(str(now.year+year_iterable))))
+        
+    return year_list
