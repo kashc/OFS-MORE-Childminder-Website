@@ -386,14 +386,12 @@ def health_check_logic(application_id_local, form):
 
     return hdb_record
 
-
-# Get the expiry year of the card
 def get_card_expiry_years():
     
-    #Output list
+    # Output list
     year_list = []
     
-    #Iterates 0 through 10, affixing each value to current year and appending to yearlist
+    # Iterates 0 through 10, affixing each value to current year and appending to yearlist
     for year_iterable in range(0,11):
         
         now = datetime.datetime.now()

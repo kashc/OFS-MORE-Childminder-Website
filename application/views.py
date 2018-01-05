@@ -1540,7 +1540,6 @@ def CardPaymentDetailsView(request):
                     'application_id': application_id_local,
                     'order_code': parsed_payment_response["orderCode"],
                 }
-                print('Hello:' + parsed_payment_response["orderCode"])
                 
                 # Go to payment confirmation page                         
                 return render(request, 'payment-confirmation.html', variables)
