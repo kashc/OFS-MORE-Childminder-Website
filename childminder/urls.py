@@ -57,7 +57,6 @@ urlpatterns = [
     url(r'^validate/(?P<id>[\w-]+)/$', magic_link.validateMagicLink), #This is curr checking that the parameter is a phone number
     url(r'^verifyPhone/', magic_link.SMSVerification),
     url(r'^email-sent/', TemplateView.as_view(template_name = 'email-sent.html')),
-    #url(r'^test/', magic_link.start, name='testing'),
     url(r'^test2/', payment.start),
     url(r'^start/', views.StartPageView),
     url(r'^confirmation/', TemplateView.as_view(template_name = 'payment-confirmation.html')),

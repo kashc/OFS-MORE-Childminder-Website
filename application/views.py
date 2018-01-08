@@ -224,7 +224,7 @@ def ContactEmailView(request):
                 application.save()
         
                 # Go to the phone numbers page   
-                return HttpResponseRedirect('/contact-phone?id=' + application_id_local)
+                return HttpResponseRedirect('/account/phone?id=' + application_id_local)
         
         # If there are invalid details
         else:
