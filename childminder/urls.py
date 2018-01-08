@@ -13,9 +13,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
+from django.views.generic import TemplateView
 from django.contrib import admin
 from application import views, magic_link, payment
-from django.views.generic.base import TemplateView 
+from django.views.generic.edit import FormView
+from functools import partial 
 
 
 urlpatterns = [
@@ -51,8 +53,11 @@ urlpatterns = [
     url(r'^application-saved/', views.ApplicationSavedView, name='Application-Saved-View'),
     url(r'^admin/', admin.site.urls),
     url(r'^reset/', views.ResetView),
-    url(r'^existing-application/',views.existingApplicationView, name='Existing-Application'),
-    url(r'^test/', magic_link.start, name='testing'),
+    url(r'^existing-application/',magic_link.existingApplicationView, name='Existing-Application'),
+    url(r'^validate/(?P<id>[\w-]+)/$', magic_link.validateMagicLink), #This is curr checking that the parameter is a phone number
+    url(r'^verifyPhone/', magic_link.SMSVerification),
+    url(r'^email-sent/', TemplateView.as_view(template_name = 'email-sent.html')),
+    #url(r'^test/', magic_link.start, name='testing'),
     url(r'^test2/', payment.start),
     url(r'^start/', views.StartPageView),
     url(r'^confirmation/', TemplateView.as_view(template_name = 'payment-confirmation.html')),

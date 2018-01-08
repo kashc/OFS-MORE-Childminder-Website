@@ -1,0 +1,30 @@
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+
+<main id="content" role="main">
+   <div class="column-full">
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+    <div class="grid-row">
+		
+           <h1 class="form-title heading-large">
+               SMS verification
+           </h1>
+           <p>Enter the code sent to your phone to resume your application.</p>
+           {% csrf_token %}
+           {{form.as_div}}
+    </div>
+    <div class="form-group grid-row">
+	    <input type="submit" class="button" value="Save and continue">
+	    <input type="hidden" name="id" value="Save and continue" />
+	    <input type="submit" class="button button-search" value="Request new link">
+	    </br>
+	    </br>
+	    <a href=""><p>Having trouble? Answer your security question</p></a>
+	</div>
+</form>
+</main>
+{% endblock %}

@@ -75,7 +75,7 @@ class TypeOfChildcare(forms.Form):
                 self.fields['type_of_childcare'].initial = []
 
 
-class EmailLogin(forms.ModelForm):
+class EmailLogin(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -128,10 +128,6 @@ class ContactEmail(GOVUKForm):
         if len(email_address) > 100:
             
             raise forms.ValidationError('Please enter 100 characters or less.')
-        
-        if Login_And_Contact_Details.objects.filter(email=email_address).exists():
-            
-            raise forms.ValidationError('There is already a Childminder application associated with this e-mail address. Please log in to the existing application.')
         
         return email_address 
 
@@ -194,7 +190,15 @@ class ContactPhone(GOVUKForm):
                 raise forms.ValidationError('TBC')
         
         return add_phone_number
+
+
+class VerifyPhone(GOVUKForm):
     
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    
+    magic_link_sms = forms.CharField(label = 'Code')   
+
 
 # Your login and contact details form: knowledge-based question 
 class Question(GOVUKForm):

@@ -10,18 +10,20 @@ from application import status, payment
 from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic, Login_Contact_Logic, Login_Contact_Logic_Phone, Multiple_Childcare_Address_Logic, Personal_Childcare_Address_Logic, Personal_DOB_Logic, Personal_Home_Address_Logic,
                             Personal_Location_Of_Care_Logic, Personal_Name_Logic, references_check_logic)
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 
 from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTrainingDetails, FirstAidTrainingDeclaration, FirstAidTrainingGuidance, FirstAidTrainingTraining, FirstAidTrainingRenew, FirstAidTrainingSummary, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetailsChildcareAddress, PersonalDetailsChildcareAddressManual, PersonalDetailsDOB, PersonalDetailsName, PersonalDetailsGuidance, PersonalDetailsHomeAddress, PersonalDetailsHomeAddressManual, PersonalDetailsLocationOfCare, PersonalDetailsSummary, Question, ReferenceForm, TypeOfChildcare
 
 from .models import Application, Login_And_Contact_Details
 
-import datetime
+import datetime, time
 
 import re
 
 import json
+
+from application import magic_link
 
 from datetime import date
 from application.models import Applicant_Personal_Details,\
@@ -187,16 +189,42 @@ def ContactEmailView(request):
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
             
-            # Perform business logic to create or update Your login and contact details record in database
-            login_and_contact_details_record = Login_Contact_Logic(application_id_local, form)
-            login_and_contact_details_record.save()
+            email = form.cleaned_data['email_address']
             
-            # Update application date updated
-            application.date_updated = current_date
-            application.save()
+            print(email)
             
-            # Go to the phone numbers page   
-            return HttpResponseRedirect('/account/phone?id=' + application_id_local)
+            if Login_And_Contact_Details.objects.filter(email=email).exists():
+            
+                # Retrieve corresponding application
+                acc = Login_And_Contact_Details.objects.get(email=email)
+                #get url and substring just the domain
+                domain = request.META.get('HTTP_REFERER', "")
+                domain = domain[:-54]
+                #generate random link
+                
+                link = magic_link.generate_random(12, "link")
+                #get current epoch so the link can be time-boxed
+                expiry = int(time.time())
+                #save link and expiry
+                acc.email_expiry_date = expiry
+                acc.magic_link_email=link
+                acc.save()
+                #send magic link email
+                r = magic_link.magic_link_email(email, domain +'validate/' +link)
+                #Note that this is the same response whether the email is valid or not
+                return HttpResponseRedirect('/email-sent?id=' + application_id_local)   
+                
+            else: 
+            
+                # Perform business logic to create or update Your login and contact details record in database
+                login_and_contact_details_record = Login_Contact_Logic(application_id_local, form)
+                login_and_contact_details_record.save()
+                
+                application.date_updated = current_date
+                application.save()
+        
+                # Go to the phone numbers page   
+                return HttpResponseRedirect('/contact-phone?id=' + application_id_local)
         
         # If there are invalid details
         else:
