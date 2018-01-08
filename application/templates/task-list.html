@@ -20,6 +20,38 @@
             <div class="form-group">
                 <table id="your-details">
                     <tbody>
+					<tr id="account_details">
+                        <td class="task" style="padding-right: 10px">
+                        	{% if login_details_status == 'NOT_STARTED' %}
+	                            <a href="/account/email?id={{application_id}}" >
+	                                <span class="task-name">Your login and contact details</span>
+	                            </a>
+	                        {% endif %}
+	                        {% if login_details_status == 'IN_PROGRESS' %}
+	                            <a href="/account/email?id={{application_id}}" >
+	                                <span class="task-name">Your login and contact details</span>
+	                            </a>
+	                        {% endif %}
+	                        {% if login_details_status == 'COMPLETED' %}
+	                            <a href="/account/summary?id={{application_id}}" >
+	                                <span class="task-name">Your login and contact details</span>
+	                            </a>
+	                        {% endif %}
+                        </td>
+                        {% if login_details_status == 'NOT_STARTED' %}
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-in-progress">To do</strong>
+	                        </td>
+                        {% elif login_details_status == 'IN_PROGRESS' %}   
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-to-do">Started</strong>
+	                        </td>
+                        {% elif login_details_status == 'COMPLETED' %}
+	                        <td class="numeric" id="task-status">
+	                        	<strong class="task-finished">Done</strong>
+	                        </td> 
+                        {% endif %}    
+                    </tr>
                     <tr id="children">
                         <td class="task" style="padding-right: 10px">
                             <a href="/childcare?id={{application_id}}">
@@ -27,73 +59,76 @@
                             </a>
                         </td>                        
                         {% if childcare_type_status == 'NOT_STARTED' %}
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-in-progress">To do</strong>
-                        </td>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-in-progress">To do</strong>
+	                        </td>
                         {% elif childcare_type_status == 'IN_PROGRESS' %}   
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-to-do">Started</strong>
-                        </td>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-to-do">Started</strong>
+	                        </td>
                         {% elif childcare_type_status == 'COMPLETED' %}
-                        <td class="numeric" id="task-status">
-                        	<strong class="task-finished">Done</strong> 
-                        </td>  
+	                        <td class="numeric" id="task-status">
+	                        	<strong class="task-finished">Done</strong> 
+	                        </td>  
                         {% endif %}                                                                                                                  
                     </tr>
-                    <tr id="account_details">
-                        <td class="task" style="padding-right: 10px">
-                            <a href="/contact-email?id={{application_id}}" >
-                                <span class="task-name">Your login and contact details</span>
-                            </a>
-                        </td>
-                        {% if login_details_status == 'NOT_STARTED' %}
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-in-progress">To do</strong>
-                        </td>
-                        {% elif login_details_status == 'IN_PROGRESS' %}   
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-to-do">Started</strong>
-                        </td>
-                        {% elif login_details_status == 'COMPLETED' %}
-                        <td class="numeric" id="task-status">
-                        	<strong class="task-finished">Done</strong>
-                        </td> 
-                        {% endif %}    
-
-                    </tr>
                     <tr id="personal_details">
-                        <td class="task" style="padding-right: 10px">
-                            <a href="/personal-details?id={{application_id}}" id="{{application_id}}">
-                                <span class="task-name">Your personal details</span>
-                            </a>
+						<td class="task" style="padding-right: 10px">
+                        	{% if personal_details_status == 'NOT_STARTED' %}
+	                            <a href="/personal-details/guidance?id={{application_id}}" >
+	                                <span class="task-name">Your personal details</span>
+	                            </a>
+	                        {% endif %}
+	                        {% if personal_details_status == 'IN_PROGRESS' %}
+	                            <a href="/personal-details/guidance?id={{application_id}}" >
+	                                <span class="task-name">Your personal details</span>
+	                            </a>
+	                        {% endif %}
+	                        {% if personal_details_status == 'COMPLETED' %}
+	                            <a href="/personal-details/summary?id={{application_id}}" >
+	                                <span class="task-name">Your personal details</span>
+	                            </a>
+	                        {% endif %}
                         </td>
                         {% if personal_details_status == 'NOT_STARTED' %}
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-in-progress">To do</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-in-progress">To do</strong>
                         {% elif personal_details_status == 'IN_PROGRESS' %}   
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-to-do">Started</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-to-do">Started</strong>
                         {% elif personal_details_status == 'COMPLETED' %}
-                        <td class="numeric" id="task-status">
-                        	<strong class="task-finished">Done</strong>   
+	                        <td class="numeric" id="task-status">
+	                        	<strong class="task-finished">Done</strong>   
                         {% endif %}  
                         </td>
                     </tr>
                     <tr id="first_aid">
-                        <td class="task" style="padding-right: 10px">
-                            <a href="/first-aid?id={{application_id}}" id="{{application_id}}">
-                                <span class="task-name">First aid training</span>
-                            </a>
+						<td class="task" style="padding-right: 10px">
+                        	{% if first_aid_training_status == 'NOT_STARTED' %}
+	                            <a href="/first-aid/guidance?id={{application_id}}" >
+	                                <span class="task-name">First aid training</span>
+	                            </a>
+	                        {% endif %}
+	                        {% if first_aid_training_status == 'IN_PROGRESS' %}
+	                            <a href="/first-aid/guidance?id={{application_id}}" >
+	                                <span class="task-name">First aid training</span>
+	                            </a>
+	                        {% endif %}
+	                        {% if first_aid_training_status == 'COMPLETED' %}
+	                            <a href="/first-aid/summary?id={{application_id}}" >
+	                                <span class="task-name">First aid training</span>
+	                            </a>
+	                        {% endif %}
                         </td>
                         {% if first_aid_training_status == 'NOT_STARTED' %}
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-in-progress">To do</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-in-progress">To do</strong>
                         {% elif first_aid_training_status == 'IN_PROGRESS' %}   
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-to-do">Started</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-to-do">Started</strong>
                         {% elif first_aid_training_status == 'COMPLETED' %}
-                        <td class="numeric" id="task-status">
-                        	<strong class="task-finished">Done</strong>   
+	                        <td class="numeric" id="task-status">
+	                        	<strong class="task-finished">Done</strong>   
                         {% endif %} 
                     	</td>
                     </tr>  
@@ -104,14 +139,14 @@
                             </a>
                         </td>
                         {% if eyfs_training_status == 'NOT_STARTED' %}
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-in-progress">To do</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-in-progress">To do</strong>
                         {% elif eyfs_training_status == 'IN_PROGRESS' %}   
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-to-do">Started</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-to-do">Started</strong>
                         {% elif eyfs_training_status == 'COMPLETED' %}
-                        <td class="numeric" id="task-status">
-                        	<strong class="task-finished">Done</strong>   
+	                        <td class="numeric" id="task-status">
+	                        	<strong class="task-finished">Done</strong>   
                         {% endif %} 
                     	</td>
                     </tr>                          
@@ -122,19 +157,17 @@
                             </a>
                         </td>
                         {% if criminal_record_check_status == 'NOT_STARTED' %}
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-in-progress">To do</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-in-progress">To do</strong>
                         {% elif criminal_record_check_status == 'IN_PROGRESS' %}   
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-to-do">Started</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-to-do">Started</strong>
                         {% elif criminal_record_check_status == 'COMPLETED' %}
-                        <td class="numeric" id="task-status">
-                        	<strong class="task-finished">Done</strong>   
+	                        <td class="numeric" id="task-status">
+	                        	<strong class="task-finished">Done</strong>   
                         {% endif %}
                         </td>
                     </tr>
-                    
-                    
                     <tr id="health">
                         <td class="task" style="padding-right: 10px">
                             <a href="/health?id={{application_id}}">
@@ -142,14 +175,14 @@
                             </a>
                         </td>
                         {% if health_status == 'NOT_STARTED' %}
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-in-progress">To do</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-in-progress">To do</strong>
                         {% elif health_status == 'IN_PROGRESS' %}   
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-to-do">Started</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-to-do">Started</strong>
                         {% elif health_status == 'COMPLETED' %}
-                        <td class="numeric" id="task-status">
-                        	<strong class="task-finished">Done</strong>   
+	                        <td class="numeric" id="task-status">
+	                        	<strong class="task-finished">Done</strong>   
                         {% endif %}
                         </td>
                     </tr>
@@ -160,14 +193,14 @@
                             </a>
                         </td>
                         {% if reference_status == 'NOT_STARTED' %}
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-in-progress">To do</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-in-progress">To do</strong>
                         {% elif reference_status == 'IN_PROGRESS' %}   
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-to-do">Started</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-to-do">Started</strong>
                         {% elif reference_status == 'COMPLETED' %}
-                        <td class="numeric" id="task-status">
-                        	<strong class="task-finished">Done</strong>   
+	                        <td class="numeric" id="task-status">
+	                        	<strong class="task-finished">Done</strong>   
                         {% endif %}
                         </td>
                     </tr>
@@ -178,16 +211,15 @@
                             </a>
                         </td>
                         {% if people_in_home_status == 'NOT_STARTED' %}
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-in-progress">To do</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-in-progress">To do</strong>
                         {% elif people_in_home_status == 'IN_PROGRESS' %}   
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-to-do">Started</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-to-do">Started</strong>
                         {% elif people_in_home_status == 'COMPLETED' %}
-                        <td class="numeric" id="task-status">
-                        	<strong class="task-finished">Done</strong>   
+	                        <td class="numeric" id="task-status">
+	                        	<strong class="task-finished">Done</strong>   
                         {% endif %}
-                            
                         </td>
                     </tr>
                     {% if all_complete == False %}
@@ -210,15 +242,15 @@
                             </a>
                         </td>
                         {% if declaration_status == 'NOT_STARTED' %}
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-in-progress">To do</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-in-progress">To do</strong>
                         {% elif declaration_status == 'IN_PROGRESS' %}
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished task-to-do">Started</strong>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished task-to-do">Started</strong>
                         {% elif declaration_status == 'COMPLETED' %}
-                        <td class="numeric" id="task-status">
-                            <strong class="task-finished">Done</strong>
-                        </td>
+	                        <td class="numeric" id="task-status">
+	                            <strong class="task-finished">Done</strong>
+	                        </td>
                         {% endif %}
                     </tr>
                     {% endif %}
@@ -227,23 +259,23 @@
             </div>
         </div>
         {% if not all_complete %}
-        <div class="column-two-thirds">
-            <div class="form-group" style="margin-top:20px;">
-                
-                <p>You can apply when everything is complete.</p>
-                
-            </div>
-        </div>
+	        <div class="column-two-thirds">
+	            <div class="form-group" style="margin-top:20px;">
+	                
+	                <p>You can apply when everything is complete.</p>
+	                
+	            </div>
+	        </div>
         {% endif %}
         {% if confirm_details %}
-        <form action ="/confirm-your-answers" method="get">
-        	<div class="column-two-thirds">
-            	<div class="form-group" style="margin-top: 20px;">
-                	<input type=submit class="button button-start" value="Confirm your details" />
-                	<input type="hidden" value="{{application_id}}" name = "id" />
-            	</div>
-            </div>	
-        </form>
+	        <form action ="/confirm-your-answers" method="get">
+	        	<div class="column-two-thirds">
+	            	<div class="form-group" style="margin-top: 20px;">
+	                	<input type=submit class="button button-start" value="Confirm your details" />
+	                	<input type="hidden" value="{{application_id}}" name = "id" />
+	            	</div>
+	            </div>	
+	        </form>
 		{% endif %}
         <div class="column-two-thirds">
             <div class="form-group">

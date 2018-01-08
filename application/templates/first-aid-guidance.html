@@ -1,0 +1,49 @@
+<!-- Tab title -->
+<head>
+	<title>First aid training</title>
+</head>
+
+<!-- Implement GOV.UK template -->
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+
+<main id="content" role="main">
+	<div class="column-full">
+		<div class="form-group grid-row" style="padding-top: 30px;">
+
+			<!-- Back button -->	    	
+		    <a href="/task-list?id={{application_id}}" style="margin-right: 10px; line-height: 28px" alt="Back to application list">
+		        <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
+		        	<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
+		        </svg>
+		        Back
+		    </a>
+		</div>	
+	
+		<!-- Form -->
+		<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+    		<!-- Content -->
+    		<div class="grid-row">
+    			<div class="guidance">
+    				<h1 class="form-title heading-large">
+	               		First aid training
+	           		</h1>
+	           		</br>
+	           		<p>You will have to go on a 12-hour paediatric first aid course.</p>
+	           		<p>Courses cost between &#163;80 and &#163;200.</p>
+	           		<p>You have to renew your certificate every 3 years to keep it up to date.</p>
+	           		{{form.as_div}}
+	  	    		{% csrf_token %}
+		    		<input type="submit" class="button guidance-button" value="Continue" alt='Continue to personal details'>
+		    		<input type="hidden" id="id" name="id" value="{{application_id}}" />
+    			</div>
+    		</div>
+		</form>
+	</div>
+</main>
+
+{% endblock %}

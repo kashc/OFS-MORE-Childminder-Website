@@ -27,6 +27,10 @@ if PROJECT_ROOT not in sys.path:
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '-r&u(maq#j68ngj=_ch#l6#mhak%8rbh$px8e&9c6b9@c7df=m'
 
+#Expiry period of Magic Link Emails and Texts in hours
+SMS_EXPIRY=1
+EMAIL_EXPIRY=1
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -86,7 +90,7 @@ WSGI_APPLICATION = 'childminder.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres_models',
+        'NAME': 'postgres',
         'USER': 'ofsted',
         'PASSWORD': 'OfstedB3ta',
         'HOST': '130.130.52.132',
