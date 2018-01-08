@@ -197,7 +197,7 @@ class VerifyPhone(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     
-    magic_link_sms = forms.CharField(label = 'Code')   
+    magic_link_sms = forms.CharField(label = 'Code', required=True)   
 
 
 # Your login and contact details form: knowledge-based question 

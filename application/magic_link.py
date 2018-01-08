@@ -134,7 +134,7 @@ def validateMagicLink(request, id):
             acc.save()
             magic_link_text(phone, g)
             #return JsonResponse({"message":"Link is valid, we just sent a text message to " +phone},status=200)
-            return HttpResponseRedirect("/verifyPhone/?id="+phone)
+            return HttpResponseRedirect("/verifyPhone/?id="+id)
         else:
             return JsonResponse({"message":"The code has expired"},status=440)
     except Exception as ex:
@@ -148,18 +148,44 @@ def SMSVerification(request):
     #Unique form for entering SMS code (must be 5 digits in accordance with JIRA)
     form = VerifyPhone()
     id = request.GET['id']
-    acc = Login_And_Contact_Details.objects.get(mobile_number=id)
+    acc = Login_And_Contact_Details.objects.get(magic_link_email=id)
     login_id = acc.login_id
     application = Application.objects.get(login_id = login_id)
+    
+    #if request.method == 'GET':
+    
+        #print('Check')
+    
     if request.method =='POST':
+        print('Post')
         form = VerifyPhone(request.POST)
         code = request.POST['magic_link_sms']
-        exp = acc.email_expiry_date
-        if form.is_valid() and not hasExpired(exp):
-            if code == acc.magic_link_sms:
-                #forward back onto appication
-                return HttpResponseRedirect("/task-list/?id="+str(application.application_id))
-            else:
-                return(JsonResponse({"message":"FAILURE", "out":"code: " +str(code) +" | " +str(acc.magic_link_sms)},status=400))
+        if len(code) == 0:
+            exp = acc.email_expiry_date
+            print(exp)
+            print(id)
+            print(hasExpired(exp))
+            if not hasExpired(exp) and len(id)>0:
+                print('Success')
+                #uncomment url if it should be a one-time use email
+                #acc.magic_link_email = ""
+                phone = acc.mobile_number
+                g = generate_random(5, "code")
+                expiry = int(time.time())
+                acc.magic_link_sms = g
+                acc.sms_expiry_date = expiry
+                acc.save()
+                magic_link_text(phone, g)
+                #return JsonResponse({"message":"Link is valid, we just sent a text message to " +phone},status=200)
+                return HttpResponseRedirect("/verifyPhone/?id="+id)
+        
+        else:
+            exp = acc.email_expiry_date
+            if form.is_valid() and not hasExpired(exp):
+                if code == acc.magic_link_sms:
+                    #forward back onto appication
+                    return HttpResponseRedirect("/task-list/?id="+str(application.application_id))
+                else:
+                    return(JsonResponse({"message":"FAILURE", "out":"code: " +str(code) +" | " +str(acc.magic_link_sms)},status=400))
         
     return render(request, 'verify-phone.html', {'form': form})
