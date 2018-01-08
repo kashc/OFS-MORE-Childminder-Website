@@ -18,10 +18,10 @@ class Login_And_Contact_Details(models.Model):
     
     login_id = models.UUIDField(primary_key = True, default = uuid4)
     email = models.CharField(max_length = 100, blank = True)
-    mobile_number = models.CharField(max_length = 11, blank = True)
-    add_phone_number = models.CharField(max_length = 11, blank = True)
-    email_expiry_date = models.DateField(blank = True, null = True)
-    sms_expiry_date = models.DateField(blank = True, null = True)
+    mobile_number = models.CharField(max_length = 20, blank = True)
+    add_phone_number = models.CharField(max_length = 20, blank = True)
+    email_expiry_date = models.IntegerField(blank = True, null = True)
+    sms_expiry_date = models.IntegerField(blank = True, null = True)
     magic_link_email = models.CharField(max_length = 100, blank = True, null = True)
     magic_link_sms = models.CharField(max_length = 100, blank = True, null = True)
     
@@ -108,9 +108,9 @@ class Applicant_Personal_Details(models.Model):
     
     personal_detail_id = models.UUIDField(primary_key = True, default = uuid4)
     application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
-    birth_day = models.IntegerField(blank = True)
-    birth_month = models.IntegerField(blank = True)
-    birth_year = models.IntegerField(blank = True)
+    birth_day = models.IntegerField(blank = True, null = True)
+    birth_month = models.IntegerField(blank = True, null = True)
+    birth_year = models.IntegerField(blank = True, null = True)
     
     # Set table name
     class Meta:
@@ -145,7 +145,8 @@ class Applicant_Home_Address(models.Model):
     county = models.CharField(max_length = 100, blank = True)
     country = models.CharField(max_length = 100, blank = True)
     postcode = models.CharField(max_length = 8, blank = True)
-    childcare_address = models.BooleanField(blank = True)
+    childcare_address = models.NullBooleanField(blank = True, null=True)
+    current_address = models.NullBooleanField(blank = True, null=True)
     move_in_month = models.IntegerField(blank = True)
     move_in_year = models.IntegerField(blank = True)
     

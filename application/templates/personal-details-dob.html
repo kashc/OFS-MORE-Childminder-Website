@@ -1,0 +1,50 @@
+<!-- Tab title -->
+<head>
+	<title>Personal details</title>
+</head>
+
+<!-- Implement GOV.UK template -->
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<!-- Initialise error summary for page -->
+{{form.error_summary}}
+
+<main id="content" role="main">
+	<div class="column-full">
+		<div class="form-group grid-row" style="padding-top: 30px;">
+
+			<!-- Back button -->	    	
+		    <a href="/personal-details/name?id={{application_id}}" style="margin-right: 10px; line-height: 28px" alt="Back to application list">
+		        <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
+		        	<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
+		        </svg>
+		        Back
+		    </a>
+		</div>	
+	
+		<!-- Form -->
+		<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+    		<!-- Content -->
+    		<div class="grid-row">
+           		<h1 class="form-title heading-large">
+               		Your date of birth
+           		</h1>
+           		{{form.as_div}}
+  	    		{% csrf_token %}
+	    		<input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+	    		<input type="hidden" id="id" name="id" value="{{application_id}}" />
+    		</div>
+    		</br>
+    		<!-- Return to task list -->
+    		<div class="form-group grid-row">
+    			<a href="/task-list?id={{application_id}}">Return to list</a>
+			</div>
+		</form>
+	</div>
+</main>
+
+{% endblock %}

@@ -1,54 +1,66 @@
+<!-- Tab title -->
+<head>
+	<title>Your account</title>
+</head>
+
+<!-- Implement GOV.UK template -->
 {% extends 'govuk_template.html' %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
+<!-- Initialise error summary for page -->
 {{form.error_summary}}
 
 <main id="content" role="main">
-   <div class="column-full">
-        <div class="form-group grid-row" style="padding-top: 30px;">
-        	{% if login_details_status == 'COMPLETED' %}
-	    	<a href="/task-list?id={{application_id}}" style="margin-right: 10px; line-height: 28px">
-	        	<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
-	        		<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
-	        	</svg>
-	        	Back
-	    	</a>
+	<div class="column-full">
+		<div class="form-group grid-row" style="padding-top: 30px;">
+			
+			<!-- If applicant has previously completed this task, return to task list with Back button -->
+			{% if login_details_status == 'COMPLETED' %}
+				<a href="/task-list?id={{application_id}}" style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
+					<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
+		        		<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
+		        	</svg>
+		        	Back
+		    	</a>
 	    	{% endif %}
+
+			<!-- If applicant has not yet completed this task, return to start page with Back button -->	    	
 	    	{% if login_details_status != 'COMPLETED' %}
-	    	<a href="/start/" style="margin-right: 10px; line-height: 28px">
-	        	<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
-	        		<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
-	        	</svg>
-	        	Back
-	    	</a>
+		    	<a href="/start/" style="margin-right: 10px; line-height: 28px">
+		        	<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
+		        		<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
+		        	</svg>
+		        	Back
+		    	</a>
 	    	{% endif %}
-	</div>	
+		</div>	
 	
-<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
-    <div class="grid-row">
-           <h1 class="form-title heading-large">
-               Your email address
-           </h1>
-           <p>Enter your email address so you can save your application.</p>
-           <p>We will send you a link so you can come back at any time.</p>
-           {{form.as_div}}
-  	    {% csrf_token %}
-	    <input type="submit" class="button" value="Save and continue">
-	    <input type="hidden" name="id" value="{{application_id}}" />
-    </div>
-
+		<!-- Form -->
+		<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+    		<!-- Content -->
+    		<div class="grid-row">
+           		<h1 class="form-title heading-large">
+               		Your email address
+           		</h1>
+           		<p>Enter your email address so you can save your application.</p>
+           		<p>We will send you a link so you can come back at any time.</p>
+           		{{form.as_div}}
+  	    		{% csrf_token %}
+	    		<input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+	    		<input type="hidden" name="id" value="{{application_id}}" />
+    		</div>
+    		</br>
+			<!-- If applicant has previously completed this task, allow user to return to task list -->
+			{% if login_details_status == 'COMPLETED' %}
+				<div class="form-group grid-row">
+			    	<a href="/task-list?id={{application_id}}">Return to list</a>
+				</div>
+			{% endif %}   
+		</form>
 	</div>
-	
-	{% if login_details_status == 'COMPLETED' %}
-	<div class="form-group grid-row">
-    	<a href="/task-list?id={{application_id}}">Return to list</a>
-	</div>
-	{% endif %}
-
-	   
-</form>
 </main>
+
 {% endblock %}

@@ -29,7 +29,7 @@
       {% endif %}
       <nav id="proposition-menu">
         <a href="{{ service_settings.header_link_url|default:'/' }}" id="proposition-name">
-          {% block proposition %}Apply to be a childminder{% endblock %}
+          {% block proposition %}Register as a childminder{% endblock %}
         </a>
         {% block proposition_menu %}
           {% if service_settings.has_header_links %}
@@ -53,7 +53,7 @@
         <div class="phase-banner">
           <p>
             <strong class="phase-tag">Beta</strong>
-            <span>{% block phase_banner_message %}{% trans 'This is a test site.' %}{% endblock %}</span>
+            <span>{% block phase_banner_message %}{% trans 'This is a new service - your <a href="">feedback</a> will help us improve it.' %}{% endblock %}</span>
           </p>
         </div>
       {% endif %}

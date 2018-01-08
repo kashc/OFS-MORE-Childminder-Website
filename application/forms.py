@@ -1,6 +1,4 @@
 '''
-Created on 07 Dec 2017
-
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Forms --
 
@@ -9,16 +7,16 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 from application.customfields import ExpirySplitDateWidget, ExpirySplitDateField
 from django import forms
-from application.business_logic import get_card_expiry_years
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
-from application.models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, Health_Declaration_Booklet, References
+
+from application.models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, Health_Declaration_Booklet, References, \
+    Applicant_Home_Address
+
+from datetime import date
 
 import re 
-import string
-
-
 
 
 # Type of childcare form
@@ -34,10 +32,10 @@ class TypeOfChildcare(forms.Form):
     )
     
     type_of_childcare = forms.MultipleChoiceField(
-        required = False,
-        widget = InlineCheckboxSelectMultiple,
-        choices = CHILDCARE_AGE_CHOICES,
-        label = '',
+        required=False,
+        widget=InlineCheckboxSelectMultiple,
+        choices=CHILDCARE_AGE_CHOICES,
+        label='',
     )
     
     def __init__(self, *args, **kwargs):
@@ -76,14 +74,24 @@ class TypeOfChildcare(forms.Form):
             elif (zero_to_five_status == False) & (five_to_eight_status == False) & (eight_plus_status == False):
                 self.fields['type_of_childcare'].initial = []
 
-class EmailLogin(forms.ModelForm):
+
+class EmailLogin(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    class Meta:
-        model = Login_And_Contact_Details
-        fields = ('email',)
-        email_address = forms.EmailField()
+
+    email_address = forms.EmailField()
+    
+    def clean_email_address(self):
+        
+        email_address = self.cleaned_data['email_address']
+            
+        if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
+            
+            raise forms.ValidationError('Please enter a valid e-mail address.')
+        
+        return email_address
+
 
 # Your login and contact details form: e-mail address   
 class ContactEmail(GOVUKForm):
@@ -108,15 +116,21 @@ class ContactEmail(GOVUKForm):
             
                 self.fields['email_address'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).email
     
+    # Email address validation
     def clean_email_address(self):
         
         email_address = self.cleaned_data['email_address']
             
         if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
             
-            raise forms.ValidationError('Please enter a valid e-mail address.')
+            raise forms.ValidationError('TBC')
         
-        return email_address
+        if len(email_address) > 100:
+            
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        
+        return email_address 
+
 
 # Your login and contact details form: phone numbers   
 class ContactPhone(GOVUKForm):
@@ -124,8 +138,8 @@ class ContactPhone(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     
-    mobile_number = forms.CharField(label = 'Mobile phone number')
-    add_phone_number = forms.CharField(label = 'Additional phone number (optional)', required = False)
+    mobile_number = forms.CharField(label='Mobile phone number')
+    add_phone_number = forms.CharField(label='Additional phone number (optional)', required=False)
     
     def __init__(self, *args, **kwargs):
         
@@ -141,36 +155,64 @@ class ContactPhone(GOVUKForm):
             self.fields['mobile_number'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).mobile_number
             self.fields['add_phone_number'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).add_phone_number
 
+    # Mobile number validation
     def clean_mobile_number(self):
         
         mobile_number = self.cleaned_data['mobile_number']
+        # Allow for spaces
+        no_space_mobile_number = mobile_number.replace(' ','')
         
-        if re.match("^(07\d{8,12}|447\d{7,11})$", mobile_number) is None:
+        if re.match("^(07\d{8,12}|447\d{7,11})$", no_space_mobile_number) is None:
             
-            raise forms.ValidationError('Please enter a valid mobile number.')
+            raise forms.ValidationError('TBC')
             
-        if len(mobile_number) > 11:
+        if len(no_space_mobile_number) > 11:
             
-            raise forms.ValidationError('Please enter a valid mobile number.')
+            raise forms.ValidationError('TBC')
         
         return mobile_number
 
+    # Phone number validation
     def clean_add_phone_number(self):
         
         add_phone_number = self.cleaned_data['add_phone_number']
+        # Allow for spaces
+        no_space_add_phone_number = add_phone_number.replace(' ','')
             
         if add_phone_number != '':
         
-            if re.match("^(0\d{8,12}|447\d{7,11})$", add_phone_number) is None:
+            if re.match("^(0\d{8,12}|447\d{7,11})$", no_space_add_phone_number) is None:
                 
-                raise forms.ValidationError('Please enter a valid phone number.')
+                raise forms.ValidationError('TBC')
                 
-            if len(add_phone_number) > 11:
+            if len(no_space_add_phone_number) > 11:
             
-                raise forms.ValidationError('Please enter a valid phone number.')
+                raise forms.ValidationError('TBC')
         
         return add_phone_number
+
+
+class VerifyPhone(GOVUKForm):
     
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    
+    magic_link_sms = forms.CharField(label = 'Code', required=True)   
+
+
+# Your login and contact details form: knowledge-based question 
+class Question(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    
+    question = forms.CharField(label='Knowledge based question', required=True)
+
+    def __init__(self, *args, **kwargs):
+        
+        self.application_id_local = kwargs.pop('id')
+        super(Question, self).__init__(*args, **kwargs)
+        
 
 # Your login and contact details form: summary page  
 class ContactSummary(GOVUKForm):
@@ -179,71 +221,441 @@ class ContactSummary(GOVUKForm):
     auto_replace_widgets = True
     
 
-# Your login and contact details form: knowledge-based question 
-class Question(GOVUKForm):
+# Your personal details form: guidance page  
+class PersonalDetailsGuidance(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    
-    question = forms.CharField(label = 'Knowledge based question', required = False)
-
-    def __init__(self, *args, **kwargs):
-        
-        self.application_id_local = kwargs.pop('id')
-        super(Question, self).__init__(*args, **kwargs)
 
 
-# Your personal details form    
-class PersonalDetails(GOVUKForm):
+# Your personal details form: names   
+class PersonalDetailsName(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    
-    options = (('yes', 'Yes'), ('no', 'No'))
 
-    first_name = forms.CharField(label = 'First name')
-    middle_names = forms.CharField(label = 'Middle names (optional)', required = False)
-    last_name = forms.CharField(label = 'Last name')
-    name_change = forms.ChoiceField(label = 'Have you ever changed your name?', choices = options, widget = InlineRadioSelect)
+    first_name = forms.CharField(label='First name')
+    middle_names = forms.CharField(label='Middle names (if you have any)', required=False)
+    last_name = forms.CharField(label='Last name')
     
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(PersonalDetails, self).__init__(*args, **kwargs)
+        super(PersonalDetailsName, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form        
         if Applicant_Personal_Details.objects.filter(application_id=self.application_id_local).count() > 0:
             
-            personal_detail_id = Applicant_Personal_Details.objects.get(application_id = self.application_id_local).personal_detail_id
+            personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
             
             self.fields['first_name'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).first_name
             self.fields['middle_names'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).middle_names
             self.fields['last_name'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).last_name
-            self.fields['name_change'].initial = 'yes'
+    
+    # First name validation
+    def clean_first_name(self):
+        
+        first_name = self.cleaned_data['first_name']
+            
+        if re.match("^[A-Za-z- ]+$", first_name) is None:
+                
+            raise forms.ValidationError('TBC')
+
+        if len(first_name) > 100:
+            
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        
+        return first_name
+    
+    # Middle names validation
+    def clean_middle_names(self):
+        
+        middle_names = self.cleaned_data['middle_names']
+        
+        if middle_names != '':
+            
+            if re.match("^[A-Za-z- ]+$", middle_names) is None:
+                    
+                raise forms.ValidationError('TBC')
+    
+            if len(middle_names) > 100:
+                
+                raise forms.ValidationError('Please enter 100 characters or less.')
+        
+        return middle_names
+    
+    # Last name validation
+    def clean_last_name(self):
+        
+        last_name = self.cleaned_data['last_name']
+            
+        if re.match("^[A-Za-z- ]+$", last_name) is None:
+                
+            raise forms.ValidationError('TBC')
+        
+        if len(last_name) > 100:
+            
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        
+        return last_name
 
 
-# First aid training form
-class FirstAidTraining(GOVUKForm):
+# Your personal details form: date of birth 
+class PersonalDetailsDOB(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    date_of_birth = SplitDateField(label='Date of birth', help_text='For example, 31 03 1980')
+    
+    def __init__(self, *args, **kwargs):
+        
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsDOB, self).__init__(*args, **kwargs)
+        
+        # If information was previously entered, display it on the form        
+        if Applicant_Personal_Details.objects.filter(application_id=self.application_id_local).count() > 0:
+            
+            self.fields['date_of_birth'].initial = [Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_day, Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_month, Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_year]
+
+    # First name validation
+    def clean_date_of_birth(self):
+        
+        birth_day = self.cleaned_data['date_of_birth'].day
+        birth_month = self.cleaned_data['date_of_birth'].month
+        birth_year = self.cleaned_data['date_of_birth'].year
+        
+        applicant_dob = date(birth_year, birth_month, birth_day)
+        today = date.today()
+        age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
+        
+        if (age < 18):
+            
+            raise forms.ValidationError('You have to be 18 to childmind.')
+        
+        return birth_day, birth_month, birth_year
+    
+
+# Your personal details form: home address   
+class PersonalDetailsHomeAddress(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    postcode = forms.CharField(label='Postcode')
+    
+    def __init__(self, *args, **kwargs):
+        
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsHomeAddress, self).__init__(*args, **kwargs)
+        
+        # If information was previously entered, display it on the form
+        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+            
+        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
+            
+            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
+            
+
+# Your personal details form: home address   
+class PersonalDetailsHomeAddressManual(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    street_name_and_number = forms.CharField(label='Street name and number')
+    street_name_and_number2 = forms.CharField(label='Street name and number 2', required=False)
+    town = forms.CharField(label='Town or city')
+    county = forms.CharField(label='County (optional)', required=False)
+    postcode = forms.CharField(label='Postcode')
+    
+    def __init__(self, *args, **kwargs):
+        
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsHomeAddressManual, self).__init__(*args, **kwargs)
+        
+        # If information was previously entered, display it on the form
+        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+            
+        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
+            
+            self.fields['street_name_and_number'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
+            self.fields['street_name_and_number2'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
+            self.fields['town'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
+            self.fields['county'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
+            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
+    
+    # Street name and number validation
+    def clean_street_name_and_number(self):
+        
+        street_name_and_number = self.cleaned_data['street_name_and_number']
+           
+        if len(street_name_and_number) > 100:
+            
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        
+        return street_name_and_number 
+    
+    def clean_street_name_and_number2(self):
+        
+        street_name_and_number2 = self.cleaned_data['street_name_and_number2']
+           
+        if len(street_name_and_number2) > 100:
+            
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        
+        return street_name_and_number2   
+    
+    # Town validation
+    def clean_town(self):
+        
+        town = self.cleaned_data['town']
+            
+        if re.match("^[A-Za-z- ]+$", town) is None:
+                
+            raise forms.ValidationError('TBC.')
+        
+        if len(town) > 100:
+            
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        
+        return town   
+    
+    # County validation
+    def clean_county(self):
+        
+        county = self.cleaned_data['county']
+            
+        if county != '':
+        
+            if re.match("^[A-Za-z- ]+$", county) is None:
+                
+                raise forms.ValidationError('TBC.')
+            
+            if len(county) > 100:
+            
+                raise forms.ValidationError('Please enter 100 characters or less.')
+        
+        return county
+    
+    # Postcode validation
+    def clean_postcode(self):
+        
+        postcode = self.cleaned_data['postcode']
+            
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+                
+            raise forms.ValidationError('TBC.')
+        
+        return postcode
+
+
+# Your personal details form: location of care  
+class PersonalDetailsLocationOfCare(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    
+    options = (('True', 'Yes'), ('False', 'No'))
+
+    location_of_care = forms.ChoiceField(label='Is this where you will be looking after the children?', choices=options, widget=InlineRadioSelect, required=True)
+    
+    def __init__(self, *args, **kwargs):
+        
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsLocationOfCare, self).__init__(*args, **kwargs)
+        
+        # If information was previously entered, display it on the form
+        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+            
+        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
+            
+            self.fields['location_of_care'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).childcare_address
+
+
+# Your personal details form: home address   
+class PersonalDetailsChildcareAddress(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    postcode = forms.CharField(label='Postcode')
+    
+    def __init__(self, *args, **kwargs):
+        
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsChildcareAddress, self).__init__(*args, **kwargs)
+        
+        # If information was previously entered, display it on the form
+        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+            
+        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
+            
+            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address = 'True').postcode
+            
+
+# Your personal details form: childcare address   
+class PersonalDetailsChildcareAddressManual(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    street_name_and_number = forms.CharField(label='Street name and number')
+    street_name_and_number2 = forms.CharField(label='Street name and number 2', required=False)
+    town = forms.CharField(label='Town or city')
+    county = forms.CharField(label='County (optional)', required=False)
+    postcode = forms.CharField(label='Postcode')
+    
+    def __init__(self, *args, **kwargs):
+        
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsChildcareAddressManual, self).__init__(*args, **kwargs)
+        
+        # If information was previously entered, display it on the form
+        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+            
+        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
+            
+            personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+            
+            self.fields['street_name_and_number'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').street_line1
+            self.fields['street_name_and_number2'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').street_line2
+            self.fields['town'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').town
+            self.fields['county'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').county
+            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').postcode
+    
+    # Street name and number validation
+    def clean_street_name_and_number(self):
+        
+        street_name_and_number = self.cleaned_data['street_name_and_number']
+           
+        if len(street_name_and_number) > 100:
+            
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        
+        return street_name_and_number 
+    
+    def clean_street_name_and_number2(self):
+        
+        street_name_and_number2 = self.cleaned_data['street_name_and_number2']
+           
+        if len(street_name_and_number2) > 100:
+            
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        
+        return street_name_and_number2   
+    
+    # Town validation
+    def clean_town(self):
+        
+        town = self.cleaned_data['town']
+            
+        if re.match("^[A-Za-z-]+$", town) is None:
+                
+            raise forms.ValidationError('TBC')
+        
+        if len(town) > 100:
+            
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        
+        return town   
+    
+    # County validation
+    def clean_county(self):
+        
+        county = self.cleaned_data['county']
+            
+        if county != '':
+        
+            if re.match("^[A-Za-z-]+$", county) is None:
+                
+                raise forms.ValidationError('TBC')
+            
+            if len(county) > 100:
+            
+                raise forms.ValidationError('Please enter 100 characters or less.')
+        
+        return county
+    
+    # Postcode validation
+    def clean_postcode(self):
+        
+        postcode = self.cleaned_data['postcode']
+            
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+                
+            raise forms.ValidationError('TBC')
+        
+        return postcode
+ 
+
+# Your personal details form: summary page  
+class PersonalDetailsSummary(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+# First aid training form: guidance
+class FirstAidTrainingGuidance(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True       
+
+
+# First aid training form: details
+class FirstAidTrainingDetails(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     
     first_aid_training_organisation = forms.CharField(label='First aid training organisation')
     title_of_training_course = forms.CharField(label='Title of training course')
-    course_date = SplitDateField(label='Course date', help_text='For example, 31 03 1980')
+    course_date = SplitDateField(label='Course date', help_text='For example, 31 03 2016')
     
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(FirstAidTraining, self).__init__(*args, **kwargs)
+        super(FirstAidTrainingDetails, self).__init__(*args, **kwargs)
 
         # If information was previously entered, display it on the form        
         if First_Aid_Training.objects.filter(application_id=self.application_id_local).count() > 0:
             
             self.fields['first_aid_training_organisation'].initial = First_Aid_Training.objects.get(application_id=self.application_id_local).training_organisation
             self.fields['title_of_training_course'].initial = First_Aid_Training.objects.get(application_id=self.application_id_local).course_title
-            self.fields['course_date'].initial = [First_Aid_Training.objects.get(application_id=self.application_id_local).course_day,First_Aid_Training.objects.get(application_id=self.application_id_local).course_month,First_Aid_Training.objects.get(application_id=self.application_id_local).course_year]
+            self.fields['course_date'].initial = [First_Aid_Training.objects.get(application_id=self.application_id_local).course_day, First_Aid_Training.objects.get(application_id=self.application_id_local).course_month, First_Aid_Training.objects.get(application_id=self.application_id_local).course_year]
  
+# First aid training form: declaration
+class FirstAidTrainingDeclaration(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    
+    declaration = forms.BooleanField(label='I will show my first aid certificate to the inspector', required=True)
+    
+
+# First aid training form: renew
+class FirstAidTrainingRenew(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    renew_a = forms.BooleanField(label='I will renew my first aid training in the next few months', required=True)
+    renew_b = forms.BooleanField(label='I will show my first aid certificate to the inspector', required=True)
+
+# First aid training form: training
+class FirstAidTrainingTraining(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+# First aid training form: summary
+class FirstAidTrainingSummary(GOVUKForm):
+    
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+        
 
 # Early Years knowledge form
 class EYFS(GOVUKForm):
@@ -356,88 +768,121 @@ class Payment(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     
-    options = (('Credit', 'Credit or debit card'), ('PayPal', 'PayPal'))
+    options = (
+        ('Credit', 'Credit or debit card'),
+        ('PayPal', 'PayPal')
+    )
     
-    payment_method = forms.ChoiceField(label='How would you like to pay?', choices=options, widget=RadioSelect)
+    payment_method = forms.ChoiceField(label='How would you like to pay?', choices=options, widget=RadioSelect, required=True)
+        
 
+# Payment Details form
 class PaymentDetails(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    options = (('a', 'Alpha'), ('b', 'Beta'))
+    
+    options = (
+        ('a', 'Alpha'),
+        ('b', 'Beta')
+    )
+    
     grouped_options = (
-    ('First', options),
-    ('Second', (('c', 'Gamma'), ('d', 'Delta'))),
-)    
+        ('First', options),
+        ('Second', (('c', 'Gamma'), ('d', 'Delta'))),
+    )    
     
+    card_type_options = (
+        ('visa', 'Visa'),
+        ('mastercard', 'Mastercard'),
+        ('american_express', 'American Express'),
+        ('maestro', 'Maestro')
+    )
     
-    card_type_options = (('visa', 'Visa'), ('mastercard', 'Mastercard'), ('american_express', 'American Express'), ('maestro', 'Maestro'))
-    
-    card_type = forms.ChoiceField(label='Card type', choices=card_type_options)
-    card_number = forms.CharField(label = 'Card number')
-    expiry_date = ExpirySplitDateField(label = 'Expiry date', widget=ExpirySplitDateWidget)
-    cardholders_name = forms.CharField(label="Cardholders name")
-    card_security_code = forms.CharField(label='Card security code')
+    card_type = forms.ChoiceField(label='Card type', choices=card_type_options, required=True)
+    card_number = forms.CharField(label = 'Card number', required=True)
+    expiry_date = ExpirySplitDateField(label = 'Expiry date', widget=ExpirySplitDateWidget, required=True)
+    cardholders_name = forms.CharField(label="Cardholder's name", required=True)
+    card_security_code = forms.CharField(label='Card security code', required=True)
        
-    #Glorious validation
-    
+    # Card number validation
     def clean_card_number(self):
         
-        #Need both of these for below validation
+        # Retrieve data
         card_type = self.cleaned_data['card_type']
         card_number = self.cleaned_data['card_number']
         
-        #Strips all spaces and dashes from the card number for regex purposes      
+        #Strip all spaces and dashes from the card number for RegEx purposes      
         card_number = re.sub('[ -]+', '', card_number)
         
-        #Casts card_number as an integer (it was a string) to see if the user has entered non-numeric characters            
+        # Cast card_number as an integer to see if the user has entered non-numeric characters            
         try:
+            
             int(card_number)
+        
         except:
+            
             #At the moment this is a catch all error, in the case of there being multiple error types this must be revisited
             raise forms.ValidationError('Please enter a valid card number')
     
-        #Card number regex checking by type
+        #Card number RegEx checking by type
         if card_type == 'visa':    
+            
             #Actual regex    
-            if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:                                    
+            if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:  
+                                                  
                 raise forms.ValidationError('The card number you have entered is not a valid Visa card number')
         
         elif card_type == 'mastercard':
+            
             if re.match("^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$", card_number) is None:
+                
                 raise forms.ValidationError('The card number you have entered is not a valid MasterCard card number')
         
         elif card_type == 'american_express':
+            
             if re.match( "^3[47][0-9]{13}$", card_number) is None:
+                
                 raise forms.ValidationError('The card number you have entered is not a valid American Express card number')
             
         elif card_type == 'maestro' :
+            
             if re.match("^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$", card_number) is None:
+                
                 raise forms.ValidationError('The card number you have entered is not a valid Maestro card number')
-        
-        #Any additions of extra cards can follow the same format
             
         return card_number
+    
+    # Cardholder's name validation
+    def clean_cardholders_name(self):
         
+        cardholders_name = self.cleaned_data['cardholders_name']
+        
+        if re.match("^[A-Za-z- ]+$", cardholders_name) is None:
+                    
+            raise forms.ValidationError('Please enter a valid name.')
+    
+    # Card security code validation   
     def clean_card_security_code(self):
         
         #Get value to be validated
         card_security_code = self.cleaned_data['card_security_code']
         
         try:
-            int(card_security_code)
-        except:
-            raise forms.ValidationError('The card security code you have entered is invalid')
-        if re.match("^[0-9]{3,4}$", card_security_code) is None:
-            raise forms.ValidationError('The card security code you have entered is invalid')
             
-                
+            int(card_security_code)
+            
+        except:
+            
+            raise forms.ValidationError('The card security code you have entered is invalid')
         
-        
+        if re.match("^[0-9]{3,4}$", card_security_code) is None:
+            
+            raise forms.ValidationError('The card security code you have entered is invalid')
+
 
 # Application saved form
 class ApplicationSaved(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    

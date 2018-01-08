@@ -8,9 +8,10 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 '''
 
 
-from childminder.wsgi import application
-from .models import Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, Login_And_Contact_Details, References
+from .models import Applicant_Home_Address, Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, References
+
 import datetime
+
 
 
 # Business logic to create or update a Type of childcare record
@@ -77,8 +78,8 @@ def Login_Contact_Logic_Phone(application_id_local, form):
     return login_and_contact_details_record
 
 
-# Business logic to create or update a Your personal details record
-def Personal_Logic(application_id_local, form):
+# Business logic to create or update a Your personal details record: names
+def Personal_Name_Logic(application_id_local, form):
 
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
@@ -92,7 +93,7 @@ def Personal_Logic(application_id_local, form):
     if Applicant_Personal_Details.objects.filter(application_id=application_id_local).count() == 0:
         
         # Create a new Applicant_Personal_Details record corresponding to the application, of which the generated personal_details_id will be used        
-        personal_details_record = Applicant_Personal_Details(birth_day=0, birth_month=0, birth_year=0, application_id=this_application)
+        personal_details_record = Applicant_Personal_Details(birth_day=None, birth_month=None, birth_year=None, application_id=this_application)
         personal_details_record.save()
         personal_detail_id_local = Applicant_Personal_Details.objects.get(application_id=application_id_local)
         
@@ -112,6 +113,152 @@ def Personal_Logic(application_id_local, form):
         applicant_names_record.last_name = last_name
     
     return applicant_names_record
+
+
+# Business logic to create or update a Your personal details record: date of birth
+def Personal_DOB_Logic(application_id_local, form):
+
+    # Retrieve the application's ID
+    this_application = Application.objects.get(application_id=application_id_local)
+    
+    # Get entered data to insert into the database
+    birth_day = form.cleaned_data.get('date_of_birth')[0]
+    birth_month = form.cleaned_data.get('date_of_birth')[1]
+    birth_year = form.cleaned_data.get('date_of_birth')[2]
+    
+    # If the user entered information for this task for the first time
+    if Applicant_Personal_Details.objects.filter(application_id=application_id_local).count() == 0:
+        
+        # Create a new Your personal details record corresponding to the application         
+        personal_details_record = Applicant_Personal_Details(birth_day=birth_day, birth_month=birth_month, birth_year=birth_year, application_id=this_application)
+        personal_details_record.save()
+            
+    # If a record exists, update it
+    elif Applicant_Personal_Details.objects.filter(application_id=application_id_local).count() > 0:
+        
+        # Retrieve the Your personal details record corresponding to the application       
+        personal_details_record = Applicant_Personal_Details.objects.get(application_id=application_id_local)
+        # Update the record
+        personal_details_record.birth_day = birth_day
+        personal_details_record.birth_month = birth_month
+        personal_details_record.birth_year = birth_year
+    
+    return personal_details_record
+
+
+# Business logic to create or update a Your personal details record: home address
+def Personal_Home_Address_Logic(application_id_local, form):
+
+    # Retrieve the application's ID
+    this_application = Application.objects.get(application_id=application_id_local)
+    
+    # Get entered data to insert into the database
+    street_line1 = form.cleaned_data.get('street_name_and_number')
+    street_line2 = form.cleaned_data.get('street_name_and_number2')
+    town = form.cleaned_data.get('town')
+    county = form.cleaned_data.get('county')
+    postcode = form.cleaned_data.get('postcode')
+    
+    personal_detail_record = Applicant_Personal_Details.objects.get(application_id=this_application)
+    personal_detail_id = personal_detail_record.personal_detail_id
+    
+    # If the user entered information for this task for the first time
+    if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
+        
+        # Create a new Applicant_Personal_Details record corresponding to the application, of which the generated personal_details_id will be used        
+        home_address_record = Applicant_Home_Address(street_line1=street_line1, street_line2=street_line2, town=town, county=county, country='United Kingdom', postcode=postcode, childcare_address=None, current_address=True, move_in_month=0, move_in_year=0, personal_detail_id=personal_detail_record)
+        home_address_record.save()
+            
+    # If a record exists, update it
+    elif Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
+        
+        # Retrieve the Your personal details record corresponding to the application
+        home_address_record = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True)
+        # Update the record
+        home_address_record.street_line1 = street_line1
+        home_address_record.street_line2 = street_line2
+        home_address_record.town = town
+        home_address_record.county = county
+        home_address_record.postcode = postcode
+    
+    return home_address_record
+
+
+# Business logic to create or update a Your personal details record: location of care
+def Personal_Location_Of_Care_Logic(application_id_local, form):
+
+    # Retrieve the application's ID
+    this_application = Application.objects.get(application_id=application_id_local)
+    
+    # Get entered data to insert into the database
+    location_of_care = form.cleaned_data.get('location_of_care')
+    
+    personal_detail_record = Applicant_Personal_Details.objects.get(application_id=this_application)
+    personal_detail_id = personal_detail_record.personal_detail_id
+        
+    # Retrieve the Your personal details record corresponding to the application
+    home_address_record = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True)
+    # Update the record
+    home_address_record.childcare_address = location_of_care
+        
+    return home_address_record
+
+
+def Multiple_Childcare_Address_Logic(personal_detail_id):
+    
+    # Remove current address status from previously entered childcare address
+    # If there are multiple addresses marked as the childcare address
+    if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True).count() > 1:
+            
+        # If the home address is marked as a childcare address
+        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True, current_address=True).count() > 0:
+            
+            # If a non-home address is also marked as a childcare address
+            if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True, current_address=False).count() > 0:
+                    
+                # Retrieve the non-home address
+                childcare_address_record = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True, current_address=False)
+                # Delete the address
+                childcare_address_record.delete()
+
+
+# Business logic to create or update a Your personal details record: childcare address
+def Personal_Childcare_Address_Logic(application_id_local, form):
+
+    # Retrieve the application's ID
+    this_application = Application.objects.get(application_id=application_id_local)
+    
+    # Get entered data to insert into the database
+    street_line1 = form.cleaned_data.get('street_name_and_number')
+    street_line2 = form.cleaned_data.get('street_name_and_number2')
+    town = form.cleaned_data.get('town')
+    county = form.cleaned_data.get('county')
+    postcode = form.cleaned_data.get('postcode')
+    
+    personal_detail_record = Applicant_Personal_Details.objects.get(application_id=this_application)
+    personal_detail_id = personal_detail_record.personal_detail_id
+    
+    # If the user entered information for this task for the first time
+    if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() == 0:
+        
+        # Create a new Applicant_Personal_Details record corresponding to the application, of which the generated personal_details_id will be used        
+        childcare_address_record = Applicant_Home_Address(street_line1=street_line1, street_line2=street_line2, town=town, county=county, country='United Kingdom', postcode=postcode, childcare_address=True, current_address=False, move_in_month=0, move_in_year=0, personal_detail_id=personal_detail_record)
+        childcare_address_record.save()
+            
+    # If a record exists, update it
+    elif Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
+        
+        # Retrieve the Your personal details record corresponding to the application
+        childcare_address_record = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True)
+        # Update the record
+        childcare_address_record.street_line1 = street_line1
+        childcare_address_record.street_line2 = street_line2
+        childcare_address_record.town = town
+        childcare_address_record.county = county
+        childcare_address_record.postcode = postcode
+        childcare_address_record.current_address = False
+    
+    return childcare_address_record
 
 
 # Business logic to create or update a First aid training record
@@ -240,14 +387,14 @@ def health_check_logic(application_id_local, form):
     return hdb_record
 
 def get_card_expiry_years():
-    #Output list
+    
+    # Output list
     year_list = []
-    #Iterates 0 through 10, affixing each value to current year and appending to yearlist
+    
+    # Iterates 0 through 10, affixing each value to current year and appending to yearlist
     for year_iterable in range(0,11):
+        
         now = datetime.datetime.now()
         year_list.append((now.year+year_iterable,(str(now.year+year_iterable))))
+        
     return year_list
-        
-        
-        
-        
