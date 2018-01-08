@@ -28,16 +28,19 @@
 		<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
     		<!-- Content -->
     		<div class="grid-row">
-           		<h1 class="form-title heading-large">
-               		First aid training
-           		</h1>
-           		<p>You will have to go on a 12-hour paediatric first aid course.</p>
-           		<p>Courses cost between &#163;80 and &#163;200.</p>
-           		<p>You have to renew your certificate every 3 years to keep it up to date.</p>
-           		{{form.as_div}}
-  	    		{% csrf_token %}
-	    		<input type="submit" class="button" value="Continue" alt='Continue to personal details'>
-	    		<input type="hidden" id="id" name="id" value="{{application_id}}" />
+    			<div class="guidance">
+    				<h1 class="form-title heading-large">
+	               		First aid training
+	           		</h1>
+	           		</br>
+	           		<p>You will have to go on a 12-hour paediatric first aid course.</p>
+	           		<p>Courses cost between &#163;80 and &#163;200.</p>
+	           		<p>You have to renew your certificate every 3 years to keep it up to date.</p>
+	           		{{form.as_div}}
+	  	    		{% csrf_token %}
+		    		<input type="submit" class="button guidance-button" value="Continue" alt='Continue to personal details'>
+		    		<input type="hidden" id="id" name="id" value="{{application_id}}" />
+    			</div>
     		</div>
 		</form>
 	</div>

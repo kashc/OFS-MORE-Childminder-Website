@@ -1,6 +1,4 @@
 '''
-Created on 07 Dec 2017
-
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Forms --
 
@@ -11,7 +9,7 @@ from application.customfields import ExpirySplitDateWidget, ExpirySplitDateField
 from django import forms
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
-from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect, SeparatedCheckboxSelectMultiple
+from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
 from application.models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, Health_Declaration_Booklet, References, \
     Applicant_Home_Address
@@ -82,10 +80,17 @@ class EmailLogin(forms.ModelForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
-    class Meta:
-        model = Login_And_Contact_Details
-        fields = ('email',)
-        email_address = forms.EmailField()
+    email_address = forms.EmailField()
+    
+    def clean_email_address(self):
+        
+        email_address = self.cleaned_data['email_address']
+            
+        if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
+            
+            raise forms.ValidationError('Please enter a valid e-mail address.')
+        
+        return email_address
 
 
 # Your login and contact details form: e-mail address   
@@ -118,11 +123,15 @@ class ContactEmail(GOVUKForm):
             
         if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
             
-            raise forms.ValidationError('Please enter a valid e-mail address.')
+            raise forms.ValidationError('TBC')
         
         if len(email_address) > 100:
             
             raise forms.ValidationError('Please enter 100 characters or less.')
+        
+        if Login_And_Contact_Details.objects.filter(email=email_address).exists():
+            
+            raise forms.ValidationError('There is already a Childminder application associated with this e-mail address. Please log in to the existing application.')
         
         return email_address 
 
@@ -159,11 +168,11 @@ class ContactPhone(GOVUKForm):
         
         if re.match("^(07\d{8,12}|447\d{7,11})$", no_space_mobile_number) is None:
             
-            raise forms.ValidationError('Please enter a valid mobile number.')
+            raise forms.ValidationError('TBC')
             
         if len(no_space_mobile_number) > 11:
             
-            raise forms.ValidationError('Please enter a valid mobile number.')
+            raise forms.ValidationError('TBC')
         
         return mobile_number
 
@@ -178,11 +187,11 @@ class ContactPhone(GOVUKForm):
         
             if re.match("^(0\d{8,12}|447\d{7,11})$", no_space_add_phone_number) is None:
                 
-                raise forms.ValidationError('Please enter a valid phone number.')
+                raise forms.ValidationError('TBC')
                 
             if len(no_space_add_phone_number) > 11:
             
-                raise forms.ValidationError('Please enter a valid phone number.')
+                raise forms.ValidationError('TBC')
         
         return add_phone_number
     
@@ -193,7 +202,7 @@ class Question(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     
-    question = forms.CharField(label='Knowledge based question', required=False)
+    question = forms.CharField(label='Knowledge based question', required=True)
 
     def __init__(self, *args, **kwargs):
         
@@ -246,7 +255,7 @@ class PersonalDetailsName(GOVUKForm):
             
         if re.match("^[A-Za-z- ]+$", first_name) is None:
                 
-            raise forms.ValidationError('Please enter a valid name.')
+            raise forms.ValidationError('TBC')
 
         if len(first_name) > 100:
             
@@ -263,7 +272,7 @@ class PersonalDetailsName(GOVUKForm):
             
             if re.match("^[A-Za-z- ]+$", middle_names) is None:
                     
-                raise forms.ValidationError('Please enter a valid name.')
+                raise forms.ValidationError('TBC')
     
             if len(middle_names) > 100:
                 
@@ -278,7 +287,7 @@ class PersonalDetailsName(GOVUKForm):
             
         if re.match("^[A-Za-z- ]+$", last_name) is None:
                 
-            raise forms.ValidationError('Please enter a valid name.')
+            raise forms.ValidationError('TBC')
         
         if len(last_name) > 100:
             
@@ -400,7 +409,7 @@ class PersonalDetailsHomeAddressManual(GOVUKForm):
             
         if re.match("^[A-Za-z- ]+$", town) is None:
                 
-            raise forms.ValidationError('Please enter a valid town.')
+            raise forms.ValidationError('TBC.')
         
         if len(town) > 100:
             
@@ -417,7 +426,7 @@ class PersonalDetailsHomeAddressManual(GOVUKForm):
         
             if re.match("^[A-Za-z- ]+$", county) is None:
                 
-                raise forms.ValidationError('Please enter a valid county.')
+                raise forms.ValidationError('TBC.')
             
             if len(county) > 100:
             
@@ -432,7 +441,7 @@ class PersonalDetailsHomeAddressManual(GOVUKForm):
             
         if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
                 
-            raise forms.ValidationError('Please enter a valid postcode.')
+            raise forms.ValidationError('TBC.')
         
         return postcode
 
@@ -539,7 +548,7 @@ class PersonalDetailsChildcareAddressManual(GOVUKForm):
             
         if re.match("^[A-Za-z-]+$", town) is None:
                 
-            raise forms.ValidationError('Please enter a valid town.')
+            raise forms.ValidationError('TBC')
         
         if len(town) > 100:
             
@@ -556,7 +565,7 @@ class PersonalDetailsChildcareAddressManual(GOVUKForm):
         
             if re.match("^[A-Za-z-]+$", county) is None:
                 
-                raise forms.ValidationError('Please enter a valid county.')
+                raise forms.ValidationError('TBC')
             
             if len(county) > 100:
             
@@ -571,7 +580,7 @@ class PersonalDetailsChildcareAddressManual(GOVUKForm):
             
         if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
                 
-            raise forms.ValidationError('Please enter a valid postcode.')
+            raise forms.ValidationError('TBC')
         
         return postcode
  
@@ -611,7 +620,6 @@ class FirstAidTrainingDetails(GOVUKForm):
             self.fields['first_aid_training_organisation'].initial = First_Aid_Training.objects.get(application_id=self.application_id_local).training_organisation
             self.fields['title_of_training_course'].initial = First_Aid_Training.objects.get(application_id=self.application_id_local).course_title
             self.fields['course_date'].initial = [First_Aid_Training.objects.get(application_id=self.application_id_local).course_day, First_Aid_Training.objects.get(application_id=self.application_id_local).course_month, First_Aid_Training.objects.get(application_id=self.application_id_local).course_year]
- 
  
 # First aid training form: declaration
 class FirstAidTrainingDeclaration(GOVUKForm):
