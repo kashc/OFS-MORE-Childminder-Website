@@ -5,20 +5,24 @@ Created on 5 Jan 2018
 '''
 #Python Imports
 from uuid import uuid4
+from base64 import b64encode, b64decode
 
 #Django Imports
 from django.http.response import HttpResponse
 
 #Actual Xml envelope for response content is the same, therefore this has been contained here
-def message_response(response_to, content):
-    response_to_result = (response_to + 'Result')
-    response_string = ('''<s12:Envelope xmlns:s12='http://schemas.xmlsoap.org/soap/envelope/'>
-  <s12:Body>
-    <ns1:''' + response_to +''' xmlns:ns1='http://127.0.0.1/OfstedOnlineWS'>
-        <ns1:'''+ response_to_result + '''>''' + content + '''</ns1:'''+ response_to_result +'''>
-    </ns1:'''+ response_to + '''>
-  </s12:Body>
-</s12:Envelope>''')
+def message_response( status, response_to = '', error = ''):
+    result_string = (response_to + 'Result')
+    payload_string = b64encode(b"""<Status>"""+ status.encode('utf-8') +b"""</Status>
+<InvocationID>"""+ response_to.encode('utf-8') +b"""</InvocationID>
+<Error>"""+ error.encode('utf-8') +b"""</Error>""")
+    response_string = ("""<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <"""+ result_string +""">"""+ str(payload_string) +"""</"""+ result_string +""">
+    </soap:Body>
+</soap:Envelope>""")
+    print(response_string)
     return(response_string)
 
 #Error response is also pre defined in the web service catalogue, needs to be built
@@ -29,53 +33,104 @@ def error_response(error):
 #Each of the below functions will recieve the full xml message sent by the SOAP request, parse it for parameters, then return either
 #Of the defined messages to the client
 
-def SendApplicationForms(parameters):
-    pass
+def SendApplicationForms(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def GetIndividualsFromSearchCriteria(parameters):
-    pass
+def GetIndividualsFromSearchCriteria(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def GetIndividualsRegistrations(parameters):
-    pass
+def GetIndividualsRegistrations(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def GetIndividualDetails(parameters):
-    pass
+def GetIndividualDetails(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def SendIndividualDetails(parameters):
-    pass
+def SendIndividualDetails(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def GetELSProviderDetails(parameters):
-    return(HttpResponse(message_response('GetELSProviderDetails', str(uuid4()))))
+def GetELSProviderDetails(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def GetNewURN(parameters):
-    pass
+def GetNewURN(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def GetReferenceData(parameters):
-    pass
+def GetReferenceData(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def SendMessages(parameters):
-    pass
+def SendMessages(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def GetOrganisationsFromSearchCriteria(parameters):
-    pass
+def GetOrganisationsFromSearchCriteria(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def GetOrganisationsDetails(parameters):
-    pass
+def GetOrganisationsDetails(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def GetInvoiceDetails(parameters):
-    pass
+def GetInvoiceDetails(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def SendAdhocPayment(parameters):
-    pass
+def SendAdhocPayment(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def SendPayment(parameters):
-    pass
+def SendPayment(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def GetRegistrationFromSearchCriteria(parameters):
-    pass
+def GetRegistrationFromSearchCriteria(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def GetRegistrationDetails(parameters):
-    pass
+def GetRegistrationDetails(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))
 
-def SendRegistrationDetails(parameters):
-    pass
+def SendRegistrationDetails(service_name, invoker_id, parameters_xml):
+    SUCCESS = '0'
+    FAILURE = '1'
+    #any parameter parsing/processing should go here
+    return(message_response(SUCCESS, service_name))

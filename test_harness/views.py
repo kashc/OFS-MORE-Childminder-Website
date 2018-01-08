@@ -17,16 +17,19 @@ from test_harness.data_exchange_methods import (SendApplicationForms, GetIndivid
                                                 GetNewURN, GetReferenceData, SendMessages, GetOrganisationsFromSearchCriteria,
                                                 GetOrganisationsDetails, GetInvoiceDetails, SendAdhocPayment, SendPayment,
                                                 GetRegistrationFromSearchCriteria, GetRegistrationDetails, SendRegistrationDetails,
-                                                error_response)
+                                                message_response)
+from django.http.response import HttpResponse
 
 @csrf_exempt
 def NOOHarnessView(request):
-    
+    SUCCESS = '0'
+    FAILURE = '1'
     #Attempts to pull a valid xml tree out of the request.body byte string (which is in unicode)
     try:
         SOAP_xml = ET.ElementTree(ET.fromstring(request.body))
     except:
-        return(error_response('Input format not valid XML!'))
+        #If this error occurs, service name cannot be determined, therefore invoker cannot be passed
+        return(HttpResponse(message_response(FAILURE, 'Input format not valid XML!')))
         
     #Assuming format is correct, requested service name, InvokerID, and Parameters can be parsed easily
     #Checks all 
@@ -42,16 +45,14 @@ def NOOHarnessView(request):
         assert(type(re.sub('{[^>]+}','',SOAP_invoker_id_node.tag)) is str )
         assert(type(re.sub('{[^>]+}','',SOAP_parameters_node.tag)) is str )
     except AssertionError:
-        return(error_response('Request XML in invalid format, consult the web service catalogue'))
+        return(HttpResponse(message_response(FAILURE, 'Request XML in invalid format, consult the web service catalogue')))
     
     except:
-        return(error_response('Uncaught error, please contact supporting quoting the following support id' + SOAP_invoker_id_node.text))
+        return(HttpResponse(message_response(FAILURE, 'Uncaught error, please contact support quoting the following support id' + SOAP_invoker_id_node.text)))
     
     
     #Stored in a tuple for easier referencing/passing later
     SOAP_service_name = (re.sub('{[^>]+}','',SOAP_service_name_node.tag))
-    print(SOAP_service_name)
-    paramater_tuple = (SOAP_invoker_id_node.text, SOAP_parameters_node.text)
    
     #Useful Debugging
     #print(SOAP_result)
@@ -81,8 +82,8 @@ def NOOHarnessView(request):
     #If the service found in the request exists, run it's function and return a HttpResponse
     #of an xml string defined in the web service catalogue
     if SOAP_service_name in possible_requests:
-        return(possible_requests[SOAP_service_name](paramater_tuple))
+        return(HttpResponse((possible_requests[SOAP_service_name](SOAP_service_name, SOAP_invoker_id_node.text, SOAP_parameters_node.text)), content_type = 'text/xml'))
     else:
-        return(error_response('Requested service does not exist!'))
+        return(HttpResponse(message_response(FAILURE, 'Requested service does not exist!')))
     
     

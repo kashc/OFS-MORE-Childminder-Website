@@ -8,7 +8,12 @@ from django.views.generic.edit import FormView
 from functools import partial
 #Views import from test_harness app
 from test_harness import views
+from test_harness import dispatcher
+from soapfish.django_ import django_dispatcher
+dispatcher2 = django_dispatcher(dispatcher.OfstedOnlineWSSoap_SERVICE)
 
 urlpatterns = [
-    url(r'^$', views.NOOHarnessView, name='Get-New-URN-View'),
-    ]
+    url(r'^$', dispatcher2),
+   ]
+
+
