@@ -49,5 +49,4 @@ urlpatterns = [
     url(r'^test2/', payment.start),
     url(r'^start/', views.StartPageView),
     url(r'^confirmation/', TemplateView.as_view(template_name = 'confirmation.html')),
-    url(r'^OfstedOnlineWS/', include('test_harness.urls')),
 ]
