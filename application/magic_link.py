@@ -103,7 +103,7 @@ def hasExpired(expiry):
     #calculate difference between current time and when it was created
     diff = int(time.time()-expiry)
     
-    if (diff <exp_period):
+    if (diff < exp_period or diff == exp_period):
         #return false if it HAS NOT expired
         return False
     else:
@@ -152,6 +152,7 @@ def SMSVerification(request):
         code = request.POST['magic_link_sms']
         if len(code) == 0:
             exp = acc.email_expiry_date
+            print(id)
             if len(id)>0:
                 print('Success')
                 #uncomment url if it should be a one-time use email
@@ -162,8 +163,8 @@ def SMSVerification(request):
                 acc.magic_link_sms = g
                 acc.sms_expiry_date = expiry
                 acc.save()
-                #print(json.loads(magic_link_text(phone, g).text))
-                return HttpResponseRedirect("/verifyPhone/?id="+id)
+                print(magic_link_text(phone, g).status_code)
+                return HttpResponseRedirect("/validate/"+id)
         
         else:
             exp = acc.email_expiry_date
