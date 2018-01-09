@@ -1587,12 +1587,12 @@ def CardPaymentDetailsView(request):
             expiry_year = request.POST["expiry_date_1"]
             
             # Make payment
-            payment_response = payment.make_payment(3500, cardholders_name, card_number, card_security_code, expiry_month, expiry_year, 'GBP', 'Test', 'Ofsted Test')
+            payment_response = payment.make_payment(3500, cardholders_name, card_number, card_security_code, expiry_month, expiry_year, 'GBP', application_id_local, 'Childminder registration fee')
             # Parse payment response
             parsed_payment_response = json.loads(payment_response.text)
             
             # If the payment is successful
-            if payment_response.status_code == 200:
+            if payment_response.status_code == 201:
                 
                 email_response = payment.payment_email('matthew.styles@informed.com', 'Test')
                 
