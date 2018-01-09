@@ -6,14 +6,11 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 '''
 
 
-from application.models import Login_And_Contact_Details, Application
-
+from .models import Login_And_Contact_Details, Application
 from django.conf import settings
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
-
 from .forms import EmailLogin, VerifyPhone
-
 import json, random, requests, string, time, traceback
 
 
@@ -32,9 +29,11 @@ def existingApplicationView(request):
         
         # If a valid e-mail address has been submitted
         if form.is_valid():
-            
-            # Retrieve corresponding application
-            acc = Login_And_Contact_Details.objects.get(email=email)
+            try:
+                # Retrieve corresponding application
+                acc = Login_And_Contact_Details.objects.get(email=email)
+            except Exception as ex:
+                return HttpResponseRedirect('/email-sent')
             #get url and substring just the domain
             domain = request.META.get('HTTP_REFERER', "")
             domain = domain[:-21]
@@ -57,7 +56,7 @@ def existingApplicationView(request):
     
 def magic_link_email(email, link_id):
     #Use Notify-Gateway API to send magic link email
-    base_request_url='http://130.130.52.132:8095'
+    base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
     input = {
         "email": email,
@@ -68,11 +67,10 @@ def magic_link_email(email, link_id):
         "templateId": "ecd2a788-257b-4bb9-8784-5aed82bcbb92"
     }
     r = requests.post(base_request_url + "/notify-gateway/api/v1/notifications/email/" , json.dumps(input), headers=header)
-    print(r.status_code)
-    return(r)
+    return r
 def magic_link_text(phone, link_id):
     #Use Notify-Gateway to send sms code
-    base_request_url='http://130.130.52.132:8095'
+    base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
     input = {
             "personalisation": {
@@ -119,9 +117,6 @@ def validateMagicLink(request, id):
     try:
         acc = Login_And_Contact_Details.objects.get(magic_link_email=id)
         exp = acc.email_expiry_date
-        print(exp)
-        print(id)
-        print(hasExpired(exp))
         if not hasExpired(exp) and len(id)>0:
             print('Success')
             #uncomment url if it should be a one-time use email

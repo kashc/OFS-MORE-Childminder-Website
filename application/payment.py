@@ -1,17 +1,11 @@
 import requests
 import json
+from django.conf import settings
 
-def start(self):
-    
-    p = make_payment(10, "matt", 5454545454545454, 111, 4, 2019, "GBP", "OFS-MORE-162738", "Registration Fee")
-    
-    if(p.status_code==200):
-        
-        send = payment_email("matthew.styles@informed.com", "Matt")
-    
+
 def make_payment(amount, name, number, cvc, expiryM, expiryY, currency, code, desc):
     
-    base_url = 'http://130.130.52.132:8089'
+    base_url = settings.PAYMENT_URL
     
     header = {'content-type': 'application/json'}
     
