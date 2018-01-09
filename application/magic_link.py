@@ -129,7 +129,7 @@ def validateMagicLink(request, id):
             acc.save()
             magic_link_text(phone, g)
             #return JsonResponse({"message":"Link is valid, we just sent a text message to " +phone},status=200)
-            return HttpResponseRedirect("/verifyPhone/?id="+id)
+            return HttpResponseRedirect("/verifyPhone/?id="+id )
         else:
             return JsonResponse({"message":"The code has expired"},status=440)
     except Exception as ex:
@@ -142,7 +142,15 @@ def SMSVerification(request):
     #This is the page where a user is redirected after clicking on their magic link
     #Unique form for entering SMS code (must be 5 digits in accordance with JIRA)
     id = request.GET['id']
-
+    if 'f' in request.GET.keys():
+        flag = request.GET['f']
+        phone = acc.mobile_number
+        g = generate_random(5, "code")
+        expiry = int(time.time())
+        acc.magic_link_sms = g
+        acc.sms_expiry_date = expiry
+        acc.save()
+        magic_link_text(phone, g).status_code
     form = VerifyPhone(id=id)
     acc = Login_And_Contact_Details.objects.get(magic_link_email=id)
     login_id = acc.login_id
@@ -150,19 +158,7 @@ def SMSVerification(request):
     if request.method =='POST':
         form = VerifyPhone(request.POST, id=id)
         code = request.POST['magic_link_sms']
-        if len(code) == 0:
-            exp = acc.email_expiry_date
-            # uncomment url if it should be a one-time use email
-            # acc.magic_link_email = ""
-            phone = acc.mobile_number
-            g = generate_random(5, "code")
-            expiry = int(time.time())
-            acc.magic_link_sms = g
-            acc.sms_expiry_date = expiry
-            acc.save()
-            magic_link_text(phone, g).status_code
-        
-        elif len(code)>0:
+        if len(code)>0:
             exp = acc.sms_expiry_date
             if form.is_valid() and not hasExpired(exp):
                 if code == acc.magic_link_sms:
@@ -172,4 +168,4 @@ def SMSVerification(request):
                     print(4)
                     return HttpResponseRedirect("/verifyPhone/?id=" + id)
         
-    return render(request, 'verify-phone.html', {'form': form})
+    return render(request, 'verify-phone.html', {'form': form, 'id': id})
