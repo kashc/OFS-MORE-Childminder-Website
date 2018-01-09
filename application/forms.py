@@ -197,8 +197,22 @@ class VerifyPhone(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     
-    magic_link_sms = forms.CharField(label = 'Code', required=True)   
+    magic_link_sms = forms.CharField(label = 'Code', required=True)
 
+    def __init__(self, *args, **kwargs):
+
+        self.magic_link_email = kwargs.pop('id')
+        super(VerifyPhone, self).__init__(*args, **kwargs)
+
+    def clean_magic_link_sms(self):
+
+        magic_link_sms = self.cleaned_data['magic_link_sms']
+
+        if Login_And_Contact_Details.objects.filter(magic_link_sms=magic_link_sms, magic_link_email=self.magic_link_email).count() == 0:
+
+            raise forms.ValidationError('TBC')
+
+        return magic_link_sms
 
 # Your login and contact details form: knowledge-based question 
 class Question(GOVUKForm):
