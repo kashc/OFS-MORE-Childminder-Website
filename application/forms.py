@@ -75,6 +75,11 @@ class TypeOfChildcare(forms.Form):
                 self.fields['type_of_childcare'].initial = []
 
 
+class AccountForm(GOVUKForm):
+
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
 class EmailLogin(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
@@ -197,7 +202,7 @@ class VerifyPhone(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     
-    magic_link_sms = forms.CharField(label = 'Code', required=True)
+    magic_link_sms = forms.CharField(label = 'Security code', required=True)
 
     def __init__(self, *args, **kwargs):
 

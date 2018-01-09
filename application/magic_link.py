@@ -131,17 +131,21 @@ def validateMagicLink(request, id):
             #return JsonResponse({"message":"Link is valid, we just sent a text message to " +phone},status=200)
             return HttpResponseRedirect("/verifyPhone/?id="+id )
         else:
-            return JsonResponse({"message":"The code has expired"},status=440)
+            #return JsonResponse({"message":"The code has expired"},status=440)
+            return HttpResponseRedirect("/code-expired/")
     except Exception as ex:
-        return JsonResponse({"message":"error bad link" + id}, status=404)
+        #return JsonResponse({"message":"error bad link" + id}, status=404)
+        return HttpResponseRedirect("/bad-link/")
     
-    return(JsonResponse({"message":"The id is: \'" +id +"\' | error link does not resolve"},status=400))
+    #return(JsonResponse({"message":"The id is: \'" +id +"\' | error link does not resolve"},status=400))
+    return HttpResponseRedirect("/link-resolution-error/")
 
 
 def SMSVerification(request):
     #This is the page where a user is redirected after clicking on their magic link
     #Unique form for entering SMS code (must be 5 digits in accordance with JIRA)
     id = request.GET['id']
+    acc = Login_And_Contact_Details.objects.get(magic_link_email=id)
     if 'f' in request.GET.keys():
         flag = request.GET['f']
         phone = acc.mobile_number
@@ -151,8 +155,9 @@ def SMSVerification(request):
         acc.sms_expiry_date = expiry
         acc.save()
         magic_link_text(phone, g).status_code
+        return HttpResponseRedirect("/verifyPhone/?id=" + id)
     form = VerifyPhone(id=id)
-    acc = Login_And_Contact_Details.objects.get(magic_link_email=id)
+
     login_id = acc.login_id
     application = Application.objects.get(login_id = login_id)
     if request.method =='POST':

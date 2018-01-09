@@ -13,7 +13,7 @@ from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Lo
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 
-from .forms import ApplicationSaved, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTrainingDetails, FirstAidTrainingDeclaration, FirstAidTrainingGuidance, FirstAidTrainingTraining, FirstAidTrainingRenew, FirstAidTrainingSummary, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetailsChildcareAddress, PersonalDetailsChildcareAddressManual, PersonalDetailsDOB, PersonalDetailsName, PersonalDetailsGuidance, PersonalDetailsHomeAddress, PersonalDetailsHomeAddressManual, PersonalDetailsLocationOfCare, PersonalDetailsSummary, Question, ReferenceForm, TypeOfChildcare
+from .forms import ApplicationSaved, AccountForm, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTrainingDetails, FirstAidTrainingDeclaration, FirstAidTrainingGuidance, FirstAidTrainingTraining, FirstAidTrainingRenew, FirstAidTrainingSummary, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetailsChildcareAddress, PersonalDetailsChildcareAddressManual, PersonalDetailsDOB, PersonalDetailsName, PersonalDetailsGuidance, PersonalDetailsHomeAddress, PersonalDetailsHomeAddressManual, PersonalDetailsLocationOfCare, PersonalDetailsSummary, Question, ReferenceForm, TypeOfChildcare
 
 from .models import Application, Login_And_Contact_Details
 
@@ -33,10 +33,10 @@ from application.models import Applicant_Personal_Details,\
 
 # View for the start page
 def StartPageView(request):
-    
+
     # Create a blank user
     user = Login_And_Contact_Details.objects.create()
-    
+
     # Create a new application
     application = Application.objects.create(
         application_type = 'CHILDMINDER',
@@ -57,9 +57,42 @@ def StartPageView(request):
         date_updated = datetime.datetime.today(),
         date_accepted = None
     )
-    
+
     # Access the task page
     return render(request, 'start-page.html', ({'id': application.application_id}))
+
+
+# View for the account selection page
+def AccountView(request):
+
+    if request.method == 'GET':
+
+        application_id = request.GET['id']
+
+        form = AccountForm()
+
+        # Access the task page
+        return render(request, 'account-account.html', ({'application_id': application_id, 'form': form}))
+
+    if request.method == 'POST':
+
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+
+        form = AccountForm()
+
+        # Return to the application's task list
+        return HttpResponseRedirect('/account/email?id=' + application_id_local)
+
+    else:
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local
+        }
+
+        # Return to the same page
+        return render(request, 'account-account.html', variables)
 
 
 # View for the task list

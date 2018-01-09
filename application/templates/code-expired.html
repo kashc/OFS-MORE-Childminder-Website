@@ -1,0 +1,21 @@
+<!-- Implement GOV.UK template -->
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+
+<main id="content" role="main">
+	<div class="column-full">
+    		<div class="grid-row">
+           		<h1 class="form-title heading-large">
+               		Security code expired
+           		</h1>
+           		<p>Your security code has expired.</p>
+				<p>Please try logging back in to your account <a href="/existing-application/">here</a>.</p>
+    		</div>
+	</div>
+</main>
+
+{% endblock %}
