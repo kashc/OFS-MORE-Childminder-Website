@@ -44,4 +44,7 @@ urlpatterns = [
     url(r'^email-sent/', TemplateView.as_view(template_name = 'email-sent.html')),
     url(r'^start/', views.StartPageView),
     url(r'^confirmation/', TemplateView.as_view(template_name = 'payment-confirmation.html')),
+    url(r'^code-expired/', TemplateView.as_view(template_name='code-expired.html')),
+    url(r'^bad-link/', TemplateView.as_view(template_name='bad-link.html')),
+    url(r'^link-resolution-error/', TemplateView.as_view(template_name='link-resolution-error.html')),
 ]

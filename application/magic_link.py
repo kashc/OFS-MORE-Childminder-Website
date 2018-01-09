@@ -131,11 +131,14 @@ def validateMagicLink(request, id):
             #return JsonResponse({"message":"Link is valid, we just sent a text message to " +phone},status=200)
             return HttpResponseRedirect("/verifyPhone/?id="+id)
         else:
-            return JsonResponse({"message":"The code has expired"},status=440)
+            #return JsonResponse({"message":"The code has expired"},status=440)
+            return HttpResponseRedirect("/code-expired/")
     except Exception as ex:
-        return JsonResponse({"message":"error bad link" + id}, status=404)
+        #return JsonResponse({"message":"error bad link" + id}, status=404)
+        return HttpResponseRedirect("/bad-link/")
     
-    return(JsonResponse({"message":"The id is: \'" +id +"\' | error link does not resolve"},status=400))
+    #return(JsonResponse({"message":"The id is: \'" +id +"\' | error link does not resolve"},status=400))
+    return HttpResponseRedirect("/link-resolution-error/")
 
 
 def SMSVerification(request):
