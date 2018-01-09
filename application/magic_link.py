@@ -120,7 +120,7 @@ def validateMagicLink(request, id):
         if not hasExpired(exp) and len(id)>0:
             print('Success')
             #uncomment url if it should be a one-time use email
-            #acc.magic_link_email = ""
+            acc.email_expiry_date = 0
             phone = acc.mobile_number
             g = generate_random(5, "code")
             expiry = int(time.time())
@@ -131,7 +131,8 @@ def validateMagicLink(request, id):
             #return JsonResponse({"message":"Link is valid, we just sent a text message to " +phone},status=200)
             return HttpResponseRedirect("/verifyPhone/?id="+id)
         else:
-            return JsonResponse({"message":"The code has expired"},status=440)
+            JsonResponse({"message":"The code has expired"},status=440)
+            return HttpResponseRedirect("/existing-application")
     except Exception as ex:
         return JsonResponse({"message":"error bad link" + id}, status=404)
     
@@ -146,16 +147,11 @@ def SMSVerification(request):
     acc = Login_And_Contact_Details.objects.get(magic_link_email=id)
     login_id = acc.login_id
     application = Application.objects.get(login_id = login_id)
-    
     if request.method =='POST':
-        print('Post')
         form = VerifyPhone(request.POST, id=id)
         code = request.POST['magic_link_sms']
         if len(code) == 0:
             exp = acc.email_expiry_date
-            print(exp)
-            print(id)
-            print(hasExpired(exp))
             if not hasExpired(exp) and len(id)>0:
                 print('Success')
                 #uncomment url if it should be a one-time use email
