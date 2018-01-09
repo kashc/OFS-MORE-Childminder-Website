@@ -27,7 +27,8 @@ def make_payment(amount, name, number, cvc, expiryM, expiryY, currency, code, de
 
 def payment_email(email, name):
     
-    base_url='http://130.130.52.132:8095'
+    base_url = settings.NOTIFY_URL
+
     header = {'content-type': 'application/json'}
     
     input = {
