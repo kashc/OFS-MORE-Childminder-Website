@@ -844,14 +844,14 @@ class PaymentDetails(GOVUKForm):
             raise forms.ValidationError('Please enter a valid card number')
     
         #Card number RegEx checking by type
-        if card_type == 'visa':    
+        #if card_type == 'visa':    
             
             #Actual regex    
-            if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:  
+            #if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:  
                                                   
-                raise forms.ValidationError('The card number you have entered is not a valid Visa card number')
+                #raise forms.ValidationError('The card number you have entered is not a valid Visa card number')
         
-        elif card_type == 'mastercard':
+        if card_type == 'mastercard':
             
             if re.match("^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$", card_number) is None:
                 
