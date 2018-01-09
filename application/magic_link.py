@@ -69,6 +69,7 @@ def magic_link_email(email, link_id):
     r = requests.post(base_request_url + "/notify-gateway/api/v1/notifications/email/" , json.dumps(input), headers=header)
     return r
 def magic_link_text(phone, link_id):
+    print("Sending SMS Message: " +link_id)
     #Use Notify-Gateway to send sms code
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
@@ -130,8 +131,7 @@ def validateMagicLink(request, id):
             #return JsonResponse({"message":"Link is valid, we just sent a text message to " +phone},status=200)
             return HttpResponseRedirect("/verifyPhone/?id="+id)
         else:
-            JsonResponse({"message":"The code has expired"},status=440)
-            return HttpResponseRedirect("/existing-application")
+            return JsonResponse({"message":"The code has expired"},status=440)
     except Exception as ex:
         return JsonResponse({"message":"error bad link" + id}, status=404)
     
@@ -142,7 +142,7 @@ def SMSVerification(request):
     #This is the page where a user is redirected after clicking on their magic link
     #Unique form for entering SMS code (must be 5 digits in accordance with JIRA)
     id = request.GET['id']
-    print(id)
+
     form = VerifyPhone(id=id)
     acc = Login_And_Contact_Details.objects.get(magic_link_email=id)
     login_id = acc.login_id
@@ -152,27 +152,24 @@ def SMSVerification(request):
         code = request.POST['magic_link_sms']
         if len(code) == 0:
             exp = acc.email_expiry_date
-            print(id)
-            if len(id)>0:
-                print('Success')
-                #uncomment url if it should be a one-time use email
-                #acc.magic_link_email = ""
-                phone = acc.mobile_number
-                g = generate_random(5, "code")
-                expiry = int(time.time())
-                acc.magic_link_sms = g
-                acc.sms_expiry_date = expiry
-                acc.save()
-                print(magic_link_text(phone, g).status_code)
-                return HttpResponseRedirect("/validate/"+id)
+            # uncomment url if it should be a one-time use email
+            # acc.magic_link_email = ""
+            phone = acc.mobile_number
+            g = generate_random(5, "code")
+            expiry = int(time.time())
+            acc.magic_link_sms = g
+            acc.sms_expiry_date = expiry
+            acc.save()
+            magic_link_text(phone, g).status_code
         
-        else:
-            exp = acc.email_expiry_date
+        elif len(code)>0:
+            exp = acc.sms_expiry_date
             if form.is_valid() and not hasExpired(exp):
                 if code == acc.magic_link_sms:
                     #forward back onto appication
                     return HttpResponseRedirect("/task-list/?id="+str(application.application_id))
                 else:
+                    print(4)
                     return HttpResponseRedirect("/verifyPhone/?id=" + id)
         
     return render(request, 'verify-phone.html', {'form': form})
