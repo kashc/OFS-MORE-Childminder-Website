@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^account/phone/', views.ContactPhoneView, name='Contact-Phone-View'),
     url(r'^account/summary/', views.ContactSummaryView, name='Contact-Summary-View'),
     url(r'^account/question/', views.QuestionView, name='Question-View'),
+    url(r'^account/account/', views.AccountView, name='Account-View'),
     url(r'^personal-details/guidance/', views.PersonalDetailsGuidanceView, name='Personal-Details-Guidance-View'),
     url(r'^personal-details/name/', views.PersonalDetailsNameView, name='Personal-Details-Name-View'),
     url(r'^personal-details/dob/', views.PersonalDetailsDOBView, name='Personal-Details-DOB-View'),

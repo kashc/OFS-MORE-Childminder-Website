@@ -75,6 +75,11 @@ class TypeOfChildcare(forms.Form):
                 self.fields['type_of_childcare'].initial = []
 
 
+class AccountForm(GOVUKForm):
+
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
 class EmailLogin(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
