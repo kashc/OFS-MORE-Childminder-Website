@@ -4,3 +4,5 @@ django-govuk-template==0.4
 django-govuk-forms==0.4
 unittest-xml-reporting
 requests
+lxml==3.7.3
+zeep

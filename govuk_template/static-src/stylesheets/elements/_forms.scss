@@ -228,6 +228,22 @@ textarea.form-control {
   }
 }
 
+.guidance {
+  background-color: #005EA5;
+  padding: 35px 70px 60px 70px;
+  margin-top: 30px;
+  color: #fff;
+  font-size: 24px;
+}
+
+.guidance-button {
+  @extend .button;
+  background-color: #fff !important;
+  color: #005ea5 !important;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
 // 7. Browser accessibility fixes
 // ==========================================================================
 
