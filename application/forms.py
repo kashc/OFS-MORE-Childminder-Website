@@ -205,7 +205,6 @@ class VerifyPhone(GOVUKForm):
         super(VerifyPhone, self).__init__(*args, **kwargs)
 
     def clean_magic_link_sms(self):
-
         magic_link_sms = self.cleaned_data['magic_link_sms']
 
         if Login_And_Contact_Details.objects.filter(magic_link_sms=magic_link_sms, magic_link_email=self.magic_link_email).count() == 0:

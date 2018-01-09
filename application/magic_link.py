@@ -118,7 +118,6 @@ def validateMagicLink(request, id):
         acc = Login_And_Contact_Details.objects.get(magic_link_email=id)
         exp = acc.email_expiry_date
         if not hasExpired(exp) and len(id)>0:
-            print('Success')
             #uncomment url if it should be a one-time use email
             acc.email_expiry_date = 0
             phone = acc.mobile_number
@@ -143,6 +142,7 @@ def SMSVerification(request):
     #This is the page where a user is redirected after clicking on their magic link
     #Unique form for entering SMS code (must be 5 digits in accordance with JIRA)
     id = request.GET['id']
+    print(id)
     form = VerifyPhone(id=id)
     acc = Login_And_Contact_Details.objects.get(magic_link_email=id)
     login_id = acc.login_id
@@ -152,7 +152,7 @@ def SMSVerification(request):
         code = request.POST['magic_link_sms']
         if len(code) == 0:
             exp = acc.email_expiry_date
-            if not hasExpired(exp) and len(id)>0:
+            if len(id)>0:
                 print('Success')
                 #uncomment url if it should be a one-time use email
                 #acc.magic_link_email = ""
@@ -162,7 +162,7 @@ def SMSVerification(request):
                 acc.magic_link_sms = g
                 acc.sms_expiry_date = expiry
                 acc.save()
-                magic_link_text(phone, g)
+                #print(json.loads(magic_link_text(phone, g).text))
                 return HttpResponseRedirect("/verifyPhone/?id="+id)
         
         else:
