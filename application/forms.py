@@ -15,7 +15,7 @@ from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
 from .customfields import ExpirySplitDateWidget, ExpirySplitDateField
-from .models import (Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type,
+from .models import (Application, Applicant_Names, Applicant_Personal_Details, ChildcareType,
                      Applicant_Home_Address, Criminal_Record_Check, First_Aid_Training,
                      Health_Declaration_Booklet, References, UserDetails)
 
@@ -45,11 +45,11 @@ class TypeOfChildcare(forms.Form):
         super(TypeOfChildcare, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        if Childcare_Type.objects.filter(application_id=self.application_id_local).count() > 0:
+        if ChildcareType.objects.filter(application_id=self.application_id_local).count() > 0:
             
-            zero_to_five_status = Childcare_Type.objects.get(application_id=self.application_id_local).zero_to_five
-            five_to_eight_status = Childcare_Type.objects.get(application_id=self.application_id_local).five_to_eight
-            eight_plus_status = Childcare_Type.objects.get(application_id=self.application_id_local).eight_plus
+            zero_to_five_status = ChildcareType.objects.get(application_id=self.application_id_local).zero_to_five
+            five_to_eight_status = ChildcareType.objects.get(application_id=self.application_id_local).five_to_eight
+            eight_plus_status = ChildcareType.objects.get(application_id=self.application_id_local).eight_plus
             
             if (zero_to_five_status == True) & (five_to_eight_status == True) & (eight_plus_status == True):
                 self.fields['type_of_childcare'].initial = ['0-5', '5-8', '8over']

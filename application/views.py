@@ -16,7 +16,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 
 from . import magic_link, payment, status
-from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic,
+from .business_logic import (ChildcareType_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic,
                              Login_Contact_Logic, Login_Contact_Logic_Phone, Multiple_Childcare_Address_Logic,
                              Personal_Childcare_Address_Logic, Personal_DOB_Logic, Personal_Home_Address_Logic,
                              Personal_Location_Of_Care_Logic, Personal_Name_Logic, references_check_logic)
@@ -172,7 +172,7 @@ def TypeOfChildcareView(request):
             status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
             
             # Perform business logic to create or update Type of childcare record in database
-            childcare_type_record = Childcare_Type_Logic(application_id_local, form)
+            childcare_type_record = ChildcareType_Logic(application_id_local, form)
             childcare_type_record.save()
             
         # Return to the application's task list

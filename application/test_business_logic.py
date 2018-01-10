@@ -12,13 +12,13 @@ from datetime import date
 from django.test import TestCase
 from uuid import UUID
 
-from .models import (Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type,
+from .models import (Application, Applicant_Names, Applicant_Personal_Details, ChildcareType,
                      Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, UserDetails,
                      References, Applicant_Home_Address)
 
 
 # Test business logic to create or update a Type of childcare record
-class Test_Childcare_Type_Logic(TestCase):
+class Test_ChildcareType_Logic(TestCase):
     
     # Test the business case where a new record needs to be created
     def test_logic_to_create_new_record(self):
@@ -26,11 +26,11 @@ class Test_Childcare_Type_Logic(TestCase):
         # Create a test application ID
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         
-        # Delete test Childcare_Type object if it already exists
-        Childcare_Type.objects.filter(application_id=test_application_id).delete()
+        # Delete test ChildcareType object if it already exists
+        ChildcareType.objects.filter(application_id=test_application_id).delete()
         
-        # Verify that the Childcare_Type object corresponding with the test application does not exist
-        assert(Childcare_Type.objects.filter(application_id=test_application_id).count() == 0)
+        # Verify that the ChildcareType object corresponding with the test application does not exist
+        assert(ChildcareType.objects.filter(application_id=test_application_id).count() == 0)
     
     # Test the business case where a record already exists
     def test_logic_to_update_record(self):
@@ -76,8 +76,8 @@ class Test_Childcare_Type_Logic(TestCase):
         # Create a test childcare ID
         test_childcare_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         
-        # Create a test Childcare_Type object
-        Childcare_Type.objects.create(
+        # Create a test ChildcareType object
+        ChildcareType.objects.create(
             childcare_id = (UUID(test_childcare_id)),
             application_id = Application.objects.get(application_id=test_application_id),
             zero_to_five = 'True',
@@ -85,13 +85,13 @@ class Test_Childcare_Type_Logic(TestCase):
             eight_plus = 'True'
         )
         
-        # Verify that the Childcare_Type object corresponding with the test application exists
-        assert(Childcare_Type.objects.filter(application_id=test_application_id).count() > 0)
+        # Verify that the ChildcareType object corresponding with the test application exists
+        assert(ChildcareType.objects.filter(application_id=test_application_id).count() > 0)
     
     # Delete test application
     def delete(self):
         
-        Childcare_Type.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        ChildcareType.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
