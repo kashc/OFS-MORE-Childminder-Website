@@ -154,19 +154,21 @@ class ApplicantHomeAddress(models.Model):
 
 
 # FIRST_AID_TRAINING entity
-class First_Aid_Training(models.Model):
+class FirstAidTraining(models.Model):
     
-    first_aid_id = models.UUIDField(primary_key = True, default = uuid4)
-    application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
-    training_organisation = models.CharField(max_length = 100)
-    course_title = models.CharField(max_length = 100)
+    first_aid_id = models.UUIDField(primary_key=True, default=uuid4)
+    application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
+    training_organisation = models.CharField(max_length=100)
+    course_title = models.CharField(max_length=100)
     course_day = models.IntegerField()
     course_month = models.IntegerField()
     course_year = models.IntegerField()
     
     # Set table name
     class Meta:
+
         db_table = 'FIRST_AID_TRAINING'
+
 
 # CRIMINAL_RECORD_CHECK entity
 class Criminal_Record_Check(models.Model):

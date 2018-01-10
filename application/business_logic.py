@@ -9,7 +9,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 import datetime
 
 from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application,
-                     ChildcareType, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet,
+                     ChildcareType, Criminal_Record_Check, FirstAidTraining, Health_Declaration_Booklet,
                      References)
 
 
@@ -274,16 +274,16 @@ def First_Aid_Logic(application_id_local, form):
     course_year = form.cleaned_data.get('course_date').year
     
     # If the user entered information for this task for the first time
-    if First_Aid_Training.objects.filter(application_id=application_id_local).count() == 0:
+    if FirstAidTraining.objects.filter(application_id=application_id_local).count() == 0:
                 
         # Create a new First aid training record corresponding to the application
-        first_aid_training_record = First_Aid_Training(training_organisation=training_organisation,course_title=course_title, course_day=course_day, course_month=course_month, course_year=course_year, application_id=this_application)
+        first_aid_training_record = FirstAidTraining(training_organisation=training_organisation, course_title=course_title, course_day=course_day, course_month=course_month, course_year=course_year, application_id=this_application)
             
     # If a record exists, update it
-    elif First_Aid_Training.objects.filter(application_id=application_id_local).count() > 0:
+    elif FirstAidTraining.objects.filter(application_id=application_id_local).count() > 0:
         
         # Retrieve the First aid training record corresponding to the application      
-        first_aid_training_record = First_Aid_Training.objects.get(application_id=application_id_local)
+        first_aid_training_record = FirstAidTraining.objects.get(application_id=application_id_local)
         # Return the record
         first_aid_training_record.training_organisation = training_organisation
         first_aid_training_record.course_title = course_title

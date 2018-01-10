@@ -13,7 +13,7 @@ from django.test import TestCase
 from uuid import UUID
 
 from .models import (Application, ApplicantName, ApplicantPersonalDetails, ChildcareType,
-                     Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, UserDetails,
+                     Criminal_Record_Check, FirstAidTraining, Health_Declaration_Booklet, UserDetails,
                      References, ApplicantHomeAddress)
 
 
@@ -658,10 +658,10 @@ class Test_First_Aid_Training_Logic(TestCase):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         
         # Delete test First_Aid_Training object if it already exists
-        First_Aid_Training.objects.filter(application_id=test_application_id).delete()
+        FirstAidTraining.objects.filter(application_id=test_application_id).delete()
         
         # Verify that the First_Aid_Training object corresponding with the test application does not exist
-        assert(First_Aid_Training.objects.filter(application_id=test_application_id).count() == 0)
+        assert(FirstAidTraining.objects.filter(application_id=test_application_id).count() == 0)
     
     # Test the business case where a record already exists
     def test_logic_to_update_record(self):
@@ -673,7 +673,7 @@ class Test_First_Aid_Training_Logic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Delete test First_Aid_Training and UserDetails objects if they already exist
-        First_Aid_Training.objects.filter(application_id=test_application_id).delete()
+        FirstAidTraining.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
@@ -714,7 +714,7 @@ class Test_First_Aid_Training_Logic(TestCase):
         test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         
         # Create a test First_Aid_Training object
-        First_Aid_Training.objects.create(
+        FirstAidTraining.objects.create(
             first_aid_id = (UUID(test_first_aid_id)),
             application_id = Application.objects.get(application_id=test_application_id),
             training_organisation = 'Red Cross',
@@ -725,7 +725,7 @@ class Test_First_Aid_Training_Logic(TestCase):
         )
         
         # Verify that the First_Aid_Training object corresponding with the test application exists
-        assert(First_Aid_Training.objects.filter(application_id=test_application_id).count() > 0)
+        assert(FirstAidTraining.objects.filter(application_id=test_application_id).count() > 0)
     
     # Test logic to go to declaration page
     def test_logic_to_go_to_declaration(self):
@@ -737,7 +737,7 @@ class Test_First_Aid_Training_Logic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Delete test First_Aid_Training and UserDetails objects if they already exist
-        First_Aid_Training.objects.filter(application_id=test_application_id).delete()
+        FirstAidTraining.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
@@ -778,7 +778,7 @@ class Test_First_Aid_Training_Logic(TestCase):
         test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         
         # Create a test First_Aid_Training object
-        test_first_aid = First_Aid_Training.objects.create(
+        test_first_aid = FirstAidTraining.objects.create(
             first_aid_id = (UUID(test_first_aid_id)),
             application_id = Application.objects.get(application_id=test_application_id),
             training_organisation = 'Red Cross',
@@ -810,7 +810,7 @@ class Test_First_Aid_Training_Logic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Delete test First_Aid_Training and UserDetails objects if they already exist
-        First_Aid_Training.objects.filter(application_id=test_application_id).delete()
+        FirstAidTraining.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
@@ -851,7 +851,7 @@ class Test_First_Aid_Training_Logic(TestCase):
         test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         
         # Create a test First_Aid_Training object
-        test_first_aid = First_Aid_Training.objects.create(
+        test_first_aid = FirstAidTraining.objects.create(
             first_aid_id = (UUID(test_first_aid_id)),
             application_id = Application.objects.get(application_id=test_application_id),
             training_organisation = 'Red Cross',
@@ -883,7 +883,7 @@ class Test_First_Aid_Training_Logic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Delete test First_Aid_Training and UserDetails objects if they already exist
-        First_Aid_Training.objects.filter(application_id=test_application_id).delete()
+        FirstAidTraining.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
@@ -924,7 +924,7 @@ class Test_First_Aid_Training_Logic(TestCase):
         test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         
         # Create a test First_Aid_Training object
-        test_first_aid = First_Aid_Training.objects.create(
+        test_first_aid = FirstAidTraining.objects.create(
             first_aid_id = (UUID(test_first_aid_id)),
             application_id = Application.objects.get(application_id=test_application_id),
             training_organisation = 'Red Cross',
@@ -949,7 +949,7 @@ class Test_First_Aid_Training_Logic(TestCase):
     # Delete test application
     def delete(self):
         
-        First_Aid_Training.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        FirstAidTraining.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 

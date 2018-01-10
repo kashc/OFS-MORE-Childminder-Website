@@ -16,7 +16,7 @@ from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect,
 
 from .customfields import ExpirySplitDateWidget, ExpirySplitDateField
 from .models import (Application, ApplicantName, ApplicantPersonalDetails, ChildcareType,
-                     ApplicantHomeAddress, Criminal_Record_Check, First_Aid_Training,
+                     ApplicantHomeAddress, Criminal_Record_Check, FirstAidTraining,
                      Health_Declaration_Booklet, References, UserDetails)
 
 
@@ -638,11 +638,11 @@ class FirstAidTrainingDetails(GOVUKForm):
         super(FirstAidTrainingDetails, self).__init__(*args, **kwargs)
 
         # If information was previously entered, display it on the form        
-        if First_Aid_Training.objects.filter(application_id=self.application_id_local).count() > 0:
+        if FirstAidTraining.objects.filter(application_id=self.application_id_local).count() > 0:
             
-            self.fields['first_aid_training_organisation'].initial = First_Aid_Training.objects.get(application_id=self.application_id_local).training_organisation
-            self.fields['title_of_training_course'].initial = First_Aid_Training.objects.get(application_id=self.application_id_local).course_title
-            self.fields['course_date'].initial = [First_Aid_Training.objects.get(application_id=self.application_id_local).course_day, First_Aid_Training.objects.get(application_id=self.application_id_local).course_month, First_Aid_Training.objects.get(application_id=self.application_id_local).course_year]
+            self.fields['first_aid_training_organisation'].initial = FirstAidTraining.objects.get(application_id=self.application_id_local).training_organisation
+            self.fields['title_of_training_course'].initial = FirstAidTraining.objects.get(application_id=self.application_id_local).course_title
+            self.fields['course_date'].initial = [FirstAidTraining.objects.get(application_id=self.application_id_local).course_day, FirstAidTraining.objects.get(application_id=self.application_id_local).course_month, FirstAidTraining.objects.get(application_id=self.application_id_local).course_year]
  
 # First aid training form: declaration
 class FirstAidTrainingDeclaration(GOVUKForm):

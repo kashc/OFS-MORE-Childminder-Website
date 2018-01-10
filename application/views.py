@@ -30,7 +30,7 @@ from .forms import (ApplicationSaved, AccountForm, Confirm, ContactEmail, Contac
                     PersonalDetailsLocationOfCare, PersonalDetailsSummary, Question,
                     ReferenceForm, TypeOfChildcare)
 from .models import (Application, UserDetails, ApplicantPersonalDetails, ApplicantHomeAddress,
-                     ApplicantName, First_Aid_Training)
+                     ApplicantName, FirstAidTraining)
 
 
 # View for the start page
@@ -1208,11 +1208,11 @@ def FirstAidTrainingSummaryView(request):
         application_id_local = request.GET["id"]
         
         # Retrieve answers
-        training_organisation = First_Aid_Training.objects.get(application_id=application_id_local).training_organisation
-        training_course = First_Aid_Training.objects.get(application_id=application_id_local).course_title
-        certificate_day = First_Aid_Training.objects.get(application_id=application_id_local).course_day
-        certificate_month = First_Aid_Training.objects.get(application_id=application_id_local).course_month
-        certificate_year = First_Aid_Training.objects.get(application_id=application_id_local).course_year
+        training_organisation = FirstAidTraining.objects.get(application_id=application_id_local).training_organisation
+        training_course = FirstAidTraining.objects.get(application_id=application_id_local).course_title
+        certificate_day = FirstAidTraining.objects.get(application_id=application_id_local).course_day
+        certificate_month = FirstAidTraining.objects.get(application_id=application_id_local).course_month
+        certificate_year = FirstAidTraining.objects.get(application_id=application_id_local).course_year
             
         form = FirstAidTrainingSummary()
         
