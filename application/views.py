@@ -1,41 +1,44 @@
-'''
+"""
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Views --
 
-@author: Informed Solutions
-'''
+author: Informed Solutions
+"""
 
-from application import status, payment
 
-from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic, Login_Contact_Logic, Login_Contact_Logic_Phone, Multiple_Childcare_Address_Logic, Personal_Childcare_Address_Logic, Personal_DOB_Logic, Personal_Home_Address_Logic,
-                            Personal_Location_Of_Care_Logic, Personal_Name_Logic, references_check_logic)
+import datetime
+import json
+import re
+import time
 
+from datetime import date
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 
-from .forms import ApplicationSaved, AccountForm, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTrainingDetails, FirstAidTrainingDeclaration, FirstAidTrainingGuidance, FirstAidTrainingTraining, FirstAidTrainingRenew, FirstAidTrainingSummary, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetailsChildcareAddress, PersonalDetailsChildcareAddressManual, PersonalDetailsDOB, PersonalDetailsName, PersonalDetailsGuidance, PersonalDetailsHomeAddress, PersonalDetailsHomeAddressManual, PersonalDetailsLocationOfCare, PersonalDetailsSummary, Question, ReferenceForm, TypeOfChildcare
+from . import magic_link, payment, status
+from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic,
+                             Login_Contact_Logic, Login_Contact_Logic_Phone, Multiple_Childcare_Address_Logic,
+                             Personal_Childcare_Address_Logic, Personal_DOB_Logic, Personal_Home_Address_Logic,
+                             Personal_Location_Of_Care_Logic, Personal_Name_Logic, references_check_logic)
+from .forms import (ApplicationSaved, AccountForm, Confirm, ContactEmail, ContactPhone, ContactSummary,
+                    DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTrainingDetails,
+                    FirstAidTrainingDeclaration, FirstAidTrainingGuidance, FirstAidTrainingTraining,
+                    FirstAidTrainingRenew, FirstAidTrainingSummary, HealthDeclarationBooklet, OtherPeople,
+                    Payment, PaymentDetails, PersonalDetailsChildcareAddress,
+                    PersonalDetailsChildcareAddressManual, PersonalDetailsDOB, PersonalDetailsName,
+                    PersonalDetailsGuidance, PersonalDetailsHomeAddress, PersonalDetailsHomeAddressManual,
+                    PersonalDetailsLocationOfCare, PersonalDetailsSummary, Question,
+                    ReferenceForm, TypeOfChildcare)
 
-from .models import Application, Login_And_Contact_Details
-
-import datetime, time
-
-import re
-import uuid
-import json
-
-from application import magic_link
-
-from datetime import date
-from application.models import Applicant_Personal_Details,\
-    Applicant_Home_Address, Applicant_Names, First_Aid_Training
-
+from .models import (Application, UserDetails, Applicant_Personal_Details, Applicant_Home_Address,
+                     Applicant_Names, First_Aid_Training)
 
 
 # View for the start page
 def StartPageView(request):
 
     # Create a blank user
-    user = Login_And_Contact_Details.objects.create()
+    user = UserDetails.objects.create()
 
     # Create a new application
     application = Application.objects.create(
@@ -226,10 +229,10 @@ def ContactEmailView(request):
             
             print(email)
             
-            if Login_And_Contact_Details.objects.filter(email=email).exists():
+            if UserDetails.objects.filter(email=email).exists():
             
                 # Retrieve corresponding application
-                acc = Login_And_Contact_Details.objects.get(email=email)
+                acc = UserDetails.objects.get(email=email)
                 #get url and substring just the domain
                 domain = request.META.get('HTTP_REFERER', "")
                 domain = domain[:-54]
@@ -376,9 +379,9 @@ def ContactSummaryView(request):
         login_id = Application.objects.get(pk=application_id_local).login_id.login_id
         
         # Retrieve answers
-        email = Login_And_Contact_Details.objects.get(login_id=login_id).email
-        mobile_number = Login_And_Contact_Details.objects.get(login_id=login_id).mobile_number
-        add_phone_number = Login_And_Contact_Details.objects.get(login_id=login_id).add_phone_number
+        email = UserDetails.objects.get(login_id=login_id).email
+        mobile_number = UserDetails.objects.get(login_id=login_id).mobile_number
+        add_phone_number = UserDetails.objects.get(login_id=login_id).add_phone_number
         
         # Update the status of the task to 'COMPLETED'
         if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
@@ -1595,7 +1598,7 @@ def CardPaymentDetailsView(request):
             if payment_response.status_code == 201:
                 application = Application.objects.get(pk=application_id_local)
                 login_id = application.login_id.login_id
-                login_record = Login_And_Contact_Details.objects.get(pk=login_id)
+                login_record = UserDetails.objects.get(pk=login_id)
                 personal_detail_id = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
                 applicant_name_record = Applicant_Names.objects.get(personal_detail_id=personal_detail_id)
                 email_response = payment.payment_email(login_record.email, applicant_name_record.first_name)

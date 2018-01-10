@@ -1,23 +1,27 @@
-'''
+"""
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Views Unit Tests --
 
 @author: Informed Solutions
-'''
+"""
 
+
+import datetime
 
 from django.test import Client
 from django.test import TestCase
 from django.urls import resolve
-
-from .models import Application, Login_And_Contact_Details
-
 from uuid import UUID
 
-from .views import ApplicationSavedView, ConfirmationView, ContactEmailView, ContactPhoneView, ContactSummaryView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingDeclarationView, FirstAidTrainingDetailsView, FirstAidTrainingGuidanceView, FirstAidTrainingRenewView, FirstAidTrainingSummaryView, FirstAidTrainingTrainingView, HealthView, LogInView, OtherPeopleView, PaymentView, PersonalDetailsDOBView, PersonalDetailsNameView, PersonalDetailsHomeAddressView, PersonalDetailsLocationOfCareView, QuestionView, ReferencesView, StartPageView, TypeOfChildcareView
-import datetime
-from application.views import PersonalDetailsGuidanceView
+from .models import Application, UserDetails
 
+from .views import (ApplicationSavedView, ConfirmationView, ContactEmailView, ContactPhoneView,
+                    ContactSummaryView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingDeclarationView,
+                    FirstAidTrainingDetailsView, FirstAidTrainingGuidanceView, FirstAidTrainingRenewView,
+                    FirstAidTrainingSummaryView, FirstAidTrainingTrainingView, HealthView, LogInView,
+                    OtherPeopleView, PaymentView, PersonalDetailsDOBView, PersonalDetailsNameView,
+                    PersonalDetailsHomeAddressView, PersonalDetailsLocationOfCareView, QuestionView,
+                    ReferencesView, StartPageView, TypeOfChildcareView, PersonalDetailsGuidanceView)
 
 
 # Test suite for start page
@@ -81,7 +85,7 @@ class TypeOfChildcareTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -116,11 +120,11 @@ class TypeOfChildcareTest(TestCase):
         
         assert(Application.objects.get(pk = test_application_id).childcare_type_status != 'COMPLETED')
 
-    # Delete test Application and Login_And_Contact_Details object    
+    # Delete test Application and UserDetails object
     def delete(self):
         
         Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()    
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for Your Login and Contact Details page
@@ -206,7 +210,7 @@ class LoginAndContactDetailsTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -241,11 +245,11 @@ class LoginAndContactDetailsTest(TestCase):
         
         assert(Application.objects.get(pk = test_application_id).login_details_status != 'COMPLETED')
 
-    # Delete test Application and Login_And_Contact_Details object    
+    # Delete test Application and UserDetails object
     def delete(self):
         
         Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete() 
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for Your Personal Details page          
@@ -349,7 +353,7 @@ class PersonalDetailsTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -384,11 +388,11 @@ class PersonalDetailsTest(TestCase):
         
         assert(Application.objects.get(pk = test_application_id).personal_details_status != 'COMPLETED')
 
-    # Delete test Application and Login_And_Contact_Details object    
+    # Delete test Application and UserDetails object
     def delete(self):
         
         Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete() 
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for First aid training page
@@ -511,7 +515,7 @@ class FirstAidTrainingTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -546,11 +550,11 @@ class FirstAidTrainingTest(TestCase):
         
         assert(Application.objects.get(pk = test_application_id).first_aid_training_status != 'COMPLETED')
 
-    # Delete test Application and Login_And_Contact_Details object    
+    # Delete test Application and UserDetails object
     def delete(self):
         
         Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete() 
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for Early Years knowledge page          
@@ -582,7 +586,7 @@ class EYFSTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -617,11 +621,11 @@ class EYFSTest(TestCase):
         
         assert(Application.objects.get(pk = test_application_id).eyfs_training_status != 'COMPLETED')
 
-    # Delete test Application and Login_And_Contact_Details object    
+    # Delete test Application and UserDetails object
     def delete(self):
         
         Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete() 
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for Your criminal record (DBS) check page
@@ -653,7 +657,7 @@ class DBSCheckTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -688,11 +692,11 @@ class DBSCheckTest(TestCase):
         
         assert(Application.objects.get(pk = test_application_id).criminal_record_check_status != 'COMPLETED')
 
-    # Delete test Application and Login_And_Contact_Details object    
+    # Delete test Application and UserDetails object
     def delete(self):
         
         Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete() 
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for Your health page
@@ -724,7 +728,7 @@ class HealthTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -759,11 +763,11 @@ class HealthTest(TestCase):
         
         assert(Application.objects.get(pk = test_application_id).health_status != 'COMPLETED')
 
-    # Delete test Application and Login_And_Contact_Details object    
+    # Delete test Application and UserDetails object
     def delete(self):
         
         Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete() 
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for 2 references page
@@ -795,7 +799,7 @@ class ReferencesTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -830,11 +834,11 @@ class ReferencesTest(TestCase):
         
         assert(Application.objects.get(pk = test_application_id).references_status != 'COMPLETED')
 
-    # Delete test Application and Login_And_Contact_Details object    
+    # Delete test Application and UserDetails object
     def delete(self):
         
         Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete() 
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for People in your home page
@@ -866,7 +870,7 @@ class OtherPeopleTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -901,11 +905,11 @@ class OtherPeopleTest(TestCase):
         
         assert(Application.objects.get(pk = test_application_id).people_in_home_status != 'COMPLETED')
 
-    # Delete test Application and Login_And_Contact_Details object    
+    # Delete test Application and UserDetails object
     def delete(self):
         
         Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete() 
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for Declarations page
@@ -937,7 +941,7 @@ class DeclarationTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -972,11 +976,11 @@ class DeclarationTest(TestCase):
         
         assert(Application.objects.get(pk = test_application_id).declarations_status != 'COMPLETED')
 
-    # Delete test Application and Login_And_Contact_Details object    
+    # Delete test Application and UserDetails object
     def delete(self):
         
         Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete() 
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for Confirm your answers page
@@ -1057,7 +1061,7 @@ class TaskStatusTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -1121,7 +1125,7 @@ class TaskStatusTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -1185,7 +1189,7 @@ class TaskStatusTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -1250,7 +1254,7 @@ class TaskStatusTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -1310,7 +1314,7 @@ class TaskStatusTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -1370,7 +1374,7 @@ class TaskStatusTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -1425,4 +1429,4 @@ class TaskStatusTest(TestCase):
     def delete(self):
         
         Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()

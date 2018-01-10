@@ -1,17 +1,16 @@
-'''
-Created on 15 Dec 2017
-
+"""
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Business Logic --
 
 @author: Informed Solutions
-'''
+"""
 
-
-from .models import Applicant_Home_Address, Applicant_Names, Applicant_Personal_Details, Application, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, References
 
 import datetime
 
+from .models import (Applicant_Home_Address, Applicant_Names, Applicant_Personal_Details, Application,
+                     Childcare_Type, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet,
+                     References)
 
 
 # Business logic to create or update a Type of childcare record

@@ -1,7 +1,16 @@
+"""
+OFS-MORE-CCN3: Apply to be a Childminder Beta
+-- URLs --
+
+@author: Informed Solutions
+"""
+
+
 from django.conf.urls import url
-from django.views.generic import TemplateView
 from django.contrib import admin
-from application import views, magic_link, payment
+from django.views.generic import TemplateView
+
+from ..application import magic_link, views
 
 
 urlpatterns = [

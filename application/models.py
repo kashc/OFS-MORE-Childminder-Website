@@ -1,29 +1,26 @@
-'''
-Created on 07 Dec 2017
-
+"""
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Models --
 
 @author: Informed Solutions
-'''
+"""
 
 
 from django.db import models
 from uuid import uuid4
 
 
-
 # USER_DETAILS entity
-class Login_And_Contact_Details(models.Model):
+class UserDetails(models.Model):
     
-    login_id = models.UUIDField(primary_key = True, default = uuid4)
-    email = models.CharField(max_length = 100, blank = True)
-    mobile_number = models.CharField(max_length = 20, blank = True)
-    add_phone_number = models.CharField(max_length = 20, blank = True)
-    email_expiry_date = models.IntegerField(blank = True, null = True)
-    sms_expiry_date = models.IntegerField(blank = True, null = True)
-    magic_link_email = models.CharField(max_length = 100, blank = True, null = True)
-    magic_link_sms = models.CharField(max_length = 100, blank = True, null = True)
+    login_id = models.UUIDField(primary_key=True, default=uuid4)
+    email = models.CharField(max_length=100, blank=True)
+    mobile_number = models.CharField(max_length=20, blank=True)
+    add_phone_number = models.CharField(max_length=20, blank=True)
+    email_expiry_date = models.IntegerField(blank=True, null=True)
+    sms_expiry_date = models.IntegerField(blank=True, null=True)
+    magic_link_email = models.CharField(max_length=100, blank=True, null=True)
+    magic_link_sms = models.CharField(max_length=100, blank=True, null=True)
     
     # Set table name
     class Meta:
@@ -62,7 +59,7 @@ class Application(models.Model):
     )
     
     application_id = models.UUIDField(primary_key = True, default = uuid4)
-    login_id = models.ForeignKey(Login_And_Contact_Details, on_delete = models.CASCADE, db_column = 'login_id', blank = True, null = True)
+    login_id = models.ForeignKey(UserDetails, on_delete = models.CASCADE, db_column ='login_id', blank = True, null = True)
     application_type = models.CharField(choices = APP_TYPE, max_length = 50, blank = True)
     application_status = models.CharField(choices = APP_STATUS, max_length = 50, blank = True)
     cygnum_urn = models.CharField(max_length = 50, blank = True)

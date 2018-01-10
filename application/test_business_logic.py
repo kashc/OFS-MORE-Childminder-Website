@@ -1,21 +1,20 @@
-'''
+"""
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Business Logic Unit Tests --
 
 @author: Informed Solutions
-'''
+"""
 
-
-from django.test import TestCase
-
-from .models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, Login_And_Contact_Details, References
-
-from uuid import UUID
 
 import datetime
-from application.models import Applicant_Home_Address
-from datetime import date
 
+from datetime import date
+from django.test import TestCase
+from uuid import UUID
+
+from .models import (Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type,
+                     Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, UserDetails,
+                     References, Applicant_Home_Address)
 
 
 # Test business logic to create or update a Type of childcare record
@@ -41,7 +40,7 @@ class Test_Childcare_Type_Logic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -94,7 +93,7 @@ class Test_Childcare_Type_Logic(TestCase):
         
         Childcare_Type.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete() 
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test business logic to create or update a Your Personal Details record
@@ -121,12 +120,12 @@ class Test_Personal_Logic(TestCase):
         # Create a test login ID
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
-        # Delete test Applicant_Personal_Details, Applicant_Names and Login_And_Contact_Details objects if they already exist
+        # Delete test Applicant_Personal_Details, Applicant_Names and UserDetails objects if they already exist
         Applicant_Personal_Details.objects.filter(application_id=test_application_id).delete()
-        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -203,13 +202,13 @@ class Test_Personal_Logic(TestCase):
         # Create a test login ID
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
-        # Delete test Applicant_Personal_Details, Applicant_Names and Login_And_Contact_Details objects if they already exist
+        # Delete test Applicant_Personal_Details, Applicant_Names and UserDetails objects if they already exist
         Applicant_Personal_Details.objects.filter(application_id=test_application_id).delete()
         Applicant_Names.objects.filter(personal_detail_id=test_personal_detail_id).delete()
-        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -297,13 +296,13 @@ class Test_Personal_Logic(TestCase):
         # Create a test login ID
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
-        # Delete test Applicant_Personal_Details, Applicant_Names and Login_And_Contact_Details objects if they already exist
+        # Delete test Applicant_Personal_Details, Applicant_Names and UserDetails objects if they already exist
         Applicant_Personal_Details.objects.filter(application_id=test_application_id).delete()
         Applicant_Home_Address.objects.filter(personal_detail_id=test_personal_detail_id).delete()
-        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -380,13 +379,13 @@ class Test_Personal_Logic(TestCase):
         # Create a test login ID
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
-        # Delete test Applicant_Personal_Details, Applicant_Names and Login_And_Contact_Details objects if they already exist
+        # Delete test Applicant_Personal_Details, Applicant_Names and UserDetails objects if they already exist
         Applicant_Personal_Details.objects.filter(application_id=test_application_id).delete()
         Applicant_Home_Address.objects.filter(personal_detail_id=test_personal_detail_id).delete()
-        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -467,13 +466,13 @@ class Test_Personal_Logic(TestCase):
         # Create a test login ID
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
-        # Delete test Applicant_Personal_Details, Applicant_Names and Login_And_Contact_Details objects if they already exist
+        # Delete test Applicant_Personal_Details, Applicant_Names and UserDetails objects if they already exist
         Applicant_Personal_Details.objects.filter(application_id=test_application_id).delete()
         Applicant_Home_Address.objects.filter(personal_detail_id=test_personal_detail_id).delete()
-        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -550,13 +549,13 @@ class Test_Personal_Logic(TestCase):
         # Create a test login ID
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
-        # Delete test Applicant_Personal_Details, Applicant_Names and Login_And_Contact_Details objects if they already exist
+        # Delete test Applicant_Personal_Details, Applicant_Names and UserDetails objects if they already exist
         Applicant_Personal_Details.objects.filter(application_id=test_application_id).delete()
         Applicant_Home_Address.objects.filter(personal_detail_id=test_personal_detail_id).delete()
-        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -646,7 +645,7 @@ class Test_Personal_Logic(TestCase):
         Applicant_Home_Address.objects.filter(name_id='11a3aef5-9e23-4216-b646-e6adccda4270').delete()
         Applicant_Personal_Details.objects.filter(personal_detail_id='166f77f7-c2ee-4550-9461-45b9d2f28d34').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test business logic to create or update a First aid training record
@@ -673,12 +672,12 @@ class Test_First_Aid_Training_Logic(TestCase):
         # Create a test login ID
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
-        # Delete test First_Aid_Training and Login_And_Contact_Details objects if they already exist
+        # Delete test First_Aid_Training and UserDetails objects if they already exist
         First_Aid_Training.objects.filter(application_id=test_application_id).delete()
-        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -737,12 +736,12 @@ class Test_First_Aid_Training_Logic(TestCase):
         # Create a test login ID
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
-        # Delete test First_Aid_Training and Login_And_Contact_Details objects if they already exist
+        # Delete test First_Aid_Training and UserDetails objects if they already exist
         First_Aid_Training.objects.filter(application_id=test_application_id).delete()
-        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -810,12 +809,12 @@ class Test_First_Aid_Training_Logic(TestCase):
         # Create a test login ID
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
-        # Delete test First_Aid_Training and Login_And_Contact_Details objects if they already exist
+        # Delete test First_Aid_Training and UserDetails objects if they already exist
         First_Aid_Training.objects.filter(application_id=test_application_id).delete()
-        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -883,12 +882,12 @@ class Test_First_Aid_Training_Logic(TestCase):
         # Create a test login ID
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
-        # Delete test First_Aid_Training and Login_And_Contact_Details objects if they already exist
+        # Delete test First_Aid_Training and UserDetails objects if they already exist
         First_Aid_Training.objects.filter(application_id=test_application_id).delete()
-        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -952,7 +951,7 @@ class Test_First_Aid_Training_Logic(TestCase):
         
         First_Aid_Training.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test business logic to create or update a Your criminal record (DBS) check record
@@ -979,12 +978,12 @@ class Test_DBS_Check_Logic(TestCase):
         # Create a test login ID
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
-        # Delete test Criminal_Record_Check and Login_And_Contact_Details objects if they already exist
+        # Delete test Criminal_Record_Check and UserDetails objects if they already exist
         Criminal_Record_Check.objects.filter(application_id=test_application_id).delete()
-        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -1036,7 +1035,7 @@ class Test_DBS_Check_Logic(TestCase):
         
         Criminal_Record_Check.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
         
 
 # Test business logic to create or update a Your health record
@@ -1063,12 +1062,12 @@ class Test_Health_Logic(TestCase):
         # Create a test login ID
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
-        # Delete test Health_Declaration_Booklet and Login_And_Contact_Details objects if they already exist
+        # Delete test Health_Declaration_Booklet and UserDetails objects if they already exist
         Health_Declaration_Booklet.objects.filter(application_id=test_application_id).delete()
-        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -1125,7 +1124,7 @@ class Test_Health_Logic(TestCase):
         
         Health_Declaration_Booklet.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test business logic to create or update a 2 references record
@@ -1152,12 +1151,12 @@ class Test_References_Logic(TestCase):
         # Create a test login ID
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
-        # Delete test References and Login_And_Contact_Details objects if they already exist
+        # Delete test References and UserDetails objects if they already exist
         References.objects.filter(application_id=test_application_id).delete()
-        Login_And_Contact_Details.objects.filter(login_id=test_login_id).delete()
+        UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
-        user = Login_And_Contact_Details.objects.create(
+        user = UserDetails.objects.create(
             login_id = (UUID(test_login_id)),
             email = '',
             mobile_number = '',
@@ -1220,4 +1219,4 @@ class Test_References_Logic(TestCase):
         
         References.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        Login_And_Contact_Details.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()

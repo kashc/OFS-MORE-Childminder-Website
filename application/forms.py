@@ -1,22 +1,23 @@
-'''
+"""
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Forms --
 
 @author: Informed Solutions
-'''
+"""
 
-from application.customfields import ExpirySplitDateWidget, ExpirySplitDateField
+
+import re
+
+from datetime import date
 from django import forms
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
-from application.models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, Health_Declaration_Booklet, References, \
-    Applicant_Home_Address
-
-from datetime import date
-
-import re 
+from .customfields import ExpirySplitDateWidget, ExpirySplitDateField
+from .models import (Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type,
+                     Applicant_Home_Address, Criminal_Record_Check, First_Aid_Training,
+                     Health_Declaration_Booklet, References, UserDetails)
 
 
 # Type of childcare form
@@ -117,9 +118,9 @@ class ContactEmail(GOVUKForm):
             this_user = Application.objects.get(pk=self.application_id_local)
             login_id = this_user.login_id.login_id
             
-            if Login_And_Contact_Details.objects.get(login_id=login_id).login_id != '':
+            if UserDetails.objects.get(login_id=login_id).login_id != '':
             
-                self.fields['email_address'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).email
+                self.fields['email_address'].initial = UserDetails.objects.get(login_id=login_id).email
     
     # Email address validation
     def clean_email_address(self):
@@ -157,8 +158,8 @@ class ContactPhone(GOVUKForm):
             this_user = Application.objects.get(pk=self.application_id_local)
             login_id = this_user.login_id.login_id
             
-            self.fields['mobile_number'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).mobile_number
-            self.fields['add_phone_number'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).add_phone_number
+            self.fields['mobile_number'].initial = UserDetails.objects.get(login_id=login_id).mobile_number
+            self.fields['add_phone_number'].initial = UserDetails.objects.get(login_id=login_id).add_phone_number
 
     # Mobile number validation
     def clean_mobile_number(self):
@@ -212,7 +213,7 @@ class VerifyPhone(GOVUKForm):
     def clean_magic_link_sms(self):
         magic_link_sms = self.cleaned_data['magic_link_sms']
 
-        if Login_And_Contact_Details.objects.filter(magic_link_sms=magic_link_sms, magic_link_email=self.magic_link_email).count() == 0:
+        if UserDetails.objects.filter(magic_link_sms=magic_link_sms, magic_link_email=self.magic_link_email).count() == 0:
 
             raise forms.ValidationError('TBC')
 

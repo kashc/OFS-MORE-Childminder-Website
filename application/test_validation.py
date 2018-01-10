@@ -1,21 +1,20 @@
-'''
+"""
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Validation Unit Tests --
 
 @author: Informed Solutions
-'''
+"""
 
-
-from django.test import TestCase
 
 import re
 
 from datetime import date
 
+from django.test import TestCase
 
 
 # Test validation for Your login details
-class Test_Login_And_Contact_Details_Validation(TestCase):
+class Test_UserDetails_Validation(TestCase):
     
     # Test validation for correct email
     def test_correct_email(self):

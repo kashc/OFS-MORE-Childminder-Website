@@ -1,1 +1,0 @@
-from application import magic_link, payment
