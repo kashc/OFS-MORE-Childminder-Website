@@ -12,7 +12,7 @@ from datetime import date
 from django.test import TestCase
 from uuid import UUID
 
-from .models import (Application, Applicant_Names, ApplicantPersonalDetails, ChildcareType,
+from .models import (Application, ApplicantName, ApplicantPersonalDetails, ChildcareType,
                      Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet, UserDetails,
                      References, Applicant_Home_Address)
 
@@ -184,11 +184,11 @@ class Test_Personal_Logic(TestCase):
         
         # Delete test Applicant_Personal_Details and Applicant_Names objects if they already exist
         ApplicantPersonalDetails.objects.filter(application_id=test_application_id).delete()
-        Applicant_Names.objects.filter(personal_detail_id=test_personal_detail_id).delete()
+        ApplicantName.objects.filter(personal_detail_id=test_personal_detail_id).delete()
         
         # Verify that the Applicant_Personal_Details and Applicant_Names objects corresponding with the test application do not exist
         assert(ApplicantPersonalDetails.objects.filter(application_id=test_application_id).count() == 0)
-        assert(Applicant_Names.objects.filter(personal_detail_id=test_personal_detail_id).count() == 0)
+        assert(ApplicantName.objects.filter(personal_detail_id=test_personal_detail_id).count() == 0)
     
     # Test the business case where a record already exists
     def test_logic_to_update_name_record(self):
@@ -204,7 +204,7 @@ class Test_Personal_Logic(TestCase):
         
         # Delete test Applicant_Personal_Details, Applicant_Names and UserDetails objects if they already exist
         ApplicantPersonalDetails.objects.filter(application_id=test_application_id).delete()
-        Applicant_Names.objects.filter(personal_detail_id=test_personal_detail_id).delete()
+        ApplicantName.objects.filter(personal_detail_id=test_personal_detail_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
@@ -254,7 +254,7 @@ class Test_Personal_Logic(TestCase):
         test_name_id = '6e09fe41-2b07-4177-a5e4-347b2515ea8e'
         
         # Create a test Applicant_Names object
-        Applicant_Names.objects.create(
+        ApplicantName.objects.create(
             name_id = (UUID(test_name_id)),
             personal_detail_id = ApplicantPersonalDetails.objects.get(personal_detail_id=test_personal_detail_id),
             current_name = 'True',
@@ -265,7 +265,7 @@ class Test_Personal_Logic(TestCase):
         
         # Verify that the Applicant_Personal_Details and Applicant_Names objects corresponding with the test application exist
         assert(ApplicantPersonalDetails.objects.filter(application_id=test_application_id).count() > 0)
-        assert(Applicant_Names.objects.filter(personal_detail_id=test_personal_detail_id).count() > 0)
+        assert(ApplicantName.objects.filter(personal_detail_id=test_personal_detail_id).count() > 0)
  
     # Test the business case where a new record needs to be created
     def test_logic_to_create_new_home_address_record(self):

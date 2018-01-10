@@ -8,7 +8,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 import datetime
 
-from .models import (Applicant_Home_Address, Applicant_Names, ApplicantPersonalDetails, Application,
+from .models import (Applicant_Home_Address, ApplicantName, ApplicantPersonalDetails, Application,
                      ChildcareType, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet,
                      References)
 
@@ -97,7 +97,7 @@ def Personal_Name_Logic(application_id_local, form):
         personal_detail_id_local = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
         
         # Create a new Your personal details record corresponding to the application    
-        applicant_names_record = Applicant_Names(current_name='True', first_name=first_name, middle_names=middle_names, last_name=last_name, personal_detail_id=personal_detail_id_local)
+        applicant_names_record = ApplicantName(current_name='True', first_name=first_name, middle_names=middle_names, last_name=last_name, personal_detail_id=personal_detail_id_local)
             
     # If a record exists, update it
     elif ApplicantPersonalDetails.objects.filter(application_id=application_id_local).count() > 0:
@@ -105,7 +105,7 @@ def Personal_Name_Logic(application_id_local, form):
         # Retrieve the personal_details_id corresponding to the application       
         personal_detail_id_local = ApplicantPersonalDetails.objects.get(application_id=application_id_local).personal_detail_id
         # Retrieve the Your personal details record corresponding to the application
-        applicant_names_record = Applicant_Names.objects.get(personal_detail_id=personal_detail_id_local)
+        applicant_names_record = ApplicantName.objects.get(personal_detail_id=personal_detail_id_local)
         # Update the record
         applicant_names_record.first_name = first_name
         applicant_names_record.middle_names = middle_names

@@ -30,7 +30,7 @@ from .forms import (ApplicationSaved, AccountForm, Confirm, ContactEmail, Contac
                     PersonalDetailsLocationOfCare, PersonalDetailsSummary, Question,
                     ReferenceForm, TypeOfChildcare)
 from .models import (Application, UserDetails, ApplicantPersonalDetails, Applicant_Home_Address,
-                     Applicant_Names, First_Aid_Training)
+                     ApplicantName, First_Aid_Training)
 
 
 # View for the start page
@@ -884,9 +884,9 @@ def PersonalDetailsSummaryView(request):
         birth_day = personal_detail_id.birth_day
         birth_month = personal_detail_id.birth_month
         birth_year = personal_detail_id.birth_year
-        first_name = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).first_name
-        middle_names = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).middle_names
-        last_name = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).last_name
+        first_name = ApplicantName.objects.get(personal_detail_id=personal_detail_id).first_name
+        middle_names = ApplicantName.objects.get(personal_detail_id=personal_detail_id).middle_names
+        last_name = ApplicantName.objects.get(personal_detail_id=personal_detail_id).last_name
         street_line1 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
         street_line2 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
         town = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
@@ -1599,7 +1599,7 @@ def CardPaymentDetailsView(request):
                 login_id = application.login_id.login_id
                 login_record = UserDetails.objects.get(pk=login_id)
                 personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=application_id_local).personal_detail_id
-                applicant_name_record = Applicant_Names.objects.get(personal_detail_id=personal_detail_id)
+                applicant_name_record = ApplicantName.objects.get(personal_detail_id=personal_detail_id)
                 email_response = payment.payment_email(login_record.email, applicant_name_record.first_name)
                 
                 variables = {

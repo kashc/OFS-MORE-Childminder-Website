@@ -114,14 +114,14 @@ class ApplicantPersonalDetails(models.Model):
 
 
 # APPLICANT_NAME entity
-class Applicant_Names(models.Model):
+class ApplicantName(models.Model):
     
-    name_id = models.UUIDField(primary_key = True, default = uuid4)
-    personal_detail_id = models.ForeignKey(ApplicantPersonalDetails, on_delete = models.CASCADE, db_column ='personal_detail_id')
-    current_name = models.BooleanField(blank = True)
-    first_name = models.CharField(max_length = 100, blank = True)
-    middle_names = models.CharField(max_length = 100, blank = True)
-    last_name = models.CharField(max_length = 100, blank = True)
+    name_id = models.UUIDField(primary_key=True, default=uuid4)
+    personal_detail_id = models.ForeignKey(ApplicantPersonalDetails, on_delete=models.CASCADE, db_column='personal_detail_id')
+    current_name = models.BooleanField(blank=True)
+    first_name = models.CharField(max_length=100, blank=True)
+    middle_names = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
     
     # Set table name
     class Meta:

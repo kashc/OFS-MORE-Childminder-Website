@@ -15,7 +15,7 @@ from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
 from .customfields import ExpirySplitDateWidget, ExpirySplitDateField
-from .models import (Application, Applicant_Names, ApplicantPersonalDetails, ChildcareType,
+from .models import (Application, ApplicantName, ApplicantPersonalDetails, ChildcareType,
                      Applicant_Home_Address, Criminal_Record_Check, First_Aid_Training,
                      Health_Declaration_Booklet, References, UserDetails)
 
@@ -267,9 +267,9 @@ class PersonalDetailsName(GOVUKForm):
             
             personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-            self.fields['first_name'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).first_name
-            self.fields['middle_names'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).middle_names
-            self.fields['last_name'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).last_name
+            self.fields['first_name'].initial = ApplicantName.objects.get(personal_detail_id=personal_detail_id).first_name
+            self.fields['middle_names'].initial = ApplicantName.objects.get(personal_detail_id=personal_detail_id).middle_names
+            self.fields['last_name'].initial = ApplicantName.objects.get(personal_detail_id=personal_detail_id).last_name
     
     # First name validation
     def clean_first_name(self):
