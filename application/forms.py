@@ -16,7 +16,7 @@ from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect,
 
 from .customfields import ExpirySplitDateWidget, ExpirySplitDateField
 from .models import (Application, ApplicantName, ApplicantPersonalDetails, ChildcareType,
-                     Applicant_Home_Address, Criminal_Record_Check, First_Aid_Training,
+                     ApplicantHomeAddress, Criminal_Record_Check, First_Aid_Training,
                      Health_Declaration_Booklet, References, UserDetails)
 
 
@@ -371,9 +371,9 @@ class PersonalDetailsHomeAddress(GOVUKForm):
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
             
-            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
+            self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
             
 
 # Your personal details form: home address   
@@ -396,13 +396,13 @@ class PersonalDetailsHomeAddressManual(GOVUKForm):
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
             
-            self.fields['street_name_and_number'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
-            self.fields['street_name_and_number2'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
-            self.fields['town'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
-            self.fields['county'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
-            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
+            self.fields['street_name_and_number'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
+            self.fields['street_name_and_number2'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
+            self.fields['town'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
+            self.fields['county'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
+            self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
     
     # Street name and number validation
     def clean_street_name_and_number(self):
@@ -487,9 +487,9 @@ class PersonalDetailsLocationOfCare(GOVUKForm):
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
             
-            self.fields['location_of_care'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).childcare_address
+            self.fields['location_of_care'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).childcare_address
 
 
 # Your personal details form: home address   
@@ -508,9 +508,9 @@ class PersonalDetailsChildcareAddress(GOVUKForm):
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
             
-            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address = 'True').postcode
+            self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address ='True').postcode
             
 
 # Your personal details form: childcare address   
@@ -533,15 +533,15 @@ class PersonalDetailsChildcareAddressManual(GOVUKForm):
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
             
             personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-            self.fields['street_name_and_number'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').street_line1
-            self.fields['street_name_and_number2'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').street_line2
-            self.fields['town'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').town
-            self.fields['county'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').county
-            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').postcode
+            self.fields['street_name_and_number'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').street_line1
+            self.fields['street_name_and_number2'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').street_line2
+            self.fields['town'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').town
+            self.fields['county'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').county
+            self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').postcode
     
     # Street name and number validation
     def clean_street_name_and_number(self):

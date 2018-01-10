@@ -29,7 +29,7 @@ from .forms import (ApplicationSaved, AccountForm, Confirm, ContactEmail, Contac
                     PersonalDetailsGuidance, PersonalDetailsHomeAddress, PersonalDetailsHomeAddressManual,
                     PersonalDetailsLocationOfCare, PersonalDetailsSummary, Question,
                     ReferenceForm, TypeOfChildcare)
-from .models import (Application, UserDetails, ApplicantPersonalDetails, Applicant_Home_Address,
+from .models import (Application, UserDetails, ApplicantPersonalDetails, ApplicantHomeAddress,
                      ApplicantName, First_Aid_Training)
 
 
@@ -701,11 +701,11 @@ def PersonalDetailsLocationOfCareView(request):
         Multiple_Childcare_Address_Logic(personal_detail_id)
         
         # Retrieve answers
-        street_line1 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
-        street_line2 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
-        town = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
-        county = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
-        postcode = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
+        street_line1 = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
+        street_line2 = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
+        town = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
+        county = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
+        postcode = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
         
         # Update the status of the task to 'COMPLETED'
         if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
@@ -887,17 +887,17 @@ def PersonalDetailsSummaryView(request):
         first_name = ApplicantName.objects.get(personal_detail_id=personal_detail_id).first_name
         middle_names = ApplicantName.objects.get(personal_detail_id=personal_detail_id).middle_names
         last_name = ApplicantName.objects.get(personal_detail_id=personal_detail_id).last_name
-        street_line1 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
-        street_line2 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
-        town = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
-        county = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
-        postcode = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
-        location_of_childcare = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).childcare_address           
-        childcare_street_line1 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).street_line1
-        childcare_street_line2 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).street_line2
-        childcare_town = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).town
-        childcare_county = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).county
-        childcare_postcode = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).postcode        
+        street_line1 = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
+        street_line2 = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
+        town = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
+        county = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
+        postcode = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
+        location_of_childcare = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).childcare_address
+        childcare_street_line1 = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).street_line1
+        childcare_street_line2 = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).street_line2
+        childcare_town = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).town
+        childcare_county = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).county
+        childcare_postcode = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).postcode
             
         form = PersonalDetailsSummary()
         

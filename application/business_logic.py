@@ -8,7 +8,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 import datetime
 
-from .models import (Applicant_Home_Address, ApplicantName, ApplicantPersonalDetails, Application,
+from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application,
                      ChildcareType, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet,
                      References)
 
@@ -162,17 +162,17 @@ def Personal_Home_Address_Logic(application_id_local, form):
     personal_detail_id = personal_detail_record.personal_detail_id
     
     # If the user entered information for this task for the first time
-    if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
+    if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
         
         # Create a new Applicant_Personal_Details record corresponding to the application, of which the generated personal_details_id will be used        
-        home_address_record = Applicant_Home_Address(street_line1=street_line1, street_line2=street_line2, town=town, county=county, country='United Kingdom', postcode=postcode, childcare_address=None, current_address=True, move_in_month=0, move_in_year=0, personal_detail_id=personal_detail_record)
+        home_address_record = ApplicantHomeAddress(street_line1=street_line1, street_line2=street_line2, town=town, county=county, country='United Kingdom', postcode=postcode, childcare_address=None, current_address=True, move_in_month=0, move_in_year=0, personal_detail_id=personal_detail_record)
         home_address_record.save()
             
     # If a record exists, update it
-    elif Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
+    elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
         
         # Retrieve the Your personal details record corresponding to the application
-        home_address_record = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True)
+        home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True)
         # Update the record
         home_address_record.street_line1 = street_line1
         home_address_record.street_line2 = street_line2
@@ -196,7 +196,7 @@ def Personal_Location_Of_Care_Logic(application_id_local, form):
     personal_detail_id = personal_detail_record.personal_detail_id
         
     # Retrieve the Your personal details record corresponding to the application
-    home_address_record = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True)
+    home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True)
     # Update the record
     home_address_record.childcare_address = location_of_care
         
@@ -207,16 +207,16 @@ def Multiple_Childcare_Address_Logic(personal_detail_id):
     
     # Remove current address status from previously entered childcare address
     # If there are multiple addresses marked as the childcare address
-    if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True).count() > 1:
+    if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True).count() > 1:
             
         # If the home address is marked as a childcare address
-        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True, current_address=True).count() > 0:
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True, current_address=True).count() > 0:
             
             # If a non-home address is also marked as a childcare address
-            if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True, current_address=False).count() > 0:
+            if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True, current_address=False).count() > 0:
                     
                 # Retrieve the non-home address
-                childcare_address_record = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True, current_address=False)
+                childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address=True, current_address=False)
                 # Delete the address
                 childcare_address_record.delete()
 
@@ -238,17 +238,17 @@ def Personal_Childcare_Address_Logic(application_id_local, form):
     personal_detail_id = personal_detail_record.personal_detail_id
     
     # If the user entered information for this task for the first time
-    if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() == 0:
+    if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() == 0:
         
         # Create a new Applicant_Personal_Details record corresponding to the application, of which the generated personal_details_id will be used        
-        childcare_address_record = Applicant_Home_Address(street_line1=street_line1, street_line2=street_line2, town=town, county=county, country='United Kingdom', postcode=postcode, childcare_address=True, current_address=False, move_in_month=0, move_in_year=0, personal_detail_id=personal_detail_record)
+        childcare_address_record = ApplicantHomeAddress(street_line1=street_line1, street_line2=street_line2, town=town, county=county, country='United Kingdom', postcode=postcode, childcare_address=True, current_address=False, move_in_month=0, move_in_year=0, personal_detail_id=personal_detail_record)
         childcare_address_record.save()
             
     # If a record exists, update it
-    elif Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
+    elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
         
         # Retrieve the Your personal details record corresponding to the application
-        childcare_address_record = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True)
+        childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address=True)
         # Update the record
         childcare_address_record.street_line1 = street_line1
         childcare_address_record.street_line2 = street_line2

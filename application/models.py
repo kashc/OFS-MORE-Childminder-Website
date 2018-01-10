@@ -117,7 +117,8 @@ class ApplicantPersonalDetails(models.Model):
 class ApplicantName(models.Model):
     
     name_id = models.UUIDField(primary_key=True, default=uuid4)
-    personal_detail_id = models.ForeignKey(ApplicantPersonalDetails, on_delete=models.CASCADE, db_column='personal_detail_id')
+    personal_detail_id = models.ForeignKey(ApplicantPersonalDetails, on_delete=models.CASCADE,
+                                           db_column='personal_detail_id')
     current_name = models.BooleanField(blank=True)
     first_name = models.CharField(max_length=100, blank=True)
     middle_names = models.CharField(max_length=100, blank=True)
@@ -130,20 +131,21 @@ class ApplicantName(models.Model):
 
 
 # APPLICANT_HOME_ADDRESS entity
-class Applicant_Home_Address(models.Model):
+class ApplicantHomeAddress(models.Model):
     
-    home_address_id = models.UUIDField(primary_key = True, default = uuid4)
-    personal_detail_id = models.ForeignKey(ApplicantPersonalDetails, on_delete = models.CASCADE, db_column ='personal_detail_id')
-    street_line1 = models.CharField(max_length = 100, blank = True)
-    street_line2 = models.CharField(max_length = 100, blank = True)
-    town = models.CharField(max_length = 100, blank = True)
-    county = models.CharField(max_length = 100, blank = True)
-    country = models.CharField(max_length = 100, blank = True)
-    postcode = models.CharField(max_length = 8, blank = True)
-    childcare_address = models.NullBooleanField(blank = True, null=True)
-    current_address = models.NullBooleanField(blank = True, null=True)
-    move_in_month = models.IntegerField(blank = True)
-    move_in_year = models.IntegerField(blank = True)
+    home_address_id = models.UUIDField(primary_key=True, default=uuid4)
+    personal_detail_id = models.ForeignKey(ApplicantPersonalDetails, on_delete=models.CASCADE,
+                                           db_column='personal_detail_id')
+    street_line1 = models.CharField(max_length=100, blank=True)
+    street_line2 = models.CharField(max_length=100, blank=True)
+    town = models.CharField(max_length=100, blank=True)
+    county = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    postcode = models.CharField(max_length=8, blank=True)
+    childcare_address = models.NullBooleanField(blank=True, null=True)
+    current_address = models.NullBooleanField(blank=True, null=True)
+    move_in_month = models.IntegerField(blank=True)
+    move_in_year = models.IntegerField(blank=True)
     
     # Set table name
     class Meta:
