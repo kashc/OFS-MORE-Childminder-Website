@@ -15,7 +15,7 @@ from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
 from .customfields import ExpirySplitDateWidget, ExpirySplitDateField
-from .models import (Application, Applicant_Names, Applicant_Personal_Details, ChildcareType,
+from .models import (Application, Applicant_Names, ApplicantPersonalDetails, ChildcareType,
                      Applicant_Home_Address, Criminal_Record_Check, First_Aid_Training,
                      Health_Declaration_Booklet, References, UserDetails)
 
@@ -263,9 +263,9 @@ class PersonalDetailsName(GOVUKForm):
         super(PersonalDetailsName, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form        
-        if Applicant_Personal_Details.objects.filter(application_id=self.application_id_local).count() > 0:
+        if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             
-            personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+            personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
             self.fields['first_name'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).first_name
             self.fields['middle_names'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).middle_names
@@ -333,9 +333,9 @@ class PersonalDetailsDOB(GOVUKForm):
         super(PersonalDetailsDOB, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form        
-        if Applicant_Personal_Details.objects.filter(application_id=self.application_id_local).count() > 0:
+        if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             
-            self.fields['date_of_birth'].initial = [Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_day, Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_month, Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_year]
+            self.fields['date_of_birth'].initial = [ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).birth_day, ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).birth_month, ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).birth_year]
 
     # First name validation
     def clean_date_of_birth(self):
@@ -369,7 +369,7 @@ class PersonalDetailsHomeAddress(GOVUKForm):
         super(PersonalDetailsHomeAddress, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
         if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
             
@@ -394,7 +394,7 @@ class PersonalDetailsHomeAddressManual(GOVUKForm):
         super(PersonalDetailsHomeAddressManual, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
         if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
             
@@ -485,7 +485,7 @@ class PersonalDetailsLocationOfCare(GOVUKForm):
         super(PersonalDetailsLocationOfCare, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
         if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
             
@@ -506,7 +506,7 @@ class PersonalDetailsChildcareAddress(GOVUKForm):
         super(PersonalDetailsChildcareAddress, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
         if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
             
@@ -531,11 +531,11 @@ class PersonalDetailsChildcareAddressManual(GOVUKForm):
         super(PersonalDetailsChildcareAddressManual, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
         if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
             
-            personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+            personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
             self.fields['street_name_and_number'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').street_line1
             self.fields['street_name_and_number2'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').street_line2

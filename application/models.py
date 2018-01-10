@@ -99,13 +99,13 @@ class ChildcareType(models.Model):
 
 
 # APPLICANT_PERSONAL_DETAILS entity
-class Applicant_Personal_Details(models.Model):
+class ApplicantPersonalDetails(models.Model):
     
-    personal_detail_id = models.UUIDField(primary_key = True, default = uuid4)
-    application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
-    birth_day = models.IntegerField(blank = True, null = True)
-    birth_month = models.IntegerField(blank = True, null = True)
-    birth_year = models.IntegerField(blank = True, null = True)
+    personal_detail_id = models.UUIDField(primary_key=True, default=uuid4)
+    application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
+    birth_day = models.IntegerField(blank=True, null=True)
+    birth_month = models.IntegerField(blank=True, null=True)
+    birth_year = models.IntegerField(blank=True, null=True)
     
     # Set table name
     class Meta:
@@ -117,7 +117,7 @@ class Applicant_Personal_Details(models.Model):
 class Applicant_Names(models.Model):
     
     name_id = models.UUIDField(primary_key = True, default = uuid4)
-    personal_detail_id = models.ForeignKey(Applicant_Personal_Details, on_delete = models.CASCADE, db_column = 'personal_detail_id')
+    personal_detail_id = models.ForeignKey(ApplicantPersonalDetails, on_delete = models.CASCADE, db_column ='personal_detail_id')
     current_name = models.BooleanField(blank = True)
     first_name = models.CharField(max_length = 100, blank = True)
     middle_names = models.CharField(max_length = 100, blank = True)
@@ -133,7 +133,7 @@ class Applicant_Names(models.Model):
 class Applicant_Home_Address(models.Model):
     
     home_address_id = models.UUIDField(primary_key = True, default = uuid4)
-    personal_detail_id = models.ForeignKey(Applicant_Personal_Details, on_delete = models.CASCADE, db_column = 'personal_detail_id')
+    personal_detail_id = models.ForeignKey(ApplicantPersonalDetails, on_delete = models.CASCADE, db_column ='personal_detail_id')
     street_line1 = models.CharField(max_length = 100, blank = True)
     street_line2 = models.CharField(max_length = 100, blank = True)
     town = models.CharField(max_length = 100, blank = True)

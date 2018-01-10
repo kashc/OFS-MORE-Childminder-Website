@@ -8,7 +8,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 import datetime
 
-from .models import (Applicant_Home_Address, Applicant_Names, Applicant_Personal_Details, Application,
+from .models import (Applicant_Home_Address, Applicant_Names, ApplicantPersonalDetails, Application,
                      ChildcareType, Criminal_Record_Check, First_Aid_Training, Health_Declaration_Booklet,
                      References)
 
@@ -89,21 +89,21 @@ def Personal_Name_Logic(application_id_local, form):
     last_name = form.cleaned_data.get('last_name')
     
     # If the user entered information for this task for the first time
-    if Applicant_Personal_Details.objects.filter(application_id=application_id_local).count() == 0:
+    if ApplicantPersonalDetails.objects.filter(application_id=application_id_local).count() == 0:
         
         # Create a new Applicant_Personal_Details record corresponding to the application, of which the generated personal_details_id will be used        
-        personal_details_record = Applicant_Personal_Details(birth_day=None, birth_month=None, birth_year=None, application_id=this_application)
+        personal_details_record = ApplicantPersonalDetails(birth_day=None, birth_month=None, birth_year=None, application_id=this_application)
         personal_details_record.save()
-        personal_detail_id_local = Applicant_Personal_Details.objects.get(application_id=application_id_local)
+        personal_detail_id_local = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
         
         # Create a new Your personal details record corresponding to the application    
         applicant_names_record = Applicant_Names(current_name='True', first_name=first_name, middle_names=middle_names, last_name=last_name, personal_detail_id=personal_detail_id_local)
             
     # If a record exists, update it
-    elif Applicant_Personal_Details.objects.filter(application_id=application_id_local).count() > 0:
+    elif ApplicantPersonalDetails.objects.filter(application_id=application_id_local).count() > 0:
         
         # Retrieve the personal_details_id corresponding to the application       
-        personal_detail_id_local = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
+        personal_detail_id_local = ApplicantPersonalDetails.objects.get(application_id=application_id_local).personal_detail_id
         # Retrieve the Your personal details record corresponding to the application
         applicant_names_record = Applicant_Names.objects.get(personal_detail_id=personal_detail_id_local)
         # Update the record
@@ -126,17 +126,17 @@ def Personal_DOB_Logic(application_id_local, form):
     birth_year = form.cleaned_data.get('date_of_birth')[2]
     
     # If the user entered information for this task for the first time
-    if Applicant_Personal_Details.objects.filter(application_id=application_id_local).count() == 0:
+    if ApplicantPersonalDetails.objects.filter(application_id=application_id_local).count() == 0:
         
         # Create a new Your personal details record corresponding to the application         
-        personal_details_record = Applicant_Personal_Details(birth_day=birth_day, birth_month=birth_month, birth_year=birth_year, application_id=this_application)
+        personal_details_record = ApplicantPersonalDetails(birth_day=birth_day, birth_month=birth_month, birth_year=birth_year, application_id=this_application)
         personal_details_record.save()
             
     # If a record exists, update it
-    elif Applicant_Personal_Details.objects.filter(application_id=application_id_local).count() > 0:
+    elif ApplicantPersonalDetails.objects.filter(application_id=application_id_local).count() > 0:
         
         # Retrieve the Your personal details record corresponding to the application       
-        personal_details_record = Applicant_Personal_Details.objects.get(application_id=application_id_local)
+        personal_details_record = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
         # Update the record
         personal_details_record.birth_day = birth_day
         personal_details_record.birth_month = birth_month
@@ -158,7 +158,7 @@ def Personal_Home_Address_Logic(application_id_local, form):
     county = form.cleaned_data.get('county')
     postcode = form.cleaned_data.get('postcode')
     
-    personal_detail_record = Applicant_Personal_Details.objects.get(application_id=this_application)
+    personal_detail_record = ApplicantPersonalDetails.objects.get(application_id=this_application)
     personal_detail_id = personal_detail_record.personal_detail_id
     
     # If the user entered information for this task for the first time
@@ -192,7 +192,7 @@ def Personal_Location_Of_Care_Logic(application_id_local, form):
     # Get entered data to insert into the database
     location_of_care = form.cleaned_data.get('location_of_care')
     
-    personal_detail_record = Applicant_Personal_Details.objects.get(application_id=this_application)
+    personal_detail_record = ApplicantPersonalDetails.objects.get(application_id=this_application)
     personal_detail_id = personal_detail_record.personal_detail_id
         
     # Retrieve the Your personal details record corresponding to the application
@@ -234,7 +234,7 @@ def Personal_Childcare_Address_Logic(application_id_local, form):
     county = form.cleaned_data.get('county')
     postcode = form.cleaned_data.get('postcode')
     
-    personal_detail_record = Applicant_Personal_Details.objects.get(application_id=this_application)
+    personal_detail_record = ApplicantPersonalDetails.objects.get(application_id=this_application)
     personal_detail_id = personal_detail_record.personal_detail_id
     
     # If the user entered information for this task for the first time

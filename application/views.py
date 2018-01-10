@@ -12,7 +12,7 @@ import re
 import time
 
 from datetime import date
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from . import magic_link, payment, status
@@ -29,8 +29,7 @@ from .forms import (ApplicationSaved, AccountForm, Confirm, ContactEmail, Contac
                     PersonalDetailsGuidance, PersonalDetailsHomeAddress, PersonalDetailsHomeAddressManual,
                     PersonalDetailsLocationOfCare, PersonalDetailsSummary, Question,
                     ReferenceForm, TypeOfChildcare)
-
-from .models import (Application, UserDetails, Applicant_Personal_Details, Applicant_Home_Address,
+from .models import (Application, UserDetails, ApplicantPersonalDetails, Applicant_Home_Address,
                      Applicant_Names, First_Aid_Training)
 
 
@@ -697,7 +696,7 @@ def PersonalDetailsLocationOfCareView(request):
         application_id_local = request.GET["id"]
         
         # Get associated personal detail ID
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=application_id_local).personal_detail_id
         
         Multiple_Childcare_Address_Logic(personal_detail_id)
         
@@ -727,7 +726,7 @@ def PersonalDetailsLocationOfCareView(request):
         application_id_local = request.POST["id"]
 
         # Get associated personal detail ID
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=application_id_local).personal_detail_id
         
         # Initialise the Your login and contact details form
         form = PersonalDetailsLocationOfCare(request.POST,id = application_id_local)
@@ -879,7 +878,7 @@ def PersonalDetailsSummaryView(request):
         application_id_local = request.GET["id"]
         
         # Get associated personal detail ID
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=application_id_local)
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
         
         # Retrieve answers
         birth_day = personal_detail_id.birth_day
@@ -1599,7 +1598,7 @@ def CardPaymentDetailsView(request):
                 application = Application.objects.get(pk=application_id_local)
                 login_id = application.login_id.login_id
                 login_record = UserDetails.objects.get(pk=login_id)
-                personal_detail_id = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
+                personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=application_id_local).personal_detail_id
                 applicant_name_record = Applicant_Names.objects.get(personal_detail_id=personal_detail_id)
                 email_response = payment.payment_email(login_record.email, applicant_name_record.first_name)
                 
