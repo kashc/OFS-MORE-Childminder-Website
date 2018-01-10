@@ -26,7 +26,7 @@ def make_payment(amount, name, number, cvc, expiryM, expiryY, currency, code, de
     return r
 
 def payment_email(email, name):
-    
+
     base_url = settings.NOTIFY_URL
 
     header = {'content-type': 'application/json'}
@@ -41,5 +41,5 @@ def payment_email(email, name):
     }
     
     r = requests.post(base_url + "/notify-gateway/api/v1/notifications/email/" , json.dumps(input), headers=header)
-    
+    print("Payment Email Sent")
     return(r)

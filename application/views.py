@@ -20,7 +20,7 @@ from .models import Application, Login_And_Contact_Details
 import datetime, time
 
 import re
-
+import uuid
 import json
 
 from application import magic_link
@@ -1593,8 +1593,12 @@ def CardPaymentDetailsView(request):
             
             # If the payment is successful
             if payment_response.status_code == 201:
-                
-                email_response = payment.payment_email('matthew.styles@informed.com', 'Test')
+                application = Application.objects.get(pk=application_id_local)
+                login_id = application.login_id.login_id
+                login_record = Login_And_Contact_Details.objects.get(pk=login_id)
+                personal_detail_id = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
+                applicant_name_record = Applicant_Names.objects.get(personal_detail_id=personal_detail_id)
+                email_response = payment.payment_email(login_record.email, applicant_name_record.first_name)
                 
                 variables = {
                     'form': form,
