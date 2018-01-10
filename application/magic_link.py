@@ -16,18 +16,18 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .forms import EmailLogin, VerifyPhone
+from .forms import EmailLoginForm, VerifyPhoneForm
 from .models import Application, UserDetails
 
 
 def existingApplicationView(request):
     
     # Initialise form
-    form = EmailLogin()
+    form = EmailLoginForm()
     
     if request.method =='POST':
         
-        form = EmailLogin(request.POST)
+        form = EmailLoginForm(request.POST)
         
         # Retrieve e-mail address
         email = request.POST['email_address']
@@ -161,12 +161,12 @@ def SMSVerification(request):
         acc.save()
         magic_link_text(phone, g).status_code
         return HttpResponseRedirect("/verifyPhone/?id=" + id)
-    form = VerifyPhone(id=id)
+    form = VerifyPhoneForm(id=id)
 
     login_id = acc.login_id
     application = Application.objects.get(login_id = login_id)
     if request.method =='POST':
-        form = VerifyPhone(request.POST, id=id)
+        form = VerifyPhoneForm(request.POST, id=id)
         code = request.POST['magic_link_sms']
         if len(code)>0:
             exp = acc.sms_expiry_date
