@@ -171,7 +171,8 @@ class FirstAidTraining(models.Model):
 
 
 # CRIMINAL_RECORD_CHECK entity
-class Criminal_Record_Check(models.Model):
+class CriminalRecordCheck(models.Model):
+
     criminal_record_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     dbs_certificate_number = models.CharField(max_length=50, blank=True)
@@ -179,21 +180,22 @@ class Criminal_Record_Check(models.Model):
     
     # Set table name
     class Meta:
+
         db_table = 'CRIMINAL_RECORD_CHECK'
 
 
 # HEALTH_DECLARATION_BOOKLET entity
-class Health_Declaration_Booklet(models.Model):
+class HealthDeclarationBooklet(models.Model):
     
-    hdb_id = models.UUIDField(primary_key = True, default = uuid4)
-    application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
-    movement_problems = models.BooleanField(blank = True)
-    breathing_problems = models.BooleanField(blank = True)
-    heart_disease = models.BooleanField(blank = True)
-    blackout_epilepsy = models.BooleanField(blank = True)
-    mental_health_problems = models.BooleanField(blank = True)
-    alcohol_drug_problems = models.BooleanField(blank = True)
-    health_details = models.CharField(max_length = 500, blank = True)
+    hdb_id = models.UUIDField(primary_key=True, default=uuid4)
+    application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
+    movement_problems = models.BooleanField(blank=True)
+    breathing_problems = models.BooleanField(blank=True)
+    heart_disease = models.BooleanField(blank=True)
+    blackout_epilepsy = models.BooleanField(blank=True)
+    mental_health_problems = models.BooleanField(blank=True)
+    alcohol_drug_problems = models.BooleanField(blank=True)
+    health_details = models.CharField(max_length=500, blank=True)
     
     # Set table name
     class Meta:
@@ -202,23 +204,23 @@ class Health_Declaration_Booklet(models.Model):
 
 
 # REFERENCE entity
-class References(models.Model):
+class Reference(models.Model):
     
-    reference_id = models.UUIDField(primary_key = True, default = uuid4)
-    application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
-    first_name = models.CharField(max_length = 100, blank = True)
-    last_name = models.CharField(max_length = 100, blank = True)
-    relationship = models.CharField(max_length = 100, blank = True)
-    years_known = models.IntegerField(blank = True)
-    months_known = models.IntegerField(blank = True)
-    street_line1 = models.CharField(max_length = 100, blank = True)
-    street_line2 = models.CharField(max_length = 100, blank = True)
-    town = models.CharField(max_length = 100, blank = True)
-    county = models.CharField(max_length = 100, blank = True)
-    country = models.CharField(max_length = 100, blank = True)
-    postcode = models.CharField(max_length = 8, blank = True)
-    phone_number = models.CharField(max_length = 50, blank = True)
-    email = models.CharField(max_length = 100, blank = True)
+    reference_id = models.UUIDField(primary_key=True, default=uuid4)
+    application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
+    relationship = models.CharField(max_length=100, blank=True)
+    years_known = models.IntegerField(blank=True)
+    months_known = models.IntegerField(blank=True)
+    street_line1 = models.CharField(max_length=100, blank=True)
+    street_line2 = models.CharField(max_length=100, blank=True)
+    town = models.CharField(max_length=100, blank=True)
+    county = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    postcode = models.CharField(max_length=8, blank=True)
+    phone_number = models.CharField(max_length=50, blank=True)
+    email = models.CharField(max_length=100, blank=True)
     
     # Set table name
     class Meta:
@@ -227,40 +229,40 @@ class References(models.Model):
 
 
 # ADULT_IN_HOME entity
-class Adults_In_Home(models.Model):
+class AdultInHome(models.Model):
     
-    adult_id = models.UUIDField(primary_key = True, default = uuid4)
-    application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
-    first_name = models.CharField(max_length = 100, blank = True)
-    middle_names = models.CharField(max_length = 100, blank = True)
-    last_name = models.CharField(max_length = 100, blank = True)
-    birth_day = models.IntegerField(blank = True)
-    birth_month = models.IntegerField(blank = True)
-    birth_year = models.IntegerField(blank = True)
-    relationship = models.CharField(max_length = 100, blank = True)
-    dbs_certificate_number = models.CharField(max_length = 50, blank = True)
-    email = models.CharField(max_length = 100, blank = True)
+    adult_id = models.UUIDField(primary_key=True, default=uuid4)
+    application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
+    first_name = models.CharField(max_length=100, blank=True)
+    middle_names = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
+    birth_day = models.IntegerField(blank=True)
+    birth_month = models.IntegerField(blank=True)
+    birth_year = models.IntegerField(blank=True)
+    relationship = models.CharField(max_length=100, blank=True)
+    dbs_certificate_number = models.CharField(max_length=50, blank=True)
+    email = models.CharField(max_length=100, blank=True)
     
     # Set table name
     class Meta:
+
         db_table = 'ADULT_IN_HOME'
         
 
 # CHILD_IN_HOME entity
-class Children_In_Home(models.Model):
+class ChildInHome(models.Model):
     
-    child_id = models.UUIDField(primary_key = True, default = uuid4)
-    application_id = models.ForeignKey(Application, on_delete = models.CASCADE, db_column = 'application_id')
-    first_name = models.CharField(max_length = 100, blank = True)
-    middle_names = models.CharField(max_length = 100, blank = True)
-    last_name = models.CharField(max_length = 100, blank = True)
-    birth_day = models.IntegerField(blank = True)
-    birth_month = models.IntegerField(blank = True)
-    birth_year = models.IntegerField(blank = True)
-    relationship = models.CharField(max_length = 100, blank = True)
+    child_id = models.UUIDField(primary_key=True, default=uuid4)
+    application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
+    first_name = models.CharField(max_length=100, blank=True)
+    middle_names = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
+    birth_day = models.IntegerField(blank=True)
+    birth_month = models.IntegerField(blank=True)
+    birth_year = models.IntegerField(blank=True)
+    relationship = models.CharField(max_length=100, blank=True)
     
     # Set table name
     class Meta:
         
         db_table = 'CHILD_IN_HOME'
-

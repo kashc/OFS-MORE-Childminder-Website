@@ -9,8 +9,8 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 import datetime
 
 from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application,
-                     ChildcareType, Criminal_Record_Check, FirstAidTraining, Health_Declaration_Booklet,
-                     References)
+                     ChildcareType, CriminalRecordCheck, FirstAidTraining, HealthDeclarationBooklet,
+                     Reference)
 
 
 # Business logic to create or update a Type of childcare record
@@ -305,16 +305,16 @@ def dbs_check_logic(application_id_local, form):
     cautions_convictions = form.cleaned_data.get('convictions')
     
     # If the user entered information for this task for the first time
-    if Criminal_Record_Check.objects.filter(application_id=application_id_local).count() == 0:
+    if CriminalRecordCheck.objects.filter(application_id=application_id_local).count() == 0:
         
         # Create a new Your criminal record (DBS) check record corresponding to the application
-        dbs_record = Criminal_Record_Check(dbs_certificate_number=dbs_certificate_number, cautions_convictions=cautions_convictions, application_id=this_application)
+        dbs_record = CriminalRecordCheck(dbs_certificate_number=dbs_certificate_number, cautions_convictions=cautions_convictions, application_id=this_application)
     
     # If a record exists, update it
-    elif Criminal_Record_Check.objects.filter(application_id=application_id_local).count() > 0:
+    elif CriminalRecordCheck.objects.filter(application_id=application_id_local).count() > 0:
         
         # Retrieve the Your criminal record (DBS) check record corresponding to the application
-        dbs_record = Criminal_Record_Check.objects.get(application_id=application_id_local)
+        dbs_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
         # Return the record
         dbs_record.dbs_certificate_number = dbs_certificate_number
         dbs_record.cautions_convictions = cautions_convictions
@@ -334,16 +334,16 @@ def references_check_logic(application_id_local, form):
     relationship = form.cleaned_data.get('relationship')
     
     # If the user entered information for this task for the first time
-    if References.objects.filter(application_id=application_id_local).count() == 0:
+    if Reference.objects.filter(application_id=application_id_local).count() == 0:
         
         # Create a new 2 references record corresponding to the application
-        reference_record = References(first_name=first_name,last_name=last_name,relationship=relationship,years_known=0,months_known=0,street_line1='',street_line2='',town='',county='',country='',postcode='',phone_number='',email='',application_id=this_application)
+        reference_record = Reference(first_name=first_name, last_name=last_name, relationship=relationship, years_known=0, months_known=0, street_line1='', street_line2='', town='', county='', country='', postcode='', phone_number='', email='', application_id=this_application)
     
     # If a record exists, update it
-    elif References.objects.filter(application_id=application_id_local).count() > 0:
+    elif Reference.objects.filter(application_id=application_id_local).count() > 0:
         
         # Retrieve the 2 references record corresponding to the application
-        reference_record = References.objects.get(application_id=application_id_local)
+        reference_record = Reference.objects.get(application_id=application_id_local)
         reference_record.first_name = first_name
         reference_record.last_name = last_name
         reference_record.relationship = relationship
@@ -366,16 +366,16 @@ def health_check_logic(application_id_local, form):
     alcohol_drug_problems = form.cleaned_data.get('alcohol_drugs')
     
     # If no record exists, create a new one
-    if Health_Declaration_Booklet.objects.filter(application_id=application_id_local).count() == 0:
+    if HealthDeclarationBooklet.objects.filter(application_id=application_id_local).count() == 0:
         
         # Create a new Your health record corresponding to the application        
-        hdb_record = Health_Declaration_Booklet(movement_problems=movement_problems, breathing_problems=breathing_problems, heart_disease=heart_disease, blackout_epilepsy=blackout_epilepsy, mental_health_problems=mental_health_problems, alcohol_drug_problems=alcohol_drug_problems, application_id=this_application)
+        hdb_record = HealthDeclarationBooklet(movement_problems=movement_problems, breathing_problems=breathing_problems, heart_disease=heart_disease, blackout_epilepsy=blackout_epilepsy, mental_health_problems=mental_health_problems, alcohol_drug_problems=alcohol_drug_problems, application_id=this_application)
       
     # If a record exists, update it
-    elif Health_Declaration_Booklet.objects.filter(application_id=application_id_local).count() > 0:
+    elif HealthDeclarationBooklet.objects.filter(application_id=application_id_local).count() > 0:
         
         # Retrieve the Your health record corresponding to the application        
-        hdb_record = Health_Declaration_Booklet.objects.get(application_id=application_id_local)
+        hdb_record = HealthDeclarationBooklet.objects.get(application_id=application_id_local)
         hdb_record.movement_problems = movement_problems
         hdb_record.breathing_problems = breathing_problems
         hdb_record.heart_disease = heart_disease

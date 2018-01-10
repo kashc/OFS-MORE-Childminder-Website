@@ -13,8 +13,8 @@ from django.test import TestCase
 from uuid import UUID
 
 from .models import (Application, ApplicantName, ApplicantPersonalDetails, ChildcareType,
-                     Criminal_Record_Check, FirstAidTraining, Health_Declaration_Booklet, UserDetails,
-                     References, ApplicantHomeAddress)
+                     CriminalRecordCheck, FirstAidTraining, HealthDeclarationBooklet, UserDetails,
+                     Reference, ApplicantHomeAddress)
 
 
 # Test business logic to create or update a Type of childcare record
@@ -964,10 +964,10 @@ class Test_DBS_Check_Logic(TestCase):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         
         # Delete test Criminal_Record_Check object if it already exists
-        Criminal_Record_Check.objects.filter(application_id=test_application_id).delete()
+        CriminalRecordCheck.objects.filter(application_id=test_application_id).delete()
         
         # Verify that the Criminal_Record_Check object corresponding with the test application does not exist
-        assert(Criminal_Record_Check.objects.filter(application_id=test_application_id).count() == 0)
+        assert(CriminalRecordCheck.objects.filter(application_id=test_application_id).count() == 0)
     
     # Test the business case where a record already exists
     def test_logic_to_update_record(self):
@@ -979,7 +979,7 @@ class Test_DBS_Check_Logic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Delete test Criminal_Record_Check and UserDetails objects if they already exist
-        Criminal_Record_Check.objects.filter(application_id=test_application_id).delete()
+        CriminalRecordCheck.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
@@ -1020,7 +1020,7 @@ class Test_DBS_Check_Logic(TestCase):
         test_criminal_record_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         
         # Create a test Criminal_Record_Check object
-        Criminal_Record_Check.objects.create(
+        CriminalRecordCheck.objects.create(
             criminal_record_id = (UUID(test_criminal_record_id)),
             application_id = Application.objects.get(application_id=test_application_id),
             dbs_certificate_number = '123456789012',
@@ -1028,12 +1028,12 @@ class Test_DBS_Check_Logic(TestCase):
         )
         
         # Verify that the Criminal_Record_Check object corresponding with the test application exists
-        assert(Criminal_Record_Check.objects.filter(application_id=test_application_id).count() > 0)
+        assert(CriminalRecordCheck.objects.filter(application_id=test_application_id).count() > 0)
     
     # Delete test application
     def delete(self):
         
-        Criminal_Record_Check.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        CriminalRecordCheck.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
         
@@ -1048,10 +1048,10 @@ class Test_Health_Logic(TestCase):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         
         # Delete test Health_Declaration_Booklet object if it already exists
-        Health_Declaration_Booklet.objects.filter(application_id=test_application_id).delete()
+        HealthDeclarationBooklet.objects.filter(application_id=test_application_id).delete()
         
         # Verify that the Health_Declaration_Booklet object corresponding with the test application does not exist
-        assert(Health_Declaration_Booklet.objects.filter(application_id=test_application_id).count() == 0)
+        assert(HealthDeclarationBooklet.objects.filter(application_id=test_application_id).count() == 0)
     
     # Test the business case where a record already exists
     def test_logic_to_update_record(self):
@@ -1063,7 +1063,7 @@ class Test_Health_Logic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Delete test Health_Declaration_Booklet and UserDetails objects if they already exist
-        Health_Declaration_Booklet.objects.filter(application_id=test_application_id).delete()
+        HealthDeclarationBooklet.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
@@ -1104,7 +1104,7 @@ class Test_Health_Logic(TestCase):
         test_hdb_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         
         # Create a test Health_Declaration_Booklet object
-        Health_Declaration_Booklet.objects.create(
+        HealthDeclarationBooklet.objects.create(
             hdb_id = (UUID(test_hdb_id)),
             application_id = Application.objects.get(application_id=test_application_id),
             movement_problems = 'True',
@@ -1117,12 +1117,12 @@ class Test_Health_Logic(TestCase):
         )
         
         # Verify that the Health_Declaration_Booklet object corresponding with the test application exists
-        assert(Health_Declaration_Booklet.objects.filter(application_id=test_application_id).count() > 0)
+        assert(HealthDeclarationBooklet.objects.filter(application_id=test_application_id).count() > 0)
     
     # Delete test application
     def delete(self):
         
-        Health_Declaration_Booklet.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        HealthDeclarationBooklet.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
@@ -1137,10 +1137,10 @@ class Test_References_Logic(TestCase):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         
         # Delete test References object if it already exists
-        References.objects.filter(application_id=test_application_id).delete()
+        Reference.objects.filter(application_id=test_application_id).delete()
         
         # Verify that the References object corresponding with the test application does not exist
-        assert(References.objects.filter(application_id=test_application_id).count() == 0)
+        assert(Reference.objects.filter(application_id=test_application_id).count() == 0)
     
     # Test the business case where a record already exists
     def test_logic_to_update_record(self):
@@ -1152,7 +1152,7 @@ class Test_References_Logic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         
         # Delete test References and UserDetails objects if they already exist
-        References.objects.filter(application_id=test_application_id).delete()
+        Reference.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
         
         # Create a test user
@@ -1193,7 +1193,7 @@ class Test_References_Logic(TestCase):
         test_reference_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         
         # Create a test References object
-        References.objects.create(
+        Reference.objects.create(
             reference_id = (UUID(test_reference_id)),
             application_id = Application.objects.get(application_id=test_application_id),
             first_name = 'Hugo',
@@ -1212,11 +1212,11 @@ class Test_References_Logic(TestCase):
         )
         
         # Verify that the References object corresponding with the test application exists
-        assert(References.objects.filter(application_id=test_application_id).count() > 0)
+        assert(Reference.objects.filter(application_id=test_application_id).count() > 0)
     
     # Delete test application
     def delete(self):
         
-        References.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        Reference.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()

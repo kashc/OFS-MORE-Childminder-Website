@@ -16,8 +16,8 @@ from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect,
 
 from .customfields import ExpirySplitDateWidget, ExpirySplitDateField
 from .models import (Application, ApplicantName, ApplicantPersonalDetails, ChildcareType,
-                     ApplicantHomeAddress, Criminal_Record_Check, FirstAidTraining,
-                     Health_Declaration_Booklet, References, UserDetails)
+                     ApplicantHomeAddress, CriminalRecordCheck, FirstAidTraining,
+                     HealthDeclarationBooklet, Reference, UserDetails)
 
 
 # Type of childcare form
@@ -700,10 +700,10 @@ class DBSCheck(GOVUKForm):
         super(DBSCheck, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form 
-        if Criminal_Record_Check.objects.filter(application_id=self.application_id_local).count() > 0:
+        if CriminalRecordCheck.objects.filter(application_id=self.application_id_local).count() > 0:
         
-            self.fields['dbs_certificate_number'].initial = Criminal_Record_Check.objects.get(application_id=self.application_id_local).dbs_certificate_number
-            self.fields['convictions'].initial = Criminal_Record_Check.objects.get(application_id=self.application_id_local).cautions_convictions
+            self.fields['dbs_certificate_number'].initial = CriminalRecordCheck.objects.get(application_id=self.application_id_local).dbs_certificate_number
+            self.fields['convictions'].initial = CriminalRecordCheck.objects.get(application_id=self.application_id_local).cautions_convictions
 
 
 # Your health form
@@ -727,14 +727,14 @@ class HealthDeclarationBooklet(GOVUKForm):
         super(HealthDeclarationBooklet, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form 
-        if Health_Declaration_Booklet.objects.filter(application_id=self.application_id_local).count() > 0:
+        if HealthDeclarationBooklet.objects.filter(application_id=self.application_id_local).count() > 0:
         
-            self.fields['walking_bending'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).movement_problems
-            self.fields['asthma_breathing'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).breathing_problems
-            self.fields['heart_disease'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).heart_disease
-            self.fields['blackout_epilepsy'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).blackout_epilepsy
-            self.fields['mental_health'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).mental_health_problems
-            self.fields['alcohol_drugs'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).alcohol_drug_problems 
+            self.fields['walking_bending'].initial = HealthDeclarationBooklet.objects.get(application_id=self.application_id_local).movement_problems
+            self.fields['asthma_breathing'].initial = HealthDeclarationBooklet.objects.get(application_id=self.application_id_local).breathing_problems
+            self.fields['heart_disease'].initial = HealthDeclarationBooklet.objects.get(application_id=self.application_id_local).heart_disease
+            self.fields['blackout_epilepsy'].initial = HealthDeclarationBooklet.objects.get(application_id=self.application_id_local).blackout_epilepsy
+            self.fields['mental_health'].initial = HealthDeclarationBooklet.objects.get(application_id=self.application_id_local).mental_health_problems
+            self.fields['alcohol_drugs'].initial = HealthDeclarationBooklet.objects.get(application_id=self.application_id_local).alcohol_drug_problems
 
 
 # 2 references form
@@ -753,11 +753,11 @@ class ReferenceForm(GOVUKForm):
         super(ReferenceForm, self).__init__(*args, **kwargs)
 
         # If information was previously entered, display it on the form        
-        if References.objects.filter(application_id=self.application_id_local).count() > 0:
+        if Reference.objects.filter(application_id=self.application_id_local).count() > 0:
         
-            self.fields['first_name'].initial = References.objects.get(application_id=self.application_id_local).first_name
-            self.fields['last_name'].initial = References.objects.get(application_id=self.application_id_local).last_name
-            self.fields['relationship'].initial = References.objects.get(application_id=self.application_id_local).relationship  
+            self.fields['first_name'].initial = Reference.objects.get(application_id=self.application_id_local).first_name
+            self.fields['last_name'].initial = Reference.objects.get(application_id=self.application_id_local).last_name
+            self.fields['relationship'].initial = Reference.objects.get(application_id=self.application_id_local).relationship
 
 
 # People in your home form     
