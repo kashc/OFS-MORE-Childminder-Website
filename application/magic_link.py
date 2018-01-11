@@ -1,28 +1,33 @@
-'''
+"""
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Magic Link --
 
 @author: Informed Solutions
-'''
+"""
 
 
-from .models import Login_And_Contact_Details, Application
+import json
+import random
+import requests
+import string
+import time
+
 from django.conf import settings
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from .forms import EmailLogin, VerifyPhone
-import json, random, requests, string, time, traceback
 
+from .forms import EmailLoginForm, VerifyPhoneForm
+from .models import Application, UserDetails
 
 
 def existingApplicationView(request):
     
     # Initialise form
-    form = EmailLogin()
+    form = EmailLoginForm()
     
     if request.method =='POST':
         
-        form = EmailLogin(request.POST)
+        form = EmailLoginForm(request.POST)
         
         # Retrieve e-mail address
         email = request.POST['email_address']
@@ -31,7 +36,7 @@ def existingApplicationView(request):
         if form.is_valid():
             try:
                 # Retrieve corresponding application
-                acc = Login_And_Contact_Details.objects.get(email=email)
+                acc = UserDetails.objects.get(email=email)
             except Exception as ex:
                 return HttpResponseRedirect('/email-sent')
             #get url and substring just the domain
@@ -116,7 +121,7 @@ def hasExpired(expiry):
 def validateMagicLink(request, id):
     #commented lines below check that the url matches the magic link (active lines check it vs phone number)
     try:
-        acc = Login_And_Contact_Details.objects.get(magic_link_email=id)
+        acc = UserDetails.objects.get(magic_link_email=id)
         exp = acc.email_expiry_date
         if not hasExpired(exp) and len(id)>0:
             #uncomment url if it should be a one-time use email
@@ -145,7 +150,7 @@ def SMSVerification(request):
     #This is the page where a user is redirected after clicking on their magic link
     #Unique form for entering SMS code (must be 5 digits in accordance with JIRA)
     id = request.GET['id']
-    acc = Login_And_Contact_Details.objects.get(magic_link_email=id)
+    acc = UserDetails.objects.get(magic_link_email=id)
     if 'f' in request.GET.keys():
         flag = request.GET['f']
         phone = acc.mobile_number
@@ -156,12 +161,12 @@ def SMSVerification(request):
         acc.save()
         magic_link_text(phone, g).status_code
         return HttpResponseRedirect("/verifyPhone/?id=" + id)
-    form = VerifyPhone(id=id)
+    form = VerifyPhoneForm(id=id)
 
     login_id = acc.login_id
     application = Application.objects.get(login_id = login_id)
     if request.method =='POST':
-        form = VerifyPhone(request.POST, id=id)
+        form = VerifyPhoneForm(request.POST, id=id)
         code = request.POST['magic_link_sms']
         if len(code)>0:
             exp = acc.sms_expiry_date

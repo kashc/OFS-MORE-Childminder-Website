@@ -1,17 +1,17 @@
-'''
-Created on 3 Jan 2018
+"""
+OFS-MORE-CCN3: Apply to be a Childminder Beta
+-- Custom Fields --
 
-@author: geevesh
-'''
-import datetime
+@author: Informed Solutions
+"""
 
-from django.utils.timezone import now
+
 from django import forms
 from django.forms import widgets
-from django.utils.dates import MONTHS
+from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _
-from application.business_logic import get_card_expiry_years
 from govuk_forms.widgets import SplitHiddenDateWidget
+
 
 #Extremely hacky disgusting workaround for expiry date
 #Creating a widget class

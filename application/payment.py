@@ -1,5 +1,14 @@
+"""
+OFS-MORE-CCN3: Apply to be a Childminder Beta
+-- Worldpay Integration --
+
+@author: Informed Solutions
+"""
+
+
 import requests
 import json
+
 from django.conf import settings
 
 

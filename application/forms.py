@@ -1,26 +1,27 @@
-'''
+"""
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Forms --
 
 @author: Informed Solutions
-'''
+"""
 
-from application.customfields import ExpirySplitDateWidget, ExpirySplitDateField
+
+import re
+
+from datetime import date
 from django import forms
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
-from application.models import Application, Applicant_Names, Applicant_Personal_Details, Childcare_Type, Criminal_Record_Check, First_Aid_Training, Login_And_Contact_Details, Health_Declaration_Booklet, References, \
-    Applicant_Home_Address
-
-from datetime import date
-
-import re 
+from .customfields import ExpirySplitDateWidget, ExpirySplitDateField
+from .models import (Application, ApplicantName, ApplicantPersonalDetails, ChildcareType,
+                     ApplicantHomeAddress, CriminalRecordCheck, FirstAidTraining,
+                     HealthDeclarationBooklet, Reference, UserDetails)
 
 
 # Type of childcare form
-class TypeOfChildcare(forms.Form):
+class TypeOfChildcareForm(forms.Form):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -41,46 +42,49 @@ class TypeOfChildcare(forms.Form):
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(TypeOfChildcare, self).__init__(*args, **kwargs)
+        super(TypeOfChildcareForm, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        if Childcare_Type.objects.filter(application_id=self.application_id_local).count() > 0:
+        if ChildcareType.objects.filter(application_id=self.application_id_local).count() > 0:
             
-            zero_to_five_status = Childcare_Type.objects.get(application_id=self.application_id_local).zero_to_five
-            five_to_eight_status = Childcare_Type.objects.get(application_id=self.application_id_local).five_to_eight
-            eight_plus_status = Childcare_Type.objects.get(application_id=self.application_id_local).eight_plus
+            zero_to_five_status = ChildcareType.objects.get(application_id=self.application_id_local).zero_to_five
+            five_to_eight_status = ChildcareType.objects.get(application_id=self.application_id_local).five_to_eight
+            eight_plus_status = ChildcareType.objects.get(application_id=self.application_id_local).eight_plus
             
-            if (zero_to_five_status == True) & (five_to_eight_status == True) & (eight_plus_status == True):
+            if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
                 self.fields['type_of_childcare'].initial = ['0-5', '5-8', '8over']
             
-            elif (zero_to_five_status == True) & (five_to_eight_status == True) & (eight_plus_status == False):
+            elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
                 self.fields['type_of_childcare'].initial = ['0-5', '5-8']
             
-            elif (zero_to_five_status == True) & (five_to_eight_status == False) & (eight_plus_status == True):
+            elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
                 self.fields['type_of_childcare'].initial = ['0-5', '8over']
 
-            elif (zero_to_five_status == False) & (five_to_eight_status == True) & (eight_plus_status == True):
+            elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
                 self.fields['type_of_childcare'].initial = ['5-8', '8over']
 
-            elif (zero_to_five_status == True) & (five_to_eight_status == False) & (eight_plus_status == False):
+            elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
                 self.fields['type_of_childcare'].initial = ['0-5']
 
-            elif (zero_to_five_status == False) & (five_to_eight_status == True) & (eight_plus_status == False):
+            elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
                 self.fields['type_of_childcare'].initial = ['5-8']
                 
-            elif (zero_to_five_status == False) & (five_to_eight_status == False) & (eight_plus_status == True):
+            elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
                 self.fields['type_of_childcare'].initial = ['8over']
 
-            elif (zero_to_five_status == False) & (five_to_eight_status == False) & (eight_plus_status == False):
+            elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is False):
                 self.fields['type_of_childcare'].initial = []
 
 
+# Form for account selection
 class AccountForm(GOVUKForm):
 
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
-class EmailLogin(GOVUKForm):
+
+# Form for login
+class EmailLoginForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -99,7 +103,7 @@ class EmailLogin(GOVUKForm):
 
 
 # Your login and contact details form: e-mail address   
-class ContactEmail(GOVUKForm):
+class ContactEmailForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -109,7 +113,7 @@ class ContactEmail(GOVUKForm):
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(ContactEmail, self).__init__(*args, **kwargs)
+        super(ContactEmailForm, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
@@ -117,9 +121,9 @@ class ContactEmail(GOVUKForm):
             this_user = Application.objects.get(pk=self.application_id_local)
             login_id = this_user.login_id.login_id
             
-            if Login_And_Contact_Details.objects.get(login_id=login_id).login_id != '':
+            if UserDetails.objects.get(login_id=login_id).login_id != '':
             
-                self.fields['email_address'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).email
+                self.fields['email_address'].initial = UserDetails.objects.get(login_id=login_id).email
     
     # Email address validation
     def clean_email_address(self):
@@ -138,7 +142,7 @@ class ContactEmail(GOVUKForm):
 
 
 # Your login and contact details form: phone numbers   
-class ContactPhone(GOVUKForm):
+class ContactPhoneForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -149,7 +153,7 @@ class ContactPhone(GOVUKForm):
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(ContactPhone, self).__init__(*args, **kwargs)
+        super(ContactPhoneForm, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
@@ -157,8 +161,8 @@ class ContactPhone(GOVUKForm):
             this_user = Application.objects.get(pk=self.application_id_local)
             login_id = this_user.login_id.login_id
             
-            self.fields['mobile_number'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).mobile_number
-            self.fields['add_phone_number'].initial = Login_And_Contact_Details.objects.get(login_id=login_id).add_phone_number
+            self.fields['mobile_number'].initial = UserDetails.objects.get(login_id=login_id).mobile_number
+            self.fields['add_phone_number'].initial = UserDetails.objects.get(login_id=login_id).add_phone_number
 
     # Mobile number validation
     def clean_mobile_number(self):
@@ -197,7 +201,7 @@ class ContactPhone(GOVUKForm):
         return add_phone_number
 
 
-class VerifyPhone(GOVUKForm):
+class VerifyPhoneForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -207,19 +211,21 @@ class VerifyPhone(GOVUKForm):
     def __init__(self, *args, **kwargs):
 
         self.magic_link_email = kwargs.pop('id')
-        super(VerifyPhone, self).__init__(*args, **kwargs)
+        super(VerifyPhoneForm, self).__init__(*args, **kwargs)
 
     def clean_magic_link_sms(self):
         magic_link_sms = self.cleaned_data['magic_link_sms']
 
-        if Login_And_Contact_Details.objects.filter(magic_link_sms=magic_link_sms, magic_link_email=self.magic_link_email).count() == 0:
+        if (UserDetails.objects.filter(magic_link_sms=magic_link_sms, magic_link_email=self.magic_link_email).count()
+                == 0):
 
             raise forms.ValidationError('TBC')
 
         return magic_link_sms
 
+
 # Your login and contact details form: knowledge-based question 
-class Question(GOVUKForm):
+class QuestionForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -229,25 +235,25 @@ class Question(GOVUKForm):
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(Question, self).__init__(*args, **kwargs)
+        super(QuestionForm, self).__init__(*args, **kwargs)
         
 
 # Your login and contact details form: summary page  
-class ContactSummary(GOVUKForm):
+class ContactSummaryForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     
 
 # Your personal details form: guidance page  
-class PersonalDetailsGuidance(GOVUKForm):
+class PersonalDetailsGuidanceForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
 
 # Your personal details form: names   
-class PersonalDetailsName(GOVUKForm):
+class PersonalDetailsNameForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -259,16 +265,16 @@ class PersonalDetailsName(GOVUKForm):
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(PersonalDetailsName, self).__init__(*args, **kwargs)
+        super(PersonalDetailsNameForm, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form        
-        if Applicant_Personal_Details.objects.filter(application_id=self.application_id_local).count() > 0:
+        if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             
-            personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+            personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-            self.fields['first_name'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).first_name
-            self.fields['middle_names'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).middle_names
-            self.fields['last_name'].initial = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).last_name
+            self.fields['first_name'].initial = ApplicantName.objects.get(personal_detail_id=personal_detail_id).first_name
+            self.fields['middle_names'].initial = ApplicantName.objects.get(personal_detail_id=personal_detail_id).middle_names
+            self.fields['last_name'].initial = ApplicantName.objects.get(personal_detail_id=personal_detail_id).last_name
     
     # First name validation
     def clean_first_name(self):
@@ -319,7 +325,7 @@ class PersonalDetailsName(GOVUKForm):
 
 
 # Your personal details form: date of birth 
-class PersonalDetailsDOB(GOVUKForm):
+class PersonalDetailsDOBForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -329,12 +335,12 @@ class PersonalDetailsDOB(GOVUKForm):
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(PersonalDetailsDOB, self).__init__(*args, **kwargs)
+        super(PersonalDetailsDOBForm, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form        
-        if Applicant_Personal_Details.objects.filter(application_id=self.application_id_local).count() > 0:
+        if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             
-            self.fields['date_of_birth'].initial = [Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_day, Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_month, Applicant_Personal_Details.objects.get(application_id=self.application_id_local).birth_year]
+            self.fields['date_of_birth'].initial = [ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).birth_day, ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).birth_month, ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).birth_year]
 
     # First name validation
     def clean_date_of_birth(self):
@@ -355,7 +361,7 @@ class PersonalDetailsDOB(GOVUKForm):
     
 
 # Your personal details form: home address   
-class PersonalDetailsHomeAddress(GOVUKForm):
+class PersonalDetailsHomeAddressForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -365,18 +371,18 @@ class PersonalDetailsHomeAddress(GOVUKForm):
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(PersonalDetailsHomeAddress, self).__init__(*args, **kwargs)
+        super(PersonalDetailsHomeAddressForm, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
             
-            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
+            self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
             
 
 # Your personal details form: home address   
-class PersonalDetailsHomeAddressManual(GOVUKForm):
+class PersonalDetailsHomeAddressManualForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -390,18 +396,18 @@ class PersonalDetailsHomeAddressManual(GOVUKForm):
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(PersonalDetailsHomeAddressManual, self).__init__(*args, **kwargs)
+        super(PersonalDetailsHomeAddressManualForm, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
             
-            self.fields['street_name_and_number'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
-            self.fields['street_name_and_number2'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
-            self.fields['town'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
-            self.fields['county'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
-            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
+            self.fields['street_name_and_number'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
+            self.fields['street_name_and_number2'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
+            self.fields['town'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
+            self.fields['county'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
+            self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
     
     # Street name and number validation
     def clean_street_name_and_number(self):
@@ -469,7 +475,7 @@ class PersonalDetailsHomeAddressManual(GOVUKForm):
 
 
 # Your personal details form: location of care  
-class PersonalDetailsLocationOfCare(GOVUKForm):
+class PersonalDetailsLocationOfCareForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -481,18 +487,18 @@ class PersonalDetailsLocationOfCare(GOVUKForm):
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(PersonalDetailsLocationOfCare, self).__init__(*args, **kwargs)
+        super(PersonalDetailsLocationOfCareForm, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
             
-            self.fields['location_of_care'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).childcare_address
+            self.fields['location_of_care'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).childcare_address
 
 
 # Your personal details form: home address   
-class PersonalDetailsChildcareAddress(GOVUKForm):
+class PersonalDetailsChildcareAddressForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -502,18 +508,18 @@ class PersonalDetailsChildcareAddress(GOVUKForm):
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(PersonalDetailsChildcareAddress, self).__init__(*args, **kwargs)
+        super(PersonalDetailsChildcareAddressForm, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
             
-            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address = 'True').postcode
+            self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address ='True').postcode
             
 
 # Your personal details form: childcare address   
-class PersonalDetailsChildcareAddressManual(GOVUKForm):
+class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -527,20 +533,20 @@ class PersonalDetailsChildcareAddressManual(GOVUKForm):
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(PersonalDetailsChildcareAddressManual, self).__init__(*args, **kwargs)
+        super(PersonalDetailsChildcareAddressManualForm, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-        if Applicant_Home_Address.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address='True').count() > 0:
             
-            personal_detail_id = Applicant_Personal_Details.objects.get(application_id=self.application_id_local).personal_detail_id
+            personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).personal_detail_id
             
-            self.fields['street_name_and_number'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').street_line1
-            self.fields['street_name_and_number2'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').street_line2
-            self.fields['town'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').town
-            self.fields['county'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').county
-            self.fields['postcode'].initial = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').postcode
+            self.fields['street_name_and_number'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').street_line1
+            self.fields['street_name_and_number2'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').street_line2
+            self.fields['town'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').town
+            self.fields['county'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').county
+            self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address='True').postcode
     
     # Street name and number validation
     def clean_street_name_and_number(self):
@@ -608,21 +614,21 @@ class PersonalDetailsChildcareAddressManual(GOVUKForm):
  
 
 # Your personal details form: summary page  
-class PersonalDetailsSummary(GOVUKForm):
+class PersonalDetailsSummaryForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
 
 # First aid training form: guidance
-class FirstAidTrainingGuidance(GOVUKForm):
+class FirstAidTrainingGuidanceForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True       
 
 
 # First aid training form: details
-class FirstAidTrainingDetails(GOVUKForm):
+class FirstAidTrainingDetailsForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -634,17 +640,18 @@ class FirstAidTrainingDetails(GOVUKForm):
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(FirstAidTrainingDetails, self).__init__(*args, **kwargs)
+        super(FirstAidTrainingDetailsForm, self).__init__(*args, **kwargs)
 
         # If information was previously entered, display it on the form        
-        if First_Aid_Training.objects.filter(application_id=self.application_id_local).count() > 0:
+        if FirstAidTraining.objects.filter(application_id=self.application_id_local).count() > 0:
             
-            self.fields['first_aid_training_organisation'].initial = First_Aid_Training.objects.get(application_id=self.application_id_local).training_organisation
-            self.fields['title_of_training_course'].initial = First_Aid_Training.objects.get(application_id=self.application_id_local).course_title
-            self.fields['course_date'].initial = [First_Aid_Training.objects.get(application_id=self.application_id_local).course_day, First_Aid_Training.objects.get(application_id=self.application_id_local).course_month, First_Aid_Training.objects.get(application_id=self.application_id_local).course_year]
- 
+            self.fields['first_aid_training_organisation'].initial = FirstAidTraining.objects.get(application_id=self.application_id_local).training_organisation
+            self.fields['title_of_training_course'].initial = FirstAidTraining.objects.get(application_id=self.application_id_local).course_title
+            self.fields['course_date'].initial = [FirstAidTraining.objects.get(application_id=self.application_id_local).course_day, FirstAidTraining.objects.get(application_id=self.application_id_local).course_month, FirstAidTraining.objects.get(application_id=self.application_id_local).course_year]
+
+
 # First aid training form: declaration
-class FirstAidTrainingDeclaration(GOVUKForm):
+class FirstAidTrainingDeclarationForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -653,7 +660,7 @@ class FirstAidTrainingDeclaration(GOVUKForm):
     
 
 # First aid training form: renew
-class FirstAidTrainingRenew(GOVUKForm):
+class FirstAidTrainingRenewForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -661,52 +668,112 @@ class FirstAidTrainingRenew(GOVUKForm):
     renew_a = forms.BooleanField(label='I will renew my first aid training in the next few months', required=True)
     renew_b = forms.BooleanField(label='I will show my first aid certificate to the inspector', required=True)
 
+
 # First aid training form: training
-class FirstAidTrainingTraining(GOVUKForm):
+class FirstAidTrainingTrainingForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
 
 # First aid training form: summary
-class FirstAidTrainingSummary(GOVUKForm):
+class FirstAidTrainingSummaryForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
         
 
 # Early Years knowledge form
-class EYFS(GOVUKForm):
+class EYFSForm(GOVUKForm):
     
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+# Your criminal record (DBS) check: guidance form
+class DBSCheckGuidanceForm(GOVUKForm):
+
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
  
 # Your criminal record (DBS) check form   
-class DBSCheck(GOVUKForm):
+class DBSCheckDBSDetailsForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     
     options = (('True', 'Yes'), ('False', 'No'))
 
-    dbs_certificate_number = forms.IntegerField(label='DBS certificate number', help_text='12-digit number on your certificate')
-    convictions = forms.ChoiceField(label='Do you have any cautions or convictions?', help_text='Include any information recorded on your certificate', choices=options, widget=InlineRadioSelect)
+    dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
+                                                help_text='12-digit number on your certificate',
+                                                required=True)
+    convictions = forms.ChoiceField(label='Do you have any cautions or convictions?',
+                                    help_text='Include any information recorded on your certificate',
+                                    choices=options, widget=InlineRadioSelect,
+                                    required=True)
     
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(DBSCheck, self).__init__(*args, **kwargs)
+        super(DBSCheckDBSDetailsForm, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form 
-        if Criminal_Record_Check.objects.filter(application_id=self.application_id_local).count() > 0:
+        if CriminalRecordCheck.objects.filter(application_id=self.application_id_local).count() > 0:
         
-            self.fields['dbs_certificate_number'].initial = Criminal_Record_Check.objects.get(application_id=self.application_id_local).dbs_certificate_number
-            self.fields['convictions'].initial = Criminal_Record_Check.objects.get(application_id=self.application_id_local).cautions_convictions
+            self.fields['dbs_certificate_number'].initial = CriminalRecordCheck.objects.get(application_id=self.application_id_local).dbs_certificate_number
+            self.fields['convictions'].initial = CriminalRecordCheck.objects.get(application_id=self.application_id_local).cautions_convictions
+
+    # DBS certificate number validation
+    def clean_dbs_certificate_number(self):
+
+        dbs_certificate_number = self.cleaned_data['dbs_certificate_number']
+
+        if len(str(dbs_certificate_number)) > 12 :
+
+            raise forms.ValidationError('TBC')
+
+        if len(str(dbs_certificate_number)) < 12 :
+
+            raise forms.ValidationError('TBC')
+
+        return dbs_certificate_number
+
+
+# Your criminal record (DBS) check: upload DBS form
+class DBSCheckUploadDBSForm(GOVUKForm):
+
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    declaration = forms.BooleanField(label='I will send my original DBS certificate to Ofsted', required=True)
+
+    def __init__(self, *args, **kwargs):
+
+        self.application_id_local = kwargs.pop('id')
+        super(DBSCheckUploadDBSForm, self).__init__(*args, **kwargs)
+
+        # If information was previously entered, display it on the form
+        if CriminalRecordCheck.objects.filter(application_id=self.application_id_local).count() > 0:
+
+            if CriminalRecordCheck.objects.get(application_id=self.application_id_local).send_certificate_declare is True:
+
+                self.fields['declaration'].initial = '1'
+
+            elif CriminalRecordCheck.objects.get(application_id=self.application_id_local).send_certificate_declare is False:
+
+                self.fields['declaration'].initial = '0'
+
+
+# Your criminal record (DBS) check: summary form
+class DBSCheckSummaryForm(GOVUKForm):
+
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
 
 
 # Your health form
-class HealthDeclarationBooklet(GOVUKForm):
+class HealthDeclarationBookletForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -723,17 +790,17 @@ class HealthDeclarationBooklet(GOVUKForm):
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(HealthDeclarationBooklet, self).__init__(*args, **kwargs)
+        super(HealthDeclarationBookletForm, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form 
-        if Health_Declaration_Booklet.objects.filter(application_id=self.application_id_local).count() > 0:
+        if HealthDeclarationBookletForm.objects.filter(application_id=self.application_id_local).count() > 0:
         
-            self.fields['walking_bending'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).movement_problems
-            self.fields['asthma_breathing'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).breathing_problems
-            self.fields['heart_disease'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).heart_disease
-            self.fields['blackout_epilepsy'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).blackout_epilepsy
-            self.fields['mental_health'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).mental_health_problems
-            self.fields['alcohol_drugs'].initial = Health_Declaration_Booklet.objects.get(application_id=self.application_id_local).alcohol_drug_problems 
+            self.fields['walking_bending'].initial = HealthDeclarationBookletForm.objects.get(application_id=self.application_id_local).movement_problems
+            self.fields['asthma_breathing'].initial = HealthDeclarationBookletForm.objects.get(application_id=self.application_id_local).breathing_problems
+            self.fields['heart_disease'].initial = HealthDeclarationBookletForm.objects.get(application_id=self.application_id_local).heart_disease
+            self.fields['blackout_epilepsy'].initial = HealthDeclarationBookletForm.objects.get(application_id=self.application_id_local).blackout_epilepsy
+            self.fields['mental_health'].initial = HealthDeclarationBookletForm.objects.get(application_id=self.application_id_local).mental_health_problems
+            self.fields['alcohol_drugs'].initial = HealthDeclarationBookletForm.objects.get(application_id=self.application_id_local).alcohol_drug_problems
 
 
 # 2 references form
@@ -752,36 +819,36 @@ class ReferenceForm(GOVUKForm):
         super(ReferenceForm, self).__init__(*args, **kwargs)
 
         # If information was previously entered, display it on the form        
-        if References.objects.filter(application_id=self.application_id_local).count() > 0:
+        if Reference.objects.filter(application_id=self.application_id_local).count() > 0:
         
-            self.fields['first_name'].initial = References.objects.get(application_id=self.application_id_local).first_name
-            self.fields['last_name'].initial = References.objects.get(application_id=self.application_id_local).last_name
-            self.fields['relationship'].initial = References.objects.get(application_id=self.application_id_local).relationship  
+            self.fields['first_name'].initial = Reference.objects.get(application_id=self.application_id_local).first_name
+            self.fields['last_name'].initial = Reference.objects.get(application_id=self.application_id_local).last_name
+            self.fields['relationship'].initial = Reference.objects.get(application_id=self.application_id_local).relationship
 
 
 # People in your home form     
-class OtherPeople(GOVUKForm):
+class OtherPeopleForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True 
 
 
 # Declaration form
-class Declaration(GOVUKForm):
+class DeclarationForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
 
 # Confirm your details form
-class Confirm(GOVUKForm):
+class ConfirmForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
 
 # Payment form
-class Payment(GOVUKForm):
+class PaymentForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -791,11 +858,12 @@ class Payment(GOVUKForm):
         ('PayPal', 'PayPal')
     )
     
-    payment_method = forms.ChoiceField(label='How would you like to pay?', choices=options, widget=RadioSelect, required=True)
+    payment_method = forms.ChoiceField(label='How would you like to pay?', choices=options,
+                                       widget=RadioSelect, required=True)
         
 
 # Payment Details form
-class PaymentDetails(GOVUKForm):
+class PaymentDetailsForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -830,7 +898,7 @@ class PaymentDetails(GOVUKForm):
         card_type = self.cleaned_data['card_type']
         card_number = self.cleaned_data['card_number']
         
-        #Strip all spaces and dashes from the card number for RegEx purposes      
+        # Strip all spaces and dashes from the card number for RegEx purposes
         card_number = re.sub('[ -]+', '', card_number)
         
         # Cast card_number as an integer to see if the user has entered non-numeric characters            
@@ -840,20 +908,22 @@ class PaymentDetails(GOVUKForm):
         
         except:
             
-            #At the moment this is a catch all error, in the case of there being multiple error types this must be revisited
+            # At the moment this is a catch all error, in the case of there being multiple error
+            # types this must be revisited
             raise forms.ValidationError('Please enter a valid card number')
     
-        #Card number RegEx checking by type
-        #if card_type == 'visa':    
+        # Card number RegEx checking by type
+        # if card_type == 'visa':
             
-            #Actual regex    
-            #if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:  
+            # Actual regex
+            # if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:
                                                   
-                #raise forms.ValidationError('The card number you have entered is not a valid Visa card number')
+            # raise forms.ValidationError('The card number you have entered is not a valid Visa card number')
         
         if card_type == 'mastercard':
             
-            if re.match("^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$", card_number) is None:
+            if re.match("^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$",
+                        card_number) is None:
                 
                 raise forms.ValidationError('The card number you have entered is not a valid MasterCard card number')
         
@@ -883,7 +953,7 @@ class PaymentDetails(GOVUKForm):
     # Card security code validation   
     def clean_card_security_code(self):
         
-        #Get value to be validated
+        # Get value to be validated
         card_security_code = self.cleaned_data['card_security_code']
         
         try:
@@ -900,7 +970,7 @@ class PaymentDetails(GOVUKForm):
 
 
 # Application saved form
-class ApplicationSaved(GOVUKForm):
+class ApplicationSavedForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True

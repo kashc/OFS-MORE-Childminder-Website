@@ -1,41 +1,45 @@
-'''
+"""
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Views --
 
-@author: Informed Solutions
-'''
+author: Informed Solutions
+"""
 
-from application import status, payment
 
-from .business_logic import (Childcare_Type_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic, Login_Contact_Logic, Login_Contact_Logic_Phone, Multiple_Childcare_Address_Logic, Personal_Childcare_Address_Logic, Personal_DOB_Logic, Personal_Home_Address_Logic,
-                            Personal_Location_Of_Care_Logic, Personal_Name_Logic, references_check_logic)
-
-from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
-
-from .forms import ApplicationSaved, AccountForm, Confirm, ContactEmail, ContactPhone, ContactSummary, DBSCheck, EmailLogin, Declaration, EYFS, FirstAidTrainingDetails, FirstAidTrainingDeclaration, FirstAidTrainingGuidance, FirstAidTrainingTraining, FirstAidTrainingRenew, FirstAidTrainingSummary, HealthDeclarationBooklet, OtherPeople, Payment, PaymentDetails, PersonalDetailsChildcareAddress, PersonalDetailsChildcareAddressManual, PersonalDetailsDOB, PersonalDetailsName, PersonalDetailsGuidance, PersonalDetailsHomeAddress, PersonalDetailsHomeAddressManual, PersonalDetailsLocationOfCare, PersonalDetailsSummary, Question, ReferenceForm, TypeOfChildcare
-
-from .models import Application, Login_And_Contact_Details
-
-import datetime, time
-
-import re
-import uuid
+import datetime
 import json
-
-from application import magic_link
+import re
+import time
 
 from datetime import date
-from application.models import Applicant_Personal_Details,\
-    Applicant_Home_Address, Applicant_Names, First_Aid_Training
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
 
+from . import magic_link, payment, status
+from .business_logic import (ChildcareType_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic,
+                             Login_Contact_Logic, Login_Contact_Logic_Phone, Multiple_Childcare_Address_Logic,
+                             Personal_Childcare_Address_Logic, Personal_DOB_Logic, Personal_Home_Address_Logic,
+                             Personal_Location_Of_Care_Logic, Personal_Name_Logic, references_check_logic)
+from .forms import (ApplicationSavedForm, AccountForm, ConfirmForm, ContactEmailForm, ContactPhoneForm,
+                    ContactSummaryForm, DBSCheckDBSDetailsForm, DBSCheckGuidanceForm, EmailLoginForm, DeclarationForm,
+                    EYFSForm, DBSCheckUploadDBSForm, DBSCheckSummaryForm,
+                    FirstAidTrainingDetailsForm, FirstAidTrainingDeclarationForm, FirstAidTrainingGuidanceForm,
+                    FirstAidTrainingTrainingForm, FirstAidTrainingRenewForm, FirstAidTrainingSummaryForm,
+                    HealthDeclarationBookletForm, OtherPeopleForm, PaymentForm, PaymentDetailsForm,
+                    PersonalDetailsChildcareAddressForm, PersonalDetailsChildcareAddressManualForm,
+                    PersonalDetailsDOBForm, PersonalDetailsNameForm,
+                    PersonalDetailsGuidanceForm, PersonalDetailsHomeAddressForm, PersonalDetailsHomeAddressManualForm,
+                    PersonalDetailsLocationOfCareForm, PersonalDetailsSummaryForm, QuestionForm,
+                    ReferenceForm, TypeOfChildcareForm)
+from .models import (Application, UserDetails, ApplicantPersonalDetails, ApplicantHomeAddress,
+                     ApplicantName, FirstAidTraining, CriminalRecordCheck)
 
 
 # View for the start page
 def StartPageView(request):
 
     # Create a blank user
-    user = Login_And_Contact_Details.objects.create()
+    user = UserDetails.objects.create()
 
     # Create a new application
     application = Application.objects.create(
@@ -67,12 +71,17 @@ def AccountView(request):
 
     if request.method == 'GET':
 
-        application_id = request.GET['id']
+        application_id_local = request.GET['id']
 
         form = AccountForm()
 
+        variables = {
+            'form': form,
+            'application_id': application_id_local
+        }
+
         # Access the task page
-        return render(request, 'account-account.html', ({'application_id': application_id, 'form': form}))
+        return render(request, 'account-account.html', variables)
 
     if request.method == 'POST':
 
@@ -160,7 +169,7 @@ def TypeOfChildcareView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Type of childcare form
-        form = TypeOfChildcare(request.POST, id = application_id_local)
+        form = TypeOfChildcareForm(request.POST, id = application_id_local)
         
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
@@ -169,7 +178,7 @@ def TypeOfChildcareView(request):
             status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
             
             # Perform business logic to create or update Type of childcare record in database
-            childcare_type_record = Childcare_Type_Logic(application_id_local, form)
+            childcare_type_record = ChildcareType_Logic(application_id_local, form)
             childcare_type_record.save()
             
         # Return to the application's task list
@@ -183,10 +192,15 @@ def TypeOfChildcareView(request):
         
         status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
         
-    form = TypeOfChildcare(id = application_id_local)
-    
+    form = TypeOfChildcareForm(id = application_id_local)
+
+    variables = {
+        'form': form,
+        'application_id': application_id_local
+    }
+
     # Access the task page
-    return render(request, 'childcare.html', {'form': form, 'application_id': application_id_local})
+    return render(request, 'childcare.html', variables)
 
 
 # View for the Your login and contact details task: e-mail address
@@ -200,13 +214,19 @@ def ContactEmailView(request):
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
             
-        form = ContactEmail(id = application_id_local)
+        form = ContactEmailForm(id = application_id_local)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-        
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'login_details_status': application.login_details_status
+        }
+
         # Access the task page
-        return render(request, 'contact-email.html', {'form': form,'application_id': application_id_local, 'login_details_status': application.login_details_status})
+        return render(request, 'contact-email.html', variables)
     
     if request.method =='POST':
         
@@ -214,7 +234,7 @@ def ContactEmailView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = ContactEmail(request.POST,id = application_id_local)
+        form = ContactEmailForm(request.POST, id = application_id_local)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
@@ -224,27 +244,24 @@ def ContactEmailView(request):
             
             email = form.cleaned_data['email_address']
             
-            print(email)
-            
-            if Login_And_Contact_Details.objects.filter(email=email).exists():
+            if UserDetails.objects.filter(email=email).exists():
             
                 # Retrieve corresponding application
-                acc = Login_And_Contact_Details.objects.get(email=email)
-                #get url and substring just the domain
+                acc = UserDetails.objects.get(email=email)
+                # Get url and substring just the domain
                 domain = request.META.get('HTTP_REFERER', "")
                 domain = domain[:-54]
-                #generate random link
-                
+                # Generate random link
                 link = magic_link.generate_random(12, "link")
-                #get current epoch so the link can be time-boxed
+                # Get current epoch so the link can be time-boxed
                 expiry = int(time.time())
-                #save link and expiry
+                # Save link and expiry
                 acc.email_expiry_date = expiry
                 acc.magic_link_email=link
                 acc.save()
-                #send magic link email
+                # Send magic link email
                 r = magic_link.magic_link_email(email, domain +'validate/' +link)
-                #Note that this is the same response whether the email is valid or not
+                # Note that this is the same response whether the email is valid or not
                 return HttpResponseRedirect('/email-sent?id=' + application_id_local)   
                 
             else: 
@@ -261,9 +278,14 @@ def ContactEmailView(request):
         
         # If there are invalid details
         else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
             
             # Return to the same page
-            return render(request, 'contact-email.html', {'form': form,'application_id': application_id_local})
+            return render(request, 'contact-email.html', variables)
 
 
 # View for the Your login and contact details task: phone numbers
@@ -277,13 +299,19 @@ def ContactPhoneView(request):
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
             
-        form = ContactPhone(id = application_id_local)
+        form = ContactPhoneForm(id = application_id_local)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local) 
-    
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'login_details_status': application.login_details_status
+        }
+
         # Access the task page
-        return render(request, 'contact-phone.html', {'form': form,'application_id': application_id_local, 'login_details_status': application.login_details_status})
+        return render(request, 'contact-phone.html', variables)
     
     if request.method == 'POST':
         
@@ -291,7 +319,7 @@ def ContactPhoneView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = ContactPhone(request.POST,id = application_id_local)
+        form = ContactPhoneForm(request.POST, id = application_id_local)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
@@ -330,13 +358,19 @@ def QuestionView(request):
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
             
-        form = Question(id = application_id_local)  
+        form = QuestionForm(id = application_id_local)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)      
-    
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'login_details_status': application.login_details_status
+        }
+
         # Access the task page
-        return render(request, 'question.html', {'form': form,'application_id': application_id_local, 'login_details_status': application.login_details_status})
+        return render(request, 'question.html', variables)
     
     if request.method == 'POST':
         
@@ -344,7 +378,7 @@ def QuestionView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = Question(request.POST,id = application_id_local)
+        form = QuestionForm(request.POST, id = application_id_local)
         
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
@@ -376,22 +410,32 @@ def ContactSummaryView(request):
         login_id = Application.objects.get(pk=application_id_local).login_id.login_id
         
         # Retrieve answers
-        email = Login_And_Contact_Details.objects.get(login_id=login_id).email
-        mobile_number = Login_And_Contact_Details.objects.get(login_id=login_id).mobile_number
-        add_phone_number = Login_And_Contact_Details.objects.get(login_id=login_id).add_phone_number
+        email = UserDetails.objects.get(login_id=login_id).email
+        mobile_number = UserDetails.objects.get(login_id=login_id).mobile_number
+        add_phone_number = UserDetails.objects.get(login_id=login_id).add_phone_number
         
         # Update the status of the task to 'COMPLETED'
         if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
             
             status.update(application_id_local, 'login_details_status', 'COMPLETED')
             
-        form = ContactSummary()
+        form = ContactSummaryForm()
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)      
-    
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'email': email,
+            'mobile_number': mobile_number,
+            'add_phone_number': add_phone_number,
+            'login_details_status': application.login_details_status,
+            'childcare_type_status': application.childcare_type_status
+        }
+
         # Access the task page
-        return render(request, 'contact-summary.html', {'form': form,'application_id': application_id_local,'email': email,'mobile_number': mobile_number,'add_phone_number': add_phone_number, 'login_details_status': application.login_details_status, 'childcare_type_status': application.childcare_type_status})
+        return render(request, 'contact-summary.html', variables)
     
     if request.method == 'POST':
         
@@ -399,7 +443,7 @@ def ContactSummaryView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = ContactSummary()
+        form = ContactSummaryForm()
         
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
@@ -430,13 +474,20 @@ def PersonalDetailsGuidanceView(request):
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
             
-        form = PersonalDetailsGuidance()
+        form = PersonalDetailsGuidanceForm()
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-        
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'personal_details_status': application.personal_details_status
+        }
+
+
         # Access the task page
-        return render(request, 'personal-details-guidance.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+        return render(request, 'personal-details-guidance.html', variables)
     
     if request.method =='POST':
         
@@ -444,7 +495,7 @@ def PersonalDetailsGuidanceView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = PersonalDetailsGuidance(request.POST)
+        form = PersonalDetailsGuidanceForm(request.POST)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
@@ -461,9 +512,14 @@ def PersonalDetailsGuidanceView(request):
         
         # If there are invalid details
         else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
             
             # Return to the same page
-            return render(request, 'personal-details-guidance.html', {'form': form,'application_id': application_id_local})
+            return render(request, 'personal-details-guidance.html', variables)
 
 
 # View for the Your personal details task: names
@@ -477,13 +533,19 @@ def PersonalDetailsNameView(request):
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
             
-        form = PersonalDetailsName(id = application_id_local)
+        form = PersonalDetailsNameForm(id = application_id_local)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-    
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'personal_details_status': application.personal_details_status
+        }
+
         # Access the task page
-        return render(request, 'personal-details-name.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+        return render(request, 'personal-details-name.html', variables)
     
     if request.method == 'POST':
         
@@ -491,7 +553,7 @@ def PersonalDetailsNameView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = PersonalDetailsName(request.POST,id = application_id_local)
+        form = PersonalDetailsNameForm(request.POST, id = application_id_local)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
@@ -538,13 +600,19 @@ def PersonalDetailsDOBView(request):
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
             
-        form = PersonalDetailsDOB(id = application_id_local)
+        form = PersonalDetailsDOBForm(id = application_id_local)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-    
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'personal_details_status': application.personal_details_status
+        }
+
         # Access the task page
-        return render(request, 'personal-details-dob.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+        return render(request, 'personal-details-dob.html', variables)
     
     if request.method == 'POST':
         
@@ -552,7 +620,7 @@ def PersonalDetailsDOBView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = PersonalDetailsDOB(request.POST,id = application_id_local)
+        form = PersonalDetailsDOBForm(request.POST, id = application_id_local)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
@@ -603,24 +671,36 @@ def PersonalDetailsHomeAddressView(request):
         # If the user wants to use the postcode search
         if manual == 'False':    
             
-            form = PersonalDetailsHomeAddress(id = application_id_local)
+            form = PersonalDetailsHomeAddressForm(id = application_id_local)
             
             # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'personal_details_status': application.personal_details_status
+            }
         
             # Access the task page
-            return render(request, 'personal-details-home-address.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+            return render(request, 'personal-details-home-address.html', variables)
         
         # If the user wants to manually enter their address
         elif manual == 'True':    
             
-            form = PersonalDetailsHomeAddressManual(id = application_id_local)
+            form = PersonalDetailsHomeAddressManualForm(id = application_id_local)
             
             # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'personal_details_status': application.personal_details_status
+            }
         
             # Access the task page
-            return render(request, 'personal-details-home-address-manual.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+            return render(request, 'personal-details-home-address-manual.html', variables)
     
     if request.method == 'POST':
         
@@ -632,7 +712,7 @@ def PersonalDetailsHomeAddressView(request):
         if manual == 'False':
         
             # Initialise the Your login and contact details form
-            form = PersonalDetailsHomeAddress(request.POST,id = application_id_local)
+            form = PersonalDetailsHomeAddressForm(request.POST, id = application_id_local)
             
             # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
@@ -643,16 +723,22 @@ def PersonalDetailsHomeAddressView(request):
                 # Return to the application's task list    
                 return HttpResponseRedirect('/personal-details/home-address/?id=' + application_id_local + '&manual=False')
             
-            else: 
+            else:
+
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'personal_details_status': application.personal_details_status
+                }
             
                 # Access the task page
-                return render(request, 'personal-details-home-address.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+                return render(request, 'personal-details-home-address.html', variables)
         
         # If the user wants to manually enter their address    
         if manual == 'True':
         
             # Initialise the Your login and contact details form
-            form = PersonalDetailsHomeAddressManual(request.POST,id = application_id_local)
+            form = PersonalDetailsHomeAddressManualForm(request.POST, id = application_id_local)
             
             # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
@@ -676,10 +762,16 @@ def PersonalDetailsHomeAddressView(request):
                 # Return to the application's task list    
                 return HttpResponseRedirect('/personal-details/location-of-care?id=' + application_id_local)
             
-            else: 
+            else:
+
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'personal_details_status': application.personal_details_status
+                }
             
                 # Access the task page
-                return render(request, 'personal-details-home-address-manual.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})   
+                return render(request, 'personal-details-home-address-manual.html', variables)
 
 
 # View for the Your personal details task: location of care
@@ -694,29 +786,40 @@ def PersonalDetailsLocationOfCareView(request):
         application_id_local = request.GET["id"]
         
         # Get associated personal detail ID
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=application_id_local).personal_detail_id
         
         Multiple_Childcare_Address_Logic(personal_detail_id)
         
         # Retrieve answers
-        street_line1 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
-        street_line2 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
-        town = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
-        county = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
-        postcode = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
+        street_line1 = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
+        street_line2 = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
+        town = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
+        county = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
+        postcode = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
         
         # Update the status of the task to 'COMPLETED'
         if  Application.objects.get(pk = application_id_local).login_details_status != 'COMPLETED':
             
             status.update(application_id_local, 'login_details_status', 'COMPLETED')
             
-        form = PersonalDetailsLocationOfCare(id = application_id_local)
+        form = PersonalDetailsLocationOfCareForm(id = application_id_local)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)      
-    
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'street_line1': street_line1,
+            'street_line2': street_line2,
+            'town': town,
+            'county': county,
+            'postcode': postcode,
+            'personal_details_status': application.login_details_status
+        }
+
         # Access the task page
-        return render(request, 'personal-details-location-of-care.html', {'form': form,'application_id': application_id_local,'street_line1': street_line1,'street_line2': street_line2,'town': town, 'county': county, 'postcode': postcode, 'personal_details_status': application.login_details_status})
+        return render(request, 'personal-details-location-of-care.html', variables)
     
     if request.method == 'POST':
         
@@ -724,10 +827,10 @@ def PersonalDetailsLocationOfCareView(request):
         application_id_local = request.POST["id"]
 
         # Get associated personal detail ID
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=application_id_local).personal_detail_id
         
         # Initialise the Your login and contact details form
-        form = PersonalDetailsLocationOfCare(request.POST,id = application_id_local)
+        form = PersonalDetailsLocationOfCareForm(request.POST, id = application_id_local)
         
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
@@ -784,24 +887,36 @@ def PersonalDetailsChildcareAddressView(request):
         # If the user wants to use the postcode search
         if manual == 'False':  
             
-            form = PersonalDetailsChildcareAddress(id = application_id_local)
+            form = PersonalDetailsChildcareAddressForm(id = application_id_local)
             
             # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
-        
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'personal_details_status': application.personal_details_status
+            }
+
             # Access the task page
-            return render(request, 'personal-details-childcare-address.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+            return render(request, 'personal-details-childcare-address.html', variables)
         
         # If the user wants to manually enter their address
         elif manual == 'True':    
             
-            form = PersonalDetailsChildcareAddressManual(id = application_id_local)
+            form = PersonalDetailsChildcareAddressManualForm(id = application_id_local)
             
             # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
-        
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'personal_details_status': application.personal_details_status
+            }
+
             # Access the task page
-            return render(request, 'personal-details-childcare-address-manual.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+            return render(request, 'personal-details-childcare-address-manual.html', variables)
     
     if request.method == 'POST':
         
@@ -813,7 +928,7 @@ def PersonalDetailsChildcareAddressView(request):
         if manual == 'False':
         
             # Initialise the Your login and contact details form
-            form = PersonalDetailsChildcareAddress(request.POST,id = application_id_local)
+            form = PersonalDetailsChildcareAddressForm(request.POST, id = application_id_local)
             
             # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
@@ -829,15 +944,21 @@ def PersonalDetailsChildcareAddressView(request):
                 return HttpResponseRedirect('/personal-details/childcare-address/?id=' + application_id_local + '&manual=False')
             
             else: 
-            
+
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'personal_details_status': application.personal_details_status
+                }
+
                 # Access the task page
-                return render(request, 'personal-details-childcare-address.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status})
+                return render(request, 'personal-details-childcare-address.html', variables)
         
         # If the user wants to manually enter their address    
         if manual == 'True':
         
             # Initialise the Your login and contact details form
-            form = PersonalDetailsChildcareAddressManual(request.POST,id = application_id_local)
+            form = PersonalDetailsChildcareAddressManualForm(request.POST, id = application_id_local)
             
             # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
@@ -861,10 +982,16 @@ def PersonalDetailsChildcareAddressView(request):
                 # Return to the application's task list    
                 return HttpResponseRedirect('/personal-details/summary?id=' + application_id_local)
             
-            else: 
+            else:
+
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'personal_details_status': application.personal_details_status
+                }
             
                 # Access the task page
-                return render(request, 'personal-details-childcare-address-manual.html', {'form': form,'application_id': application_id_local, 'personal_details_status': application.personal_details_status}) 
+                return render(request, 'personal-details-childcare-address-manual.html', variables)
 
 
 # View for the Your personal details task: summary
@@ -876,37 +1003,59 @@ def PersonalDetailsSummaryView(request):
         application_id_local = request.GET["id"]
         
         # Get associated personal detail ID
-        personal_detail_id = Applicant_Personal_Details.objects.get(application_id=application_id_local)
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
         
         # Retrieve answers
         birth_day = personal_detail_id.birth_day
         birth_month = personal_detail_id.birth_month
         birth_year = personal_detail_id.birth_year
-        first_name = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).first_name
-        middle_names = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).middle_names
-        last_name = Applicant_Names.objects.get(personal_detail_id=personal_detail_id).last_name
-        street_line1 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
-        street_line2 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
-        town = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
-        county = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
-        postcode = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
-        location_of_childcare = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, current_address=True).childcare_address           
-        childcare_street_line1 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).street_line1
-        childcare_street_line2 = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).street_line2
-        childcare_town = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).town
-        childcare_county = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).county
-        childcare_postcode = Applicant_Home_Address.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).postcode        
+        first_name = ApplicantName.objects.get(personal_detail_id=personal_detail_id).first_name
+        middle_names = ApplicantName.objects.get(personal_detail_id=personal_detail_id).middle_names
+        last_name = ApplicantName.objects.get(personal_detail_id=personal_detail_id).last_name
+        street_line1 = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line1
+        street_line2 = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).street_line2
+        town = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).town
+        county = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).county
+        postcode = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).postcode
+        location_of_childcare = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, current_address=True).childcare_address
+        childcare_street_line1 = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).street_line1
+        childcare_street_line2 = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).street_line2
+        childcare_town = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).town
+        childcare_county = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).county
+        childcare_postcode = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id, childcare_address=True).postcode
             
-        form = PersonalDetailsSummary()
+        form = PersonalDetailsSummaryForm()
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
         
         # Update the status of the task to 'COMPLETED'
         status.update(application_id_local, 'personal_details_status', 'COMPLETED')      
-    
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'first_name': first_name,
+            'middle_names': middle_names,
+            'last_name': last_name,
+            'birth_day': birth_day,
+            'birth_month': birth_month,
+            'birth_year': birth_year,
+            'street_line1': street_line1,
+            'street_line2': street_line2,
+            'town': town,
+            'county': county,
+            'postcode': postcode,
+            'location_of_childcare': location_of_childcare,
+            'childcare_street_line1': childcare_street_line1,
+            'childcare_street_line2': childcare_street_line2,
+            'childcare_town': childcare_town, 'childcare_county': childcare_county,
+            'childcare_postcode': childcare_postcode,
+            'personal_details_status': application.personal_details_status
+        }
+
         # Access the task page
-        return render(request, 'personal-details-summary.html', {'form': form,'application_id': application_id_local,'first_name': first_name,'middle_names': middle_names,'last_name': last_name, 'birth_day': birth_day, 'birth_month': birth_month, 'birth_year': birth_year, 'street_line1': street_line1, 'street_line2': street_line2, 'town': town, 'county': county, 'postcode': postcode, 'location_of_childcare': location_of_childcare, 'childcare_street_line1': childcare_street_line1, 'childcare_street_line2': childcare_street_line2, 'childcare_town': childcare_town, 'childcare_county': childcare_county, 'childcare_postcode': childcare_postcode, 'personal_details_status': application.personal_details_status})
+        return render(request, 'personal-details-summary.html', variables)
     
     if request.method == 'POST':
         
@@ -914,7 +1063,7 @@ def PersonalDetailsSummaryView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = PersonalDetailsSummary()
+        form = PersonalDetailsSummaryForm()
         
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
@@ -945,13 +1094,19 @@ def FirstAidTrainingGuidanceView(request):
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
             
-        form = FirstAidTrainingGuidance()
+        form = FirstAidTrainingGuidanceForm()
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'first_aid_training_status': application.first_aid_training_status
+        }
         
         # Access the task page
-        return render(request, 'first-aid-guidance.html', {'form': form,'application_id': application_id_local, 'first_aid_training_status': application.first_aid_training_status})
+        return render(request, 'first-aid-guidance.html', variables)
     
     if request.method =='POST':
         
@@ -959,7 +1114,7 @@ def FirstAidTrainingGuidanceView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = FirstAidTrainingGuidance(request.POST)
+        form = FirstAidTrainingGuidanceForm(request.POST)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
@@ -976,9 +1131,14 @@ def FirstAidTrainingGuidanceView(request):
         
         # If there are invalid details
         else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
             
             # Return to the same page
-            return render(request, 'first-aid-training-guidance.html', {'form': form,'application_id': application_id_local})                     
+            return render(request, 'first-aid-training-guidance.html', variables)
 
 
 # View for the First aid training: details
@@ -992,13 +1152,19 @@ def FirstAidTrainingDetailsView(request):
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
             
-        form = FirstAidTrainingDetails(id = application_id_local)
+        form = FirstAidTrainingDetailsForm(id = application_id_local)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-    
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'first_aid_training_status': application.first_aid_training_status
+        }
+
         # Access the task page
-        return render(request, 'first-aid-details.html', {'form': form,'application_id': application_id_local, 'first_aid_training_status': application.first_aid_training_status})
+        return render(request, 'first-aid-details.html', variables)
     
     if request.method == 'POST':
         
@@ -1006,7 +1172,7 @@ def FirstAidTrainingDetailsView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = FirstAidTrainingDetails(request.POST,id = application_id_local)
+        form = FirstAidTrainingDetailsForm(request.POST, id = application_id_local)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
@@ -1078,13 +1244,19 @@ def FirstAidTrainingDeclarationView(request):
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
             
-        form = FirstAidTrainingDeclaration()
+        form = FirstAidTrainingDeclarationForm()
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-        
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'first_aid_training_status': application.first_aid_training_status
+        }
+
         # Access the task page
-        return render(request, 'first-aid-declaration.html', {'form': form,'application_id': application_id_local, 'first_aid_training_status': application.first_aid_training_status})
+        return render(request, 'first-aid-declaration.html', variables)
     
     if request.method =='POST':
         
@@ -1092,7 +1264,7 @@ def FirstAidTrainingDeclarationView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = FirstAidTrainingDeclaration(request.POST)
+        form = FirstAidTrainingDeclarationForm(request.POST)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
@@ -1107,9 +1279,14 @@ def FirstAidTrainingDeclarationView(request):
         
         # If there are invalid details
         else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
             
             # Return to the same page
-            return render(request, 'first-aid-declaration.html', {'form': form,'application_id': application_id_local}) 
+            return render(request, 'first-aid-declaration.html', variables)
 
 
 # View for the First aid training task: renew
@@ -1120,13 +1297,19 @@ def FirstAidTrainingRenewView(request):
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
             
-        form = FirstAidTrainingRenew()
+        form = FirstAidTrainingRenewForm()
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-        
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'first_aid_training_status': application.first_aid_training_status
+        }
+
         # Access the task page
-        return render(request, 'first-aid-renew.html', {'form': form,'application_id': application_id_local, 'first_aid_training_status': application.first_aid_training_status})
+        return render(request, 'first-aid-renew.html', variables)
     
     if request.method =='POST':
         
@@ -1134,7 +1317,7 @@ def FirstAidTrainingRenewView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = FirstAidTrainingRenew(request.POST)
+        form = FirstAidTrainingRenewForm(request.POST)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
@@ -1149,9 +1332,14 @@ def FirstAidTrainingRenewView(request):
         
         # If there are invalid details
         else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
             
             # Return to the same page
-            return render(request, 'first-aid-renew.html', {'form': form,'application_id': application_id_local}) 
+            return render(request, 'first-aid-renew.html', variables)
 
 
 # View for the First aid training task: training
@@ -1162,13 +1350,19 @@ def FirstAidTrainingTrainingView(request):
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
             
-        form = FirstAidTrainingTraining()
+        form = FirstAidTrainingTrainingForm()
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-        
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'first_aid_training_status': application.first_aid_training_status
+        }
+
         # Access the task page
-        return render(request, 'first-aid-training.html', {'form': form,'application_id': application_id_local, 'first_aid_training_status': application.first_aid_training_status})
+        return render(request, 'first-aid-training.html', variables)
     
     if request.method =='POST':
         
@@ -1176,7 +1370,7 @@ def FirstAidTrainingTrainingView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = FirstAidTrainingTraining(request.POST)
+        form = FirstAidTrainingTrainingForm(request.POST)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
@@ -1192,9 +1386,14 @@ def FirstAidTrainingTrainingView(request):
         
         # If there are invalid details
         else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
             
             # Return to the same page
-            return render(request, 'first-aid-training.html', {'form': form,'application_id': application_id_local}) 
+            return render(request, 'first-aid-training.html', variables)
         
         
 # View for the First aid training task: summary
@@ -1206,19 +1405,30 @@ def FirstAidTrainingSummaryView(request):
         application_id_local = request.GET["id"]
         
         # Retrieve answers
-        training_organisation = First_Aid_Training.objects.get(application_id=application_id_local).training_organisation
-        training_course = First_Aid_Training.objects.get(application_id=application_id_local).course_title
-        certificate_day = First_Aid_Training.objects.get(application_id=application_id_local).course_day
-        certificate_month = First_Aid_Training.objects.get(application_id=application_id_local).course_month
-        certificate_year = First_Aid_Training.objects.get(application_id=application_id_local).course_year
+        training_organisation = FirstAidTraining.objects.get(application_id=application_id_local).training_organisation
+        training_course = FirstAidTraining.objects.get(application_id=application_id_local).course_title
+        certificate_day = FirstAidTraining.objects.get(application_id=application_id_local).course_day
+        certificate_month = FirstAidTraining.objects.get(application_id=application_id_local).course_month
+        certificate_year = FirstAidTraining.objects.get(application_id=application_id_local).course_year
             
-        form = FirstAidTrainingSummary()
+        form = FirstAidTrainingSummaryForm()
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-        
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'training_organisation': training_organisation,
+            'training_course': training_course,
+            'certificate_day': certificate_day,
+            'certificate_month': certificate_month,
+            'certificate_year': certificate_year,
+            'first_aid_training_status': application.first_aid_training_status
+        }
+
         # Access the task page
-        return render(request, 'first-aid-summary.html', {'form': form,'application_id': application_id_local, 'training_organisation': training_organisation, 'training_course': training_course, 'certificate_day': certificate_day, 'certificate_month': certificate_month, 'certificate_year': certificate_year, 'first_aid_training_status': application.first_aid_training_status})
+        return render(request, 'first-aid-summary.html', variables)
     
     if request.method =='POST':
         
@@ -1226,7 +1436,7 @@ def FirstAidTrainingSummaryView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your login and contact details form
-        form = FirstAidTrainingSummary(request.POST)
+        form = FirstAidTrainingSummaryForm(request.POST)
         
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
@@ -1239,9 +1449,14 @@ def FirstAidTrainingSummaryView(request):
         
         # If there are invalid details
         else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
             
             # Return to the same page
-            return render(request, 'first-aid-summary.html', {'form': form,'application_id': application_id_local}) 
+            return render(request, 'first-aid-summary.html', variables)
 
 
 # View for the Early Years knowledge task
@@ -1253,7 +1468,7 @@ def EYFSView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Early Years knowledge form
-        form = EYFS(request.POST)
+        form = EYFSForm(request.POST)
         
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
@@ -1272,32 +1487,113 @@ def EYFSView(request):
         
         status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
     
-    form = EYFS()
+    form = EYFSForm()
+
+    variables = {
+        'form': form,
+        'application_id': application_id_local
+    }
     
     # Access the task page
-    return render(request, 'eyfs.html', {'application_id': application_id_local})
+    return render(request, 'eyfs.html', variables)
 
 
-# View for the Your criminal record (DBS) check task
-def DBSCheckView(request):
+# View for the Your criminal record (DBS) check: guidance
+def dbs_check_guidance_view(request):
+
+    if request.method == 'GET':
+        # If the Your criminal record (DBS) check form is not completed
+        application_id_local = request.GET["id"]
+
+        form = DBSCheckGuidanceForm()
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'criminal_record_check_status': application.criminal_record_check_status
+        }
+
+        # Access the task page
+        return render(request, 'dbs-check-guidance.html', variables)
+
+    if request.method == 'POST':
+
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+
+        # Initialise the Your login and contact details form
+        form = DBSCheckGuidanceForm(request.POST)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+
+            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+            if Application.objects.get(pk=application_id_local).criminal_record_check_status != 'COMPLETED':
+                status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
+
+            # Go to the phone numbers page
+            return HttpResponseRedirect('/dbs-check/dbs-details?id=' + application_id_local)
+
+        # If there are invalid details
+        else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+
+            # Return to the same page
+            return render(request, 'dbs-check-guidance.html', variables)
+
+
+# View for the Your criminal record (DBS) check task: DBS details
+def dbs_check_dbs_details_view(request):
 
     # Get current date and time
     current_date = datetime.datetime.today()
-   
-    if request.method =='POST':
-        
+
+    if request.method == 'GET':
+        # If the Your criminal record (DBS) check form is not completed
+        application_id_local = request.GET["id"]
+
+        form = DBSCheckDBSDetailsForm(id=application_id_local)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'criminal_record_check_status': application.criminal_record_check_status
+        }
+
+        # Access the task page
+        return render(request, 'dbs-check-dbs-details.html', variables)
+
+    if request.method == 'POST':
+
         # Retrieve the application's ID
         application_id_local = request.POST["id"]
-        
-        # Initialise the Your criminal record (DBS) check form
-        form = DBSCheck(request.POST, id = application_id_local)
-        
+
+        # Initialise the Your login and contact details form
+        form = DBSCheckDBSDetailsForm(request.POST, id=application_id_local)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
-            
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
-            
+
+            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+            if Application.objects.get(pk=application_id_local).criminal_record_check_status != 'COMPLETED':
+                status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
+
             # Perform business logic to create or update Your criminal record (DBS) check record in database
             dbs_check_record = dbs_check_logic(application_id_local, form)
             dbs_check_record.save()
@@ -1306,22 +1602,154 @@ def DBSCheckView(request):
             application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
-            
-        # Return to the application's task list
-        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
-    
-    # If the Your criminal record (DBS) check form is not completed
-    application_id_local = request.GET["id"]
-    
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if  Application.objects.get(pk = application_id_local).criminal_record_check_status != 'COMPLETED':
-        
-        status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
-    
-    form = DBSCheck(id = application_id_local)
-    
-    # Access the task page
-    return render(request, 'dbs-check.html', {'form': form,'application_id': application_id_local})
+
+            # Get answers
+            cautions_convictions = form.cleaned_data['convictions']
+
+            if cautions_convictions == 'True':
+
+                # Go to the upload DBS page
+                return HttpResponseRedirect('/dbs-check/upload-dbs?id=' + application_id_local)
+
+            elif cautions_convictions == 'False':
+
+                # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+                if Application.objects.get(pk=application_id_local).criminal_record_check_status != 'COMPLETED':
+                    status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
+
+                # Go to the summary page
+                return HttpResponseRedirect('/dbs-check/summary?id=' + application_id_local)
+
+        # If there are invalid details
+        else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+
+            # Return to the same page
+            return render(request, 'dbs-check-dbs-details.html', variables)
+
+
+# View for the Your criminal record (DBS) check: upload DBS
+def dbs_check_upload_dbs_view(request):
+
+    if request.method == 'GET':
+        # If the Your criminal record (DBS) check form is not completed
+        application_id_local = request.GET["id"]
+
+        form = DBSCheckUploadDBSForm(id=application_id_local)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'criminal_record_check_status': application.criminal_record_check_status
+        }
+
+        # Access the task page
+        return render(request, 'dbs-check-upload-dbs.html', variables)
+
+    if request.method == 'POST':
+
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+
+        # Initialise the Your login and contact details form
+        form = DBSCheckUploadDBSForm(request.POST, id=application_id_local)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+
+            # Retrieve entered data
+            declaration = form.cleaned_data['declaration']
+
+            # Update DBS check record
+            dbs_check_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
+            dbs_check_record.send_certificate_declare = declaration
+            dbs_check_record.save()
+
+            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+            if Application.objects.get(pk=application_id_local).criminal_record_check_status != 'COMPLETED':
+                status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
+
+            # Go to the phone numbers page
+            return HttpResponseRedirect('/dbs-check/summary?id=' + application_id_local)
+
+        # If there are invalid details
+        else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+
+            # Return to the same page
+            return render(request, 'dbs-check-upload-dbs.html', variables)
+
+
+# View for the Your criminal record (DBS) check task: summary
+def dbs_check_summary_view(request):
+
+    if request.method == 'GET':
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+
+        # Retrieve answers
+        dbs_certificate_number = CriminalRecordCheck.objects.get(application_id=application_id_local).dbs_certificate_number
+        cautions_convictions = CriminalRecordCheck.objects.get(application_id=application_id_local).cautions_convictions
+        send_certificate_declare = CriminalRecordCheck.objects.get(application_id=application_id_local).send_certificate_declare
+
+        form = DBSCheckSummaryForm()
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'dbs_certificate_number': dbs_certificate_number,
+            'cautions_convictions': cautions_convictions,
+            'criminal_record_check_status': application.criminal_record_check_status,
+            'declaration': send_certificate_declare
+        }
+
+        # Access the task page
+        return render(request, 'dbs-check-summary.html', variables)
+
+    if request.method == 'POST':
+
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+
+        # Initialise the Your login and contact details form
+        form = DBSCheckSummaryForm(request.POST)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+
+            # Go to the details page
+            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+
+        # If there are invalid details
+        else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+
+            # Return to the same page
+            return render(request, 'dbs-check-summary.html', variables)
 
 
 # View for the Your health task
@@ -1336,7 +1764,7 @@ def HealthView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Your health form
-        form = HealthDeclarationBooklet(request.POST, id = application_id_local)
+        form = HealthDeclarationBookletForm(request.POST, id = application_id_local)
         
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
@@ -1364,7 +1792,7 @@ def HealthView(request):
         
         status.update(application_id_local, 'health_status', 'IN_PROGRESS')
     
-    form = HealthDeclarationBooklet(id = application_id_local)
+    form = HealthDeclarationBookletForm(id = application_id_local)
     
     # Access the task page
     return render(request, 'health.html', {'form': form,'application_id': application_id_local})
@@ -1425,7 +1853,7 @@ def OtherPeopleView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the People in your home form        
-        form = OtherPeople(request.POST)
+        form = OtherPeopleForm(request.POST)
         
         # If the form is successfully submitted (with valid details)         
         if form.is_valid():
@@ -1444,7 +1872,7 @@ def OtherPeopleView(request):
         
         status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
     
-    form = OtherPeople()
+    form = OtherPeopleForm()
     
     # Access the task page
     return render(request, 'other-people.html', {'application_id': application_id_local}) 
@@ -1459,7 +1887,7 @@ def DeclarationView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Declaration form
-        form = Declaration(request.POST)
+        form = DeclarationForm(request.POST)
         
         # If the form is successfully submitted (with valid details) 
         if form.is_valid():
@@ -1478,7 +1906,7 @@ def DeclarationView(request):
     
         status.update(application_id_local, 'declarations_status', 'COMPLETED')
     
-    form = Declaration()
+    form = DeclarationForm()
     
     # Access the task page
     return render(request, 'declaration.html', {'application_id': application_id_local})
@@ -1493,7 +1921,7 @@ def ConfirmationView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Confirm your details form        
-        form = Confirm(request.POST)
+        form = ConfirmForm(request.POST)
         
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
@@ -1503,7 +1931,7 @@ def ConfirmationView(request):
 
     # If the Confirm your details form is not completed     
     application_id_local = request.GET["id"]
-    form = Confirm()
+    form = ConfirmForm()
     
     # Access the page
     return render(request, 'confirm.html', {'application_id': application_id_local})
@@ -1518,7 +1946,7 @@ def PaymentView(request):
         application_id_local = request.GET["id"]
 
         # As not data is saved for this, a blank payment form is generated with each get request       
-        form = Payment()
+        form = PaymentForm()
     
         # Access the task page
         return render(request, 'payment.html', {'form': form,'application_id': application_id_local})        
@@ -1529,7 +1957,7 @@ def PaymentView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Payment form        
-        form = Payment(request.POST)
+        form = PaymentForm(request.POST)
         
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
@@ -1563,7 +1991,7 @@ def CardPaymentDetailsView(request):
         application_id_local = request.GET["id"]
 
         # As no data is saved for this, a blank payment form is generated with each get request       
-        form = PaymentDetails()
+        form = PaymentDetailsForm()
     
         # Access the task page
         return render(request, 'payment-details.html', {'form': form,'application_id': application_id_local})
@@ -1574,7 +2002,7 @@ def CardPaymentDetailsView(request):
         application_id_local = request.POST["id"]
                
         # Initialise the Payment Details form
-        form = PaymentDetails(request.POST)
+        form = PaymentDetailsForm(request.POST)
         
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
@@ -1595,9 +2023,9 @@ def CardPaymentDetailsView(request):
             if payment_response.status_code == 201:
                 application = Application.objects.get(pk=application_id_local)
                 login_id = application.login_id.login_id
-                login_record = Login_And_Contact_Details.objects.get(pk=login_id)
-                personal_detail_id = Applicant_Personal_Details.objects.get(application_id=application_id_local).personal_detail_id
-                applicant_name_record = Applicant_Names.objects.get(personal_detail_id=personal_detail_id)
+                login_record = UserDetails.objects.get(pk=login_id)
+                personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=application_id_local).personal_detail_id
+                applicant_name_record = ApplicantName.objects.get(personal_detail_id=personal_detail_id)
                 email_response = payment.payment_email(login_record.email, applicant_name_record.first_name)
                 
                 variables = {
@@ -1642,7 +2070,7 @@ def ApplicationSavedView(request):
         application_id_local = request.POST["id"]
         
         # Initialise the Application saved form        
-        form = ApplicationSaved(request.POST)
+        form = ApplicationSavedForm(request.POST)
         
         # If the form is successfully submitted (with valid details)        
         if form.is_valid():
@@ -1652,7 +2080,7 @@ def ApplicationSavedView(request):
     
     # If the Application saved form is not completed
     application_id_local = request.GET["id"]
-    form = ApplicationSaved()
+    form = ApplicationSavedForm()
     
     # Access the page
     return render(request, 'application-saved.html', {'form': form, 'application_id': application_id_local})
@@ -1682,7 +2110,7 @@ def ResetView(request):
 
 #Test View, will change
 def existingApplicationView(request):
-    form = EmailLogin()
+    form = EmailLoginForm()
     if request.method =='POST':
         print (request)
     return render(request, 'existing-application.html', {'form': form})

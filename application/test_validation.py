@@ -1,21 +1,20 @@
-'''
+"""
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Validation Unit Tests --
 
 @author: Informed Solutions
-'''
+"""
 
-
-from django.test import TestCase
 
 import re
 
 from datetime import date
 
+from django.test import TestCase
 
 
 # Test validation for Your login details
-class Test_Login_And_Contact_Details_Validation(TestCase):
+class Test_UserDetails_Validation(TestCase):
     
     # Test validation for correct email
     def test_correct_email(self):
@@ -328,6 +327,23 @@ class Test_Personal_Details_Validation(TestCase):
         test_postcode = 'WA144PAAAAAA'
         
         assert(re.match("^[A-Za-z0-9 ]{1,8}$", test_postcode) == None)
+
+
+# Test validation for Your criminal record (DBS) check
+class TestDBSCheckValidation(TestCase):
+
+    # Test invalid DBS certificate number: too long
+    def test_invalid_dbs_certificate_number(self):
+
+        test_dbs_certificate_number = 12345612345678
+
+        assert(len(str(test_dbs_certificate_number)) > 12)
+
+    # Test invalid DBS certificate number: too short
+    def test_invalid_dbs_certificate_number2(self):
+        test_dbs_certificate_number = 123456
+
+        assert (len(str(test_dbs_certificate_number)) < 12)
 
 
 # Test validation for Payment

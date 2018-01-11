@@ -1,15 +1,12 @@
-'''
-Created on 13 Dec 2017
-
+"""
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- Status --
 
 @author: Informed Solutions
-'''
+"""
 
 
-from application.models import Application
-
+from .models import Application
 
 
 # Function to update task status
