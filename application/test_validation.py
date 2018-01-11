@@ -329,6 +329,23 @@ class Test_Personal_Details_Validation(TestCase):
         assert(re.match("^[A-Za-z0-9 ]{1,8}$", test_postcode) == None)
 
 
+# Test validation for Your criminal record (DBS) check
+class TestDBSCheckValidation(TestCase):
+
+    # Test invalid DBS certificate number: too long
+    def test_invalid_dbs_certificate_number(self):
+
+        test_dbs_certificate_number = 12345612345678
+
+        assert(len(str(test_dbs_certificate_number)) > 12)
+
+    # Test invalid DBS certificate number: too short
+    def test_invalid_dbs_certificate_number2(self):
+        test_dbs_certificate_number = 123456
+
+        assert (len(str(test_dbs_certificate_number)) < 12)
+
+
 # Test validation for Payment
 class Test_Payment_Validation(TestCase):
     

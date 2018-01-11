@@ -12,9 +12,16 @@ from datetime import date
 from django.test import TestCase
 from uuid import UUID
 
-from .models import (Application, ApplicantName, ApplicantPersonalDetails, ChildcareType,
-                     CriminalRecordCheck, FirstAidTraining, HealthDeclarationBooklet, UserDetails,
-                     Reference, ApplicantHomeAddress)
+from .models import (ApplicantHomeAddress,
+                     ApplicantName,
+                     ApplicantPersonalDetails,
+                     Application,
+                     ChildcareType,
+                     CriminalRecordCheck,
+                     FirstAidTraining,
+                     HealthDeclarationBooklet,
+                     Reference,
+                     UserDetails)
 
 
 # Test business logic to create or update a Type of childcare record
@@ -955,7 +962,7 @@ class Test_First_Aid_Training_Logic(TestCase):
 
 
 # Test business logic to create or update a Your criminal record (DBS) check record
-class Test_DBS_Check_Logic(TestCase):
+class TestDBSCheckLogic(TestCase):
     
     # Test the business case where a new record needs to be created
     def test_logic_to_create_new_record(self):

@@ -1,45 +1,49 @@
+<!-- Tab title -->
+<head>
+	<title>DBS check</title>
+</head>
+
+<!-- Implement GOV.UK template -->
 {% extends 'govuk_template.html' %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
+<!-- Initialise error summary for page -->
+{{form.error_summary}}
+
 <main id="content" role="main">
     <div class="column-full">
 		<div class="form-group grid-row" style="padding-top: 30px;">
-    		<a href="javascript:history.back()" style="margin-right: 10px; line-height: 28px">
-        		<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
-                	<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
-                </svg>
-        	Back
-    		</a>
+            <a href="/dbs-check/guidance?id={{application_id}}" style="margin-right: 10px; line-height: 28px" alt="Back to application list">
+		        <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
+		        	<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
+		        </svg>
+		        Back
+		    </a>
 		</div>
-        <form action="/dbs-check/reference" method="post" class="form">{% csrf_token %}
+        <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
             <div class="grid-row">
                 <h1 class="form-title heading-large">
-                    Your criminal record check
+                    Your criminal record (DBS) check details
                 </h1>
-            </div>
-            <div class="panel panel-border-narrow grid-row">
-                <p>Criminal record checks are also known as 'DBS checks'.</p>
             </div>
             <div class="grid-row">
                 <p>Please give us details of your Disclosure and Barring Service (DBS) certificate.</p>
-                <p>This must be an enhanced check for a home-based childcare role.</p>
                 <details style="margin-bottom: 15px;" role="group">
                     <summary role="button" aria-controls="details-content-0" aria-expanded="false">
-                    	<span class="summary">How do I get a DBS certificate?</span>
+                    	<span class="summary">Where can I get a DBS certificate?</span>
                     </summary>
                     <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-                        <p>You can apply for a DBS certificate online using the link below.</p>
-                        <p>DBS checks cost 	&#163;52.10 and can take about 6 weeks.</p>
-                        <p>You can come back and finish this section when you have the certificate.</p>
+                        <p>You can apply for a DBS certificate on the Ofsted DBS website:</p>
                         <a href="http://ofsteddbsapplication.co.uk/step-one.aspx" class="external-link" target="_blank">Get an Ofsted DBS check</a>
                     </div>
                 </details>
+                {{form.as_div}}
+                {% csrf_token %}
+                <input type="hidden" value="{{application_id}}" name = "id" />
             </div>
-            {{form}}
-            <input type="hidden" value="{{application_id}}" name = "id" />
             <div class="form-group grid-row">
     			<input type="submit" class="button" value="Save and continue">
 			</div>

@@ -689,9 +689,16 @@ class EYFSForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
+
+# Your criminal record (DBS) check: guidance form
+class DBSCheckGuidanceForm(GOVUKForm):
+
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
  
 # Your criminal record (DBS) check form   
-class DBSCheckForm(GOVUKForm):
+class DBSCheckDBSDetailsForm(GOVUKForm):
     
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -699,21 +706,51 @@ class DBSCheckForm(GOVUKForm):
     options = (('True', 'Yes'), ('False', 'No'))
 
     dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
-                                                help_text='12-digit number on your certificate')
+                                                help_text='12-digit number on your certificate',
+                                                required=True)
     convictions = forms.ChoiceField(label='Do you have any cautions or convictions?',
                                     help_text='Include any information recorded on your certificate',
-                                    choices=options, widget=InlineRadioSelect)
+                                    choices=options, widget=InlineRadioSelect,
+                                    required=True)
     
     def __init__(self, *args, **kwargs):
         
         self.application_id_local = kwargs.pop('id')
-        super(DBSCheckForm, self).__init__(*args, **kwargs)
+        super(DBSCheckDBSDetailsForm, self).__init__(*args, **kwargs)
         
         # If information was previously entered, display it on the form 
         if CriminalRecordCheck.objects.filter(application_id=self.application_id_local).count() > 0:
         
             self.fields['dbs_certificate_number'].initial = CriminalRecordCheck.objects.get(application_id=self.application_id_local).dbs_certificate_number
             self.fields['convictions'].initial = CriminalRecordCheck.objects.get(application_id=self.application_id_local).cautions_convictions
+
+    # DBS certificate number validation
+    def clean_dbs_certificate_number(self):
+
+        dbs_certificate_number = self.cleaned_data['dbs_certificate_number']
+
+        if len(str(dbs_certificate_number)) > 12 :
+
+            raise forms.ValidationError('TBC')
+
+        if len(str(dbs_certificate_number)) < 12 :
+
+            raise forms.ValidationError('TBC')
+
+        return dbs_certificate_number
+
+# Your criminal record (DBS) check: upload DBS form
+class DBSCheckUploadDBSForm(GOVUKForm):
+
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+# Your criminal record (DBS) check: summary form
+class DBSCheckSummaryForm(GOVUKForm):
+
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
 
 
 # Your health form

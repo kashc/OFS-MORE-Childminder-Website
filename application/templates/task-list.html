@@ -152,9 +152,19 @@
                     </tr>                          
                     <tr id="dbs">
                         <td class="task" style="padding-right: 10px">
-                            <a href="/dbs-check/reference?id={{application_id}}" id="{{application_id}}">
+                            {% if criminal_record_check_status == 'NOT_STARTED' %}
+                            <a href="/dbs-check/guidance?id={{application_id}}" id="{{application_id}}">
                                 <span class="task-name">Your criminal record (DBS) check</span>
                             </a>
+                            {% elif criminal_record_check_status == 'IN_PROGRESS' %}
+                            <a href="/dbs-check/guidance?id={{application_id}}" id="{{application_id}}">
+                                <span class="task-name">Your criminal record (DBS) check</span>
+                            </a>
+                            {% elif criminal_record_check_status == 'COMPLETED' %}
+                            <a href="/dbs-check/summary?id={{application_id}}" id="{{application_id}}">
+                                <span class="task-name">Your criminal record (DBS) check</span>
+                            </a>
+                            {% endif %}
                         </td>
                         {% if criminal_record_check_status == 'NOT_STARTED' %}
 	                        <td class="numeric" id="task-status">

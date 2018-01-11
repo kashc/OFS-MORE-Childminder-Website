@@ -1,0 +1,66 @@
+<!-- Tab title -->
+<head>
+	<title>DBS check</title>
+</head>
+
+<!-- Implement GOV.UK template -->
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<!-- Initialise error summary for page -->
+{{form.error_summary}}
+
+<main id="content" role="main">
+    <div class="column-full">
+		<div class="form-group grid-row" style="padding-top: 30px;">
+            <a href="/dbs-check/dbs-details?id={{application_id}}" style="margin-right: 10px; line-height: 28px" alt="Back to application list">
+		        <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
+		        	<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
+		        </svg>
+		        Back
+		    </a>
+		</div>
+        <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+            <div class="grid-row">
+                <h1 class="form-title heading-large">
+                    Post your DBS certificate
+                </h1>
+            </div>
+            <div class="grid-row">
+                <p>You will have to send us your original DBS certificate.</p>
+                <p>We need this to check details of any cautions or convictions.</p>
+                <p>Ofsted is separate from DBS and so won't have all of this information.</p>
+                <p>Please send your original certificate to:</p>
+                <p>
+                    Ofsted
+                    </br>
+                    Piccadilly Gate
+                    </br>
+                    Store Street
+                    </br>
+                    Manchester
+                    </br>
+                    M1 2WD
+                </p>
+                </br>
+                <p>We will check your certificate and send it straight back to you, using recorded delivery.</p>
+                {{form.as_div}}
+                {% csrf_token %}
+                <input type="hidden" value="{{application_id}}" name = "id" />
+            </div>
+            <div class="form-group grid-row">
+    			<input type="submit" class="button" value="Save and continue">
+			</div>
+			<div class="grid-row">
+    			<div class="form-group">
+    				<a href="/task-list?id={{application_id}}">Return to list</a>
+				</div>
+			</div>
+        </form>
+    </div>
+</main>
+
+{% endblock %}

@@ -16,12 +16,13 @@ from uuid import UUID
 from .models import Application, UserDetails
 
 from .views import (ApplicationSavedView, ConfirmationView, ContactEmailView, ContactPhoneView,
-                    ContactSummaryView, DBSCheckView, DeclarationView, EYFSView, FirstAidTrainingDeclarationView,
+                    ContactSummaryView, dbs_check_dbs_details_view, DeclarationView, EYFSView, FirstAidTrainingDeclarationView,
                     FirstAidTrainingDetailsView, FirstAidTrainingGuidanceView, FirstAidTrainingRenewView,
                     FirstAidTrainingSummaryView, FirstAidTrainingTrainingView, HealthView, LogInView,
                     OtherPeopleView, PaymentView, PersonalDetailsDOBView, PersonalDetailsNameView,
                     PersonalDetailsHomeAddressView, PersonalDetailsLocationOfCareView, QuestionView,
-                    ReferencesView, StartPageView, TypeOfChildcareView, PersonalDetailsGuidanceView)
+                    ReferencesView, StartPageView, TypeOfChildcareView, PersonalDetailsGuidanceView,
+                    dbs_check_guidance_view)
 
 
 # Test suite for start page
@@ -633,9 +634,27 @@ class DBSCheckTest(TestCase):
 
     # Test to check if URL resolves to correct view
     def test_url_resolves_to_page(self):
+
+        found = resolve('/dbs-check/guidance/')
+        self.assertEqual(found.func, dbs_check_guidance_view)
+
+    # Test to check that a user cannot navigate to the page without an application ID
+    def test_page_not_displayed_without_id(self):
+
+        c = Client()
+
+        try:
+            c.get('/dbs-check/guidance/?id=')
+            self.assertEqual(1, 0)
+
+        except:
+            self.assertEqual(0, 0)
+
+    # Test to check if URL resolves to correct view
+    def test_url_resolves_to_page(self):
         
-        found = resolve('/dbs-check/')
-        self.assertEqual(found.func, DBSCheckView)
+        found = resolve('/dbs-check/dbs-details/')
+        self.assertEqual(found.func, dbs_check_dbs_details_view)
     
     # Test to check that a user cannot navigate to the page without an application ID
     def test_page_not_displayed_without_id(self):
@@ -643,11 +662,47 @@ class DBSCheckTest(TestCase):
         c = Client()
         
         try:
-            c.get('/dbs-check/?id=')
+            c.get('/dbs-check/dbs-details?id=')
             self.assertEqual(1,0)
             
         except:
             self.assertEqual(0,0)
+
+    # Test to check if URL resolves to correct view
+    def test_url_resolves_to_page(self):
+
+        found = resolve('/dbs-check/upload-dbs/')
+        self.assertEqual(found.func, dbs_check_dbs_details_view)
+
+    # Test to check that a user cannot navigate to the page without an application ID
+    def test_page_not_displayed_without_id(self):
+
+        c = Client()
+
+        try:
+            c.get('/dbs-check/upload-dbs?id=')
+            self.assertEqual(1, 0)
+
+        except:
+            self.assertEqual(0, 0)
+
+    # Test to check if URL resolves to correct view
+    def test_url_resolves_to_page(self):
+
+        found = resolve('/dbs-check/summary/')
+        self.assertEqual(found.func, dbs_check_dbs_details_view)
+
+    # Test to check that a user cannot navigate to the page without an application ID
+    def test_page_not_displayed_without_id(self):
+
+        c = Client()
+
+        try:
+            c.get('/dbs-check/summary?id=')
+            self.assertEqual(1, 0)
+
+        except:
+            self.assertEqual(0, 0)
             
     # Test progress status does not update to Started when a returning to the task list after completing a task
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
