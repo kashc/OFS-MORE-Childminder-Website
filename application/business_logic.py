@@ -318,6 +318,7 @@ def dbs_check_logic(application_id_local, form):
         # Return the record
         dbs_record.dbs_certificate_number = dbs_certificate_number
         dbs_record.cautions_convictions = cautions_convictions
+        dbs_record.send_certificate_declare = None
         
     return dbs_record
 

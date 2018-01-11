@@ -177,6 +177,7 @@ class CriminalRecordCheck(models.Model):
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     dbs_certificate_number = models.CharField(max_length=50, blank=True)
     cautions_convictions = models.BooleanField(blank=True)
+    send_certificate_declare = models.NullBooleanField(blank=True)
     
     # Set table name
     class Meta:

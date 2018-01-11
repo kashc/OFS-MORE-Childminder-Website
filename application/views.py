@@ -1639,7 +1639,7 @@ def dbs_check_upload_dbs_view(request):
         # If the Your criminal record (DBS) check form is not completed
         application_id_local = request.GET["id"]
 
-        form = DBSCheckUploadDBSForm()
+        form = DBSCheckUploadDBSForm(id=application_id_local)
 
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
@@ -1659,13 +1659,21 @@ def dbs_check_upload_dbs_view(request):
         application_id_local = request.POST["id"]
 
         # Initialise the Your login and contact details form
-        form = DBSCheckUploadDBSForm(request.POST)
+        form = DBSCheckUploadDBSForm(request.POST, id=application_id_local)
 
         # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
 
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
+
+            # Retrieve entered data
+            declaration = form.cleaned_data['declaration']
+
+            # Update DBS check record
+            dbs_check_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
+            dbs_check_record.send_certificate_declare = declaration
+            dbs_check_record.save()
 
             # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
             if Application.objects.get(pk=application_id_local).criminal_record_check_status != 'COMPLETED':
@@ -1696,6 +1704,7 @@ def dbs_check_summary_view(request):
         # Retrieve answers
         dbs_certificate_number = CriminalRecordCheck.objects.get(application_id=application_id_local).dbs_certificate_number
         cautions_convictions = CriminalRecordCheck.objects.get(application_id=application_id_local).cautions_convictions
+        send_certificate_declare = CriminalRecordCheck.objects.get(application_id=application_id_local).send_certificate_declare
 
         form = DBSCheckSummaryForm()
 
@@ -1707,7 +1716,8 @@ def dbs_check_summary_view(request):
             'application_id': application_id_local,
             'dbs_certificate_number': dbs_certificate_number,
             'cautions_convictions': cautions_convictions,
-            'criminal_record_check_status': application.criminal_record_check_status
+            'criminal_record_check_status': application.criminal_record_check_status,
+            'declaration': send_certificate_declare
         }
 
         # Access the task page

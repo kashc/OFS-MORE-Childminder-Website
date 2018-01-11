@@ -739,11 +739,30 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
 
         return dbs_certificate_number
 
+
 # Your criminal record (DBS) check: upload DBS form
 class DBSCheckUploadDBSForm(GOVUKForm):
 
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
+
+    declaration = forms.BooleanField(label='I will send my original DBS certificate to Ofsted', required=True)
+
+    def __init__(self, *args, **kwargs):
+
+        self.application_id_local = kwargs.pop('id')
+        super(DBSCheckUploadDBSForm, self).__init__(*args, **kwargs)
+
+        # If information was previously entered, display it on the form
+        if CriminalRecordCheck.objects.filter(application_id=self.application_id_local).count() > 0:
+
+            if CriminalRecordCheck.objects.get(application_id=self.application_id_local).send_certificate_declare is True:
+
+                self.fields['declaration'].initial = '1'
+
+            elif CriminalRecordCheck.objects.get(application_id=self.application_id_local).send_certificate_declare is False:
+
+                self.fields['declaration'].initial = '0'
 
 
 # Your criminal record (DBS) check: summary form

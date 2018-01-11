@@ -30,10 +30,9 @@
                 </h1>
             </div>
             <div class="grid-row">
-                <p>You will have to send us your original DBS certificate.</p>
+                <p>You will have to send your original DBS certificate to Ofsted.</p>
                 <p>We need this to check details of any cautions or convictions.</p>
-                <p>Ofsted is separate from DBS and so won't have all of this information.</p>
-                <p>Please send your original certificate to:</p>
+                <p>Please send your original certificate (not a photocopy) to:</p>
                 <p>
                     Ofsted
                     </br>
@@ -45,8 +44,10 @@
                     </br>
                     M1 2WD
                 </p>
-                </br>
-                <p>We will check your certificate and send it straight back to you, using recorded delivery.</p>
+                <p>We will check your certificate and send it back to you.</p>
+                <h2 class="form-title heading-medium">
+               		I declare that:
+           		</h2>
                 {{form.as_div}}
                 {% csrf_token %}
                 <input type="hidden" value="{{application_id}}" name = "id" />

@@ -76,6 +76,27 @@
 						</a>
 					</td>
 				</tr>
+                {% if cautions_convictions is True %}
+                <tr>
+					<td>
+						Will you send your DBS certificate to Ofsted?
+					</td>
+					{% if declaration is True %}
+					<td>
+						Yes
+					</td>
+					{% elif declaration is False %}
+					<td>
+						No
+					</td>
+					{% endif %}
+					<td class="change-answer">
+						<a href="/dbs-check/upload-dbs?id={{application_id}}#id_declaration-group" alt='Change will you send your DBS certificate to Ofsted?'>
+							Change <span class="visuallyhidden">will you send your DBS certificate to Ofsted?</span>
+						</a>
+					</td>
+				</tr>
+                {% endif %}
 			</tbody>
 		</table>
 		<br>
