@@ -8,8 +8,8 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 import datetime
 
 from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application,
-                     ChildcareType, CriminalRecordCheck, FirstAidTraining, HealthDeclarationBooklet,
-                     Reference)
+                     ChildcareType, CriminalRecordCheck, FirstAidTraining,
+                     Reference, HealthDeclarationBooklet)
 
 
 # Business logic to create or update a Type of childcare record
@@ -370,22 +370,13 @@ def health_check_logic(application_id_local, form):
     this_application = Application.objects.get(application_id=application_id_local)
 
     # Get entered data to insert into database
-    movement_problems = form.cleaned_data.get('walking_bending')
-    breathing_problems = form.cleaned_data.get('asthma_breathing')
-    heart_disease = form.cleaned_data.get('heart_disease')
-    blackout_epilepsy = form.cleaned_data.get('blackout_epilepsy')
-    mental_health_problems = form.cleaned_data.get('mental_health')
-    alcohol_drug_problems = form.cleaned_data.get('alcohol_drugs')
+    send_hdb_declare = form.cleaned_data.get('send_hdb_declare')
 
     # If no record exists, create a new one
     if HealthDeclarationBooklet.objects.filter(application_id=application_id_local).count() == 0:
 
         # Create a new Your health record corresponding to the application        
-        hdb_record = HealthDeclarationBooklet(movement_problems=movement_problems,
-                                              breathing_problems=breathing_problems, heart_disease=heart_disease,
-                                              blackout_epilepsy=blackout_epilepsy,
-                                              mental_health_problems=mental_health_problems,
-                                              alcohol_drug_problems=alcohol_drug_problems,
+        hdb_record = HealthDeclarationBooklet(send_hdb_declare=send_hdb_declare,
                                               application_id=this_application)
 
     # If a record exists, update it
@@ -393,12 +384,7 @@ def health_check_logic(application_id_local, form):
 
         # Retrieve the Your health record corresponding to the application        
         hdb_record = HealthDeclarationBooklet.objects.get(application_id=application_id_local)
-        hdb_record.movement_problems = movement_problems
-        hdb_record.breathing_problems = breathing_problems
-        hdb_record.heart_disease = heart_disease
-        hdb_record.blackout_epilepsy = blackout_epilepsy
-        hdb_record.mental_health_problems = mental_health_problems
-        hdb_record.alcohol_drug_problems = alcohol_drug_problems
+        hdb_record.send_hdb_declare = send_hdb_declare
 
     return hdb_record
 

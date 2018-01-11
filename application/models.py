@@ -190,13 +190,7 @@ class HealthDeclarationBooklet(models.Model):
     
     hdb_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
-    movement_problems = models.BooleanField(blank=True)
-    breathing_problems = models.BooleanField(blank=True)
-    heart_disease = models.BooleanField(blank=True)
-    blackout_epilepsy = models.BooleanField(blank=True)
-    mental_health_problems = models.BooleanField(blank=True)
-    alcohol_drug_problems = models.BooleanField(blank=True)
-    health_details = models.CharField(max_length=500, blank=True)
+    send_hdb_declare = models.NullBooleanField(blank=True)
     
     # Set table name
     class Meta:
