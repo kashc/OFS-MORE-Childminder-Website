@@ -27,11 +27,11 @@ if PROJECT_ROOT not in sys.path:
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '-r&u(maq#j68ngj=_ch#l6#mhak%8rbh$px8e&9c6b9@c7df=m'
 
-#Expiry period of Magic Link Emails and Texts in hours
-SMS_EXPIRY=1
-EMAIL_EXPIRY=1
+# Expiry period of Magic Link Emails and Texts in hours
+SMS_EXPIRY = 1
+EMAIL_EXPIRY = 1
 
-#Base URL of notify gateway
+# Base URL of notify gateway
 NOTIFY_URL = 'http://130.130.52.132:8095'
 
 PAYMENT_URL = 'http://130.130.52.132:8089'
@@ -40,7 +40,6 @@ PAYMENT_URL = 'http://130.130.52.132:8089'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -88,7 +87,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'childminder.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -102,7 +100,6 @@ DATABASES = {
         'PORT': '5462',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -122,7 +119,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -136,7 +132,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
@@ -146,10 +141,9 @@ STATICFILES_FINDERS = [
 
 ]
 
-
 STATIC_URL = '/static/'
 
-#Test outputs
+# Test outputs
 TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.XMLTestRunner'
 TEST_OUTPUT_VERBOSE = True
 TEST_OUTPUT_DESCRIPTIONS = True

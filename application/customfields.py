@@ -5,7 +5,6 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 """
 
-
 from django import forms
 from django.forms import widgets
 from django.utils.timezone import now
@@ -13,8 +12,8 @@ from django.utils.translation import gettext, gettext_lazy as _
 from govuk_forms.widgets import SplitHiddenDateWidget
 
 
-#Extremely hacky disgusting workaround for expiry date
-#Creating a widget class
+# Extremely hacky disgusting workaround for expiry date
+# Creating a widget class
 class Widget(widgets.Widget):
     input_classes = 'form-control'
     input_error_classes = 'form-control-error'
@@ -25,7 +24,8 @@ class Widget(widgets.Widget):
         attrs['class'] = ('%s %s' % (attrs.get('class', ''), css_classes)).strip()
         return attrs
 
-#Creating a base multiwidget class
+
+# Creating a base multiwidget class
 class MultiWidget(widgets.MultiWidget, Widget):
     subwidget_group_classes = ()
     subwidget_label_classes = ()
@@ -65,7 +65,8 @@ class ExpirySplitDateWidget(MultiWidget):
         if value:
             return [value.month, value.year]
         return [None, None]
-    
+
+
 class YearField(forms.IntegerField):
     """
     In integer field that accepts years between 1900 and now
@@ -99,9 +100,7 @@ class YearField(forms.IntegerField):
                 value += self.century - 100
             else:
                 value += self.century
-        return super().clean(value)    
-
-
+        return super().clean(value)
 
 
 class ExpirySplitDateField(forms.MultiValueField):
