@@ -10,48 +10,44 @@
 
 {% block inner_content %}
 
+<div class="column-full">
+	<div class="form-group grid-row" style="padding-top: 30px;">
 
-<main id="content" role="main">
-	<div class="column-full">
-		<div class="form-group grid-row" style="padding-top: 30px;">
-
-			<!-- Back button -->	    	
-		    <a href="/first-aid/details?id={{application_id}}" style="margin-right: 10px; line-height: 28px" alt="Back to application list">
-		        <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
-		        	<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
-		        </svg>
-		        Back
-		    </a>
-		</div>	
-	
-		<!-- Form -->
-		<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
-    		<!-- Content -->
-    		<div class="grid-row">
-           		<h1 class="form-title heading-large">
-               		Update your first aid training
-           		</h1>
-           		<p>You will have to go on another course to update your certificate.</p>
-           		<p>Ask your council for details of courses in your area.</p>
-           		<p>You can come finish this section when you have booked your course.</p>
-           		<ul class="list-bullet list-item-wrapper">
-			        <li><a href="https://www.gov.uk/find-local-council" class="external-link" target="_blank">Find your local council</a></li>
-			        <li><a href="https://www.redcrossfirstaidtraining.co.uk/Courses/First-aid-at-work-courses-uk-mainland/Scheduled-courses/Paediatric-first-aid.aspx" class="external-link" target="_blank">Red Cross course</a></li>
-			        <li><a href="http://www.sja.org.uk/sja/training-courses/first-aid-courses/paediatric-first-aid.aspx" class="external-link" target="_blank">St John Ambulance course</a></li>
-		        </ul>
-           		{{form.as_div}}
-  	    		{% csrf_token %}
-  	    		</br>
-	    		<input type="submit" class="button" value="Save and continue" alt='Continue to personal details'>
-	    		<input type="hidden" id="id" name="id" value="{{application_id}}" />
-    		</div>
-		</form>
-		</br>
-		<!-- Return to task list -->
-    	<div class="form-group grid-row">
-    		<a href="/task-list?id={{application_id}}">Return to list</a>
-		</div>
+		<!-- Back button -->
+		<a href="/first-aid/details?id={{application_id}}" style="margin-right: 10px; line-height: 28px" alt="Back to application list">
+			<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
+				<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
+			</svg>
+			Back
+		</a>
 	</div>
-</main>
+	<!-- Form -->
+	<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+		<!-- Content -->
+		<div class="grid-row">
+			<h1 class="form-title heading-large">
+				Update your first aid training
+			</h1>
+			<p>You will have to go on another course to update your certificate.</p>
+			<p>Ask your council for details of courses in your area.</p>
+			<p>You can come finish this section when you have booked your course.</p>
+			<ul class="list-bullet list-item-wrapper">
+				<li><a href="https://www.gov.uk/find-local-council" class="external-link" target="_blank">Find your local council</a></li>
+				<li><a href="https://www.redcrossfirstaidtraining.co.uk/Courses/First-aid-at-work-courses-uk-mainland/Scheduled-courses/Paediatric-first-aid.aspx" class="external-link" target="_blank">Red Cross course</a></li>
+				<li><a href="http://www.sja.org.uk/sja/training-courses/first-aid-courses/paediatric-first-aid.aspx" class="external-link" target="_blank">St John Ambulance course</a></li>
+			</ul>
+			{{form.as_div}}
+			{% csrf_token %}
+			</br>
+			<input type="submit" class="button" value="Save and continue" alt='Continue to personal details'>
+			<input type="hidden" id="id" name="id" value="{{application_id}}" />
+		</div>
+	</form>
+	</br>
+	<!-- Return to task list -->
+	<div class="form-group grid-row">
+		<a href="/task-list?id={{application_id}}">Return to list</a>
+	</div>
+</div>
 
 {% endblock %}

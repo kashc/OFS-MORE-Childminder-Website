@@ -1,3 +1,8 @@
+<!-- Tab title -->
+<head>
+	<title>Bad link</title>
+</head>
+
 <!-- Implement GOV.UK template -->
 {% extends 'govuk_template.html' %}
 {% load static %}
@@ -5,17 +10,14 @@
 
 {% block inner_content %}
 
-
-<main id="content" role="main">
-	<div class="column-full">
-    		<div class="grid-row">
-           		<h1 class="form-title heading-large">
-               		Bad link
-           		</h1>
-           		<p>You have navigated to a bad link.</p>
-				<p>Please try logging back in to your account <a href="/existing-application/">here</a>.</p>
-    		</div>
-	</div>
-</main>
+<div class="column-full">
+	<div class="grid-row">
+        <h1 class="form-title heading-large">
+            Bad link
+        </h1>
+        <p>You have navigated to a bad link.</p>
+        <p>Please try logging back in to your account <a href="/existing-application/">here</a>.</p>
+    </div>
+</div>
 
 {% endblock %}

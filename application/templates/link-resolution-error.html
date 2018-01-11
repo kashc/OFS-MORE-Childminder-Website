@@ -1,3 +1,8 @@
+<!-- Tab title -->
+<head>
+	<title>Link not resolved</title>
+</head>
+
 <!-- Implement GOV.UK template -->
 {% extends 'govuk_template.html' %}
 {% load static %}
@@ -5,17 +10,14 @@
 
 {% block inner_content %}
 
-
-<main id="content" role="main">
-	<div class="column-full">
-    		<div class="grid-row">
-           		<h1 class="form-title heading-large">
-               		Link cannot be resolved
-           		</h1>
-           		<p>We are unable to resolve your link.</p>
-				<p>Please try logging back in to your account <a href="/existing-application/">here</a>.</p>
-    		</div>
-	</div>
-</main>
+<div class="column-full">
+    <div class="grid-row">
+        <h1 class="form-title heading-large">
+            Link cannot be resolved
+        </h1>
+        <p>We are unable to resolve your link.</p>
+        <p>Please try logging back in to your account <a href="/existing-application/">here</a>.</p>
+    </div>
+</div>
 
 {% endblock %}

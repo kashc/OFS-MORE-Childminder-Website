@@ -188,15 +188,20 @@ def TypeOfChildcareView(request):
     application_id_local = request.GET["id"]
     
     # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if  Application.objects.get(pk = application_id_local).childcare_type_status != 'COMPLETED':
+    if Application.objects.get(pk = application_id_local).childcare_type_status != 'COMPLETED':
         
         status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
         
     form = TypeOfChildcareForm(id = application_id_local)
 
+    # Retrieve status of task
+    application = Application.objects.get(pk=application_id_local)
+    childcare_type_status = application.childcare_type_status
+
     variables = {
         'form': form,
-        'application_id': application_id_local
+        'application_id': application_id_local,
+        'childcare_type_status': childcare_type_status
     }
 
     # Access the task page

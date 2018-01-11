@@ -3,6 +3,7 @@
 	<title>Payment</title>
 </head>
 
+<!-- Implement GOV.UK template -->
 {% extends 'govuk_template.html' %}
 {% load static %}
 {% load govuk_template_base %}
@@ -12,46 +13,44 @@
 <!-- Initialise error summary for page -->
 {{form.error_summary}}
 
-<main id="content" role="main">
-    <div class="column-full">
-        <div class="form-group grid-row" style="padding-top: 30px;">
-    		<a href="/payment?id={{application_id}}" style="margin-right: 10px; line-height: 28px">
-	        	<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
-	            	<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "/>
-	            </svg>
-	        	Back
-    		</a>
-		</div>
-		<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
-            <div class="grid-row">
-                <h1 class="form-title heading-large">
-                    Pay by debit or credit card
-                </h1>
-            </div>
-            <p class="grid-row">
-                <img src="\static\images\card-types.png" alt="accepted-cards-visa-maestro-mastercard-amex" style="height: 40px;"/>
-            </p>
-            <div class="grid-row">
-                <div class="form-group">
-                    <p>We accept Visa, Maestro, MasterCard and American Express cards.</p>
-                    <p>You are paying <span class="bold-small">&#163;35</span> to <span class="bold-small">apply to be a childminder.</span></p>
-                </div>
-            	<div class="form-group">
-	            	{{form.as_div}}
-					{% csrf_token %}
-            	</div>
-            </div>
-			<input type="hidden" value="{{application_id}}" name = "id" />
-            <div class="form-group grid-row">
-                <input type="submit" class="button" value="Make payment and apply">
-            </div>
-            <div class="form-group grid-row">
-                <div class="form-group">
-    				<a href="/task-list?=true">Return to list</a>
-				</div>
-            </div>
-        </form>
+<div class="column-full">
+    <div class="form-group grid-row" style="padding-top: 30px;">
+        <a href="/payment?id={{application_id}}" style="margin-right: 10px; line-height: 28px">
+            <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
+                <polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "/>
+            </svg>
+            Back
+        </a>
     </div>
-</main>
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+        <div class="grid-row">
+            <h1 class="form-title heading-large">
+                Pay by debit or credit card
+            </h1>
+        </div>
+        <p class="grid-row">
+            <img src="\static\images\card-types.png" alt="accepted-cards-visa-maestro-mastercard-amex" style="height: 40px;"/>
+        </p>
+        <div class="grid-row">
+            <div class="form-group">
+                <p>We accept Visa, Maestro, MasterCard and American Express cards.</p>
+                <p>You are paying <span class="bold-small">&#163;35</span> to <span class="bold-small">apply to be a childminder.</span></p>
+            </div>
+            <div class="form-group">
+                {{form.as_div}}
+                {% csrf_token %}
+            </div>
+        </div>
+        <input type="hidden" value="{{application_id}}" name = "id" />
+        <div class="form-group grid-row">
+            <input type="submit" class="button" value="Make payment and apply">
+        </div>
+        <div class="form-group grid-row">
+            <div class="form-group">
+                <a href="/task-list?=true">Return to list</a>
+            </div>
+        </div>
+    </form>
+</div>
 
 {% endblock %}
