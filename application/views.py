@@ -2067,7 +2067,7 @@ def confirmation(request):
 
 
 # View the Payment page
-def payment(request):
+def payment_view(request):
     if request.method == 'GET':
         # Get the application
         application_id_local = request.GET["id"]
@@ -2145,7 +2145,6 @@ def card_payment_details(request):
                                                     application_id_local)
             # Parse payment response
             parsed_payment_response = json.loads(payment_response.text)
-
             # If the payment is successful
             if payment_response.status_code == 201:
                 application = Application.objects.get(pk=application_id_local)
@@ -2166,7 +2165,6 @@ def card_payment_details(request):
                 return render(request, 'payment-confirmation.html', variables)
 
             else:
-
                 variables = {
                     'form': form,
                     'application_id': application_id_local,
