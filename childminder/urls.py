@@ -55,6 +55,7 @@ urlpatterns = [
         name='References-Second-Reference-Address-View'),
     url(r'^references/second-reference-contact-details/', views.references_second_reference_contact_details,
         name='References-Second-Reference-Contact-Details-View'),
+    url(r'^references/summary/', views.references_summary, name='References-Summary-View'),
     url(r'^other-people/', views.other_people, name='Other-People-View'),
     url(r'^declaration/', views.declaration, name='Declaration-View'),
     url(r'^confirm-your-answers/', views.confirmation, name='Confirmation-View'),

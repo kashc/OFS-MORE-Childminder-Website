@@ -70,6 +70,7 @@ from .forms import (AccountForm,
                     ReferenceSecondReferenceAddressForm,
                     ReferenceSecondReferenceAddressManualForm,
                     ReferenceSecondReferenceContactForm,
+                    ReferenceSummaryForm,
                     SecondReferenceForm,
                     TypeOfChildcareForm)
 from .models import (Application,
@@ -2525,7 +2526,7 @@ def references_second_reference_contact_details(request):
             application.save()
 
             # Return to the application's task list
-            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+            return HttpResponseRedirect('/references/summary?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -2537,6 +2538,116 @@ def references_second_reference_contact_details(request):
 
             # Return to the same page
             return render(request, 'references-second-reference-contact-details.html', variables)
+
+
+# View for the 2 references task: summary
+def references_summary(request):
+    if request.method == 'GET':
+        # If the Your login and contact details form is not completed
+        application_id_local = request.GET["id"]
+
+        # Get associated reference record
+        first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
+        second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
+
+        # Retrieve answers
+        first_reference_first_name = first_reference_record.first_name
+        first_reference_last_name = first_reference_record.last_name
+        first_reference_relationship = first_reference_record.relationship
+        first_reference_years_known = first_reference_record.years_known
+        first_reference_months_known = first_reference_record.months_known
+        first_reference_street_line1 = first_reference_record.street_line1
+        first_reference_street_line2 = first_reference_record.street_line2
+        first_reference_town = first_reference_record.town
+        first_reference_county = first_reference_record.county
+        first_reference_country = first_reference_record.country
+        first_reference_postcode = first_reference_record.postcode
+        first_reference_phone_number = first_reference_record.phone_number
+        first_reference_email = first_reference_record.email
+        second_reference_first_name = second_reference_record.first_name
+        second_reference_last_name = second_reference_record.last_name
+        second_reference_relationship = second_reference_record.relationship
+        second_reference_years_known = second_reference_record.years_known
+        second_reference_months_known = second_reference_record.months_known
+        second_reference_street_line1 = second_reference_record.street_line1
+        second_reference_street_line2 = second_reference_record.street_line2
+        second_reference_town = second_reference_record.town
+        second_reference_county = second_reference_record.county
+        second_reference_country = second_reference_record.country
+        second_reference_postcode = second_reference_record.postcode
+        second_reference_phone_number = second_reference_record.phone_number
+        second_reference_email = second_reference_record.email
+
+        form = ReferenceSummaryForm()
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        # Update the status of the task to 'COMPLETED'
+        status.update(application_id_local, 'references_status', 'COMPLETED')
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'first_reference_first_name': first_reference_first_name,
+            'first_reference_last_name': first_reference_last_name,
+            'first_reference_relationship': first_reference_relationship,
+            'first_reference_years_known': first_reference_years_known,
+            'first_reference_months_known': first_reference_months_known,
+            'first_reference_street_line1': first_reference_street_line1,
+            'first_reference_street_line2': first_reference_street_line2,
+            'first_reference_town': first_reference_town,
+            'first_reference_county': first_reference_county,
+            'first_reference_country': first_reference_country,
+            'first_reference_postcode': first_reference_postcode,
+            'first_reference_phone_number': first_reference_phone_number,
+            'first_reference_email': first_reference_email,
+            'second_reference_first_name': second_reference_first_name,
+            'second_reference_last_name': second_reference_last_name,
+            'second_reference_relationship': second_reference_relationship,
+            'second_reference_years_known': second_reference_years_known,
+            'second_reference_months_known': second_reference_months_known,
+            'second_reference_street_line1': second_reference_street_line1,
+            'second_reference_street_line2': second_reference_street_line2,
+            'second_reference_town': second_reference_town,
+            'second_reference_county': second_reference_county,
+            'second_reference_country': second_reference_country,
+            'second_reference_postcode': second_reference_postcode,
+            'second_reference_phone_number': second_reference_phone_number,
+            'second_reference_email': second_reference_email,
+            'references_status': application.references_status
+        }
+
+        # Access the task page
+        return render(request, 'references-summary.html', variables)
+
+    if request.method == 'POST':
+
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+
+        # Initialise the Your login and contact details form
+        form = PersonalDetailsSummaryForm()
+
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+
+            # Update the status of the task to 'COMPLETED'
+            status.update(application_id_local, 'references_status', 'COMPLETED')
+
+            # Return to the application's task list
+            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+
+        # If there are invalid details
+        else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+
+            # Return to the same page
+            return render(request, 'references-summary.html', variables)
 
 
 # View for the People in your home task

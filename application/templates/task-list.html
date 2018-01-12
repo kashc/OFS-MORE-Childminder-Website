@@ -214,9 +214,19 @@
                 </tr>
                 <tr id="references">
                     <td class="task" style="padding-right: 10px">
+                        {% if reference_status == 'NOT_STARTED' %}
                         <a href="/references/intro?id={{application_id}}">
                             <span class="task-name">2 references</span>
                         </a>
+                        {% elif reference_status == 'IN_PROGRESS' %}
+                        <a href="/references/intro?id={{application_id}}">
+                            <span class="task-name">2 references</span>
+                        </a>
+                        {% elif reference_status == 'COMPLETED' %}
+                        <a href="/references/summary?id={{application_id}}">
+                            <span class="task-name">2 references</span>
+                        </a>
+                        {% endif %}
                     </td>
                     {% if reference_status == 'NOT_STARTED' %}
                     <td class="numeric" id="task-status">

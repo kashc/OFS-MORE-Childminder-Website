@@ -1204,6 +1204,12 @@ class ReferenceSecondReferenceContactForm(GOVUKForm):
         return email_address
 
 
+# 2 references summary form
+class ReferenceSummaryForm(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
 # People in your home form     
 class OtherPeopleForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
