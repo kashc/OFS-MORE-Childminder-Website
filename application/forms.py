@@ -6,8 +6,8 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 
 import re
-
 from datetime import date
+from django.conf import settings
 from django import forms
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
@@ -335,7 +335,7 @@ class PersonalDetailsDOBForm(GOVUKForm):
         today = date.today()
         age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
 
-        if (age < 18):
+        if age < 18:
             raise forms.ValidationError('You have to be 18 to childmind.')
 
         return birth_day, birth_month, birth_year
@@ -789,7 +789,8 @@ class ReferenceForm(GOVUKForm):
 
     first_name = forms.CharField(label='First name', required=True)
     last_name = forms.CharField(label='Last name', required=True)
-    relationship = forms.CharField(label='How do they know you?', help_text='For instance, friend or neighbour', required=True)
+    relationship = forms.CharField(label='How do they know you?', help_text='For instance, friend or neighbour',
+                                   required=True)
     time_known = TimeKnownField(label='How long have they known you?', required=True)
 
     def __init__(self, *args, **kwargs):
@@ -812,14 +813,13 @@ class ReferenceForm(GOVUKForm):
 
         if months_known != 0:
 
-            reference_known_time = years_known + (1/months_known)
+            reference_known_time = years_known + (1 / months_known)
 
         elif months_known == 0:
 
             reference_known_time = years_known
 
         if reference_known_time < 1:
-
             raise forms.ValidationError('TBC.')
 
         return years_known, months_known
@@ -903,18 +903,15 @@ class PaymentDetailsForm(GOVUKForm):
             int(card_number)
 
         except:
-
             # At the moment this is a catch all error, in the case of there being multiple error
             # types this must be revisited
             raise forms.ValidationError('Please enter a valid card number')
-
-        # Card number RegEx checking by type
-        # if card_type == 'visa':
-
-        # Actual regex
-        # if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:
-
-        # raise forms.ValidationError('The card number you have entered is not a valid Visa card number')
+        if settings.VISA_VALIDATION:
+            # Card number RegEx checking by type
+            if card_type == 'visa':
+                # Actual regex
+                if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:
+                    raise forms.ValidationError('The card number you have entered is not a valid Visa card number')
 
         if card_type == 'mastercard':
 
