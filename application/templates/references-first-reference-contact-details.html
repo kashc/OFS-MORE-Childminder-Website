@@ -1,7 +1,9 @@
 <!-- Tab title -->
 <head>
-	<title>Log back in</title>
+    <title>References</title>
 </head>
+
+<!-- Implement GOV.UK template -->
 {% extends 'govuk_template.html' %}
 {% load static %}
 {% load govuk_template_base %}
@@ -13,28 +15,33 @@
 
 <div class="column-full">
     <div class="grid-row" style="padding-top: 30px;">
-        <!-- Back button -->
-        <a href="/" style="margin-right: 10px; line-height: 28px" alt="Back to application list">
+        <a href="/references/first-reference-address?id={{application_id}}&manual=False"
+           style="margin-right: 10px; line-height: 28px"
+           alt='Back to application list'>
             <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
                 <polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
             </svg>
             Back
         </a>
     </div>
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+    <!-- Form -->
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        <!-- Content -->
         <div class="grid-row">
             <h1 class="form-title heading-large">
-                Log into your childminder application
+                First reference contact details
             </h1>
-            <p>Please enter your email address so we can find your application.</p>
-            {% csrf_token %}
+            <p>Please give contact details for this referee.</p>
             {{form.as_div}}
+            {% csrf_token %}
+            <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+            <input type="hidden" name="id" value="{{application_id}}"/>
         </div>
+        </br>
         <div class="form-group grid-row">
-            <input type="submit" class="button" value="Continue">
-            <input type="hidden" name="id" value="Save and continue" />
+            <a href="/task-list?id={{application_id}}">Return to list</a>
         </div>
     </form>
 </div>
-	
+
 {% endblock %}

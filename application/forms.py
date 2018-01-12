@@ -783,7 +783,7 @@ class ReferenceIntroForm(GOVUKForm):
 
 
 # 2 references form
-class ReferenceForm(GOVUKForm):
+class FirstReferenceForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
@@ -795,18 +795,19 @@ class ReferenceForm(GOVUKForm):
 
     def __init__(self, *args, **kwargs):
         self.application_id_local = kwargs.pop('id')
-        super(ReferenceForm, self).__init__(*args, **kwargs)
+        super(FirstReferenceForm, self).__init__(*args, **kwargs)
 
         # If information was previously entered, display it on the form        
-        if Reference.objects.filter(application_id=self.application_id_local).count() > 0:
+        if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
             self.fields['first_name'].initial = Reference.objects.get(
-                application_id=self.application_id_local).first_name
-            self.fields['last_name'].initial = Reference.objects.get(application_id=self.application_id_local).last_name
+                application_id=self.application_id_local, reference=1).first_name
+            self.fields['last_name'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                     reference=1).last_name
             self.fields['relationship'].initial = Reference.objects.get(
-                application_id=self.application_id_local).relationship
+                application_id=self.application_id_local, reference=1).relationship
             self.fields['time_known'].initial = [Reference.objects.get(
-                application_id=self.application_id_local).years_known, Reference.objects.get(
-                application_id=self.application_id_local).months_known]
+                application_id=self.application_id_local, reference=1).years_known, Reference.objects.get(
+                application_id=self.application_id_local, reference=1).months_known]
 
     # Time known validation
     def clean_time_known(self):
@@ -831,6 +832,378 @@ class ReferenceForm(GOVUKForm):
         return years_known, months_known
 
 
+# 2 reference form: first reference address
+class ReferenceFirstReferenceAddressForm(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    postcode = forms.CharField(label='Postcode')
+
+    def __init__(self, *args, **kwargs):
+        self.application_id_local = kwargs.pop('id')
+        super(ReferenceFirstReferenceAddressForm, self).__init__(*args, **kwargs)
+
+        # If information was previously entered, display it on the form
+        if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
+            self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                    reference=1).postcode
+
+
+# 2 references form: first reference address (manual)
+class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    street_name_and_number = forms.CharField(label='Street name and number')
+    street_name_and_number2 = forms.CharField(label='Street name and number 2', required=False)
+    town = forms.CharField(label='Town or city')
+    county = forms.CharField(label='County (optional)', required=False)
+    postcode = forms.CharField(label='Postcode')
+    country = forms.CharField(label='Country', required=True)
+
+    def __init__(self, *args, **kwargs):
+
+        self.application_id_local = kwargs.pop('id')
+        super(ReferenceFirstReferenceAddressManualForm, self).__init__(*args, **kwargs)
+
+        # If information was previously entered, display it on the form
+        if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
+            self.fields['street_name_and_number'].initial = Reference.objects.get(
+                application_id=self.application_id_local,
+                reference=1).street_line1
+            self.fields['street_name_and_number2'].initial = Reference.objects.get(
+                application_id=self.application_id_local,
+                reference=1).street_line2
+            self.fields['town'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                reference=1).town
+            self.fields['county'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                  reference=1).county
+            self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                    reference=1).postcode
+            self.fields['country'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                   reference=1).country
+
+    # Street name and number validation
+    def clean_street_name_and_number(self):
+
+        street_name_and_number = self.cleaned_data['street_name_and_number']
+
+        if len(street_name_and_number) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+
+        return street_name_and_number
+
+    def clean_street_name_and_number2(self):
+
+        street_name_and_number2 = self.cleaned_data['street_name_and_number2']
+
+        if len(street_name_and_number2) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+
+        return street_name_and_number2
+
+        # Town validation
+
+    def clean_town(self):
+
+        town = self.cleaned_data['town']
+
+        if re.match("^[A-Za-z-]+$", town) is None:
+            raise forms.ValidationError('TBC')
+
+        if len(town) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+
+        return town
+
+        # County validation
+
+    def clean_county(self):
+
+        county = self.cleaned_data['county']
+
+        if county != '':
+
+            if re.match("^[A-Za-z-]+$", county) is None:
+                raise forms.ValidationError('TBC')
+
+            if len(county) > 100:
+                raise forms.ValidationError('Please enter 100 characters or less.')
+
+        return county
+
+    # Postcode validation
+    def clean_postcode(self):
+
+        postcode = self.cleaned_data['postcode']
+
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC')
+
+        return postcode
+
+
+# 2 reference form: first reference contact details
+class ReferenceFirstReferenceContactForm(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    phone_number = forms.CharField(label='Phone number')
+    email_address = forms.CharField(label='Email address')
+
+    def __init__(self, *args, **kwargs):
+        self.application_id_local = kwargs.pop('id')
+        super(ReferenceFirstReferenceContactForm, self).__init__(*args, **kwargs)
+
+        # If information was previously entered, display it on the form
+        if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
+            self.fields['phone_number'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                        reference=1).phone_number
+            self.fields['email_address'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                         reference=1).email
+
+    # Phone number validation
+    def clean_phone_number(self):
+
+        phone_number = self.cleaned_data['phone_number']
+        # Allow for spaces
+        no_space_phone_number = phone_number.replace(' ', '')
+
+        if phone_number != '':
+
+            if re.match("^(0\d{8,12}|447\d{7,11})$", no_space_phone_number) is None:
+                raise forms.ValidationError('TBC')
+
+            if len(no_space_phone_number) > 11:
+                raise forms.ValidationError('TBC')
+
+        return phone_number
+
+    # Email address validation
+    def clean_email_address(self):
+
+        email_address = self.cleaned_data['email_address']
+
+        if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
+            raise forms.ValidationError('TBC')
+
+        if len(email_address) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+
+        return email_address
+
+
+# 2 references form
+class SecondReferenceForm(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    first_name = forms.CharField(label='First name', required=True)
+    last_name = forms.CharField(label='Last name', required=True)
+    relationship = forms.CharField(label='How do they know you?', help_text='For instance, friend or neighbour',
+                                   required=True)
+    time_known = TimeKnownField(label='How long have they known you?', required=True)
+
+    def __init__(self, *args, **kwargs):
+        self.application_id_local = kwargs.pop('id')
+        super(SecondReferenceForm, self).__init__(*args, **kwargs)
+
+        # If information was previously entered, display it on the form
+        if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
+            self.fields['first_name'].initial = Reference.objects.get(
+                application_id=self.application_id_local, reference=2).first_name
+            self.fields['last_name'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                     reference=2).last_name
+            self.fields['relationship'].initial = Reference.objects.get(
+                application_id=self.application_id_local, reference=2).relationship
+            self.fields['time_known'].initial = [Reference.objects.get(
+                application_id=self.application_id_local, reference=2).years_known, Reference.objects.get(
+                application_id=self.application_id_local, reference=2).months_known]
+
+    # Time known validation
+    def clean_time_known(self):
+
+        years_known = self.cleaned_data['time_known'][1]
+        months_known = self.cleaned_data['time_known'][0]
+        print('Years:' + str(years_known))
+        print('Months:' + str(months_known))
+
+        if months_known != 0:
+
+            reference_known_time = years_known + (months_known / 12)
+
+        elif months_known == 0:
+
+            reference_known_time = years_known
+
+        if reference_known_time < 1:
+            print(reference_known_time)
+            raise forms.ValidationError('TBC.')
+
+        return years_known, months_known
+
+
+# 2 reference form: second reference address
+class ReferenceSecondReferenceAddressForm(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    postcode = forms.CharField(label='Postcode')
+
+    def __init__(self, *args, **kwargs):
+        self.application_id_local = kwargs.pop('id')
+        super(ReferenceSecondReferenceAddressForm, self).__init__(*args, **kwargs)
+
+        # If information was previously entered, display it on the form
+        if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
+            self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                    reference=2).postcode
+
+
+# 2 references form: second reference address (manual)
+class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    street_name_and_number = forms.CharField(label='Street name and number')
+    street_name_and_number2 = forms.CharField(label='Street name and number 2', required=False)
+    town = forms.CharField(label='Town or city')
+    county = forms.CharField(label='County (optional)', required=False)
+    postcode = forms.CharField(label='Postcode')
+    country = forms.CharField(label='Country', required=True)
+
+    def __init__(self, *args, **kwargs):
+
+        self.application_id_local = kwargs.pop('id')
+        super(ReferenceSecondReferenceAddressManualForm, self).__init__(*args, **kwargs)
+
+        # If information was previously entered, display it on the form
+        if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
+            self.fields['street_name_and_number'].initial = Reference.objects.get(
+                application_id=self.application_id_local,
+                reference=2).street_line1
+            self.fields['street_name_and_number2'].initial = Reference.objects.get(
+                application_id=self.application_id_local,
+                reference=2).street_line2
+            self.fields['town'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                reference=2).town
+            self.fields['county'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                  reference=2).county
+            self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                    reference=2).postcode
+            self.fields['country'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                   reference=2).country
+
+    # Street name and number validation
+    def clean_street_name_and_number(self):
+
+        street_name_and_number = self.cleaned_data['street_name_and_number']
+
+        if len(street_name_and_number) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+
+        return street_name_and_number
+
+    def clean_street_name_and_number2(self):
+
+        street_name_and_number2 = self.cleaned_data['street_name_and_number2']
+
+        if len(street_name_and_number2) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+
+        return street_name_and_number2
+
+        # Town validation
+
+    def clean_town(self):
+
+        town = self.cleaned_data['town']
+
+        if re.match("^[A-Za-z-]+$", town) is None:
+            raise forms.ValidationError('TBC')
+
+        if len(town) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+
+        return town
+
+        # County validation
+
+    def clean_county(self):
+
+        county = self.cleaned_data['county']
+
+        if county != '':
+
+            if re.match("^[A-Za-z-]+$", county) is None:
+                raise forms.ValidationError('TBC')
+
+            if len(county) > 100:
+                raise forms.ValidationError('Please enter 100 characters or less.')
+
+        return county
+
+    # Postcode validation
+    def clean_postcode(self):
+
+        postcode = self.cleaned_data['postcode']
+
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC')
+
+        return postcode
+
+
+# 2 reference form: second reference contact details
+class ReferenceSecondReferenceContactForm(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    phone_number = forms.CharField(label='Phone number')
+    email_address = forms.CharField(label='Email address')
+
+    def __init__(self, *args, **kwargs):
+        self.application_id_local = kwargs.pop('id')
+        super(ReferenceSecondReferenceContactForm, self).__init__(*args, **kwargs)
+
+        # If information was previously entered, display it on the form
+        if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
+            self.fields['phone_number'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                        reference=2).phone_number
+            self.fields['email_address'].initial = Reference.objects.get(application_id=self.application_id_local,
+                                                                         reference=2).email
+
+    # Phone number validation
+    def clean_phone_number(self):
+
+        phone_number = self.cleaned_data['phone_number']
+        # Allow for spaces
+        no_space_phone_number = phone_number.replace(' ', '')
+
+        if phone_number != '':
+
+            if re.match("^(0\d{8,12}|447\d{7,11})$", no_space_phone_number) is None:
+                raise forms.ValidationError('TBC')
+
+            if len(no_space_phone_number) > 11:
+                raise forms.ValidationError('TBC')
+
+        return phone_number
+
+    # Email address validation
+    def clean_email_address(self):
+
+        email_address = self.cleaned_data['email_address']
+
+        if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
+            raise forms.ValidationError('TBC')
+
+        if len(email_address) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+
+        return email_address
+
+
 # People in your home form     
 class OtherPeopleForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
@@ -838,8 +1211,6 @@ class OtherPeopleForm(GOVUKForm):
 
 
 # Declaration form
-
-
 class DeclarationForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True

@@ -50,7 +50,7 @@
     {% block phase_banner %}
       {% get_service_settings as service_settings %}
       {% if service_settings.phase != 'live' %}
-        <div class="phase-banner">
+        <div class="phase-banner-beta">
           <p>
             <strong class="phase-tag">Beta</strong>
             <span>{% block phase_banner_message %}{% trans 'This is a new service - your <a href="">feedback</a> will help us improve it.' %}{% endblock %}</span>

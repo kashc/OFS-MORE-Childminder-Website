@@ -13,7 +13,7 @@ from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetai
 
 
 # Business logic to create or update a Type of childcare record
-def ChildcareType_Logic(application_id_local, form):
+def childcare_type_logic(application_id_local, form):
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
 
@@ -43,7 +43,7 @@ def ChildcareType_Logic(application_id_local, form):
 
 
 # Business logic to create or update a Your login and contact details record: e-mail address
-def Login_Contact_Logic(application_id_local, form):
+def login_contact_logic(application_id_local, form):
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
 
@@ -58,7 +58,7 @@ def Login_Contact_Logic(application_id_local, form):
 
 
 # Business logic to create or update a Your login and contact details record: phone numbers
-def Login_Contact_Logic_Phone(application_id_local, form):
+def login_contact_logic_phone(application_id_local, form):
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
 
@@ -75,7 +75,7 @@ def Login_Contact_Logic_Phone(application_id_local, form):
 
 
 # Business logic to create or update a Your personal details record: names
-def Personal_Name_Logic(application_id_local, form):
+def personal_name_logic(application_id_local, form):
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
 
@@ -87,7 +87,8 @@ def Personal_Name_Logic(application_id_local, form):
     # If the user entered information for this task for the first time
     if ApplicantPersonalDetails.objects.filter(application_id=application_id_local).count() == 0:
 
-        # Create a new Applicant_Personal_Details record corresponding to the application, of which the generated personal_details_id will be used        
+        # Create a new Applicant_Personal_Details record corresponding to the application, of which the
+        # generated personal_details_id will be used
         personal_details_record = ApplicantPersonalDetails(birth_day=None, birth_month=None, birth_year=None,
                                                            application_id=this_application)
         personal_details_record.save()
@@ -114,7 +115,7 @@ def Personal_Name_Logic(application_id_local, form):
 
 
 # Business logic to create or update a Your personal details record: date of birth
-def Personal_DOB_Logic(application_id_local, form):
+def personal_dob_logic(application_id_local, form):
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
 
@@ -145,7 +146,7 @@ def Personal_DOB_Logic(application_id_local, form):
 
 
 # Business logic to create or update a Your personal details record: home address
-def Personal_Home_Address_Logic(application_id_local, form):
+def personal_home_address_logic(application_id_local, form):
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
 
@@ -162,7 +163,8 @@ def Personal_Home_Address_Logic(application_id_local, form):
     # If the user entered information for this task for the first time
     if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
 
-        # Create a new Applicant_Personal_Details record corresponding to the application, of which the generated personal_details_id will be used        
+        # Create a new Applicant_Personal_Details record corresponding to the application,
+        # of which the generated personal_details_id will be used
         home_address_record = ApplicantHomeAddress(street_line1=street_line1, street_line2=street_line2, town=town,
                                                    county=county, country='United Kingdom', postcode=postcode,
                                                    childcare_address=None, current_address=True, move_in_month=0,
@@ -186,7 +188,7 @@ def Personal_Home_Address_Logic(application_id_local, form):
 
 
 # Business logic to create or update a Your personal details record: location of care
-def Personal_Location_Of_Care_Logic(application_id_local, form):
+def personal_location_of_care_logic(application_id_local, form):
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
 
@@ -204,7 +206,7 @@ def Personal_Location_Of_Care_Logic(application_id_local, form):
     return home_address_record
 
 
-def Multiple_Childcare_Address_Logic(personal_detail_id):
+def multiple_childcare_address_logic(personal_detail_id):
     # Remove current address status from previously entered childcare address
     # If there are multiple addresses marked as the childcare address
     if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True).count() > 1:
@@ -225,7 +227,7 @@ def Multiple_Childcare_Address_Logic(personal_detail_id):
 
 
 # Business logic to create or update a Your personal details record: childcare address
-def Personal_Childcare_Address_Logic(application_id_local, form):
+def personal_childcare_address_logic(application_id_local, form):
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
 
@@ -243,7 +245,8 @@ def Personal_Childcare_Address_Logic(application_id_local, form):
     if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
                                            childcare_address='True').count() == 0:
 
-        # Create a new Applicant_Personal_Details record corresponding to the application, of which the generated personal_details_id will be used        
+        # Create a new Applicant_Personal_Details record corresponding to the application,
+        # of which the generated personal_details_id will be used
         childcare_address_record = ApplicantHomeAddress(street_line1=street_line1, street_line2=street_line2, town=town,
                                                         county=county, country='United Kingdom', postcode=postcode,
                                                         childcare_address=True, current_address=False, move_in_month=0,
@@ -269,7 +272,7 @@ def Personal_Childcare_Address_Logic(application_id_local, form):
 
 
 # Business logic to create or update a First aid training record
-def First_Aid_Logic(application_id_local, form):
+def first_aid_logic(application_id_local, form):
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
 
@@ -334,7 +337,7 @@ def dbs_check_logic(application_id_local, form):
 
 
 # Business logic to create or update a 2 references record                
-def references_check_logic(application_id_local, form):
+def references_first_reference_logic(application_id_local, form):
     # Retrieve the application's ID
     this_application = Application.objects.get(application_id=application_id_local)
 
@@ -346,10 +349,11 @@ def references_check_logic(application_id_local, form):
     months_known = form.cleaned_data.get('time_known')[1]
 
     # If the user entered information for this task for the first time
-    if Reference.objects.filter(application_id=application_id_local).count() == 0:
+    if Reference.objects.filter(application_id=application_id_local, reference=1).count() == 0:
 
         # Create a new 2 references record corresponding to the application
-        reference_record = Reference(first_name=first_name,
+        reference_record = Reference(reference=1,
+                                     first_name=first_name,
                                      last_name=last_name,
                                      relationship=relationship,
                                      years_known=years_known,
@@ -365,10 +369,56 @@ def references_check_logic(application_id_local, form):
                                      application_id=this_application)
 
     # If a record exists, update it
-    elif Reference.objects.filter(application_id=application_id_local).count() > 0:
+    elif Reference.objects.filter(application_id=application_id_local, reference=1).count() > 0:
 
         # Retrieve the 2 references record corresponding to the application
-        reference_record = Reference.objects.get(application_id=application_id_local)
+        reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
+        reference_record.first_name = first_name
+        reference_record.last_name = last_name
+        reference_record.relationship = relationship
+        reference_record.years_known = years_known
+        reference_record.months_known = months_known
+
+    return reference_record
+
+
+# Business logic to create or update a 2 references record
+def references_second_reference_logic(application_id_local, form):
+    # Retrieve the application's ID
+    this_application = Application.objects.get(application_id=application_id_local)
+
+    # Get entered data to insert into database
+    first_name = form.cleaned_data.get('first_name')
+    last_name = form.cleaned_data.get('last_name')
+    relationship = form.cleaned_data.get('relationship')
+    years_known = form.cleaned_data.get('time_known')[0]
+    months_known = form.cleaned_data.get('time_known')[1]
+
+    # If the user entered information for this task for the first time
+    if Reference.objects.filter(application_id=application_id_local, reference=2).count() == 0:
+
+        # Create a new 2 references record corresponding to the application
+        reference_record = Reference(reference=2,
+                                     first_name=first_name,
+                                     last_name=last_name,
+                                     relationship=relationship,
+                                     years_known=years_known,
+                                     months_known=years_known,
+                                     street_line1='',
+                                     street_line2='',
+                                     town='',
+                                     county='',
+                                     country='',
+                                     postcode='',
+                                     phone_number='',
+                                     email='',
+                                     application_id=this_application)
+
+    # If a record exists, update it
+    elif Reference.objects.filter(application_id=application_id_local, reference=2).count() > 0:
+
+        # Retrieve the 2 references record corresponding to the application
+        reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
         reference_record.first_name = first_name
         reference_record.last_name = last_name
         reference_record.relationship = relationship

@@ -1,6 +1,6 @@
 <!-- Tab title -->
 <head>
-    <title>Personal details</title>
+    <title>References</title>
 </head>
 
 <!-- Implement GOV.UK template -->
@@ -13,7 +13,7 @@
 <div class="column-full">
     <div class="grid-row" style="padding-top: 30px;">
         <!-- Back button -->
-        <a href="/task-list?id={{application_id}}" style="margin-right: 10px; line-height: 28px"
+        <a href="/references/second-reference/?id={{application_id}}" style="margin-right: 10px; line-height: 28px"
            alt="Back to application list">
             <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
 				<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
@@ -26,15 +26,26 @@
         <!-- Content -->
         <div class="grid-row">
             <h1 class="form-title heading-large">
-                Personal details
+                Second reference address
             </h1>
-            <p>You need to give your full name and home address.</p>
-            <p>The details must match what is in your criminal record (DBS) check.</p>
-            <p>Make sure you include any middle names.</p>
-            {{form.as_div}}
+            <p>Please give the address for your second referee.</p>
+            <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
+            {{form.postcode}}
             {% csrf_token %}
-            <input type="submit" class="button" value="Continue" alt='Continue to personal details'>
+            </br>
+            </br>
+            <a href="/references/second-reference-address?id={{application_id}}&manual=True" name="manual" id="manual">Enter
+                address manually</a>
+            </br>
+            </br>
+            <input type="submit" class="button button-search" value="Find postcode" alt='Continue to declaration'>
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+            <input type="hidden" id="manual" name="manual" value="False"/>
+        </div>
+        </br>
+        <!-- Return to task list -->
+        <div class="form-group grid-row">
+            <a href="/task-list?id={{application_id}}">Return to list</a>
         </div>
     </form>
 </div>
