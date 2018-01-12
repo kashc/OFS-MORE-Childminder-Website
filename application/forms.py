@@ -6,17 +6,16 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 
 import re
-
 from datetime import date
+from django.conf import settings
 from django import forms
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
-from .customfields import ExpirySplitDateWidget, ExpirySplitDateField
-from .models import (Application, ApplicantName, ApplicantPersonalDetails, ChildcareType,
-                     ApplicantHomeAddress, CriminalRecordCheck, FirstAidTraining,
-                     HealthDeclarationBooklet, Reference, UserDetails)
+from .customfields import ExpirySplitDateField, ExpirySplitDateWidget
+from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, ChildcareType,
+                     CriminalRecordCheck, FirstAidTraining, HealthDeclarationBooklet, Reference, UserDetails)
 
 
 # Type of childcare form
@@ -597,6 +596,7 @@ class FirstAidTrainingGuidanceForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
+
 # First aid training form: details
 
 
@@ -803,6 +803,7 @@ class OtherPeopleForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
+
 # Declaration form
 
 
@@ -875,18 +876,15 @@ class PaymentDetailsForm(GOVUKForm):
             int(card_number)
 
         except:
-
             # At the moment this is a catch all error, in the case of there being multiple error
             # types this must be revisited
             raise forms.ValidationError('Please enter a valid card number')
-
-        # Card number RegEx checking by type
-        # if card_type == 'visa':
-
-        # Actual regex
-        # if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:
-
-        # raise forms.ValidationError('The card number you have entered is not a valid Visa card number')
+        if settings.VISA_VALIDATION:
+            # Card number RegEx checking by type
+            if card_type == 'visa':
+                # Actual regex
+                if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:
+                    raise forms.ValidationError('The card number you have entered is not a valid Visa card number')
 
         if card_type == 'mastercard':
 

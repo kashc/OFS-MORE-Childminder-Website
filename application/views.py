@@ -1977,7 +1977,7 @@ def card_payment_details(request):
             # Make payment
             payment_response = payment.make_payment(3500, cardholders_name, card_number, card_security_code,
                                                     expiry_month, expiry_year, 'GBP', application_id_local,
-                                                    'Childminder registration fee')
+                                                    application_id_local)
             # Parse payment response
             parsed_payment_response = json.loads(payment_response.text)
 
