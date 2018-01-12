@@ -161,7 +161,7 @@ class TimeKnownSplitDateWidget(MultiWidget):
 
     def decompress(self, value):
         if value:
-            return [value.year, value.month]
+            return [value[0], value[1]]
         return [None, None]
 
 
@@ -196,7 +196,7 @@ class TimeKnownField(forms.MultiValueField):
             try:
                 if any(item in self.empty_values for item in data_list):
                     raise ValueError
-                return data_list[0], data_list[1]
+                return data_list[1], data_list[0]
             except ValueError:
                 raise forms.ValidationError(self.error_messages['invalid'], code='invalid')
         return None

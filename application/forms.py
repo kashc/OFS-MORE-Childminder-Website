@@ -804,22 +804,28 @@ class ReferenceForm(GOVUKForm):
             self.fields['last_name'].initial = Reference.objects.get(application_id=self.application_id_local).last_name
             self.fields['relationship'].initial = Reference.objects.get(
                 application_id=self.application_id_local).relationship
+            self.fields['time_known'].initial = [Reference.objects.get(
+                application_id=self.application_id_local).years_known, Reference.objects.get(
+                application_id=self.application_id_local).months_known]
 
     # Time known validation
     def clean_time_known(self):
 
         years_known = self.cleaned_data['time_known'][1]
         months_known = self.cleaned_data['time_known'][0]
+        print('Years:' + str(years_known))
+        print('Months:' + str(months_known))
 
         if months_known != 0:
 
-            reference_known_time = years_known + (1 / months_known)
+            reference_known_time = years_known + (months_known / 12)
 
         elif months_known == 0:
 
             reference_known_time = years_known
 
         if reference_known_time < 1:
+            print(reference_known_time)
             raise forms.ValidationError('TBC.')
 
         return years_known, months_known

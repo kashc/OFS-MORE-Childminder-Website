@@ -342,8 +342,8 @@ def references_check_logic(application_id_local, form):
     first_name = form.cleaned_data.get('first_name')
     last_name = form.cleaned_data.get('last_name')
     relationship = form.cleaned_data.get('relationship')
-    years_known = form.cleaned_data.get('time_known')[1]
-    months_known = form.cleaned_data.get('time_known')[0]
+    years_known = form.cleaned_data.get('time_known')[0]
+    months_known = form.cleaned_data.get('time_known')[1]
 
     # If the user entered information for this task for the first time
     if Reference.objects.filter(application_id=application_id_local).count() == 0:
