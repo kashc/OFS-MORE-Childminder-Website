@@ -186,9 +186,19 @@
                 </tr>
                 <tr id="health">
                     <td class="task" style="padding-right: 10px">
-                        <a href="/health?id={{application_id}}">
+                        {% if health_status == 'NOT_STARTED' %}
+                        <a href="/health/intro?id={{application_id}}">
                             <span class="task-name">Your health</span>
                         </a>
+                        {% elif health_status == 'IN_PROGRESS' %}
+                        <a href="/health/intro?id={{application_id}}">
+                            <span class="task-name">Your health</span>
+                        </a>
+                        {% elif health_status == 'COMPLETED' %}
+                        <a href="/health/check-answers?id={{application_id}}">
+                            <span class="task-name">Your health</span>
+                        </a>
+                        {% endif %}
                     </td>
                     {% if health_status == 'NOT_STARTED' %}
                         <td class="numeric" id="task-status">

@@ -738,42 +738,36 @@ class DBSCheckSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-# Your health form
-class HealthDeclarationBookletForm(GOVUKForm):
+# Your health: intro form
+class HealthIntroForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
-    options = (('True', 'Yes'), ('False', 'No'))
 
-    walking_bending = forms.ChoiceField(label='Walking, bending, kneeling or lifting a child', choices=options,
-                                        widget=InlineRadioSelect)
-    asthma_breathing = forms.ChoiceField(label='Asthma or breathing difficulties', choices=options,
-                                         widget=InlineRadioSelect)
-    heart_disease = forms.ChoiceField(label='Heart disease', choices=options, widget=InlineRadioSelect)
-    blackout_epilepsy = forms.ChoiceField(label='Blackouts, fits, epilepsy or fainting', choices=options,
-                                          widget=InlineRadioSelect)
-    mental_health = forms.ChoiceField(label='Depression, anxiety, panic attacks or mood swings', choices=options,
-                                      widget=InlineRadioSelect)
-    alcohol_drugs = forms.ChoiceField(label='Alcohol or drugs', choices=options, widget=InlineRadioSelect)
+# Your health: booklet form
+class HealthBookletForm(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    send_hdb_declare = forms.BooleanField(label='I will send the completed booklet to Ofsted', required=True)
 
     def __init__(self, *args, **kwargs):
-        self.application_id_local = kwargs.pop('id')
-        super(HealthDeclarationBookletForm, self).__init__(*args, **kwargs)
 
-        # If information was previously entered, display it on the form 
-        if HealthDeclarationBookletForm.objects.filter(application_id=self.application_id_local).count() > 0:
-            self.fields['walking_bending'].initial = HealthDeclarationBookletForm.objects.get(
-                application_id=self.application_id_local).movement_problems
-            self.fields['asthma_breathing'].initial = HealthDeclarationBookletForm.objects.get(
-                application_id=self.application_id_local).breathing_problems
-            self.fields['heart_disease'].initial = HealthDeclarationBookletForm.objects.get(
-                application_id=self.application_id_local).heart_disease
-            self.fields['blackout_epilepsy'].initial = HealthDeclarationBookletForm.objects.get(
-                application_id=self.application_id_local).blackout_epilepsy
-            self.fields['mental_health'].initial = HealthDeclarationBookletForm.objects.get(
-                application_id=self.application_id_local).mental_health_problems
-            self.fields['alcohol_drugs'].initial = HealthDeclarationBookletForm.objects.get(
-                application_id=self.application_id_local).alcohol_drug_problems
+        self.application_id_local = kwargs.pop('id')
+        super(HealthBookletForm, self).__init__(*args, **kwargs)
+
+        # If information was previously entered, display it on the form
+        if HealthDeclarationBooklet.objects.filter(application_id=self.application_id_local).count() > 0:
+
+            if HealthDeclarationBooklet.objects.get(
+                    application_id=self.application_id_local).send_hdb_declare is True:
+
+                self.fields['send_hdb_declare'].initial = '1'
+
+            elif HealthDeclarationBooklet.objects.get(
+                    application_id=self.application_id_local).send_hdb_declare is False:
+
+                self.fields['send_hdb_declare'].initial = '0'
 
 
 # 2 references form

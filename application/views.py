@@ -15,23 +15,62 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from . import magic_link, payment, status
-from .business_logic import (ChildcareType_Logic, dbs_check_logic, First_Aid_Logic, health_check_logic,
-                             Login_Contact_Logic, Login_Contact_Logic_Phone, Multiple_Childcare_Address_Logic,
-                             Personal_Childcare_Address_Logic, Personal_DOB_Logic, Personal_Home_Address_Logic,
-                             Personal_Location_Of_Care_Logic, Personal_Name_Logic, references_check_logic)
-from .forms import (ApplicationSavedForm, AccountForm, ConfirmForm, ContactEmailForm, ContactPhoneForm,
-                    ContactSummaryForm, DBSCheckDBSDetailsForm, DBSCheckGuidanceForm, EmailLoginForm, DeclarationForm,
-                    EYFSForm, DBSCheckUploadDBSForm, DBSCheckSummaryForm,
-                    FirstAidTrainingDetailsForm, FirstAidTrainingDeclarationForm, FirstAidTrainingGuidanceForm,
-                    FirstAidTrainingTrainingForm, FirstAidTrainingRenewForm, FirstAidTrainingSummaryForm,
-                    HealthDeclarationBookletForm, OtherPeopleForm, PaymentForm, PaymentDetailsForm,
-                    PersonalDetailsChildcareAddressForm, PersonalDetailsChildcareAddressManualForm,
-                    PersonalDetailsDOBForm, PersonalDetailsNameForm,
-                    PersonalDetailsGuidanceForm, PersonalDetailsHomeAddressForm, PersonalDetailsHomeAddressManualForm,
-                    PersonalDetailsLocationOfCareForm, PersonalDetailsSummaryForm, QuestionForm,
-                    ReferenceForm, TypeOfChildcareForm)
-from .models import (Application, UserDetails, ApplicantPersonalDetails, ApplicantHomeAddress,
-                     ApplicantName, FirstAidTraining, CriminalRecordCheck)
+from .business_logic import (ChildcareType_Logic,
+                             dbs_check_logic,
+                             First_Aid_Logic,
+                             health_check_logic,
+                             Login_Contact_Logic,
+                             Login_Contact_Logic_Phone,
+                             Multiple_Childcare_Address_Logic,
+                             Personal_Childcare_Address_Logic,
+                             Personal_DOB_Logic,
+                             Personal_Home_Address_Logic,
+                             Personal_Location_Of_Care_Logic,
+                             Personal_Name_Logic,
+                             references_check_logic)
+from .forms import (AccountForm,
+                    ApplicationSavedForm,
+                    ConfirmForm,
+                    ContactEmailForm,
+                    ContactPhoneForm,
+                    ContactSummaryForm,
+                    DBSCheckDBSDetailsForm,
+                    DBSCheckGuidanceForm,
+                    DBSCheckSummaryForm,
+                    DBSCheckUploadDBSForm,
+                    DeclarationForm,
+                    EYFSForm,
+                    FirstAidTrainingDeclarationForm,
+                    FirstAidTrainingDetailsForm,
+                    FirstAidTrainingGuidanceForm,
+                    FirstAidTrainingRenewForm,
+                    FirstAidTrainingSummaryForm,
+                    FirstAidTrainingTrainingForm,
+                    HealthBookletForm,
+                    HealthIntroForm,
+                    OtherPeopleForm,
+                    PaymentDetailsForm,
+                    PaymentForm,
+                    PersonalDetailsChildcareAddressForm,
+                    PersonalDetailsChildcareAddressManualForm,
+                    PersonalDetailsDOBForm,
+                    PersonalDetailsGuidanceForm,
+                    PersonalDetailsHomeAddressForm,
+                    PersonalDetailsHomeAddressManualForm,
+                    PersonalDetailsLocationOfCareForm,
+                    PersonalDetailsNameForm,
+                    PersonalDetailsSummaryForm,
+                    QuestionForm,
+                    ReferenceForm,
+                    TypeOfChildcareForm)
+from .models import (Application,
+                     ApplicantHomeAddress,
+                     ApplicantName,
+                     ApplicantPersonalDetails,
+                     CriminalRecordCheck,
+                     FirstAidTraining,
+                     HealthDeclarationBooklet,
+                     UserDetails)
 
 
 # View for the start page
@@ -1479,7 +1518,7 @@ def eyfs(request):
 
 
 # View for the Your criminal record (DBS) check: guidance
-def dbs_check_guidance_view(request):
+def dbs_check_guidance(request):
     if request.method == 'GET':
         # If the Your criminal record (DBS) check form is not completed
         application_id_local = request.GET["id"]
@@ -1532,7 +1571,7 @@ def dbs_check_guidance_view(request):
 
 
 # View for the Your criminal record (DBS) check task: DBS details
-def dbs_check_dbs_details_view(request):
+def dbs_check_dbs_details(request):
     # Get current date and time
     current_date = datetime.datetime.today()
 
@@ -1611,7 +1650,7 @@ def dbs_check_dbs_details_view(request):
 
 
 # View for the Your criminal record (DBS) check: upload DBS
-def dbs_check_upload_dbs_view(request):
+def dbs_check_upload_dbs(request):
     if request.method == 'GET':
         # If the Your criminal record (DBS) check form is not completed
         application_id_local = request.GET["id"]
@@ -1672,7 +1711,7 @@ def dbs_check_upload_dbs_view(request):
 
 
 # View for the Your criminal record (DBS) check task: summary
-def dbs_check_summary_view(request):
+def dbs_check_summary(request):
     if request.method == 'GET':
         # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
@@ -1730,47 +1769,173 @@ def dbs_check_summary_view(request):
             return render(request, 'dbs-check-summary.html', variables)
 
 
-# View for the Your health task
-def health(request):
-    # Get current date and time
-    current_date = datetime.datetime.today()
+# View for the Your health task: intro
+def health_intro(request):
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+
+        form = HealthIntroForm()
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'health_status': application.health_status
+        }
+
+        # Access the task page
+        return render(request, 'health-intro.html', variables)
 
     if request.method == 'POST':
 
         # Retrieve the application's ID
         application_id_local = request.POST["id"]
 
-        # Initialise the Your health form
-        form = HealthDeclarationBookletForm(request.POST, id=application_id_local)
+        # Initialise the Your login and contact details form
+        form = HealthIntroForm(request.POST)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
 
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'health_status', 'COMPLETED')
 
-            # Perform business logic to create or update Your health record in database            
-            health_record = health_check_logic(application_id_local, form)
-            health_record.save()
+            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+            if Application.objects.get(pk=application_id_local).health_status != 'COMPLETED':
+                status.update(application_id_local, 'health_status', 'IN_PROGRESS')
+
+            # Go to the phone numbers page
+            return HttpResponseRedirect('/health/booklet?id=' + application_id_local)
+
+        # If there are invalid details
+        else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+
+            # Return to the same page
+            return render(request, 'health-intro.html', variables)
+
+
+# View for the Your health task: booklet
+def health_booklet(request):
+    # Get current date and time
+    current_date = datetime.datetime.today()
+
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+
+        form = HealthBookletForm(id=application_id_local)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'health_status': application.health_status
+        }
+
+        # Access the task page
+        return render(request, 'health-booklet.html', variables)
+
+    if request.method == 'POST':
+
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+
+        # Initialise the Your login and contact details form
+        form = HealthBookletForm(request.POST, id=application_id_local)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+            # Perform business logic to create or update Your health record in database
+            hdb_record = health_check_logic(application_id_local, form)
+            hdb_record.save()
 
             # Update application date updated
             application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
 
-        # Return to the application's task list
-        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+            if Application.objects.get(pk=application_id_local).health_status != 'COMPLETED':
+                status.update(application_id_local, 'health_status', 'COMPLETED')
 
-    # If the Your health form is not completed    
-    application_id_local = request.GET["id"]
+            # Go to the phone numbers page
+            return HttpResponseRedirect('/health/check-answers?id=' + application_id_local)
 
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if Application.objects.get(pk=application_id_local).health_status != 'COMPLETED':
-        status.update(application_id_local, 'health_status', 'IN_PROGRESS')
+        # If there are invalid details
+        else:
 
-    form = HealthDeclarationBookletForm(id=application_id_local)
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
 
-    # Access the task page
-    return render(request, 'health.html', {'form': form, 'application_id': application_id_local})
+            # Return to the same page
+            return render(request, 'health-booklet.html', variables)
+
+
+# View for the Your health task: summary
+def health_check_answers(request):
+    if request.method == 'GET':
+        # If the Your health form is not completed
+        application_id_local = request.GET["id"]
+
+        # Retrieve answers
+        send_hdb_declare = HealthDeclarationBooklet.objects.get(
+            application_id=application_id_local).send_hdb_declare
+
+        form = HealthBookletForm(id=application_id_local)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'send_hdb_declare': send_hdb_declare,
+            'health_status': application.health_status,
+        }
+
+        # Access the task page
+        return render(request, 'health-check-answers.html', variables)
+
+    if request.method == 'POST':
+
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+
+        # Initialise the Your login and contact details form
+        form = HealthBookletForm(request.POST, id=application_id_local)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+
+            # Go to the details page
+            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+
+        # If there are invalid details
+        else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+
+            # Return to the same page
+            return render(request, 'health-check-answers.html', variables)
 
 
 # View for the 2 references task

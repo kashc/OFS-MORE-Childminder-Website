@@ -15,14 +15,14 @@ from uuid import UUID
 from .models import Application, UserDetails
 
 from .views import (application_saved, confirmation, contact_email, contact_phone,
-                    contact_summary, dbs_check_dbs_details_view, declaration, eyfs, first_aid_training_declaration,
+                    contact_summary, dbs_check_dbs_details, declaration, eyfs, first_aid_training_declaration,
                     first_aid_training_details, first_aid_training_guidance, first_aid_training_renew,
                     first_aid_training_summary, first_aid_training_training, health, log_in,
                     other_people, payment, personal_details_dob, personal_details_name,
                     personal_details_home_address, personal_details_location_of_care, contact_question,
                     references, start_page, type_of_childcare, personal_details_guidance,
-                    dbs_check_guidance_view, personal_details_childcare_address, personal_details_summary,
-                    card_payment_details)
+                    dbs_check_guidance, personal_details_childcare_address, personal_details_summary,
+                    card_payment_details, dbs_check_upload_dbs, dbs_check_summary)
 
 
 # Test suite for start page
@@ -676,7 +676,7 @@ class DBSCheckTest(TestCase):
     def test_url_resolves_to_page(self):
 
         found = resolve('/dbs-check/guidance/')
-        self.assertEqual(found.func, dbs_check_guidance_view)
+        self.assertEqual(found.func, dbs_check_guidance)
 
     # Test to check that a user cannot navigate to the page without an application ID
     def test_page_not_displayed_without_id(self):
@@ -694,7 +694,7 @@ class DBSCheckTest(TestCase):
     def test_url_resolves_to_page(self):
 
         found = resolve('/dbs-check/dbs-details/')
-        self.assertEqual(found.func, dbs_check_dbs_details_view)
+        self.assertEqual(found.func, dbs_check_dbs_details)
 
     # Test to check that a user cannot navigate to the page without an application ID
     def test_page_not_displayed_without_id(self):
@@ -712,7 +712,7 @@ class DBSCheckTest(TestCase):
     def test_url_resolves_to_page(self):
 
         found = resolve('/dbs-check/upload-dbs/')
-        self.assertEqual(found.func, dbs_check_dbs_details_view)
+        self.assertEqual(found.func, dbs_check_upload_dbs)
 
     # Test to check that a user cannot navigate to the page without an application ID
     def test_page_not_displayed_without_id(self):
@@ -730,7 +730,7 @@ class DBSCheckTest(TestCase):
     def test_url_resolves_to_page(self):
 
         found = resolve('/dbs-check/summary/')
-        self.assertEqual(found.func, dbs_check_dbs_details_view)
+        self.assertEqual(found.func, dbs_check_summary)
 
     # Test to check that a user cannot navigate to the page without an application ID
     def test_page_not_displayed_without_id(self):
