@@ -13,10 +13,17 @@ from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
-from .customfields import ExpirySplitDateWidget, ExpirySplitDateField
-from .models import (Application, ApplicantName, ApplicantPersonalDetails, ChildcareType,
-                     ApplicantHomeAddress, CriminalRecordCheck, FirstAidTraining,
-                     HealthDeclarationBooklet, Reference, UserDetails)
+from .customfields import ExpirySplitDateWidget, ExpirySplitDateField, TimeKnownField
+from .models import (Application,
+                     ApplicantHomeAddress,
+                     ApplicantName,
+                     ApplicantPersonalDetails,
+                     ChildcareType,
+                     CriminalRecordCheck,
+                     FirstAidTraining,
+                     HealthDeclarationBooklet,
+                     Reference,
+                     UserDetails)
 
 
 # Type of childcare form
@@ -599,8 +606,6 @@ class FirstAidTrainingGuidanceForm(GOVUKForm):
 
 
 # First aid training form: details
-
-
 class FirstAidTrainingDetailsForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -771,14 +776,21 @@ class HealthBookletForm(GOVUKForm):
                 self.fields['send_hdb_declare'].initial = '0'
 
 
+# 2 references: intro form
+class ReferenceIntroForm(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
 # 2 references form
 class ReferenceForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
-    first_name = forms.CharField(label='First name')
-    last_name = forms.CharField(label='Last name')
-    relationship = forms.CharField(label='How do they know you?')
+    first_name = forms.CharField(label='First name', required=True)
+    last_name = forms.CharField(label='Last name', required=True)
+    relationship = forms.CharField(label='How do they know you?', help_text='For instance, friend or neighbour', required=True)
+    time_known = TimeKnownField(label='How long have they known you?', required=True)
 
     def __init__(self, *args, **kwargs):
         self.application_id_local = kwargs.pop('id')
@@ -791,6 +803,26 @@ class ReferenceForm(GOVUKForm):
             self.fields['last_name'].initial = Reference.objects.get(application_id=self.application_id_local).last_name
             self.fields['relationship'].initial = Reference.objects.get(
                 application_id=self.application_id_local).relationship
+
+    # Time known validation
+    def clean_time_known(self):
+
+        years_known = self.cleaned_data['time_known'][1]
+        months_known = self.cleaned_data['time_known'][0]
+
+        if months_known != 0:
+
+            reference_known_time = years_known + (1/months_known)
+
+        elif months_known == 0:
+
+            reference_known_time = years_known
+
+        if reference_known_time < 1:
+
+            raise forms.ValidationError('TBC.')
+
+        return years_known, months_known
 
 
 # People in your home form     

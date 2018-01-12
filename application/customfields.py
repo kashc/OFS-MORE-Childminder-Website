@@ -5,6 +5,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 """
 
+from datetime import date
 from django import forms
 from django.forms import widgets
 from django.utils.timezone import now
@@ -12,7 +13,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 from govuk_forms.widgets import SplitHiddenDateWidget
 
 
-# Extremely hacky disgusting workaround for expiry date
+# Custom creation of an expiry date (month and year) field
 # Creating a widget class
 class Widget(widgets.Widget):
     input_classes = 'form-control'
@@ -25,7 +26,7 @@ class Widget(widgets.Widget):
         return attrs
 
 
-# Creating a base multiwidget class
+# Creating a base multi-widget class
 class MultiWidget(widgets.MultiWidget, Widget):
     subwidget_group_classes = ()
     subwidget_label_classes = ()
@@ -130,6 +131,72 @@ class ExpirySplitDateField(forms.MultiValueField):
                 if any(item in self.empty_values for item in data_list):
                     raise ValueError
                 return (data_list[1], data_list[0])
+            except ValueError:
+                raise forms.ValidationError(self.error_messages['invalid'], code='invalid')
+        return None
+
+    def widget_attrs(self, widget):
+        attrs = super().widget_attrs(widget)
+        if not isinstance(widget, ExpirySplitDateWidget):
+            return attrs
+        for subfield, subwidget in zip(self.fields, widget.widgets):
+            if subfield.min_value is not None:
+                subwidget.attrs['min'] = subfield.min_value
+            if subfield.max_value is not None:
+                subwidget.attrs['max'] = subfield.max_value
+        return attrs
+
+
+class TimeKnownSplitDateWidget(MultiWidget):
+    template_name = 'govuk_forms/widgets/split-date.html'
+    subwidget_group_classes = ('form-group form-group-year',
+                               'form-group form-group-month',)
+    subwidget_label_classes = ('form-hint', 'form-hint')
+    subwidget_labels = (_('Years'), _('Months'))
+
+    def __init__(self, attrs=None):
+        date_widgets = (widgets.NumberInput(attrs=attrs),
+                        widgets.NumberInput(attrs=attrs),)
+        super().__init__(date_widgets, attrs)
+
+    def decompress(self, value):
+        if value:
+            return [value.year, value.month]
+        return [None, None]
+
+
+class TimeKnownField(forms.MultiValueField):
+    widget = TimeKnownSplitDateWidget
+    hidden_widget = SplitHiddenDateWidget
+    default_error_messages = {
+        'invalid': _('Enter a valid date.')
+    }
+
+    def __init__(self, *args, **kwargs):
+        month_bounds_error = gettext('The number of months should be maximum 11.')
+        year_bounds_error = gettext('The number of years should be maximum 100')
+
+        self.fields = [
+            forms.IntegerField(max_value=100, error_messages={
+                'min_value': year_bounds_error,
+                'max_value': year_bounds_error,
+                'invalid': gettext('Enter number of years as a number.')
+            }),
+            forms.IntegerField(max_value=11, error_messages={
+                'min_value': month_bounds_error,
+                'max_value': month_bounds_error,
+                'invalid': gettext('Enter number of months as a number.')
+            })
+        ]
+
+        super().__init__(self.fields, *args, **kwargs)
+
+    def compress(self, data_list):
+        if data_list:
+            try:
+                if any(item in self.empty_values for item in data_list):
+                    raise ValueError
+                return data_list[0], data_list[1]
             except ValueError:
                 raise forms.ValidationError(self.error_messages['invalid'], code='invalid')
         return None

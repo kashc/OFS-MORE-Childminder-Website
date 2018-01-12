@@ -62,6 +62,7 @@ from .forms import (AccountForm,
                     PersonalDetailsSummaryForm,
                     QuestionForm,
                     ReferenceForm,
+                    ReferenceIntroForm,
                     TypeOfChildcareForm)
 from .models import (Application,
                      ApplicantHomeAddress,
@@ -1938,25 +1939,102 @@ def health_check_answers(request):
             return render(request, 'health-check-answers.html', variables)
 
 
-# View for the 2 references task
-def references(request):
-    # Get current date and time
-    current_date = datetime.datetime.today()
+# View for the 2 references task: intro
+def references_intro(request):
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+
+        form = ReferenceIntroForm()
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'references_status': application.references_status
+        }
+
+        # Access the task page
+        return render(request, 'references-intro.html', variables)
 
     if request.method == 'POST':
 
-        # Retrieve the application's ID        
+        # Retrieve the application's ID
         application_id_local = request.POST["id"]
 
-        # Initialise the 2 references form
+        # Initialise the Your login and contact details form
+        form = ReferenceIntroForm(request.POST)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+
+            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+            if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
+                status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+
+            # Go to the phone numbers page
+            return HttpResponseRedirect('/references/first-reference?id=' + application_id_local)
+
+        # If there are invalid details
+        else:
+
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+
+            # Return to the same page
+            return render(request, 'references-intro.html', variables)
+
+
+# View for the 2 references task: first reference
+def references_first_reference(request):
+    # Get current date and time
+    current_date = datetime.datetime.today()
+
+    if request.method == 'GET':
+        # If the 2 references form is not completed
+        application_id_local = request.GET["id"]
+
+        form = ReferenceForm(id=application_id_local)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'references_status': application.references_status
+        }
+
+        # Access the task page
+        return render(request, 'references-first-reference.html', variables)
+
+    if request.method == 'POST':
+
+        # Retrieve the application's ID
+        application_id_local = request.POST["id"]
+
+        # Initialise the Your login and contact details form
         form = ReferenceForm(request.POST, id=application_id_local)
 
-        # If the form is successfully submitted (with valid details) 
-        if form.is_valid():
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'references_status', 'COMPLETED')
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
 
-            # Perform business logic to create or update 2 references record in database              
+        # If the form is successfully submitted (with valid details)
+        if form.is_valid():
+
+            print(form.cleaned_data['time_known'])
+
+            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
+            if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
+                status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+
+            # Perform business logic to create or update Your personal details record in database
             references_record = references_check_logic(application_id_local, form)
             references_record.save()
 
@@ -1965,20 +2043,19 @@ def references(request):
             application.date_updated = current_date
             application.save()
 
-        # Return to the application's task list            
-        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+            # Go to the date of birth page
+            return HttpResponseRedirect('/task-list?id=' + application_id_local)
 
-    # If the 2 references form is not completed 
-    application_id_local = request.GET["id"]
+        # If there are invalid details
+        else:
 
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
-        status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
 
-    form = ReferenceForm(id=application_id_local)
-
-    # Access the task page
-    return render(request, 'references.html', {'form': form, 'application_id': application_id_local})
+            # Return to the same page
+            return render(request, 'references-first-reference.html', variables)
 
 
 # View for the People in your home task

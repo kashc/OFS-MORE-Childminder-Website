@@ -342,14 +342,26 @@ def references_check_logic(application_id_local, form):
     first_name = form.cleaned_data.get('first_name')
     last_name = form.cleaned_data.get('last_name')
     relationship = form.cleaned_data.get('relationship')
+    years_known = form.cleaned_data.get('time_known')[1]
+    months_known = form.cleaned_data.get('time_known')[0]
 
     # If the user entered information for this task for the first time
     if Reference.objects.filter(application_id=application_id_local).count() == 0:
 
         # Create a new 2 references record corresponding to the application
-        reference_record = Reference(first_name=first_name, last_name=last_name, relationship=relationship,
-                                     years_known=0, months_known=0, street_line1='', street_line2='', town='',
-                                     county='', country='', postcode='', phone_number='', email='',
+        reference_record = Reference(first_name=first_name,
+                                     last_name=last_name,
+                                     relationship=relationship,
+                                     years_known=years_known,
+                                     months_known=years_known,
+                                     street_line1='',
+                                     street_line2='',
+                                     town='',
+                                     county='',
+                                     country='',
+                                     postcode='',
+                                     phone_number='',
+                                     email='',
                                      application_id=this_application)
 
     # If a record exists, update it
@@ -360,6 +372,8 @@ def references_check_logic(application_id_local, form):
         reference_record.first_name = first_name
         reference_record.last_name = last_name
         reference_record.relationship = relationship
+        reference_record.years_known = years_known
+        reference_record.months_known = months_known
 
     return reference_record
 
