@@ -44,7 +44,8 @@
         <p>It can cost a few hundred pounds to become a childminder.</p>
         <p>It usually costs &#163;35 per year to register with Ofsted.</p>
         <p>You will also have to pay for things like criminal record checks and training courses.</p>
-        <form action ="/account/account/" method="get">
+
+        <form action="{{ URL_PREFIX }}/account/account/" method="get">
             <div class="form-group" style="margin-top: 20px;">
                 <input type = submit class="button button-start" value="Submit">
                 <input type="hidden" value="{{id}}" name = "id" />

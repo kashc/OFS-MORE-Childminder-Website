@@ -4,12 +4,15 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 @author: Informed Solutions
 """
+import re
 
 from django.conf.urls import url
 from django.contrib import admin
 from django.views.generic import TemplateView
 
 from application import magic_link, views
+
+from django.conf import settings
 
 urlpatterns = [
     url(r'^$', views.start_page, name='start-page.html'),
@@ -64,3 +67,10 @@ urlpatterns = [
     url(r'^bad-link/', TemplateView.as_view(template_name='bad-link.html')),
     url(r'^link-resolution-error/', TemplateView.as_view(template_name='link-resolution-error.html')),
 ]
+
+if settings.URL_PREFIX:
+    prefixed_url_pattern = []
+    for pat in urlpatterns:
+        pat.regex = re.compile(r"^%s/%s" % (settings.URL_PREFIX[1:], pat.regex.pattern[1:]))
+        prefixed_url_pattern.append(pat)
+    urlpatterns = prefixed_url_pattern

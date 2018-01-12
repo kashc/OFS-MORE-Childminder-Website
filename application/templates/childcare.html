@@ -7,7 +7,6 @@
 {% extends 'govuk_template.html' %}
 {% load static %}
 {% load govuk_template_base %}
-
 {% block inner_content %}
 
 <!-- Initialise error summary for page -->
@@ -16,21 +15,21 @@
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
         {% if childcare_type_status == 'NOT_STARTED' %}
-        <a href="/account/summary?id={{application_id}}" style="margin-right: 10px; line-height: 28px">
+        <a href="account/summary?id={{application_id}}" style="margin-right: 10px; line-height: 28px">
             <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
                 <polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
             </svg>
             Back
         </a>
         {% elif childcare_type_status == 'IN_PROGRESS' %}
-        <a href="/account/summary?id={{application_id}}" style="margin-right: 10px; line-height: 28px">
+        <a href="account/summary?id={{application_id}}" style="margin-right: 10px; line-height: 28px">
             <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
                 <polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
             </svg>
             Back
         </a>
         {% elif childcare_type_status == 'COMPLETED' %}
-        <a href="/task-list?id={{application_id}}" style="margin-right: 10px; line-height: 28px">
+        <a href="task-list?id={{application_id}}" style="margin-right: 10px; line-height: 28px">
             <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
                 <polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
             </svg>
@@ -38,7 +37,7 @@
         </a>
         {% endif %}
     </div>
-    <form action="/childcare/" method="post" class="form">
+    <form action="childcare/" method="post" class="form">
         <div class="grid-row">
             <h1 class="form-title heading-large">
                 Who you'll be caring for
@@ -63,7 +62,7 @@
         </div>
         <input type="hidden" value="{{application_id}}" name = "id" />
         <div class="form-group grid-row">
-            <a href="/task-list?id={{application_id}}">Return to list</a>
+            <a href="task-list?id={{application_id}}">Return to list</a>
         </div>
     </form>
 </div>
