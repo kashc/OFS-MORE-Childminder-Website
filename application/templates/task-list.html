@@ -29,17 +29,17 @@
                 <tr id="account_details">
                     <td class="task" style="padding-right: 10px">
                         {% if login_details_status == 'NOT_STARTED' %}
-                            <a href="/account/email?id={{application_id}}" >
+                            <a href="{{ URL_PREFIX }}/account/email?id={{application_id}}" >
                                 <span class="task-name">Your login and contact details</span>
                             </a>
                         {% endif %}
                         {% if login_details_status == 'IN_PROGRESS' %}
-                            <a href="/account/email?id={{application_id}}" >
+                            <a href="{{ URL_PREFIX }}/account/email?id={{application_id}}" >
                                 <span class="task-name">Your login and contact details</span>
                             </a>
                         {% endif %}
                         {% if login_details_status == 'COMPLETED' %}
-                            <a href="/account/summary?id={{application_id}}" >
+                            <a href="{{ URL_PREFIX }}/account/summary?id={{application_id}}" >
                                 <span class="task-name">Your login and contact details</span>
                             </a>
                         {% endif %}
@@ -60,7 +60,7 @@
                 </tr>
                 <tr id="children">
                     <td class="task" style="padding-right: 10px">
-                        <a href="/childcare?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/childcare?id={{application_id}}">
                             <span class="task-name">Type of childcare</span>
                         </a>
                     </td>
@@ -81,17 +81,17 @@
                 <tr id="personal_details">
                     <td class="task" style="padding-right: 10px">
                         {% if personal_details_status == 'NOT_STARTED' %}
-                            <a href="/personal-details/guidance?id={{application_id}}" >
+                            <a href="{{ URL_PREFIX }}/personal-details/guidance?id={{application_id}}" >
                                 <span class="task-name">Your personal details</span>
                             </a>
                         {% endif %}
                         {% if personal_details_status == 'IN_PROGRESS' %}
-                            <a href="/personal-details/guidance?id={{application_id}}" >
+                            <a href="{{ URL_PREFIX }}/personal-details/guidance?id={{application_id}}" >
                                 <span class="task-name">Your personal details</span>
                             </a>
                         {% endif %}
                         {% if personal_details_status == 'COMPLETED' %}
-                            <a href="/personal-details/summary?id={{application_id}}" >
+                            <a href="{{ URL_PREFIX }}/personal-details/summary?id={{application_id}}" >
                                 <span class="task-name">Your personal details</span>
                             </a>
                         {% endif %}
@@ -111,17 +111,17 @@
                 <tr id="first_aid">
                     <td class="task" style="padding-right: 10px">
                         {% if first_aid_training_status == 'NOT_STARTED' %}
-                            <a href="/first-aid/guidance?id={{application_id}}" >
+                            <a href="{{ URL_PREFIX }}/first-aid/guidance?id={{application_id}}" >
                                 <span class="task-name">First aid training</span>
                             </a>
                         {% endif %}
                         {% if first_aid_training_status == 'IN_PROGRESS' %}
-                            <a href="/first-aid/guidance?id={{application_id}}" >
+                            <a href="{{ URL_PREFIX }}/first-aid/guidance?id={{application_id}}" >
                                 <span class="task-name">First aid training</span>
                             </a>
                         {% endif %}
                         {% if first_aid_training_status == 'COMPLETED' %}
-                            <a href="/first-aid/summary?id={{application_id}}" >
+                            <a href="{{ URL_PREFIX }}/first-aid/summary?id={{application_id}}" >
                                 <span class="task-name">First aid training</span>
                             </a>
                         {% endif %}
@@ -140,7 +140,7 @@
                 </tr>
                  <tr id="eyfs">
                     <td class="task" style="padding-right: 10px">
-                        <a href="/eyfs?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/eyfs?id={{application_id}}">
                             <span class="task-name">Early Years knowledge</span>
                         </a>
                     </td>
@@ -159,15 +159,15 @@
                 <tr id="dbs">
                     <td class="task" style="padding-right: 10px">
                         {% if criminal_record_check_status == 'NOT_STARTED' %}
-                        <a href="/dbs-check/guidance?id={{application_id}}" id="{{application_id}}">
+                        <a href="{{ URL_PREFIX }}/dbs-check/guidance?id={{application_id}}" id="{{application_id}}">
                             <span class="task-name">Your criminal record (DBS) check</span>
                         </a>
                         {% elif criminal_record_check_status == 'IN_PROGRESS' %}
-                        <a href="/dbs-check/guidance?id={{application_id}}" id="{{application_id}}">
+                        <a href="{{ URL_PREFIX }}/dbs-check/guidance?id={{application_id}}" id="{{application_id}}">
                             <span class="task-name">Your criminal record (DBS) check</span>
                         </a>
                         {% elif criminal_record_check_status == 'COMPLETED' %}
-                        <a href="/dbs-check/summary?id={{application_id}}" id="{{application_id}}">
+                        <a href="{{ URL_PREFIX }}/dbs-check/summary?id={{application_id}}" id="{{application_id}}">
                             <span class="task-name">Your criminal record (DBS) check</span>
                         </a>
                         {% endif %}
@@ -187,15 +187,15 @@
                 <tr id="health">
                     <td class="task" style="padding-right: 10px">
                         {% if health_status == 'NOT_STARTED' %}
-                        <a href="/health/intro?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/health/intro?id={{application_id}}">
                             <span class="task-name">Your health</span>
                         </a>
                         {% elif health_status == 'IN_PROGRESS' %}
-                        <a href="/health/intro?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/health/intro?id={{application_id}}">
                             <span class="task-name">Your health</span>
                         </a>
                         {% elif health_status == 'COMPLETED' %}
-                        <a href="/health/check-answers?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/health/check-answers?id={{application_id}}">
                             <span class="task-name">Your health</span>
                         </a>
                         {% endif %}
@@ -214,7 +214,7 @@
                 </tr>
                 <tr id="references">
                     <td class="task" style="padding-right: 10px">
-                        <a href="/references?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/references?id={{application_id}}">
                             <span class="task-name">2 references</span>
                         </a>
                     </td>
@@ -232,7 +232,7 @@
                 </tr>
                 <tr id="other_people">
                     <td class="task" style="padding-right: 10px">
-                        <a href="/other-people?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/other-people?id={{application_id}}">
                             <span class="task-name">People in your home</span>
                         </a>
                     </td>
@@ -263,7 +263,7 @@
                 {% if all_complete == True  %}
                 <tr id="review">
                     <td class="task" style="padding-right: 10px">
-                        <a href="/declaration/?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/declaration/?id={{application_id}}">
                             <span class="task-name">Declaration</span>
                         </a>
                     </td>
@@ -306,7 +306,7 @@
     <div class="column-two-thirds">
         <div class="form-group">
             <input type="hidden" value="{{application_id}}" name = "id" />
-            <a href="/application-saved/?id={{application_id}}" class="button-save-and-exit" style="margin-left: 0px;">Save and exit</a>
+            <a href="{{ URL_PREFIX }}/application-saved/?id={{application_id}}" class="button-save-and-exit" style="margin-left: 0px;">Save and exit</a>
         </div>
     </div>
 </div>

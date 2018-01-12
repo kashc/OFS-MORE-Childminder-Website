@@ -13,7 +13,7 @@
 <div class="column-full">
 	<div class="form-group grid-row" style="padding-top: 30px;">
 		<!-- Back button -->
-		<a href="/personal-details/location-of-care?id={{application_id}}&manual=False" style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
+		<a href="{{ URL_PREFIX }}/personal-details/location-of-care?id={{application_id}}&manual=False" style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
 			<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
 				<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
 			</svg>
@@ -48,7 +48,7 @@
 				</td>
 				{% endif %}
 				<td class="change-answer">
-					<a href="/personal-details/name?id={{application_id}}" alt='Change name'>
+					<a href="{{ URL_PREFIX }}/personal-details/name?id={{application_id}}" alt='Change name'>
 						Change <span class="visuallyhidden">your name</span>
 					</a>
 				</td>
@@ -107,7 +107,7 @@
 				</td>
 				{% endif %}
 				<td class="change-answer">
-					<a href="/personal-details/dob?id={{application_id}}" alt='Change your date of birth'>
+					<a href="{{ URL_PREFIX }}/personal-details/dob?id={{application_id}}" alt='Change your date of birth'>
 						Change <span class="visuallyhidden">date of birth</span>
 					</a>
 				</td>
@@ -171,7 +171,7 @@
 						</td>
 					{% endif %}
 					<td class="change-answer">
-						<a href="/personal-details/home-address?id={{application_id}}&manual=False" alt='Change your home address'>
+						<a href="{{ URL_PREFIX }}/personal-details/home-address?id={{application_id}}&manual=False" alt='Change your home address'>
 							Change <span class="visuallyhidden">home address</span>
 						</a>
 					</td>
@@ -228,7 +228,7 @@
 						{% endif %}
 					{% endif %}
 					<td class="change-answer">
-						<a href="/personal-details/location-of-care?id={{application_id}}&manual=True" alt='Change your childcare address'>
+						<a href="{{ URL_PREFIX }}/personal-details/location-of-care?id={{application_id}}&manual=True" alt='Change your childcare address'>
 							Change <span class="visuallyhidden">your name</span>
 						</a>
 					</td>
@@ -237,7 +237,7 @@
 		</table>
 	<br>
 	<div class="form-group grid-row">
-		<form action ="/task-list?id={{application_id}}" method="get">
+		<form action ="{{ URL_PREFIX }}/task-list?id={{application_id}}" method="get">
 			<input type="submit" class="button" value="Confirm and continue" />
 			<input type="hidden" value="{{application_id}}" name = "id" />
 		</form>

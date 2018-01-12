@@ -27,7 +27,7 @@
         <p>This is to make sure the home is safe for children.</p>
         <p>This includes all adults who live there, or who work there.</p>
     </div>
-    <form class="form" method="post" action="/other-people/">{% csrf_token %}
+    <form class="form" method="post" action="{{ URL_PREFIX }}/other-people/">{% csrf_token %}
         <div class="form-group">
             <div class="grid-row">
                 <fieldset class="inline">
@@ -54,7 +54,7 @@
         <input type="hidden" value="{{application_id}}" name = "id" />
         <div class="form-group grid-row">
             <div class="form-group">
-                <a href="/task-list?id={{application_id}}">Return to list</a>
+                <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
             </div>
         </div>
     </form>
