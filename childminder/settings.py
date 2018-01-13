@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'application.middleware.CustomAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -74,7 +75,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'govuk_template_base.context_processors.govuk_template_base',
-                "application.context_processors.url_prefix",
+                "application.middleware.globalise_url_prefix",
             ],
         },
     },
@@ -139,6 +140,14 @@ USE_TZ = True
 
 URL_PREFIX = '/childminder'
 STATIC_URL = '/static/'
+
+AUTHENTICATION_URL = URL_PREFIX + '/existing-application/'
+
+AUTHENTICATION_EXEMPT_URLS = (
+    r'^' + URL_PREFIX + '/$',
+    r'^' + URL_PREFIX + '/account/account/$',
+    r'^' + URL_PREFIX + '/account/email/$',
+)
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
