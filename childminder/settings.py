@@ -147,6 +147,10 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/$',
     r'^' + URL_PREFIX + '/account/account/$',
     r'^' + URL_PREFIX + '/account/email/$',
+    r'^' + URL_PREFIX + '/validate/$',
+    r'^' + URL_PREFIX + '/verify-phone/$',
+    r'^' + URL_PREFIX + '/bad-link/$',
+    r'^' + URL_PREFIX + '/code-expired/$',
 )
 
 STATICFILES_FINDERS = [

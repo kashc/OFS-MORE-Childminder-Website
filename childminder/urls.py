@@ -59,7 +59,7 @@ urlpatterns = [
     url(r'^existing-application/', magic_link.existing_application, name='Existing-Application'),
     url(r'^validate/(?P<id>[\w-]+)/$', magic_link.validate_magic_link),
     # This is curr checking that the parameter is a phone number
-    url(r'^verifyPhone/', magic_link.sms_verification),
+    url(r'^verify-phone/', magic_link.sms_verification),
     url(r'^email-sent/', TemplateView.as_view(template_name='email-sent.html')),
     url(r'^start/', views.start_page),
     url(r'^confirmation/', TemplateView.as_view(template_name='payment-confirmation.html')),

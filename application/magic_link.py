@@ -127,7 +127,6 @@ def validate_magic_link(request, id):
         acc = UserDetails.objects.get(magic_link_email=id)
         exp = acc.email_expiry_date
         if not has_expired(exp) and len(id) > 0:
-            # uncomment url if it should be a one-time use email
             acc.email_expiry_date = 0
             phone = acc.mobile_number
             g = generate_random(5, 'code')
@@ -136,13 +135,10 @@ def validate_magic_link(request, id):
             acc.sms_expiry_date = expiry
             acc.save()
             magic_link_text(phone, g)
-            # return JsonResponse({'message':'Link is valid, we just sent a text message to ' +phone},status=200)
-            return HttpResponseRedirect(settings.URL_PREFIX + '/verifyPhone/?id=' + id)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/verify-phone/?id=' + id)
         else:
-            # return JsonResponse({'message':'The code has expired'},status=440)
             return HttpResponseRedirect(settings.URL_PREFIX + '/code-expired/')
     except Exception as ex:
-        # return JsonResponse({'message':'error bad link' + id}, status=404)
         return HttpResponseRedirect(settings.URL_PREFIX + '/bad-link/')
 
 
