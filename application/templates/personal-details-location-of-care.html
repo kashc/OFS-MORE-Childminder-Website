@@ -1,6 +1,6 @@
 <!-- Tab title -->
 <head>
-	<title>Personal details</title>
+    <title>Personal details</title>
 </head>
 
 <!-- Implement GOV.UK template -->
@@ -14,43 +14,44 @@
 {{form.error_summary}}
 
 <div class="column-full">
-	<div class="form-group grid-row" style="padding-top: 30px;">
-		<!-- Back button -->
-		<a href="{{ URL_PREFIX }}/personal-details/home-address?id={{application_id}}&manual=False" style="margin-right: 10px; line-height: 28px" alt="Back to application list">
-			<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
+    <div class="grid-row" style="padding-top: 30px;">
+        <!-- Back button -->
+        <a href="{{ URL_PREFIX }}/personal-details/home-address?id={{application_id}}&manual=False"
+           style="margin-right: 10px; line-height: 28px" alt="Back to application list">
+            <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
 				<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
 			</svg>
-			Back
-		</a>
-	</div>
-	<!-- Form -->
-	<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
-		<!-- Content -->
-		<div class="grid-row">
-			<h1 class="form-title heading-large">
-				Your home address details
-			</h1>
-			{% if street_line2 and county %}
-				<p>{{street_line1}}, {{street_line2}}, {{town}}, {{county}} {{postcode}}</p>
-			{% elif street_line2 and not county %}
-				<p>{{street_line1}}, {{street_line2}}, {{town}} {{postcode}}</p>
-			{% elif not street_line2 and county %}
-				<p>{{street_line1}}, {{town}}, {{county}} {{postcode}}</p>
-			{% elif not street_line2 and not county %}
-				<p>{{street_line1}}, {{town}} {{postcode}}</p>
-			{% endif %}
-			</br>
-			{{form.as_div}}
-			{% csrf_token %}
-			<input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
-			<input type="hidden" id="id" name="id" value="{{application_id}}" />
-		</div>
-		</br>
-		<!-- Return to task list -->
-		<div class="form-group grid-row">
-			<a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-		</div>
-	</form>
+            Back
+        </a>
+    </div>
+    <!-- Form -->
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        <!-- Content -->
+        <div class="grid-row">
+            <h1 class="form-title heading-large">
+                Your home address details
+            </h1>
+            {% if street_line2 and county %}
+            <p>{{street_line1}}, {{street_line2}}, {{town}}, {{county}} {{postcode}}</p>
+            {% elif street_line2 and not county %}
+            <p>{{street_line1}}, {{street_line2}}, {{town}} {{postcode}}</p>
+            {% elif not street_line2 and county %}
+            <p>{{street_line1}}, {{town}}, {{county}} {{postcode}}</p>
+            {% elif not street_line2 and not county %}
+            <p>{{street_line1}}, {{town}} {{postcode}}</p>
+            {% endif %}
+            </br>
+            {{form.as_div}}
+            {% csrf_token %}
+            <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+        </div>
+        </br>
+        <!-- Return to task list -->
+        <div class="form-group grid-row">
+            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+        </div>
+    </form>
 </div>
 
 {% endblock %}

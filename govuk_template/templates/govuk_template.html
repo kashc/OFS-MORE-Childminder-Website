@@ -28,7 +28,7 @@
         <a href="#proposition-links" class="js-header-toggle menu">{% trans 'Menu' %}</a>
       {% endif %}
       <nav id="proposition-menu">
-        <a href="{{ service_settings.header_link_url|default:'/' }}" id="proposition-name">
+        <a href="{{ URL_PREFIX }}" id="proposition-name">
           {% block proposition %}Register as a childminder{% endblock %}
         </a>
         {% block proposition_menu %}
@@ -58,49 +58,7 @@
         </div>
       {% endif %}
     {% endblock %}
-	
-	<!--  {% if form.errors %}
-    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
-	    {% for field in form %}
-	          <ul class="error-summary-list">
-          	        {% for error in field.errors %}
-   	        		     <li><a href="#id_{{ field.name }}-group">{{ error|escape }}</a></li>
-			        {% endfor %}
-			          
-		      </ul>
-	    {% endfor %}
-	    
-	    {% for error in form.non_field_errors %}
-	        <div class="alert alert-danger">
-	            <strong>{{ error|escape }}</strong>
-	        </div>
-	    {% endfor %}
-	</div>
-	{% endif %}
-	-->
-<!--  {% if form.non_field_errors or form.errors %}
-  		<div class="error-summary" aria-labelledby="error-summary-heading-{{ random_string }}" role="alert" tabindex="-1">
-    		<h2 class="heading-medium error-summary-heading" id="error-summary-heading-{{ random_string }}">
-      			{{ error_summary_title }}
-    		</h2>
-    		<ul class="error-summary-list">
-      			{% for error in form.non_field_errors %}
-        			<li class="non-field-error">{{ error }}</li>
-      			{% endfor %}
-      			{% for field, field_errors in form.errors.items %}
-        			<li class="field-error {% if field.is_hidden %}hidden-field-error{% endif %}">
-          				<a {% if not field.is_hidden %}href="#{{ field.auto_id }}-label"{% endif %}>{{ field.label }}</a>
-        				<ul>
-	        				{% for field_error in form.errors %}
-	        					<li><a href="#id_{{ field_error }}">{{ field_error }}</a></li>
-	            			{% endfor %}
-        				</ul>
-        			</li>
-      			{% endfor %}
-    		</ul>
-  		</div>
-	{% endif %} -->
-	
+
     {% block inner_content %}{% endblock %}
   </main>
 {% endblock %}

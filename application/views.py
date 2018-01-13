@@ -11,6 +11,8 @@ import re
 import time
 
 from datetime import date
+
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
@@ -126,7 +128,7 @@ def account_selection(request):
         form = AccountForm()
 
         # Return to the application's task list
-        return HttpResponseRedirect('/account/email?id=' + application_id_local)
+        return HttpResponseRedirect(settings.URL_PREFIX + '/account/email?id=' + application_id_local)
 
     else:
 
@@ -214,7 +216,7 @@ def type_of_childcare(request):
             childcare_type_record.save()
 
         # Return to the application's task list
-        return HttpResponseRedirect('/task-list?id=' + application_id_local)
+        return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
 
     # If the Type of childcare form is not completed    
     application_id_local = request.GET["id"]
@@ -296,7 +298,7 @@ def contact_email(request):
                 # Send magic link email
                 r = magic_link.magic_link_email(email, domain + 'validate/' + link)
                 # Note that this is the same response whether the email is valid or not
-                return HttpResponseRedirect('/email-sent?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/email-sent?id=' + application_id_local)
 
             else:
 
@@ -308,7 +310,7 @@ def contact_email(request):
                 application.save()
 
                 # Go to the phone numbers page   
-                return HttpResponseRedirect('/account/phone?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/account/phone?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -368,7 +370,7 @@ def contact_phone(request):
             application.save()
 
             # Return to the application's task list    
-            return HttpResponseRedirect('/account/question?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/account/question?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -414,7 +416,7 @@ def contact_question(request):
         if form.is_valid():
 
             # Return to the application's task list    
-            return HttpResponseRedirect('/account/summary?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/account/summary?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -480,7 +482,7 @@ def contact_summary(request):
             status.update(application_id_local, 'login_details_status', 'COMPLETED')
 
             # Return to the application's task list    
-            return HttpResponseRedirect('/childcare?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/childcare?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -533,7 +535,7 @@ def personal_details_guidance(request):
                 status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
 
             # Go to the phone numbers page   
-            return HttpResponseRedirect('/personal-details/name?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/name?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -598,7 +600,7 @@ def personal_details_name(request):
             application.save()
 
             # Go to the date of birth page    
-            return HttpResponseRedirect('/personal-details/dob/?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/dob/?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -663,7 +665,7 @@ def personal_details_dob(request):
             application.save()
 
             # Return to the application's task list    
-            return HttpResponseRedirect('/personal-details/home-address?id=' + application_id_local + '&manual=False')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address?id=' + application_id_local + '&manual=False')
 
         # If there are invalid details
         else:
@@ -781,7 +783,7 @@ def personal_details_home_address(request):
                 application.save()
 
                 # Return to the application's task list    
-                return HttpResponseRedirect('/personal-details/location-of-care?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/location-of-care?id=' + application_id_local)
 
             else:
 
@@ -877,7 +879,7 @@ def personal_details_location_of_care(request):
             if home_address_record.childcare_address == 'True':
 
                 # Return to the application's task list    
-                return HttpResponseRedirect('/personal-details/summary?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
 
             elif home_address_record.childcare_address == 'False':
 
@@ -1006,7 +1008,7 @@ def personal_details_childcare_address(request):
                 application.save()
 
                 # Return to the application's task list    
-                return HttpResponseRedirect('/personal-details/summary?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
 
             else:
 
@@ -1105,7 +1107,7 @@ def personal_details_summary(request):
             status.update(application_id_local, 'personal_details_status', 'COMPLETED')
 
             # Return to the application's task list    
-            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -1158,7 +1160,7 @@ def first_aid_training_guidance(request):
                 status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
 
             # Go to the details page   
-            return HttpResponseRedirect('/first-aid/details?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/details?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -1240,19 +1242,19 @@ def first_aid_training_details(request):
             if (certificate_age < 2.5):
 
                 # Go to the declaration page    
-                return HttpResponseRedirect('/first-aid/declaration?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/declaration?id=' + application_id_local)
 
             # If the certificate is between 2.5 and 3 years old
             elif (2.5 <= certificate_age <= 3):
 
                 # Go to the renew page    
-                return HttpResponseRedirect('/first-aid/renew?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/renew?id=' + application_id_local)
 
             # If the certificate is older than 3 years
             elif (certificate_age > 3):
 
                 # Go to the renew page    
-                return HttpResponseRedirect('/first-aid/training?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/training?id=' + application_id_local)
 
                 # If there are invalid details
         else:
@@ -1303,7 +1305,7 @@ def first_aid_training_declaration(request):
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
 
             # Go to the details page   
-            return HttpResponseRedirect('/first-aid/summary?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -1354,7 +1356,7 @@ def first_aid_training_renew(request):
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
 
             # Go to the details page   
-            return HttpResponseRedirect('/first-aid/summary?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -1406,7 +1408,7 @@ def first_aid_training_training(request):
             status.update(application_id_local, 'first_aid_training_status', 'NOT_STARTED')
 
             # Go to the details page   
-            return HttpResponseRedirect('/first-aid/summary?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -1467,7 +1469,7 @@ def first_aid_training_summary(request):
         if form.is_valid():
 
             # Go to the details page   
-            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -1497,7 +1499,7 @@ def eyfs(request):
             status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
 
         # Return to the application's task list    
-        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+        return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
 
     # If the Early Years knowledge form is not completed
     application_id_local = request.GET["id"]
@@ -1556,7 +1558,7 @@ def dbs_check_guidance(request):
                 status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
 
             # Go to the phone numbers page
-            return HttpResponseRedirect('/dbs-check/dbs-details?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/dbs-details?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -1626,7 +1628,7 @@ def dbs_check_dbs_details(request):
             if cautions_convictions == 'True':
 
                 # Go to the upload DBS page
-                return HttpResponseRedirect('/dbs-check/upload-dbs?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/upload-dbs?id=' + application_id_local)
 
             elif cautions_convictions == 'False':
 
@@ -1635,7 +1637,7 @@ def dbs_check_dbs_details(request):
                     status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
 
                 # Go to the summary page
-                return HttpResponseRedirect('/dbs-check/summary?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/summary?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -1696,7 +1698,7 @@ def dbs_check_upload_dbs(request):
                 status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
 
             # Go to the phone numbers page
-            return HttpResponseRedirect('/dbs-check/summary?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/summary?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -1755,7 +1757,7 @@ def dbs_check_summary(request):
         if form.is_valid():
 
             # Go to the details page
-            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -1807,7 +1809,7 @@ def health_intro(request):
                 status.update(application_id_local, 'health_status', 'IN_PROGRESS')
 
             # Go to the phone numbers page
-            return HttpResponseRedirect('/health/booklet?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/health/booklet?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -1870,7 +1872,7 @@ def health_booklet(request):
                 status.update(application_id_local, 'health_status', 'COMPLETED')
 
             # Go to the phone numbers page
-            return HttpResponseRedirect('/health/check-answers?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/health/check-answers?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -1924,7 +1926,7 @@ def health_check_answers(request):
         if form.is_valid():
 
             # Go to the details page
-            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -1966,7 +1968,7 @@ def references(request):
             application.save()
 
         # Return to the application's task list            
-        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+        return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
 
     # If the 2 references form is not completed 
     application_id_local = request.GET["id"]
@@ -1997,7 +1999,7 @@ def other_people(request):
             status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
 
         # Return to the application's task list              
-        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+        return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
 
     # If the People in your home form is not completed 
     application_id_local = request.GET["id"]
@@ -2028,7 +2030,7 @@ def declaration(request):
             status.update(application_id_local, 'declarations_status', 'COMPLETED')
 
         # Return to the application's task list         
-        return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+        return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
 
     # If the People in your home form is not completed    
     application_id_local = request.GET["id"]
@@ -2056,7 +2058,7 @@ def confirmation(request):
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
             # Return to the application's task list
-            return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
 
     # If the Confirm your details form is not completed     
     application_id_local = request.GET["id"]
@@ -2095,7 +2097,7 @@ def payment_view(request):
             if (payment_method == 'Credit'):
 
                 # Navigate to the payment details page
-                return HttpResponseRedirect('/payment-details/?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/payment-details/?id=' + application_id_local)
 
             elif (payment_method == 'PayPal'):
 
@@ -2200,7 +2202,7 @@ def application_saved(request):
         # If the form is successfully submitted (with valid details)        
         if form.is_valid():
             # Stay on the same page
-            return HttpResponseRedirect('/application-saved/?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/application-saved/?id=' + application_id_local)
 
     # If the Application saved form is not completed
     application_id_local = request.GET["id"]
@@ -2226,4 +2228,4 @@ def reset(request):
         status.update(application_id_local, section, 'NOT_STARTED')
 
     # Access the task list   
-    return HttpResponseRedirect('/task-list/?id=' + application_id_local)
+    return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)

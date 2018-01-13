@@ -1,6 +1,6 @@
 <!-- Tab title -->
 <head>
-	<title>Personal details</title>
+    <title>Personal details</title>
 </head>
 
 <!-- Implement GOV.UK template -->
@@ -14,57 +14,61 @@
 {{form.error_summary}}
 
 <div class="column-full">
-	<div class="form-group grid-row" style="padding-top: 30px;">
-		<!-- Back button -->
-		<a href="{{ URL_PREFIX }}/personal-details/location-of-care?id={{application_id}}" style="margin-right: 10px; line-height: 28px" alt="Back to application list">
-			<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
+    <div class="grid-row" style="padding-top: 30px;">
+        <!-- Back button -->
+        <a href="{{ URL_PREFIX }}/personal-details/location-of-care?id={{application_id}}" style="margin-right: 10px; line-height: 28px"
+           alt="Back to application list">
+            <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
 				<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
 			</svg>
-			Back
-		</a>
-	</div>
-	<!-- Form -->
-	<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
-		<!-- Content -->
-		<div class="grid-row">
-			<h1 class="form-title heading-large">
-				Childcare address
-			</h1>
-			<p>Where will you be looking after the children?</p>
-			<legend id='{{form.street_name_and_number.id_for_label}}-label' class="form-label-bold">{{form.street_name_and_number.label}}</legend>
-			{{form.street_name_and_number}}
-			</br>
-			</br>
-			<legend id='{{form.street_name_and_number2.id_for_label}}-label' class="form-label-bold"></legend>
-			{{form.street_name_and_number2}}
-			</br>
-			</br>
-			<legend id='{{form.town.id_for_label}}-label' class="form-label-bold">{{form.town.label}}</legend>
-			{{form.town}}
-			</br>
-			</br>
-			<legend id='{{form.county.id_for_label}}-label' class="form-label-bold">{{form.county.label}}</legend>
-			{{form.county}}
-			</br>
-			</br>
-			<legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
-			{{form.postcode}}
-			{% csrf_token %}
-			</br>
-			</br>
-			<a href="/personal-details/childcare-address?id={{application_id}}&manual=False" name="manual" id="manual">Use postcode search</a>
-			</br>
-			</br>
-			<input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
-			<input type="hidden" id="id" name="id" value="{{application_id}}" />
-			<input type="hidden" id="manual" name="manual" value="True" />
-		</div>
-		</br>
-		<!-- Return to task list -->
-		<div class="form-group grid-row">
-			<a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-		</div>
-	</form>
+            Back
+        </a>
+    </div>
+    <!-- Form -->
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        <!-- Content -->
+        <div class="grid-row">
+            <h1 class="form-title heading-large">
+                Childcare address
+            </h1>
+            <p>Where will you be looking after the children?</p>
+            <legend id='{{form.street_name_and_number.id_for_label}}-label' class="form-label-bold">
+                {{form.street_name_and_number.label}}
+            </legend>
+            {{form.street_name_and_number}}
+            </br>
+            </br>
+            <legend id='{{form.street_name_and_number2.id_for_label}}-label' class="form-label-bold"></legend>
+            {{form.street_name_and_number2}}
+            </br>
+            </br>
+            <legend id='{{form.town.id_for_label}}-label' class="form-label-bold">{{form.town.label}}</legend>
+            {{form.town}}
+            </br>
+            </br>
+            <legend id='{{form.county.id_for_label}}-label' class="form-label-bold">{{form.county.label}}</legend>
+            {{form.county}}
+            </br>
+            </br>
+            <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
+            {{form.postcode}}
+            {% csrf_token %}
+            </br>
+            </br>
+            <a href="{{ URL_PREFIX }}/personal-details/childcare-address?id={{application_id}}&manual=False" name="manual" id="manual">Use
+                postcode search</a>
+            </br>
+            </br>
+            <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+            <input type="hidden" id="manual" name="manual" value="True"/>
+        </div>
+        </br>
+        <!-- Return to task list -->
+        <div class="form-group grid-row">
+            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+        </div>
+    </form>
 </div>
 
 {% endblock %}

@@ -11,9 +11,9 @@
 {% block inner_content %}
 
 <div class="column-full">
-	<div class="form-group grid-row" style="padding-top: 30px;">
+	<div class="grid-row" style="padding-top: 30px;">
 		<!-- Back button -->
-		<a href="/account/question?id={{application_id}}" style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
+		<a href="{{ URL_PREFIX }}/account/question?id={{application_id}}" style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
 			<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
 				<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
 			</svg>
@@ -43,7 +43,7 @@
 					{{email}}
 				</td>
 				<td class="change-answer">
-					<a href="/account/email?id={{application_id}}#id_email_address" alt='Change email address'>
+					<a href="{{ URL_PREFIX }}/account/email?id={{application_id}}#id_email_address" alt='Change email address'>
 						Change <span class="visuallyhidden">email address</span>
 					</a>
 				</td>
@@ -56,7 +56,7 @@
 					{{mobile_number}}
 				</td>
 				<td class="change-answer">
-					<a href="/account/phone?id={{application_id}}#id_mobile_number" alt='Change mobile number'>
+					<a href="{{ URL_PREFIX }}/account/phone?id={{application_id}}#id_mobile_number" alt='Change mobile number'>
 						Change <span class="visuallyhidden">mobile number</span>
 					</a>
 				</td>
@@ -69,7 +69,7 @@
 					{{add_phone_number}}
 				</td>
 				<td class="change-answer">
-					<a href="/account/phone?id={{application_id}}#id_add_phone_number" alt='Change landline number'>
+					<a href="{{ URL_PREFIX }}/account/phone?id={{application_id}}#id_add_phone_number" alt='Change landline number'>
 						Change <span class="visuallyhidden">landline number</span>
 					</a>
 				</td>
@@ -82,7 +82,7 @@
 					Answer
 				</td>
 				<td class="change-answer">
-					<a href="/account/question?id={{application_id}}#id_question" alt='Change answer to knowledge based question'>
+					<a href="{{ URL_PREFIX }}/account/question?id={{application_id}}#id_question" alt='Change answer to knowledge based question'>
 						Change <span class="visuallyhidden">answer to knowledge based question</span>
 					</a>
 				</td>

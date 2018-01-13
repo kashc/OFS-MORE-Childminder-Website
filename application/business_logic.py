@@ -87,7 +87,8 @@ def Personal_Name_Logic(application_id_local, form):
     # If the user entered information for this task for the first time
     if ApplicantPersonalDetails.objects.filter(application_id=application_id_local).count() == 0:
 
-        # Create a new Applicant_Personal_Details record corresponding to the application, of which the generated personal_details_id will be used        
+        # Create a new Applicant_Personal_Details record corresponding to the application, of which the generated
+        # personal_details_id will be used
         personal_details_record = ApplicantPersonalDetails(birth_day=None, birth_month=None, birth_year=None,
                                                            application_id=this_application)
         personal_details_record.save()
