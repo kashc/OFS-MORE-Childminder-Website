@@ -2,8 +2,10 @@ from django.conf import settings  # import the settings file
 from django.http import HttpResponseRedirect
 from re import compile
 
+from application.models import Application
 
-class CustomAuthenticationMiddleware(object):
+
+class CustomAuthenticationHandler(object):
     """
     Custom authentication handler to globally protect site with the exception of paths
     tested against regex patterns defined in settings.py
@@ -20,15 +22,47 @@ class CustomAuthenticationMiddleware(object):
         if hasattr(settings, 'AUTHENTICATION_EXEMPT_URLS'):
             authentication_exempt_urls += [compile(expr) for expr in settings.AUTHENTICATION_EXEMPT_URLS]
 
-        # If user is not authenticated and the path they are attempting to navigate to requires a session
-        # return the user to the login page
-        if not request.user.is_authenticated() and request.path_info != settings.AUTHENTICATION_URL \
-                and not any(m.match(request.path_info) for m in authentication_exempt_urls):
+        # Allow authentication exempt paths straight through middleware function
+        if request.path_info == settings.AUTHENTICATION_URL or any(m.match(request.path_info) for m in authentication_exempt_urls):
+            return self.get_response(request)
+
+        # If path is not exempt, and user cookie does not exist (e.g. a bypass is being attempted) return
+        # user to login page
+        if self.get_session_user(request) is None:
             return HttpResponseRedirect(settings.AUTHENTICATION_URL)
+
+        # If an application id has been supplied in the query string or post request
+        application_id = None
+
+        if request.method == 'GET' and 'id' in request.GET:
+            application_id = request.GET.get('id')
+
+        if request.method == 'POST' and 'id' in request.POST:
+            application_id = request.POST.get('id')
+
+        # If an application id is present fetch application from store
+        if application_id is not None:
+            application = Application.objects.get(pk=application_id)
+
+            # Check the email address stored in the session matches that found on the application
+            # and if not redirect to authentication url
+            if application.login_id.email != self.get_session_user(request):
+                return HttpResponseRedirect(settings.AUTHENTICATION_URL)
 
         # If request has not been blocked at this point in the execution flow, allow
         # request to continue processing as normal
         return self.get_response(request)
+
+    @staticmethod
+    def get_session_user(request):
+        if 'ofs_user' not in request.COOKIES:
+            return None
+        else:
+            return request.COOKIES.get('ofs_user')
+
+    @staticmethod
+    def create_session(response, email):
+        response.set_cookie('ofs_user', email)
 
 
 def globalise_url_prefix(request):

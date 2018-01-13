@@ -16,6 +16,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+from source.childminder.application.middleware import CustomAuthenticationHandler
 from . import magic_link, payment, status
 from .business_logic import (ChildcareType_Logic,
                              dbs_check_logic,
@@ -309,8 +310,13 @@ def contact_email(request):
                 application.date_updated = current_date
                 application.save()
 
-                # Go to the phone numbers page   
-                return HttpResponseRedirect(settings.URL_PREFIX + '/account/phone?id=' + application_id_local)
+                response = HttpResponseRedirect(settings.URL_PREFIX + '/account/phone?id=' + application_id_local)
+
+                # create session and issue cookie to user
+                CustomAuthenticationHandler.create_session(response, application.login_id)
+
+                # Go to the phone numbers page
+                return response
 
         # If there are invalid details
         else:
@@ -523,9 +529,6 @@ def personal_details_guidance(request):
 
         # Initialise the Your login and contact details form
         form = PersonalDetailsGuidanceForm(request.POST)
-
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
 
         # If the form is successfully submitted (with valid details)
         if form.is_valid():

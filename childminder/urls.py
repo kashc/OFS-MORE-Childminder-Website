@@ -10,9 +10,9 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.views.generic import TemplateView
 
-from application import magic_link, views
-
 from django.conf import settings
+
+from application import views, magic_link
 
 urlpatterns = [
     url(r'^$', views.start_page, name='start-page.html'),
@@ -58,7 +58,6 @@ urlpatterns = [
     url(r'^reset/', views.reset),
     url(r'^existing-application/', magic_link.existing_application, name='Existing-Application'),
     url(r'^validate/(?P<id>[\w-]+)/$', magic_link.validate_magic_link),
-    # This is curr checking that the parameter is a phone number
     url(r'^verify-phone/', magic_link.sms_verification),
     url(r'^email-sent/', TemplateView.as_view(template_name='email-sent.html')),
     url(r'^start/', views.start_page),

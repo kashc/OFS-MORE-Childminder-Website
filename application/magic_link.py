@@ -15,6 +15,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+from .middleware import CustomAuthenticationHandler
 from .forms import EmailLoginForm, VerifyPhoneForm
 from .models import Application, UserDetails
 
@@ -61,7 +62,7 @@ def magic_link_email(email, link_id):
     # Use Notify-Gateway API to send magic link email
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
-    input = {
+    notification_request = {
         'email': email,
         'personalisation': {
             'link': link_id
@@ -69,8 +70,9 @@ def magic_link_email(email, link_id):
         'reference': 'string',
         'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
     }
-    r = requests.post(base_request_url + '/notify-gateway/api/v1/notifications/email/', json.dumps(input),
+    r = requests.post(base_request_url + '/notify-gateway/api/v1/notifications/email/', json.dumps(notification_request),
                       headers=header)
+    print(link_id)
     return r
 
 
@@ -79,7 +81,7 @@ def magic_link_text(phone, link_id):
     # Use Notify-Gateway to send sms code
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
-    input = {
+    notification_request = {
         'personalisation': {
             'link': link_id
         },
@@ -87,7 +89,7 @@ def magic_link_text(phone, link_id):
         'reference': 'string',
         'templateId': 'd285f17b-8534-4110-ba6c-e7e788eeafb2'
     }
-    r = requests.post(base_request_url + '/notify-gateway/api/v1/notifications/sms/', json.dumps(input), headers=header)
+    r = requests.post(base_request_url + '/notify-gateway/api/v1/notifications/sms/', json.dumps(notification_request), headers=header)
     print(r.status_code)
     return r
 
@@ -147,7 +149,6 @@ def sms_verification(request):
     id = request.GET['id']
     acc = UserDetails.objects.get(magic_link_email=id)
     if 'f' in request.GET.keys():
-        flag = request.GET['f']
         phone = acc.mobile_number
         g = generate_random(5, 'code')
         expiry = int(time.time())
@@ -167,8 +168,13 @@ def sms_verification(request):
             exp = acc.sms_expiry_date
             if form.is_valid() and not has_expired(exp):
                 if code == acc.magic_link_sms:
+                    response = HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + str(application.application_id))
+
+                    # create session issue custom cookie to user
+                    CustomAuthenticationHandler.create_session(response, application.login_id.email)
+
                     # forward back onto appication
-                    return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + str(application.application_id))
+                    return response
                 else:
                     print(4)
                     return HttpResponseRedirect(settings.URL_PREFIX + '/verify-phone/?id=' + id)
