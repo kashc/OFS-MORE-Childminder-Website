@@ -123,7 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 URL_PREFIX = '/childminder'
-STATIC_URL = '/static/'
+STATIC_URL = URL_PREFIX + '/static/'
 
 AUTHENTICATION_URL = URL_PREFIX + '/existing-application/'
 
