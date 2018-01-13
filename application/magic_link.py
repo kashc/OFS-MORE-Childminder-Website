@@ -50,8 +50,7 @@ def existing_application(request):
             acc.magic_link_email = link
             acc.save()
             # send magic link email
-            r = magic_link_email(email, domain + settings.URL_PREFIX + '/validate/' + link)
-            print(link)
+            magic_link_email(email, domain + 'validate/' + link)
             # Note that this is the same response whether the email is valid or not
             return HttpResponseRedirect(settings.URL_PREFIX + '/email-sent')
 
@@ -156,7 +155,7 @@ def sms_verification(request):
         acc.sms_expiry_date = expiry
         acc.save()
         magic_link_text(phone, g).status_code
-        return HttpResponseRedirect(settings.URL_PREFIX + '/verifyPhone/?id=' + id)
+        return HttpResponseRedirect(settings.URL_PREFIX + '/verify-phone/?id=' + id)
     form = VerifyPhoneForm(id=id)
 
     login_id = acc.login_id
@@ -172,6 +171,6 @@ def sms_verification(request):
                     return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + str(application.application_id))
                 else:
                     print(4)
-                    return HttpResponseRedirect(settings.URL_PREFIX + '/verifyPhone/?id=' + id)
+                    return HttpResponseRedirect(settings.URL_PREFIX + '/verify-phone/?id=' + id)
 
     return render(request, 'verify-phone.html', {'form': form, 'id': id})
