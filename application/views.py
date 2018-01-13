@@ -16,7 +16,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from source.childminder.application.middleware import CustomAuthenticationHandler
+from application.middleware import CustomAuthenticationHandler
 from . import magic_link, payment, status
 from .business_logic import (ChildcareType_Logic,
                              dbs_check_logic,

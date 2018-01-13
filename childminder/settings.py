@@ -102,7 +102,7 @@ WSGI_APPLICATION = 'childminder.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'local',
+        'NAME': 'db.sqlite3',
     }
 }
 
