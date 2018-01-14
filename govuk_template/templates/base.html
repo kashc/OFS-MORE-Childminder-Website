@@ -1,5 +1,5 @@
-{% load static %}{% block top_of_page %}{% endblock %}
 <!DOCTYPE html>
+{% load static %}{% block top_of_page %}{% endblock %}
 <!--[if lt IE 9]><html class="lte-ie8" lang="{{ html_lang|default:'en' }}"><![endif]-->
 <!--[if gt IE 8]><!--><html lang="{{ html_lang|default:'en' }}"><!--<![endif]-->
   <head>
@@ -45,12 +45,12 @@
     </div>
 
     <div id="global-cookie-message">
-      
+
         {% block cookie_message %}{% endblock %}
-      
+
     </div>
 
-    
+
     <header role="banner" id="global-header" class="{% block header_class %}{% endblock %}">
       <div class="header-wrapper">
         <div class="header-global">
@@ -64,7 +64,7 @@
         {% block proposition_header %}{% endblock %}
       </div>
     </header>
-    
+
 
     {% block after_header %}{% endblock %}
 
@@ -80,15 +80,11 @@
         <div class="footer-meta">
           <div class="footer-meta-inner">
             {% block footer_support_links %}{% endblock %}
-
             <div class="open-government-licence">
               <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence</a></p>
-              
                 {% block licence_message %}<p>All content is available under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated</p>{% endblock %}
-              
             </div>
           </div>
-
           <div class="copyright">
             <a href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">{{ crown_copyright_message|default:'&copy; Crown copyright' }}</a>
           </div>
@@ -97,12 +93,8 @@
     </footer>
 
     <div id="global-app-error" class="app-error hidden"></div>
-
     <script src="{% static 'javascripts/govuk-template.js' %}"></script>
-
     {% block body_end %}{% endblock %}
-
-    
     <script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>
   </body>
 </html>

@@ -1,10 +1,5 @@
-<!-- Tab title -->
-<head>
-	<title>Type of childcare</title>
-</head>
-
-<!-- Implement GOV.UK template -->
 {% extends 'govuk_template.html' %}
+{% block page_title %}Type of childcare{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -54,7 +49,7 @@
                     </h2>
                 </legend>
                 {% csrf_token %}
-                {{form.as_div}}
+                {{form}}
                 <input type="hidden" value="{{application_id}}" name = "id" />
             </fieldset>
         </div>
