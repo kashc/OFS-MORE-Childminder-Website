@@ -313,7 +313,7 @@ def contact_email(request):
                 response = HttpResponseRedirect(settings.URL_PREFIX + '/account/phone?id=' + application_id_local)
 
                 # create session and issue cookie to user
-                CustomAuthenticationHandler.create_session(response, application.login_id)
+                CustomAuthenticationHandler.create_session(response, application.login_id.email)
 
                 # Go to the phone numbers page
                 return response
