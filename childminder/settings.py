@@ -40,7 +40,6 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'govuk_forms',
     'govuk_template',
-    'application.apps.ApplicationConfig',
     'govuk_template_base',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'application.apps.ApplicationConfig',
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"

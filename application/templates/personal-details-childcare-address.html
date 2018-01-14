@@ -10,7 +10,6 @@
 
 <div class="column-full">
     <div class="grid-row" style="padding-top: 30px;">
-        <!-- Back button -->
         <a href="{{ URL_PREFIX }}/personal-details/location-of-care?id={{application_id}}" style="margin-right: 10px; line-height: 28px"
            alt="Back to application list">
             <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
@@ -32,7 +31,11 @@
             {% csrf_token %}
             </br>
             </br>
+<<<<<<< HEAD
             <a href="{{ URL_PREFIX }}/personal-details/childcare-address?id={{application_id}}&manual=True" name="manual" id="manual">Enter
+=======
+            <a href="/personal-details/childcare-address?id={{application_id}}&manual=True" name="manual" id="manual">Enter
+>>>>>>> sprint4-release-candidate
                 address manually</a>
             </br>
             </br>
@@ -43,7 +46,11 @@
         </br>
         <!-- Return to task list -->
         <div class="form-group grid-row">
+<<<<<<< HEAD
             <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+=======
+            <a href="/task-list?id={{application_id}}">Return to list</a>
+>>>>>>> sprint4-release-candidate
         </div>
     </form>
 </div>

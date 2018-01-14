@@ -13,14 +13,14 @@ from django.test import TestCase
 from django.urls import resolve
 from uuid import UUID
 
-from application.models import Application, UserDetails
-from application.views import (application_saved, confirmation, contact_email, contact_phone,
+from . import models
+from .views import (application_saved, confirmation, contact_email, contact_phone,
                     contact_summary, dbs_check_dbs_details, declaration, eyfs, first_aid_training_declaration,
                     first_aid_training_details, first_aid_training_guidance, first_aid_training_renew,
                     first_aid_training_summary, first_aid_training_training, log_in,
                     other_people, payment, personal_details_dob, personal_details_name,
                     personal_details_home_address, personal_details_location_of_care, contact_question,
-                    references, start_page, type_of_childcare, personal_details_guidance,
+                    start_page, type_of_childcare, personal_details_guidance,
                     dbs_check_guidance, personal_details_childcare_address, personal_details_summary,
                     card_payment_details, dbs_check_upload_dbs, dbs_check_summary)
 
@@ -37,13 +37,13 @@ class StartPageTest(TestCase):
 # Test suite for task list
 class TaskListTest(TestCase):
 
-    # Test to check if URL resolves to correct view    
+    # Test to check if URL resolves to correct view
     def test_url_resolves_to_task_list(self):
 
         found = resolve(settings.URL_PREFIX + '/task-list/')
         self.assertEqual(found.func, log_in)
 
-    # Test to check that a user cannot navigate to the page without an application ID        
+    # Test to check that a user cannot navigate to the page without an application ID
     def test_task_list_not_displayed_without_id(self):
 
         c = Client()
@@ -60,13 +60,13 @@ class TaskListTest(TestCase):
 
 class TypeOfChildcareTest(TestCase):
 
-    # Test to check if URL resolves to correct view    
+    # Test to check if URL resolves to correct view
     def test_url_resolves_to_page(self):
 
         found = resolve(settings.URL_PREFIX + '/childcare/')
         self.assertEqual(found.func, type_of_childcare)
 
-    # Test to check that a user cannot navigate to the page without an application ID   
+    # Test to check that a user cannot navigate to the page without an application ID
     def test_page_not_displayed_without_id(self):
 
         c = Client()
@@ -86,7 +86,7 @@ class TypeOfChildcareTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -98,7 +98,7 @@ class TypeOfChildcareTest(TestCase):
         )
 
         # Create a test application
-        Application.objects.create(
+        models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -119,25 +119,25 @@ class TypeOfChildcareTest(TestCase):
             date_accepted=None
         )
 
-        assert (Application.objects.get(pk=test_application_id).childcare_type_status != 'COMPLETED')
+        assert (models.Application.objects.get(pk=test_application_id).childcare_type_status != 'COMPLETED')
 
     # Delete test Application and UserDetails object
     def delete(self):
 
-        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for Your Login and Contact Details page
 class LoginAndContactDetailsTest(TestCase):
 
-    # Test to check if URL resolves to correct view    
+    # Test to check if URL resolves to correct view
     def test_url_resolves_to_email_page(self):
 
         found = resolve(settings.URL_PREFIX + '/account/email/')
         self.assertEqual(found.func, contact_email)
 
-    # Test to check that a user cannot navigate to the page without an application ID  
+    # Test to check that a user cannot navigate to the page without an application ID
     def test_email_page_not_displayed_without_id(self):
 
         c = Client()
@@ -149,13 +149,13 @@ class LoginAndContactDetailsTest(TestCase):
         except:
             self.assertEqual(0, 0)
 
-    # Test to check if URL resolves to correct view    
+    # Test to check if URL resolves to correct view
     def test_url_resolves_to_phone_page(self):
 
         found = resolve(settings.URL_PREFIX + '/account/phone/')
         self.assertEqual(found.func, contact_phone)
 
-    # Test to check that a user cannot navigate to the page without an application ID  
+    # Test to check that a user cannot navigate to the page without an application ID
     def test_phone_page_not_displayed_without_id(self):
 
         c = Client()
@@ -174,7 +174,7 @@ class LoginAndContactDetailsTest(TestCase):
         found = resolve(settings.URL_PREFIX + '/account/question/')
         self.assertEqual(found.func, contact_question)
 
-    # Test to check that a user cannot navigate to the page without an application ID  
+    # Test to check that a user cannot navigate to the page without an application ID
     def test_question_page_not_displayed_without_id(self):
 
         c = Client()
@@ -186,13 +186,13 @@ class LoginAndContactDetailsTest(TestCase):
         except:
             self.assertEqual(0, 0)
 
-    # Test to check if URL resolves to correct view    
+    # Test to check if URL resolves to correct view
     def test_url_resolves_to_summary_page(self):
 
         found = resolve(settings.URL_PREFIX + '/account/summary/')
         self.assertEqual(found.func, contact_summary)
 
-    # Test to check that a user cannot navigate to the page without an application ID  
+    # Test to check that a user cannot navigate to the page without an application ID
     def test_summary_page_not_displayed_without_id(self):
 
         c = Client()
@@ -213,7 +213,7 @@ class LoginAndContactDetailsTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -225,7 +225,7 @@ class LoginAndContactDetailsTest(TestCase):
         )
 
         # Create a test application
-        Application.objects.create(
+        models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -246,25 +246,25 @@ class LoginAndContactDetailsTest(TestCase):
             date_accepted=None
         )
 
-        assert (Application.objects.get(pk=test_application_id).login_details_status != 'COMPLETED')
+        assert (models.Application.objects.get(pk=test_application_id).login_details_status != 'COMPLETED')
 
     # Delete test Application and UserDetails object
     def delete(self):
 
-        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
-# Test suite for Your Personal Details page          
+# Test suite for Your Personal Details page
 class PersonalDetailsTest(TestCase):
 
-    # Test to check if URL resolves to correct view    
+    # Test to check if URL resolves to correct view
     def test_guidance_url_resolves_to_page(self):
 
         found = resolve(settings.URL_PREFIX + '/personal-details/guidance/')
         self.assertEqual(found.func, personal_details_guidance)
 
-    # Test to check that a user cannot navigate to the page without an application ID 
+    # Test to check that a user cannot navigate to the page without an application ID
     def test_guidance_page_not_displayed_without_id(self):
 
         c = Client()
@@ -276,13 +276,13 @@ class PersonalDetailsTest(TestCase):
         except:
             self.assertEqual(0, 0)
 
-    # Test to check if URL resolves to correct view    
+    # Test to check if URL resolves to correct view
     def test_name_url_resolves_to_page(self):
 
         found = resolve(settings.URL_PREFIX + '/personal-details/name/')
         self.assertEqual(found.func, personal_details_name)
 
-    # Test to check that a user cannot navigate to the page without an application ID 
+    # Test to check that a user cannot navigate to the page without an application ID
     def test_name_page_not_displayed_without_id(self):
 
         c = Client()
@@ -294,13 +294,13 @@ class PersonalDetailsTest(TestCase):
         except:
             self.assertEqual(0, 0)
 
-    # Test to check if URL resolves to correct view    
+    # Test to check if URL resolves to correct view
     def test_dob_url_resolves_to_page(self):
 
         found = resolve(settings.URL_PREFIX + '/personal-details/dob/')
         self.assertEqual(found.func, personal_details_dob)
 
-    # Test to check that a user cannot navigate to the page without an application ID 
+    # Test to check that a user cannot navigate to the page without an application ID
     def test_dob_page_not_displayed_without_id(self):
 
         c = Client()
@@ -312,13 +312,13 @@ class PersonalDetailsTest(TestCase):
         except:
             self.assertEqual(0, 0)
 
-    # Test to check if URL resolves to correct view    
+    # Test to check if URL resolves to correct view
     def test_home_address_url_resolves_to_page(self):
 
         found = resolve(settings.URL_PREFIX + '/personal-details/home-address/')
         self.assertEqual(found.func, personal_details_home_address)
 
-    # Test to check that a user cannot navigate to the page without an application ID 
+    # Test to check that a user cannot navigate to the page without an application ID
     def test_home_address_page_not_displayed_without_id(self):
 
         c = Client()
@@ -330,13 +330,13 @@ class PersonalDetailsTest(TestCase):
         except:
             self.assertEqual(0, 0)
 
-    # Test to check if URL resolves to correct view    
+    # Test to check if URL resolves to correct view
     def test_location_of_care_url_resolves_to_page(self):
 
         found = resolve(settings.URL_PREFIX + '/personal-details/location-of-care/')
         self.assertEqual(found.func, personal_details_location_of_care)
 
-    # Test to check that a user cannot navigate to the page without an application ID 
+    # Test to check that a user cannot navigate to the page without an application ID
     def test_location_of_care_page_not_displayed_without_id(self):
 
         c = Client()
@@ -392,7 +392,7 @@ class PersonalDetailsTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -404,7 +404,7 @@ class PersonalDetailsTest(TestCase):
         )
 
         # Create a test application
-        Application.objects.create(
+        models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -425,19 +425,19 @@ class PersonalDetailsTest(TestCase):
             date_accepted=None
         )
 
-        assert (Application.objects.get(pk=test_application_id).personal_details_status != 'COMPLETED')
+        assert (models.Application.objects.get(pk=test_application_id).personal_details_status != 'COMPLETED')
 
     # Delete test Application and UserDetails object
     def delete(self):
 
-        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for First aid training page
 class FirstAidTrainingTest(TestCase):
 
-    # Test to check if URL resolves to correct view  
+    # Test to check if URL resolves to correct view
     def test_guidance_url_resolves_to_page(self):
 
         found = resolve(settings.URL_PREFIX + '/first-aid/guidance/')
@@ -455,7 +455,7 @@ class FirstAidTrainingTest(TestCase):
         except:
             self.assertEqual(0, 0)  #
 
-    # Test to check if URL resolves to correct view  
+    # Test to check if URL resolves to correct view
     def test_details_url_resolves_to_page(self):
 
         found = resolve(settings.URL_PREFIX + '/first-aid/details/')
@@ -473,7 +473,7 @@ class FirstAidTrainingTest(TestCase):
         except:
             self.assertEqual(0, 0)
 
-    # Test to check if URL resolves to correct view  
+    # Test to check if URL resolves to correct view
     def test_declaration_url_resolves_to_page(self):
 
         found = resolve(settings.URL_PREFIX + '/first-aid/declaration/')
@@ -491,7 +491,7 @@ class FirstAidTrainingTest(TestCase):
         except:
             self.assertEqual(0, 0)
 
-    # Test to check if URL resolves to correct view  
+    # Test to check if URL resolves to correct view
     def test_renew_url_resolves_to_page(self):
 
         found = resolve(settings.URL_PREFIX + '/first-aid/renew/')
@@ -556,7 +556,7 @@ class FirstAidTrainingTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -568,7 +568,7 @@ class FirstAidTrainingTest(TestCase):
         )
 
         # Create a test application
-        Application.objects.create(
+        models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -589,19 +589,19 @@ class FirstAidTrainingTest(TestCase):
             date_accepted=None
         )
 
-        assert (Application.objects.get(pk=test_application_id).first_aid_training_status != 'COMPLETED')
+        assert (models.Application.objects.get(pk=test_application_id).first_aid_training_status != 'COMPLETED')
 
     # Delete test Application and UserDetails object
     def delete(self):
 
-        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
-# Test suite for Early Years knowledge page          
+# Test suite for Early Years knowledge page
 class EYFSTest(TestCase):
 
-    # Test to check if URL resolves to correct view 
+    # Test to check if URL resolves to correct view
     def test_url_resolves_to_page(self):
 
         found = resolve(settings.URL_PREFIX + '/eyfs/')
@@ -627,7 +627,7 @@ class EYFSTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -639,7 +639,7 @@ class EYFSTest(TestCase):
         )
 
         # Create a test application
-        Application.objects.create(
+        models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -660,13 +660,13 @@ class EYFSTest(TestCase):
             date_accepted=None
         )
 
-        assert (Application.objects.get(pk=test_application_id).eyfs_training_status != 'COMPLETED')
+        assert (models.Application.objects.get(pk=test_application_id).eyfs_training_status != 'COMPLETED')
 
     # Delete test Application and UserDetails object
     def delete(self):
 
-        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for Your criminal record (DBS) check page
@@ -752,7 +752,7 @@ class DBSCheckTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -764,7 +764,7 @@ class DBSCheckTest(TestCase):
         )
 
         # Create a test application
-        Application.objects.create(
+        models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -785,13 +785,13 @@ class DBSCheckTest(TestCase):
             date_accepted=None
         )
 
-        assert (Application.objects.get(pk=test_application_id).criminal_record_check_status != 'COMPLETED')
+        assert (models.Application.objects.get(pk=test_application_id).criminal_record_check_status != 'COMPLETED')
 
     # Delete test Application and UserDetails object
     def delete(self):
 
-        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for 2 references page
@@ -823,7 +823,7 @@ class ReferencesTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -835,7 +835,7 @@ class ReferencesTest(TestCase):
         )
 
         # Create a test application
-        Application.objects.create(
+        models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -856,13 +856,13 @@ class ReferencesTest(TestCase):
             date_accepted=None
         )
 
-        assert (Application.objects.get(pk=test_application_id).references_status != 'COMPLETED')
+        assert (models.Application.objects.get(pk=test_application_id).references_status != 'COMPLETED')
 
     # Delete test Application and UserDetails object
     def delete(self):
 
-        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for People in your home page
@@ -894,7 +894,7 @@ class OtherPeopleTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -906,7 +906,7 @@ class OtherPeopleTest(TestCase):
         )
 
         # Create a test application
-        Application.objects.create(
+        models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -927,13 +927,13 @@ class OtherPeopleTest(TestCase):
             date_accepted=None
         )
 
-        assert (Application.objects.get(pk=test_application_id).people_in_home_status != 'COMPLETED')
+        assert (models.Application.objects.get(pk=test_application_id).people_in_home_status != 'COMPLETED')
 
     # Delete test Application and UserDetails object
     def delete(self):
 
-        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for Declarations page
@@ -965,7 +965,7 @@ class DeclarationTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -977,7 +977,7 @@ class DeclarationTest(TestCase):
         )
 
         # Create a test application
-        Application.objects.create(
+        models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -998,13 +998,13 @@ class DeclarationTest(TestCase):
             date_accepted=None
         )
 
-        assert (Application.objects.get(pk=test_application_id).declarations_status != 'COMPLETED')
+        assert (models.Application.objects.get(pk=test_application_id).declarations_status != 'COMPLETED')
 
     # Delete test Application and UserDetails object
     def delete(self):
 
-        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
 
 # Test suite for Confirm your answers page
@@ -1101,7 +1101,7 @@ class TaskStatusTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -1113,7 +1113,7 @@ class TaskStatusTest(TestCase):
         )
 
         # Create a test application
-        application = Application.objects.create(
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -1164,7 +1164,7 @@ class TaskStatusTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -1176,7 +1176,7 @@ class TaskStatusTest(TestCase):
         )
 
         # Create a test application
-        application = Application.objects.create(
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -1227,7 +1227,7 @@ class TaskStatusTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -1239,7 +1239,7 @@ class TaskStatusTest(TestCase):
         )
 
         # Create a test application
-        application = Application.objects.create(
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -1291,7 +1291,7 @@ class TaskStatusTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -1303,7 +1303,7 @@ class TaskStatusTest(TestCase):
         )
 
         # Create a test application
-        application = Application.objects.create(
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -1350,7 +1350,7 @@ class TaskStatusTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -1362,7 +1362,7 @@ class TaskStatusTest(TestCase):
         )
 
         # Create a test application
-        application = Application.objects.create(
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -1409,7 +1409,7 @@ class TaskStatusTest(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
 
         # Create a test user
-        user = UserDetails.objects.create(
+        user = models.UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
             email='',
             mobile_number='',
@@ -1421,7 +1421,7 @@ class TaskStatusTest(TestCase):
         )
 
         # Create a test application
-        application = Application.objects.create(
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
             login_id=user,
             application_type='CHILDMINDER',
@@ -1462,5 +1462,5 @@ class TaskStatusTest(TestCase):
         assert ((application_status_context['declaration_status'] == 'COMPLETED'))
 
     def delete(self):
-        Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
-        UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
+        models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()

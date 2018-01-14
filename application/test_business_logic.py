@@ -1194,31 +1194,6 @@ class Test_References_Logic(TestCase):
             date_updated = datetime.datetime.today(),
             date_accepted = None
         )
-        
-        # Create a test reference ID
-        test_reference_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
-        
-        # Create a test References object
-        Reference.objects.create(
-            reference_id = (UUID(test_reference_id)),
-            application_id = Application.objects.get(application_id=test_application_id),
-            first_name = 'Hugo',
-            last_name = 'Geeves',
-            relationship = 'Colleague',
-            years_known = '00',
-            months_known = '00',
-            street_line1 = '',
-            street_line2 = '',
-            town = '',
-            county = '',
-            country = '',
-            postcode = '',
-            phone_number = '',
-            email = ''
-        )
-        
-        # Verify that the References object corresponding with the test application exists
-        assert(Reference.objects.filter(application_id=test_application_id).count() > 0)
     
     # Delete test application
     def delete(self):
