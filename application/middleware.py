@@ -2,7 +2,7 @@ from django.conf import settings  # import the settings file
 from django.http import HttpResponseRedirect
 from re import compile
 
-from application.models import Application
+from .models import Application
 
 COOKIE_IDENTIFIER = '_ofs'
 
