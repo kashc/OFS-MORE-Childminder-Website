@@ -10,6 +10,9 @@ class CustomAuthenticationHandler(object):
     Custom authentication handler to globally protect site with the exception of paths
     tested against regex patterns defined in settings.py
     """
+
+    COOKIE_IDENTIFIER = '_ofs'
+
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -55,14 +58,14 @@ class CustomAuthenticationHandler(object):
 
     @staticmethod
     def get_session_user(request):
-        if 'ofs_user' not in request.COOKIES:
+        if CustomAuthenticationHandler.COOKIE_IDENTIFIER not in request.COOKIES:
             return None
         else:
-            return request.COOKIES.get('ofs_user')
+            return request.COOKIES.get(CustomAuthenticationHandler.COOKIE_IDENTIFIER)
 
     @staticmethod
     def create_session(response, email):
-        response.set_cookie('ofs_user', email)
+        response.set_cookie(CustomAuthenticationHandler.COOKIE_IDENTIFIER, email)
 
 
 def globalise_url_prefix(request):
