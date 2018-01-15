@@ -353,7 +353,8 @@ def contact_email(request):
 
             variables = {
                 'form': form,
-                'application_id': application_id_local
+                'application_id': application_id_local,
+                'login_details_status': application.login_details_status
             }
 
             # Return to the same page
@@ -413,7 +414,8 @@ def contact_phone(request):
 
             variables = {
                 'form': form,
-                'application_id': application_id_local
+                'application_id': application_id_local,
+                'login_details_status': application.login_details_status
             }
 
             # Return to the same page
@@ -448,6 +450,9 @@ def contact_question(request):
         # Initialise the Your login and contact details form
         form = QuestionForm(request.POST, id=application_id_local)
 
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
 
@@ -459,7 +464,8 @@ def contact_question(request):
 
             variables = {
                 'form': form,
-                'application_id': application_id_local
+                'application_id': application_id_local,
+                'login_details_status': application.login_details_status
             }
 
             # Return to the same page
@@ -511,6 +517,9 @@ def contact_summary(request):
         # Initialise the Your login and contact details form
         form = ContactSummaryForm()
 
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
 
@@ -525,7 +534,8 @@ def contact_summary(request):
 
             variables = {
                 'form': form,
-                'application_id': application_id_local
+                'application_id': application_id_local,
+                'login_details_status': application.login_details_status
             }
 
             # Return to the same page
@@ -698,7 +708,8 @@ def personal_details_dob(request):
             application.save()
 
             # Return to the application's task list    
-            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address?id=' + application_id_local + '&manual=False')
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/personal-details/home-address?id=' + application_id_local + '&manual=False')
 
         # If there are invalid details
         else:
@@ -816,7 +827,8 @@ def personal_details_home_address(request):
                 application.save()
 
                 # Return to the application's task list    
-                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/location-of-care?id=' + application_id_local)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/personal-details/location-of-care?id=' + application_id_local)
 
             else:
 
@@ -912,7 +924,8 @@ def personal_details_location_of_care(request):
             if home_address_record.childcare_address == 'True':
 
                 # Return to the application's task list    
-                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
 
             elif home_address_record.childcare_address == 'False':
 
@@ -1041,7 +1054,8 @@ def personal_details_childcare_address(request):
                 application.save()
 
                 # Return to the application's task list    
-                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
 
             else:
 
@@ -2347,7 +2361,7 @@ def references_second_reference(request):
 
             # Go to the next page
             return HttpResponseRedirect(settings.URL_PREFIX +
-                '/references/second-reference-address?id=' + application_id_local + '&manual=False')
+                                        '/references/second-reference-address?id=' + application_id_local + '&manual=False')
 
         # If there are invalid details
         else:
@@ -2464,7 +2478,7 @@ def references_second_reference_address(request):
 
                 # Update the first reference record in the database
                 references_second_reference_address_record = Reference.objects.get(application_id=application_id_local,
-                                                                                  reference=2)
+                                                                                   reference=2)
                 references_second_reference_address_record.street_line1 = street_line1
                 references_second_reference_address_record.street_line2 = street_line2
                 references_second_reference_address_record.town = town
