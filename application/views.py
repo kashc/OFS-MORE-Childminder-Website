@@ -89,44 +89,20 @@ from .models import (Application,
 
 # View for the start page
 def start_page(request):
-    # Create a blank user
-    user = UserDetails.objects.create()
-
-    # Create a new application
-    application = Application.objects.create(
-        application_type='CHILDMINDER',
-        login_id=user,
-        application_status='DRAFTING',
-        cygnum_urn='',
-        login_details_status='NOT_STARTED',
-        personal_details_status='NOT_STARTED',
-        childcare_type_status='NOT_STARTED',
-        first_aid_training_status='NOT_STARTED',
-        eyfs_training_status='NOT_STARTED',
-        criminal_record_check_status='NOT_STARTED',
-        health_status='NOT_STARTED',
-        references_status='NOT_STARTED',
-        people_in_home_status='NOT_STARTED',
-        declarations_status='NOT_STARTED',
-        date_created=datetime.datetime.today(),
-        date_updated=datetime.datetime.today(),
-        date_accepted=None
-    )
 
     # Access the task page
-    return render(request, 'start-page.html', ({'id': application.application_id}))
+    return render(request, 'start-page.html')
 
 
 # View for the account selection page
 def account_selection(request):
+
     if request.method == 'GET':
-        application_id_local = request.GET['id']
 
         form = AccountForm()
 
         variables = {
             'form': form,
-            'application_id': application_id_local
         }
 
         # Access the task page
@@ -134,10 +110,33 @@ def account_selection(request):
 
     if request.method == 'POST':
 
-        # Retrieve the application's ID
-        application_id_local = request.POST["id"]
-
         form = AccountForm()
+
+        # Create a blank user
+        user = UserDetails.objects.create()
+
+        # Create a new application
+        application = Application.objects.create(
+            application_type='CHILDMINDER',
+            login_id=user,
+            application_status='DRAFTING',
+            cygnum_urn='',
+            login_details_status='NOT_STARTED',
+            personal_details_status='NOT_STARTED',
+            childcare_type_status='NOT_STARTED',
+            first_aid_training_status='NOT_STARTED',
+            eyfs_training_status='NOT_STARTED',
+            criminal_record_check_status='NOT_STARTED',
+            health_status='NOT_STARTED',
+            references_status='NOT_STARTED',
+            people_in_home_status='NOT_STARTED',
+            declarations_status='NOT_STARTED',
+            date_created=datetime.datetime.today(),
+            date_updated=datetime.datetime.today(),
+            date_accepted=None
+        )
+
+        application_id_local = str(application.application_id)
 
         # Return to the application's task list
         return HttpResponseRedirect(settings.URL_PREFIX + '/account/email?id=' + application_id_local)
@@ -145,8 +144,7 @@ def account_selection(request):
     else:
 
         variables = {
-            'form': form,
-            'application_id': application_id_local
+            'form': form
         }
 
         # Return to the same page
