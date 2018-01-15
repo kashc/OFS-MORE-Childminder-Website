@@ -89,44 +89,20 @@ from .models import (Application,
 
 # View for the start page
 def start_page(request):
-    # Create a blank user
-    user = UserDetails.objects.create()
-
-    # Create a new application
-    application = Application.objects.create(
-        application_type='CHILDMINDER',
-        login_id=user,
-        application_status='DRAFTING',
-        cygnum_urn='',
-        login_details_status='NOT_STARTED',
-        personal_details_status='NOT_STARTED',
-        childcare_type_status='NOT_STARTED',
-        first_aid_training_status='NOT_STARTED',
-        eyfs_training_status='NOT_STARTED',
-        criminal_record_check_status='NOT_STARTED',
-        health_status='NOT_STARTED',
-        references_status='NOT_STARTED',
-        people_in_home_status='NOT_STARTED',
-        declarations_status='NOT_STARTED',
-        date_created=datetime.datetime.today(),
-        date_updated=datetime.datetime.today(),
-        date_accepted=None
-    )
 
     # Access the task page
-    return render(request, 'start-page.html', ({'id': application.application_id}))
+    return render(request, 'start-page.html')
 
 
 # View for the account selection page
 def account_selection(request):
+
     if request.method == 'GET':
-        application_id_local = request.GET['id']
 
         form = AccountForm()
 
         variables = {
             'form': form,
-            'application_id': application_id_local
         }
 
         # Access the task page
@@ -134,10 +110,33 @@ def account_selection(request):
 
     if request.method == 'POST':
 
-        # Retrieve the application's ID
-        application_id_local = request.POST["id"]
-
         form = AccountForm()
+
+        # Create a blank user
+        user = UserDetails.objects.create()
+
+        # Create a new application
+        application = Application.objects.create(
+            application_type='CHILDMINDER',
+            login_id=user,
+            application_status='DRAFTING',
+            cygnum_urn='',
+            login_details_status='NOT_STARTED',
+            personal_details_status='NOT_STARTED',
+            childcare_type_status='NOT_STARTED',
+            first_aid_training_status='NOT_STARTED',
+            eyfs_training_status='NOT_STARTED',
+            criminal_record_check_status='NOT_STARTED',
+            health_status='NOT_STARTED',
+            references_status='NOT_STARTED',
+            people_in_home_status='NOT_STARTED',
+            declarations_status='NOT_STARTED',
+            date_created=datetime.datetime.today(),
+            date_updated=datetime.datetime.today(),
+            date_accepted=None
+        )
+
+        application_id_local = str(application.application_id)
 
         # Return to the application's task list
         return HttpResponseRedirect(settings.URL_PREFIX + '/account/email?id=' + application_id_local)
@@ -145,8 +144,7 @@ def account_selection(request):
     else:
 
         variables = {
-            'form': form,
-            'application_id': application_id_local
+            'form': form
         }
 
         # Return to the same page
@@ -210,47 +208,66 @@ def log_in(request):
 
 # View for the Type of childcare task
 def type_of_childcare(request):
+    # Get current date and time
+    current_date = datetime.datetime.today()
+
+    if request.method == 'GET':
+        # If the Type of childcare form is not completed
+        application_id_local = request.GET["id"]
+
+        form = TypeOfChildcareForm(id=application_id_local)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'childcare_type_status': application.childcare_type_status
+        }
+
+        # Access the task page
+        return render(request, 'childcare.html', variables)
+
     if request.method == 'POST':
 
         # Retrieve the application's ID
         application_id_local = request.POST["id"]
 
-        # Initialise the Type of childcare form
+        # Initialise the Your login and contact details form
         form = TypeOfChildcareForm(request.POST, id=application_id_local)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
 
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
 
             # Perform business logic to create or update Type of childcare record in database
             childcare_type_record = childcare_type_logic(application_id_local, form)
             childcare_type_record.save()
 
-        # Return to the application's task list
-        return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+            # Update application date updated
+            application.date_updated = current_date
+            application.save()
 
-    # If the Type of childcare form is not completed    
-    application_id_local = request.GET["id"]
+            # Update the status of the task to 'COMPLETED'
+            status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
 
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if Application.objects.get(pk=application_id_local).childcare_type_status != 'COMPLETED':
-        status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
+            # Return to the application's task list
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
 
-    form = TypeOfChildcareForm(id=application_id_local)
+        # If there are invalid details
+        else:
 
-    # Retrieve status of task
-    application = Application.objects.get(pk=application_id_local)
-    childcare_type_status = application.childcare_type_status
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'childcare_type_status': application.childcare_type_status
+            }
 
-    variables = {
-        'form': form,
-        'application_id': application_id_local,
-        'childcare_type_status': childcare_type_status
-    }
-
-    # Access the task page
-    return render(request, 'childcare.html', variables)
+            # Return to the same page
+            return render(request, 'childcare.html', variables)
 
 
 # View for the Your login and contact details task: e-mail address
@@ -334,7 +351,8 @@ def contact_email(request):
 
             variables = {
                 'form': form,
-                'application_id': application_id_local
+                'application_id': application_id_local,
+                'login_details_status': application.login_details_status
             }
 
             # Return to the same page
@@ -394,7 +412,8 @@ def contact_phone(request):
 
             variables = {
                 'form': form,
-                'application_id': application_id_local
+                'application_id': application_id_local,
+                'login_details_status': application.login_details_status
             }
 
             # Return to the same page
@@ -429,6 +448,9 @@ def contact_question(request):
         # Initialise the Your login and contact details form
         form = QuestionForm(request.POST, id=application_id_local)
 
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
 
@@ -440,7 +462,8 @@ def contact_question(request):
 
             variables = {
                 'form': form,
-                'application_id': application_id_local
+                'application_id': application_id_local,
+                'login_details_status': application.login_details_status
             }
 
             # Return to the same page
@@ -492,6 +515,9 @@ def contact_summary(request):
         # Initialise the Your login and contact details form
         form = ContactSummaryForm()
 
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
 
@@ -506,7 +532,8 @@ def contact_summary(request):
 
             variables = {
                 'form': form,
-                'application_id': application_id_local
+                'application_id': application_id_local,
+                'login_details_status': application.login_details_status
             }
 
             # Return to the same page
@@ -679,7 +706,8 @@ def personal_details_dob(request):
             application.save()
 
             # Return to the application's task list    
-            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address?id=' + application_id_local + '&manual=False')
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/personal-details/home-address?id=' + application_id_local + '&manual=False')
 
         # If there are invalid details
         else:
@@ -797,7 +825,8 @@ def personal_details_home_address(request):
                 application.save()
 
                 # Return to the application's task list    
-                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/location-of-care?id=' + application_id_local)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/personal-details/location-of-care?id=' + application_id_local)
 
             else:
 
@@ -893,7 +922,8 @@ def personal_details_location_of_care(request):
             if home_address_record.childcare_address == 'True':
 
                 # Return to the application's task list    
-                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
 
             elif home_address_record.childcare_address == 'False':
 
@@ -1022,7 +1052,8 @@ def personal_details_childcare_address(request):
                 application.save()
 
                 # Return to the application's task list    
-                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
 
             else:
 
@@ -2328,7 +2359,7 @@ def references_second_reference(request):
 
             # Go to the next page
             return HttpResponseRedirect(settings.URL_PREFIX +
-                '/references/second-reference-address?id=' + application_id_local + '&manual=False')
+                                        '/references/second-reference-address?id=' + application_id_local + '&manual=False')
 
         # If there are invalid details
         else:
@@ -2445,7 +2476,7 @@ def references_second_reference_address(request):
 
                 # Update the first reference record in the database
                 references_second_reference_address_record = Reference.objects.get(application_id=application_id_local,
-                                                                                  reference=2)
+                                                                                   reference=2)
                 references_second_reference_address_record.street_line1 = street_line1
                 references_second_reference_address_record.street_line2 = street_line2
                 references_second_reference_address_record.town = town

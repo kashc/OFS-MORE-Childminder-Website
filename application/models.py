@@ -88,9 +88,9 @@ class ChildcareType(models.Model):
     
     childcare_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
-    zero_to_five = models.BooleanField(blank=True)
-    five_to_eight = models.BooleanField(blank=True)
-    eight_plus = models.BooleanField(blank=True)
+    zero_to_five = models.BooleanField()
+    five_to_eight = models.BooleanField()
+    eight_plus = models.BooleanField()
     
     # Set table name
     class Meta:
