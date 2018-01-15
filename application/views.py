@@ -1992,7 +1992,7 @@ def references_intro(request):
                 status.update(application_id_local, 'references_status', 'IN_PROGRESS')
 
             # Go to the phone numbers page
-            return HttpResponseRedirect('/references/first-reference?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -2057,7 +2057,7 @@ def references_first_reference(request):
             application.save()
 
             # Go to the next page
-            return HttpResponseRedirect(
+            return HttpResponseRedirect(settings.URL_PREFIX +
                 '/references/first-reference-address?id=' + application_id_local + '&manual=False')
 
         # If there are invalid details
@@ -2190,7 +2190,7 @@ def references_first_reference_address(request):
                 application.save()
 
                 # Return to the application's task list
-                return HttpResponseRedirect('/references/first-reference-contact-details?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-contact-details?id=' + application_id_local)
 
             else:
 
@@ -2262,7 +2262,7 @@ def references_first_reference_contact_details(request):
             application.save()
 
             # Return to the application's task list
-            return HttpResponseRedirect('/references/second-reference?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -2405,7 +2405,7 @@ def references_second_reference_address(request):
             if form.is_valid():
 
                 # Return to the application's task list
-                return HttpResponseRedirect(
+                return HttpResponseRedirect(settings.URL_PREFIX +
                     '/references/second-reference-address/?id=' + application_id_local + '&manual=False')
 
             else:
@@ -2460,7 +2460,7 @@ def references_second_reference_address(request):
                 application.save()
 
                 # Return to the application's task list
-                return HttpResponseRedirect('/references/second-reference-contact-details?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-contact-details?id=' + application_id_local)
 
             else:
 
@@ -2531,7 +2531,7 @@ def references_second_reference_contact_details(request):
             application.save()
 
             # Return to the application's task list
-            return HttpResponseRedirect('/references/summary?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/references/summary?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -2641,7 +2641,7 @@ def references_summary(request):
             status.update(application_id_local, 'references_status', 'COMPLETED')
 
             # Return to the application's task list
-            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -2774,7 +2774,13 @@ def payment_view(request):
             elif (payment_method == 'PayPal'):
 
                 # Stay on the same page
-                return HttpResponseRedirect('https://www.paypal.com/uk/home')
+                paypal_url = payment.make_paypal_payment("GB", 3500, "GBP", "Childminder Registration Fee", application_id_local,
+                              "http://127.0.0.1:8000/childminder/confirmation/?id=" + application_id_local,
+                              "http://127.0.0.1:8000/childminder/payment/?id=" + application_id_local,
+                              "http://127.0.0.1:8000/childminder/payment/?id=" + application_id_local,
+                              "http://127.0.0.1:8000/childminder/payment/?id=" + application_id_local)
+
+                return HttpResponseRedirect(paypal_url)
 
         # If there are invalid details
         else:
@@ -2789,7 +2795,7 @@ def card_payment_details(request):
         # Get the application
         application_id_local = request.GET["id"]
 
-        # As no data is saved for this, a blank payment form is generated with each get request       
+        # As no data is saved for this, a blank payment form is generated with each get request
         form = PaymentDetailsForm()
 
         # Access the task page
@@ -2836,7 +2842,7 @@ def card_payment_details(request):
                 }
 
                 # Go to payment confirmation page                         
-                return render(request, 'payment-confirmation.html', variables)
+                return HttpResponseRedirect(request, '/confirmation/?id=' + application_id_local, variables)
 
             else:
                 variables = {
@@ -2859,6 +2865,28 @@ def card_payment_details(request):
 
             # Return to the same page
             return render(request, 'payment-details.html', variables)
+
+def payment_confirmation(request):
+    if request.method == 'GET':
+
+        application_id_local = request.GET['id']
+        order_code = request.GET['orderCode']
+
+        if payment.check_payment(order_code) == 200:
+            variables = {
+                'application_id': application_id_local,
+                'order_code': request.GET["orderCode"],
+            }
+
+            return render(request, 'payment-confirmation.html', variables)
+        else:
+
+            form = PaymentForm()
+
+            variables = {'form': form, 'application_id': application_id_local}
+
+            return HttpResponseRedirect(settings.URL_PREFIX + '/payment/?id=' + application_id_local, variables)
+
 
 
 # View the Application saved page

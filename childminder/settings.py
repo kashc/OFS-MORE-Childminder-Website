@@ -26,7 +26,7 @@ EMAIL_EXPIRY = 1
 # Base URL of notify gateway
 NOTIFY_URL = 'http://130.130.52.132:8095'
 
-PAYMENT_URL = 'http://130.130.52.132:8089'
+PAYMENT_URL = 'http://127.0.0.1:8080'
 
 # Visa Validation
 VISA_VALIDATION = True
