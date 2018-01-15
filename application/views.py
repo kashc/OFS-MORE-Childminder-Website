@@ -89,16 +89,13 @@ from .models import (Application,
 
 # View for the start page
 def start_page(request):
-
     # Access the task page
     return render(request, 'start-page.html')
 
 
 # View for the account selection page
 def account_selection(request):
-
     if request.method == 'GET':
-
         form = AccountForm()
 
         variables = {
@@ -786,7 +783,7 @@ def personal_details_home_address(request):
 
                 # Return to the application's task list    
                 return HttpResponseRedirect(
-                    '/personal-details/home-address/?id=' + application_id_local + '&manual=False')
+                    settings.URL_PREFIX + '/personal-details/home-address/?id=' + application_id_local + '&manual=False')
 
             else:
 
@@ -929,7 +926,7 @@ def personal_details_location_of_care(request):
 
                 # Return to the application's task list    
                 return HttpResponseRedirect(
-                    '/personal-details/childcare-address?id=' + application_id_local + '&manual=False')
+                    settings.URL_PREFIX + '/personal-details/childcare-address?id=' + application_id_local + '&manual=False')
 
         # If there are invalid details
         else:
@@ -1012,8 +1009,8 @@ def personal_details_childcare_address(request):
                     status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
 
                 # Return to the application's task list    
-                return HttpResponseRedirect(
-                    '/personal-details/childcare-address/?id=' + application_id_local + '&manual=False')
+                return HttpResponseRedirect(settings.URL_PREFIX +
+                                            '/personal-details/childcare-address/?id=' + application_id_local + '&manual=False')
 
             else:
 
@@ -1513,7 +1510,7 @@ def first_aid_training_summary(request):
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
 
-            # Go to the details page   
+            # Go to the details page
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
 
         # If there are invalid details
@@ -2023,7 +2020,7 @@ def references_intro(request):
                 status.update(application_id_local, 'references_status', 'IN_PROGRESS')
 
             # Go to the phone numbers page
-            return HttpResponseRedirect('/references/first-reference?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -2089,7 +2086,7 @@ def references_first_reference(request):
 
             # Go to the next page
             return HttpResponseRedirect(
-                '/references/first-reference-address?id=' + application_id_local + '&manual=False')
+                settings.URL_PREFIX + '/references/first-reference-address?id=' + application_id_local + '&manual=False')
 
         # If there are invalid details
         else:
@@ -2166,7 +2163,7 @@ def references_first_reference_address(request):
             if form.is_valid():
 
                 # Return to the application's task list
-                return HttpResponseRedirect(
+                return HttpResponseRedirect(settings.URL_PREFIX +
                     '/references/first-reference-address/?id=' + application_id_local + '&manual=False')
 
             else:
@@ -2221,7 +2218,8 @@ def references_first_reference_address(request):
                 application.save()
 
                 # Return to the application's task list
-                return HttpResponseRedirect('/references/first-reference-contact-details?id=' + application_id_local)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/references/first-reference-contact-details?id=' + application_id_local)
 
             else:
 
@@ -2293,7 +2291,7 @@ def references_first_reference_contact_details(request):
             application.save()
 
             # Return to the application's task list
-            return HttpResponseRedirect('/references/second-reference?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -2436,7 +2434,7 @@ def references_second_reference_address(request):
             if form.is_valid():
 
                 # Return to the application's task list
-                return HttpResponseRedirect(
+                return HttpResponseRedirect(settings.URL_PREFIX +
                     '/references/second-reference-address/?id=' + application_id_local + '&manual=False')
 
             else:
@@ -2491,7 +2489,8 @@ def references_second_reference_address(request):
                 application.save()
 
                 # Return to the application's task list
-                return HttpResponseRedirect('/references/second-reference-contact-details?id=' + application_id_local)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/references/second-reference-contact-details?id=' + application_id_local)
 
             else:
 
@@ -2562,7 +2561,7 @@ def references_second_reference_contact_details(request):
             application.save()
 
             # Return to the application's task list
-            return HttpResponseRedirect('/references/summary?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/references/summary?id=' + application_id_local)
 
         # If there are invalid details
         else:
@@ -2672,7 +2671,7 @@ def references_summary(request):
             status.update(application_id_local, 'references_status', 'COMPLETED')
 
             # Return to the application's task list
-            return HttpResponseRedirect('/task-list?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
 
         # If there are invalid details
         else:
