@@ -11,7 +11,7 @@ from django.conf import settings
 from django import forms
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
-from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, RadioSelect
+from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
 from .customfields import ExpirySplitDateWidget, ExpirySplitDateField, TimeKnownField
 from .models import (Application,
@@ -27,7 +27,7 @@ from .models import (Application,
 
 
 # Type of childcare form
-class TypeOfChildcareForm(forms.Form):
+class TypeOfChildcareForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
@@ -38,10 +38,10 @@ class TypeOfChildcareForm(forms.Form):
     )
 
     type_of_childcare = forms.MultipleChoiceField(
-        required=False,
-        widget=InlineCheckboxSelectMultiple,
+        required=True,
+        widget=CheckboxSelectMultiple,
         choices=CHILDCARE_AGE_CHOICES,
-        label='',
+        label='Which ages of children do you intend to childmind?',
     )
 
     def __init__(self, *args, **kwargs):

@@ -122,7 +122,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-URL_PREFIX = '/childminder'
+URL_PREFIX = '/ricatest'
 STATIC_URL = URL_PREFIX + '/static/'
 
 AUTHENTICATION_URL = URL_PREFIX + '/existing-application/'

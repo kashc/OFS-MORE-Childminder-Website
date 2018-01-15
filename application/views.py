@@ -210,47 +210,66 @@ def log_in(request):
 
 # View for the Type of childcare task
 def type_of_childcare(request):
+    # Get current date and time
+    current_date = datetime.datetime.today()
+
+    if request.method == 'GET':
+        # If the Type of childcare form is not completed
+        application_id_local = request.GET["id"]
+
+        form = TypeOfChildcareForm(id=application_id_local)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'childcare_type_status': application.childcare_type_status
+        }
+
+        # Access the task page
+        return render(request, 'childcare.html', variables)
+
     if request.method == 'POST':
 
         # Retrieve the application's ID
         application_id_local = request.POST["id"]
 
-        # Initialise the Type of childcare form
+        # Initialise the Your login and contact details form
         form = TypeOfChildcareForm(request.POST, id=application_id_local)
+
+        # Retrieve application from database for Back button/Return to list link logic
+        application = Application.objects.get(pk=application_id_local)
 
         # If the form is successfully submitted (with valid details)
         if form.is_valid():
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
 
             # Perform business logic to create or update Type of childcare record in database
             childcare_type_record = childcare_type_logic(application_id_local, form)
             childcare_type_record.save()
 
-        # Return to the application's task list
-        return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+            # Update application date updated
+            application.date_updated = current_date
+            application.save()
 
-    # If the Type of childcare form is not completed    
-    application_id_local = request.GET["id"]
+            # Update the status of the task to 'COMPLETED'
+            status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
 
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if Application.objects.get(pk=application_id_local).childcare_type_status != 'COMPLETED':
-        status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
+            # Return to the application's task list
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
 
-    form = TypeOfChildcareForm(id=application_id_local)
+        # If there are invalid details
+        else:
 
-    # Retrieve status of task
-    application = Application.objects.get(pk=application_id_local)
-    childcare_type_status = application.childcare_type_status
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'childcare_type_status': application.childcare_type_status
+            }
 
-    variables = {
-        'form': form,
-        'application_id': application_id_local,
-        'childcare_type_status': childcare_type_status
-    }
-
-    # Access the task page
-    return render(request, 'childcare.html', variables)
+            # Return to the same page
+            return render(request, 'childcare.html', variables)
 
 
 # View for the Your login and contact details task: e-mail address
