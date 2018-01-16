@@ -67,7 +67,7 @@ def magic_link_email(email, link_id):
         'reference': 'string',
         'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
     }
-    r = requests.post(base_request_url + '/notify-gateway/api/v1/notifications/email/',
+    r = requests.post(base_request_url + '/api/v1/notifications/email/',
                       json.dumps(notification_request),
                       headers=header)
     print(link_id)
@@ -92,7 +92,7 @@ def magic_link_text(phone, link_id):
         'reference': 'string',
         'templateId': 'd285f17b-8534-4110-ba6c-e7e788eeafb2'
     }
-    r = requests.post(base_request_url + '/notify-gateway/api/v1/notifications/sms/', json.dumps(notification_request),
+    r = requests.post(base_request_url + '/api/v1/notifications/sms/', json.dumps(notification_request),
                       headers=header)
     print(r.status_code)
     return r
