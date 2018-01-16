@@ -10,26 +10,41 @@ import requests
 from django.conf import settings
 
 
-def make_payment(amount, name, number, cvc, expiryM, expiryY, currency, code, desc):
+def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, code, desc):
+    """
+    Function used to send a WorldPay card payment request to the payment gateway, all validation is done by the gateway,
+    appropriate error response will be sent in JSON
+    :param amount: amount of money to be charged, send as an integer. Done in pence, so £35 would be 3500
+    :param name: name of the card holder, send as a string. This should be what is written on the card
+    :param number: card number, sent as an integer. This should be what is written on the card
+    :param cvc: cvc number on back of card. This should be sent as an integer
+    :param expiry_m: expiry month on the card, sent as an integer. This should be what is written on the card
+    :param expiry_y: expiry year on the card, sent as an integer. This should be what is written on the card
+    :param currency: Currency code that should be charged, sent as a string, see below for full list:
+    https://developer.worldpay.com/jsonapi/faq/articles/what-currencies-can-i-accept-payments-in
+    :param code: This is the order code the customer will
+    :param desc:
+    :return:
+    """
     base_url = settings.PAYMENT_URL
 
     header = {'content-type': 'application/json'}
 
-    input = {
+    payload = {
         "amount": amount,
         "cardHolderName": name,
         "cardNumber": number,
         "cvc": cvc,
-        "expiryMonth": expiryM,
-        "expiryYear": expiryY,
+        "expiryMonth": expiry_m,
+        "expiryYear": expiry_y,
         "currencyCode": currency,
         "customerOrderCode": code,
         "orderDescription": desc
     }
 
-    r = requests.post(base_url + "/payment-gateway/api/v1/payments/card/", json.dumps(input), headers=header)
+    response = requests.post(base_url + "/payment-gateway/api/v1/payments/card/", json.dumps(payload), headers=header)
 
-    return r
+    return response
 
 
 def make_paypal_payment(shopper_country_code, amount, currency_code, order_description, customer_order_code,
@@ -54,10 +69,10 @@ def make_paypal_payment(shopper_country_code, amount, currency_code, order_descr
 
     # We deal with the entire object as parsing out just the requestURL in the payment API may be undesirbale for other
     # services
-    print(json.loads(response.text))
     response_url = json.loads(response.text)["redirectURL"]
 
     return response_url
+
 
 def check_payment(order_code):
     base_url = settings.PAYMENT_URL
@@ -72,7 +87,7 @@ def payment_email(email, name):
 
     header = {'content-type': 'application/json'}
 
-    input = {
+    payload = {
         "email": email,
         "personalisation": {
             "firstName": name
@@ -81,6 +96,7 @@ def payment_email(email, name):
         "templateId": "9c677777-95e0-424a-aaca-f9a4eec3c6b2"
     }
 
-    r = requests.post(base_url + "/notify-gateway/api/v1/notifications/email/", json.dumps(input), headers=header)
-    print("Payment Email Sent")
-    return (r)
+    response = requests.post(base_url + "/notify-gateway/api/v1/notifications/email/", json.dumps(payload),
+                             headers=header)
+
+    return response

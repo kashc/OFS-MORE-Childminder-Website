@@ -1927,7 +1927,10 @@ def card_payment_details(request):
                     'application_id': application_id_local,
                     'order_code': parsed_payment_response["orderCode"],
                 }
-                return HttpResponseRedirect(request, '/confirmation/?id=' + application_id_local, variables)
+                # Go to payment confirmation page                         
+                return HttpResponseRedirect(settings.URL_PREFIX + '/confirmation/?id=' + application_id_local +
+                                            '&orderCode=' + parsed_payment_response["orderCode"], variables)
+
             else:
                 variables = {
                     'form': form,
@@ -1935,7 +1938,12 @@ def card_payment_details(request):
                     'error_flag': 1,
                     'error_message': parsed_payment_response["message"],
                 }
-            return HttpResponseRedirect(request, '/payment-details/?id=' + application_id_local, variables)
+
+            # Return to the application's task list    
+            return HttpResponseRedirect(settings.URL_PREFIX + '/payment-details/?id=' + application_id_local, variables)
+
+        # If there are invalid details
+
         else:
             variables = {
                 'form': form,
