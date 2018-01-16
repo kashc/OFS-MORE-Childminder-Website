@@ -1042,217 +1042,140 @@ def eyfs(request):
             return render(request, 'eyfs.html', variables)
 
 
-# View for the Your criminal record (DBS) check: guidance
 def dbs_check_guidance(request):
+    """
+    Method returning the template for the Your criminal record (DBS) check: guidance page (for a given application)
+    and navigating to the Your criminal record (DBS) check: details page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your criminal record (DBS) check: guidance template
+    """
     if request.method == 'GET':
-        # If the Your criminal record (DBS) check form is not completed
         application_id_local = request.GET["id"]
-
         form = DBSCheckGuidanceForm()
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
         variables = {
             'form': form,
             'application_id': application_id_local,
             'criminal_record_check_status': application.criminal_record_check_status
         }
-
-        # Access the task page
         return render(request, 'dbs-check-guidance.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
         form = DBSCheckGuidanceForm(request.POST)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-            if Application.objects.get(pk=application_id_local).criminal_record_check_status != 'COMPLETED':
+            if application.criminal_record_check_status != 'COMPLETED':
                 status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
-
-            # Go to the phone numbers page
             return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/dbs-details?id=' + application_id_local)
-
-        # If there are invalid details
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'dbs-check-guidance.html', variables)
 
 
-# View for the Your criminal record (DBS) check task: DBS details
 def dbs_check_dbs_details(request):
-    # Get current date and time
+    """
+    Method returning the template for the Your criminal record (DBS) check: details page (for a given application)
+    and navigating to the Your criminal record (DBS) check: upload DBS or summary page when successfully completed;
+    business logic is applied to either create or update the associated Criminal_Record_Check record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your criminal record (DBS) check: details template
+    """
     current_date = datetime.datetime.today()
-
     if request.method == 'GET':
-        # If the Your criminal record (DBS) check form is not completed
         application_id_local = request.GET["id"]
-
         form = DBSCheckDBSDetailsForm(id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
         variables = {
             'form': form,
             'application_id': application_id_local,
             'criminal_record_check_status': application.criminal_record_check_status
         }
-
-        # Access the task page
         return render(request, 'dbs-check-dbs-details.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
         form = DBSCheckDBSDetailsForm(request.POST, id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-            if Application.objects.get(pk=application_id_local).criminal_record_check_status != 'COMPLETED':
+            if application.criminal_record_check_status != 'COMPLETED':
                 status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
-
-            # Perform business logic to create or update Your criminal record (DBS) check record in database
+            # Create or update Criminal_Record_Check record
             dbs_check_record = dbs_check_logic(application_id_local, form)
             dbs_check_record.save()
-
-            # Update application date updated
-            application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
-
-            # Get answers
             cautions_convictions = form.cleaned_data['convictions']
-
             if cautions_convictions == 'True':
-
-                # Go to the upload DBS page
                 return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/upload-dbs?id=' + application_id_local)
-
             elif cautions_convictions == 'False':
-
-                # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-                if Application.objects.get(pk=application_id_local).criminal_record_check_status != 'COMPLETED':
+                if application.criminal_record_check_status != 'COMPLETED':
                     status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
-
-                # Go to the summary page
                 return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/summary?id=' + application_id_local)
-
-        # If there are invalid details
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'dbs-check-dbs-details.html', variables)
 
 
-# View for the Your criminal record (DBS) check: upload DBS
 def dbs_check_upload_dbs(request):
+    """
+    Method returning the template for the Your criminal record (DBS) check: upload DBS page (for a given application)
+    and navigating to the Your criminal record (DBS) check: summary page when successfully completed;
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your criminal record (DBS) check: upload DBS template
+    """
+    current_date = datetime.datetime.today()
     if request.method == 'GET':
-        # If the Your criminal record (DBS) check form is not completed
         application_id_local = request.GET["id"]
-
         form = DBSCheckUploadDBSForm(id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
         variables = {
             'form': form,
             'application_id': application_id_local,
             'criminal_record_check_status': application.criminal_record_check_status
         }
-
-        # Access the task page
         return render(request, 'dbs-check-upload-dbs.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
         form = DBSCheckUploadDBSForm(request.POST, id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Retrieve entered data
-            declaration = form.cleaned_data['declaration']
-
-            # Update DBS check record
+            declare = form.cleaned_data['declaration']
             dbs_check_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
-            dbs_check_record.send_certificate_declare = declaration
+            dbs_check_record.send_certificate_declare = declare
             dbs_check_record.save()
-
-            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-            if Application.objects.get(pk=application_id_local).criminal_record_check_status != 'COMPLETED':
+            application.date_updated = current_date
+            application.save()
+            if application.criminal_record_check_status != 'COMPLETED':
                 status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
-
-            # Go to the phone numbers page
             return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/summary?id=' + application_id_local)
-
-        # If there are invalid details
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'dbs-check-upload-dbs.html', variables)
 
 
-# View for the Your criminal record (DBS) check task: summary
 def dbs_check_summary(request):
+    """
+    Method returning the template for the Your criminal record (DBS) check: summary page (for a given application)
+    displaying entered data for this task and navigating to the task list when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your criminal record (DBS) check: summary template
+    """
     if request.method == 'GET':
-        # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
-
-        # Retrieve answers
-        dbs_certificate_number = CriminalRecordCheck.objects.get(
-            application_id=application_id_local).dbs_certificate_number
-        cautions_convictions = CriminalRecordCheck.objects.get(application_id=application_id_local).cautions_convictions
-        send_certificate_declare = CriminalRecordCheck.objects.get(
-            application_id=application_id_local).send_certificate_declare
-
+        criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
+        dbs_certificate_number = criminal_record_check.dbs_certificate_number
+        cautions_convictions = criminal_record_check.cautions_convictions
+        send_certificate_declare = criminal_record_check.send_certificate_declare
         form = DBSCheckSummaryForm()
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -1261,36 +1184,17 @@ def dbs_check_summary(request):
             'criminal_record_check_status': application.criminal_record_check_status,
             'declaration': send_certificate_declare
         }
-
-        # Access the task page
         return render(request, 'dbs-check-summary.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
         form = DBSCheckSummaryForm(request.POST)
-
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Go to the details page
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
-
-        # If there are invalid details
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'dbs-check-summary.html', variables)
 
 
