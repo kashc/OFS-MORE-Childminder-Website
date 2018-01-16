@@ -46,7 +46,7 @@ def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, code, 
         "orderDescription": desc
     }
 
-    response = requests.post(base_url + "/payment-gateway/api/v1/payments/card/", json.dumps(payload), headers=header)
+    response = requests.post(base_url + "/api/v1/payments/card/", json.dumps(payload), headers=header)
 
     return response
 
@@ -89,7 +89,7 @@ def make_paypal_payment(shopper_country_code, amount, currency_code, order_descr
         "cancellationUrl": cancel_url,
     }
 
-    response = requests.post(base_url + "/payment-gateway/api/v1/payments/paypal/", json.dumps(payload), headers=header)
+    response = requests.post(base_url + "/api/v1/payments/paypal/", json.dumps(payload), headers=header)
 
     # We deal with the entire object as parsing out just the requestURL in the payment API may be undesirbale for other
     # services
@@ -106,7 +106,7 @@ def check_payment(order_code):
     """
     base_url = settings.PAYMENT_URL
     header = {'content-type': 'application/json'}
-    response = requests.get(base_url + "/payment-gateway/api/v1/payments/" + order_code, headers=header)
+    response = requests.get(base_url + "/api/v1/payments/" + order_code, headers=header)
 
     return response.status_code
 
