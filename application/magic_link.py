@@ -1,6 +1,6 @@
 """
 OFS-MORE-CCN3: Apply to be a Childminder Beta
--- Magic Link --
+-- magic_link.py --
 
 @author: Informed Solutions
 """
@@ -21,45 +21,42 @@ from .models import Application, UserDetails
 
 
 def existing_application(request):
-    # Initialise form
+    """
+    Method returning the template for the Existing application page and navigating to the email sent page when
+    successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Existing application template
+    """
     form = EmailLoginForm()
-
     if request.method == 'POST':
-
         form = EmailLoginForm(request.POST)
-
-        # Retrieve e-mail address
         email = request.POST['email_address']
-
-        # If a valid e-mail address has been submitted
         if form.is_valid():
             try:
-                # Retrieve corresponding application
                 acc = UserDetails.objects.get(email=email)
             except Exception as ex:
                 return HttpResponseRedirect(settings.URL_PREFIX + '/email-sent')
-            # get url and substring just the domain
+            # Send time-boxed e-mail link to log back in
             domain = request.META.get('HTTP_REFERER', '')
             domain = domain[:-21]
-            # generate random link
-
             link = generate_random(12, 'link')
-            # get current epoch so the link can be time-boxed
             expiry = int(time.time())
-            # save link and expiry
             acc.email_expiry_date = expiry
             acc.magic_link_email = link
             acc.save()
-            # send magic link email
             magic_link_email(email, domain + 'validate/' + link)
-            # Note that this is the same response whether the email is valid or not
+            # The same response is returned whether the e-mail is valid or not
             return HttpResponseRedirect(settings.URL_PREFIX + '/email-sent')
-
     return render(request, 'existing-application.html', {'form': form})
 
 
 def magic_link_email(email, link_id):
-    # Use Notify-Gateway API to send magic link email
+    """
+    Method to send a magic link email using the Notify Gateway API
+    :param email: string containing the e-mail address to send the e-mail to
+    :param link_id: string containing the magic link ID related to an application
+    :return: an email
+    """
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
     notification_request = {
@@ -70,15 +67,21 @@ def magic_link_email(email, link_id):
         'reference': 'string',
         'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
     }
-    r = requests.post(base_request_url + '/notify-gateway/api/v1/notifications/email/', json.dumps(notification_request),
+    r = requests.post(base_request_url + '/notify-gateway/api/v1/notifications/email/',
+                      json.dumps(notification_request),
                       headers=header)
     print(link_id)
     return r
 
 
 def magic_link_text(phone, link_id):
+    """
+    Method to send an SMS verification code using the Notify Gateway API
+    :param phone: string containing the phone number to send the code to
+    :param link_id: string containing the magic link ID related to an application
+    :return: an SMS
+    """
     print('Sending SMS Message: ' + link_id)
-    # Use Notify-Gateway to send sms code
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
     notification_request = {
@@ -89,41 +92,49 @@ def magic_link_text(phone, link_id):
         'reference': 'string',
         'templateId': 'd285f17b-8534-4110-ba6c-e7e788eeafb2'
     }
-    r = requests.post(base_request_url + '/notify-gateway/api/v1/notifications/sms/', json.dumps(notification_request), headers=header)
+    r = requests.post(base_request_url + '/notify-gateway/api/v1/notifications/sms/', json.dumps(notification_request),
+                      headers=header)
     print(r.status_code)
     return r
 
 
 def generate_random(digits, type):
-    # generate a random code or random string of varying size depending on whether it's the SMS code or Magic Link url
-    # digits is the length desired, and type can only be 'code' or 'link' anything else and it will break
+    """
+    Method to generate a random code or random string of varying size for the SMS code or Magic Link URL
+    :param digits: integer indicating the desired length
+    :param type: flag to indicate the SMS code or Magic Link URL
+    :return:
+    """
     if type == 'code':
         r = ''.join([random.choice(string.digits) for n in range(digits)])
-        # get expiry date
     elif type == 'link':
         r = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(digits)])
-        # get expiry date
     r = r.upper()
     return r
 
 
 def has_expired(expiry):
-    # check to see whether a magic link url or sms code has expired
-    # Expiry period is set in hours in the settings file
+    """
+    Method to check whether a Magic Link URL or SMS code has expired
+    :param expiry:
+    :return:
+    """
+    # Expiry period is set in hours in settings.py
     exp_period = settings.EMAIL_EXPIRY * 60 * 60
-    # calculate difference between current time and when it was created
     diff = int(time.time() - expiry)
-
     if diff < exp_period or diff == exp_period:
-        # return false if it HAS NOT expired
         return False
     else:
-        # Return true if it HAS expired
         return True
 
 
 def validate_magic_link(request, id):
-    # commented lines below check that the url matches the magic link (active lines check it vs phone number)
+    """
+    Method to verify that the URL matches a magic link
+    :param request: request to display a magic link page
+    :param id: magic link ID
+    :return: HttpResponse, directing to the correct page
+    """
     try:
         acc = UserDetails.objects.get(magic_link_email=id)
         exp = acc.email_expiry_date
@@ -144,8 +155,11 @@ def validate_magic_link(request, id):
 
 
 def sms_verification(request):
-    # This is the page where a user is redirected after clicking on their magic link
-    # Unique form for entering SMS code (must be 5 digits in accordance with JIRA)
+    """
+    Method to display the SMS code verification page
+    :param request: request to display the SMS verification page
+    :return: HttpResponse displaying the SMS verification page
+    """
     id = request.GET['id']
     acc = UserDetails.objects.get(magic_link_email=id)
     if 'f' in request.GET.keys():
@@ -158,7 +172,6 @@ def sms_verification(request):
         magic_link_text(phone, g).status_code
         return HttpResponseRedirect(settings.URL_PREFIX + '/verify-phone/?id=' + id)
     form = VerifyPhoneForm(id=id)
-
     login_id = acc.login_id
     application = Application.objects.get(login_id=login_id)
     if request.method == 'POST':
@@ -168,15 +181,13 @@ def sms_verification(request):
             exp = acc.sms_expiry_date
             if form.is_valid() and not has_expired(exp):
                 if code == acc.magic_link_sms:
-                    response = HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + str(application.application_id))
-
-                    # create session issue custom cookie to user
+                    response = HttpResponseRedirect(
+                        settings.URL_PREFIX + '/task-list/?id=' + str(application.application_id))
+                    # Create session issue custom cookie to user
                     CustomAuthenticationHandler.create_session(response, application.login_id.email)
-
-                    # forward back onto appication
+                    # Forward back onto application
                     return response
                 else:
                     print(4)
                     return HttpResponseRedirect(settings.URL_PREFIX + '/verify-phone/?id=' + id)
-
     return render(request, 'verify-phone.html', {'form': form, 'id': id})
