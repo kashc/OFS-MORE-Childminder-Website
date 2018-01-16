@@ -1234,7 +1234,7 @@ def health_intro(request):
 def health_booklet(request):
     """
     Method returning the template for the Your health: booklet page (for a given application)
-    and navigating to the Your health: summary page when successfully completed;
+    and navigating to the Your health: answers page when successfully completed;
     business logic is applied to either create or update the associated Health_Declaration_Booklet record
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your health: booklet template
@@ -1273,10 +1273,10 @@ def health_booklet(request):
 
 def health_check_answers(request):
     """
-    Method returning the template for the Your health: summary page (for a given application)
+    Method returning the template for the Your health: answers page (for a given application)
     displaying entered data for this task and navigating to the task list when successfully completed
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Your health: summary template
+    :return: an HttpResponse object with the rendered Your health: answers template
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
@@ -1303,226 +1303,137 @@ def health_check_answers(request):
             return render(request, 'health-check-answers.html', variables)
 
 
-# View for the 2 references task: intro
 def references_intro(request):
+    """
+    Method returning the template for the 2 references: intro page (for a given application)
+    and navigating to the Your health: intro page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered 2 references: intro template
+    """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-
         form = ReferenceIntroForm()
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
         variables = {
             'form': form,
             'application_id': application_id_local,
             'references_status': application.references_status
         }
-
-        # Access the task page
         return render(request, 'references-intro.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
         form = ReferenceIntroForm(request.POST)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-            if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
+            if application.references_status != 'COMPLETED':
                 status.update(application_id_local, 'references_status', 'IN_PROGRESS')
-
-            # Go to the phone numbers page
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference?id=' + application_id_local)
-
-        # If there are invalid details
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'references-intro.html', variables)
 
 
-# View for the 2 references task: first reference
 def references_first_reference(request):
-    # Get current date and time
+    """
+    Method returning the template for the 2 references: first reference page (for a given application)
+    and navigating to the 2 references: first reference address page when successfully completed;
+    business logic is applied to either create or update the associated Reference record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered 2 references: first reference template
+    """
     current_date = datetime.datetime.today()
-
     if request.method == 'GET':
-        # If the 2 references form is not completed
         application_id_local = request.GET["id"]
-
         form = FirstReferenceForm(id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
         variables = {
             'form': form,
             'application_id': application_id_local,
             'references_status': application.references_status
         }
-
-        # Access the task page
         return render(request, 'references-first-reference.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
         form = FirstReferenceForm(request.POST, id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-            if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
+            if application.references_status != 'COMPLETED':
                 status.update(application_id_local, 'references_status', 'IN_PROGRESS')
-
-            # Perform business logic to create or update Your personal details record in database
+            # Create or update Reference record
             references_record = references_first_reference_logic(application_id_local, form)
             references_record.save()
-
-            # Update application date updated
-            application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
-
-            # Go to the next page
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/references/first-reference-address?id=' + application_id_local + '&manual=False')
-
-        # If there are invalid details
+            return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-address?id='
+                                        + application_id_local + '&manual=False')
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'references-first-reference.html', variables)
 
 
-# View for the 2 references task: first reference address
 def references_first_reference_address(request):
-    # Get current date and time
+    """
+    Method returning the template for the 2 references: first reference address page (for a given application)
+    and navigating to the 2 references: first reference contact details page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered 2 references: first reference address template
+    """
     current_date = datetime.datetime.today()
-
     if request.method == 'GET':
-
-        # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
         manual = request.GET["manual"]
-
-        # If the user wants to use the postcode search
+        # Switch between manual address entry or postcode search
         if manual == 'False':
-
             form = ReferenceFirstReferenceAddressForm(id=application_id_local)
-
-            # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
-
             variables = {
                 'form': form,
                 'application_id': application_id_local,
                 'references_status': application.references_status
             }
-
-            # Access the task page
             return render(request, 'references-first-reference-address.html', variables)
-
-        # If the user wants to manually enter their address
         elif manual == 'True':
-
             form = ReferenceFirstReferenceAddressManualForm(id=application_id_local)
-
-            # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
-
             variables = {
                 'form': form,
                 'application_id': application_id_local,
                 'references_status': application.references_status
             }
-
-            # Access the task page
             return render(request, 'references-first-reference-address-manual.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
         manual = request.POST["manual"]
-
-        # If the user wants to use the postcode search
         if manual == 'False':
-
             form = ReferenceFirstReferenceAddressForm(request.POST, id=application_id_local)
-
-            # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
-
-            # If the form is successfully submitted (with valid details)
             if form.is_valid():
-
-                # Return to the application's task list
-                return HttpResponseRedirect(settings.URL_PREFIX +
-                                            '/references/first-reference-address/?id=' + application_id_local + '&manual=False')
-
+                return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-address/?id='
+                                            + application_id_local + '&manual=False')
             else:
-
                 variables = {
                     'form': form,
                     'application_id': application_id_local,
                     'references_status': application.references_status
                 }
-
-                # Access the task page
                 return render(request, 'references-first-reference-address.html', variables)
-
-        # If the user wants to manually enter their address
         if manual == 'True':
-
-            # Initialise the Your login and contact details form
             form = ReferenceFirstReferenceAddressManualForm(request.POST, id=application_id_local)
-
-            # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
-
-            # If the form is successfully submitted (with valid details)
             if form.is_valid():
-
-                # Retrieve entered data
                 street_line1 = form.cleaned_data.get('street_name_and_number')
                 street_line2 = form.cleaned_data.get('street_name_and_number2')
                 town = form.cleaned_data.get('town')
                 county = form.cleaned_data.get('county')
                 country = form.cleaned_data.get('country')
                 postcode = form.cleaned_data.get('postcode')
-
-                # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-                if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
-                    status.update(application_id_local, 'references_status', 'IN_PROGRESS')
-
-                # Update the first reference record in the database
+                # Create or update Reference record
                 references_first_reference_address_record = Reference.objects.get(application_id=application_id_local,
                                                                                   reference=1)
                 references_first_reference_address_record.street_line1 = street_line1
@@ -1532,268 +1443,166 @@ def references_first_reference_address(request):
                 references_first_reference_address_record.country = country
                 references_first_reference_address_record.postcode = postcode
                 references_first_reference_address_record.save()
-
-                # Update application date updated
                 application = Application.objects.get(pk=application_id_local)
                 application.date_updated = current_date
                 application.save()
-
-                # Return to the application's task list
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/references/first-reference-contact-details?id=' + application_id_local)
-
+                if application.references_status != 'COMPLETED':
+                    status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+                return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-contact-details?id='
+                                            + application_id_local)
             else:
-
                 variables = {
                     'form': form,
                     'application_id': application_id_local,
                     'references_status': application.references_status
                 }
-
-                # Access the task page
                 return render(request, 'references-first-reference-address-manual.html', variables)
 
 
-# View for the 2 references: first reference contact details
 def references_first_reference_contact_details(request):
-    # Get current date and time
+    """
+    Method returning the template for the 2 references: first reference contact details page (for a given application)
+    and navigating to the 2 references: second reference page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered 2 references: first reference contact details template
+    """
     current_date = datetime.datetime.today()
-
     if request.method == 'GET':
-        # If the 2 references form is not completed
         application_id_local = request.GET["id"]
-
         form = ReferenceFirstReferenceContactForm(id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
         variables = {
             'form': form,
             'application_id': application_id_local,
             'references_status': application.references_status
         }
-
-        # Access the task page
         return render(request, 'references-first-reference-contact-details.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the 2 references form
         form = ReferenceFirstReferenceContactForm(request.POST, id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-            if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
+            if application.references_status != 'COMPLETED':
                 status.update(application_id_local, 'references_status', 'IN_PROGRESS')
-
-            # Retrieve entered data
             email_address = form.cleaned_data.get('email_address')
             phone_number = form.cleaned_data.get('phone_number')
-
-            # Update the first reference record in the database
             references_first_reference_address_record = Reference.objects.get(application_id=application_id_local,
                                                                               reference=1)
             references_first_reference_address_record.phone_number = phone_number
             references_first_reference_address_record.email = email_address
             references_first_reference_address_record.save()
-
-            # Update application date updated
             application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
-
-            # Return to the application's task list
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference?id=' + application_id_local)
-
-        # If there are invalid details
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'references-first-reference-contact-details.html', variables)
 
 
-# View for the 2 references task: first reference
 def references_second_reference(request):
-    # Get current date and time
+    """
+    Method returning the template for the 2 references: second reference page (for a given application)
+    and navigating to the 2 references: second reference address page when successfully completed;
+    business logic is applied to either create or update the associated Reference record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered 2 references: second reference template
+    """
     current_date = datetime.datetime.today()
-
     if request.method == 'GET':
-        # If the 2 references form is not completed
         application_id_local = request.GET["id"]
-
         form = SecondReferenceForm(id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
         variables = {
             'form': form,
             'application_id': application_id_local,
             'references_status': application.references_status
         }
-
-        # Access the task page
         return render(request, 'references-second-reference.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
         form = SecondReferenceForm(request.POST, id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-            if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
+            if application.references_status != 'COMPLETED':
                 status.update(application_id_local, 'references_status', 'IN_PROGRESS')
-
-            # Perform business logic to create or update Your personal details record in database
+            # Create or update Reference record
             references_record = references_second_reference_logic(application_id_local, form)
             references_record.save()
-
-            # Update application date updated
-            application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
-
-            # Go to the next page
-            return HttpResponseRedirect(settings.URL_PREFIX +
-                                        '/references/second-reference-address?id=' + application_id_local + '&manual=False')
-
-        # If there are invalid details
+            return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-address?id=' +
+                                        application_id_local + '&manual=False')
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'references-second-reference.html', variables)
 
 
-# View for the 2 references task: second reference address
 def references_second_reference_address(request):
-    # Get current date and time
+    """
+    Method returning the template for the 2 references: second reference address page (for a given application)
+    and navigating to the 2 references: second reference contact details page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered 2 references: second reference address template
+    """
     current_date = datetime.datetime.today()
-
     if request.method == 'GET':
-
-        # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
         manual = request.GET["manual"]
-
-        # If the user wants to use the postcode search
+        # Switch between manual address entry and postcode search
         if manual == 'False':
-
             form = ReferenceSecondReferenceAddressForm(id=application_id_local)
-
-            # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
-
             variables = {
                 'form': form,
                 'application_id': application_id_local,
                 'references_status': application.references_status
             }
-
-            # Access the task page
             return render(request, 'references-second-reference-address.html', variables)
-
-        # If the user wants to manually enter their address
         elif manual == 'True':
-
             form = ReferenceSecondReferenceAddressManualForm(id=application_id_local)
-
-            # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
-
             variables = {
                 'form': form,
                 'application_id': application_id_local,
                 'references_status': application.references_status
             }
-
-            # Access the task page
             return render(request, 'references-second-reference-address-manual.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
         manual = request.POST["manual"]
-
-        # If the user wants to use the postcode search
+        # Switch between manual address entry and postcode search
         if manual == 'False':
-
             form = ReferenceSecondReferenceAddressForm(request.POST, id=application_id_local)
-
-            # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
-
-            # If the form is successfully submitted (with valid details)
             if form.is_valid():
-
-                # Return to the application's task list
-                return HttpResponseRedirect(settings.URL_PREFIX +
-                                            '/references/second-reference-address/?id=' + application_id_local + '&manual=False')
-
+                return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-address/?id='
+                                            + application_id_local + '&manual=False')
             else:
-
                 variables = {
                     'form': form,
                     'application_id': application_id_local,
                     'references_status': application.references_status
                 }
-
-                # Access the task page
                 return render(request, 'references-second-reference-address.html', variables)
-
-        # If the user wants to manually enter their address
         if manual == 'True':
-
-            # Initialise the Your login and contact details form
             form = ReferenceSecondReferenceAddressManualForm(request.POST, id=application_id_local)
-
-            # Retrieve application from database for Back button/Return to list link logic
             application = Application.objects.get(pk=application_id_local)
-
-            # If the form is successfully submitted (with valid details)
             if form.is_valid():
-
-                # Retrieve entered data
                 street_line1 = form.cleaned_data.get('street_name_and_number')
                 street_line2 = form.cleaned_data.get('street_name_and_number2')
                 town = form.cleaned_data.get('town')
                 county = form.cleaned_data.get('county')
                 country = form.cleaned_data.get('country')
                 postcode = form.cleaned_data.get('postcode')
-
-                # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-                if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
+                if application.references_status != 'COMPLETED':
                     status.update(application_id_local, 'references_status', 'IN_PROGRESS')
-
-                # Update the first reference record in the database
                 references_second_reference_address_record = Reference.objects.get(application_id=application_id_local,
                                                                                    reference=2)
                 references_second_reference_address_record.street_line1 = street_line1
@@ -1803,110 +1612,73 @@ def references_second_reference_address(request):
                 references_second_reference_address_record.country = country
                 references_second_reference_address_record.postcode = postcode
                 references_second_reference_address_record.save()
-
-                # Update application date updated
                 application = Application.objects.get(pk=application_id_local)
                 application.date_updated = current_date
                 application.save()
-
-                # Return to the application's task list
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/references/second-reference-contact-details?id=' + application_id_local)
-
+                return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-contact-details?id='
+                                            + application_id_local)
             else:
-
                 variables = {
                     'form': form,
                     'application_id': application_id_local,
                     'references_status': application.references_status
                 }
-
-                # Access the task page
                 return render(request, 'references-second-reference-address-manual.html', variables)
 
 
-# View for the 2 references: second reference contact details
 def references_second_reference_contact_details(request):
-    # Get current date and time
+    """
+    Method returning the template for the 2 references: second reference contact details page (for a given application)
+    and navigating to the 2 references: summary page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered 2 references: second reference contact details template
+    """
     current_date = datetime.datetime.today()
-
     if request.method == 'GET':
-        # If the 2 references form is not completed
         application_id_local = request.GET["id"]
-
         form = ReferenceSecondReferenceContactForm(id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
         variables = {
             'form': form,
             'application_id': application_id_local,
             'references_status': application.references_status
         }
-
-        # Access the task page
         return render(request, 'references-second-reference-contact-details.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the 2 references form
         form = ReferenceSecondReferenceContactForm(request.POST, id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
             status.update(application_id_local, 'references_status', 'COMPLETED')
-
-            # Retrieve entered data
             email_address = form.cleaned_data.get('email_address')
             phone_number = form.cleaned_data.get('phone_number')
-
-            # Update the first reference record in the database
             references_first_reference_address_record = Reference.objects.get(application_id=application_id_local,
                                                                               reference=2)
             references_first_reference_address_record.phone_number = phone_number
             references_first_reference_address_record.email = email_address
             references_first_reference_address_record.save()
-
-            # Update application date updated
-            application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
-
-            # Return to the application's task list
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/summary?id=' + application_id_local)
-
-        # If there are invalid details
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'references-second-reference-contact-details.html', variables)
 
 
-# View for the 2 references task: summary
 def references_summary(request):
+    """
+    Method returning the template for the 2 references: summary page (for a given application)
+    displaying entered data for this task and navigating to the task list when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered 2 references: summary template
+    """
     if request.method == 'GET':
-        # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
-
-        # Get associated reference record
         first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
-
-        # Retrieve answers
         first_reference_first_name = first_reference_record.first_name
         first_reference_last_name = first_reference_record.last_name
         first_reference_relationship = first_reference_record.relationship
@@ -1933,15 +1705,9 @@ def references_summary(request):
         second_reference_postcode = second_reference_record.postcode
         second_reference_phone_number = second_reference_record.phone_number
         second_reference_email = second_reference_record.email
-
         form = ReferenceSummaryForm()
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
-        # Update the status of the task to 'COMPLETED'
         status.update(application_id_local, 'references_status', 'COMPLETED')
-
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -1973,36 +1739,18 @@ def references_summary(request):
             'second_reference_email': second_reference_email,
             'references_status': application.references_status
         }
-
-        # Access the task page
         return render(request, 'references-summary.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
         form = PersonalDetailsSummaryForm()
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Update the status of the task to 'COMPLETED'
             status.update(application_id_local, 'references_status', 'COMPLETED')
-
-            # Return to the application's task list
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
-
-        # If there are invalid details
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'references-summary.html', variables)
 
 
