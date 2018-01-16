@@ -1038,7 +1038,6 @@ def eyfs(request):
                 'form': form,
                 'application_id': application_id_local
             }
-            # Return to the same page
             return render(request, 'eyfs.html', variables)
 
 
@@ -1754,35 +1753,37 @@ def references_summary(request):
             return render(request, 'references-summary.html', variables)
 
 
-# View for the People in your home task
 def other_people(request):
+    """
+    Method returning the template for the People in your home page (for a given application) and navigating to
+    the task list when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered People in your home template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = OtherPeopleForm()
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'people_in_home_status': application.people_in_home_status
+        }
+        if application.people_in_home_status != 'COMPLETED':
+            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+        return render(request, 'other-people.html', variables)
     if request.method == 'POST':
-
-        # Retrieve the application's ID         
         application_id_local = request.POST["id"]
-
-        # Initialise the People in your home form        
         form = OtherPeopleForm(request.POST)
-
-        # If the form is successfully submitted (with valid details)         
         if form.is_valid():
-            # Update the status of the task to 'COMPLETED'
             status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
-
-        # Return to the application's task list              
-        return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
-
-    # If the People in your home form is not completed 
-    application_id_local = request.GET["id"]
-
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if Application.objects.get(pk=application_id_local).people_in_home_status != 'COMPLETED':
-        status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
-
-    form = OtherPeopleForm()
-
-    # Access the task page
-    return render(request, 'other-people.html', {'application_id': application_id_local})
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'other-people.html', variables)
 
 
 # View for the Declaration task
