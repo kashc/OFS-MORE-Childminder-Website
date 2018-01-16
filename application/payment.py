@@ -1,12 +1,13 @@
 """
 OFS-MORE-CCN3: Apply to be a Childminder Beta
--- Worldpay Integration --
+-- payment.py --
 
 @author: Informed Solutions
 """
 
 import json
 import requests
+
 from django.conf import settings
 
 
@@ -22,9 +23,12 @@ def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, code, 
     :param expiry_y: expiry year on the card, sent as an integer. This should be what is written on the card
     :param currency: Currency code that should be charged, sent as a string, see below for full list:
     https://developer.worldpay.com/jsonapi/faq/articles/what-currencies-can-i-accept-payments-in
-    :param code: This is the order code the customer will
-    :param desc:
-    :return:
+    :param code: This is the order code the customer will be provided with on the confirmation page, make sure it is the
+    same as their application id, this should be a string
+    :param desc: This is the order description the user will see attached to their payment when on PayPal, this should
+    be a string
+    :return: returns a full http response object containing either order details on success or an error message on
+    failure
     """
     base_url = settings.PAYMENT_URL
 
@@ -49,6 +53,26 @@ def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, code, 
 
 def make_paypal_payment(shopper_country_code, amount, currency_code, order_description, customer_order_code,
                         success_url, pending_url, failure_url, cancel_url):
+    """
+    Function used to obtain the redirect url that will allow a user to authorise a payment through paypal base off of
+    the below parameters
+    :param shopper_country_code:The country from which the user is accessing the service
+    :param amount: the amount of money to be charge to the users paypal account
+    :param currency_code: Currency code that should be charged, sent as a string, see below for full list:
+    https://developer.worldpay.com/jsonapi/faq/articles/what-currencies-can-i-accept-payments-in
+    :param order_description: This is the order description the user will see attached to their payment when on PayPal,
+    this should be a string
+    :param customer_order_code: This is the order code the customer will be provided with on the confirmation page, make
+    sure it is the ame as their application id, this should be a string
+    :param success_url: This is the url the user should be redirected to upon successfully paying the amount requested,
+    sent as a string
+    :param pending_url: This is the url the user should be redirected to whilst their payment is pending,
+    sent as a string
+    :param failure_url: This is the url the user should be redirected to should their payment fail, sent as a string
+    :param cancel_url: this is the url the user should be redirected to should they cancel the payment, sent as a string
+    :return: Returns the redirect url for the user to be redirected to in order to authorise the payment.
+    This is taken from the JSON object the payment gateway gives us, returned as a string
+    """
     base_url = settings.PAYMENT_URL
 
     header = {'content-type': 'application/json'}
@@ -75,6 +99,11 @@ def make_paypal_payment(shopper_country_code, amount, currency_code, order_descr
 
 
 def check_payment(order_code):
+    """
+    A function to confirm a worldpay order code exists in worldpay's records
+    :param order_code: the order code of the payment that needs to be checked
+    :return: a status code to confirm whether this payment exists or not, these responses are defined in swagger
+    """
     base_url = settings.PAYMENT_URL
     header = {'content-type': 'application/json'}
     response = requests.get(base_url + "/payment-gateway/api/v1/payments/" + order_code, headers=header)
@@ -83,6 +112,13 @@ def check_payment(order_code):
 
 
 def payment_email(email, name):
+    """
+    A function to send an email through the notify gateway with a payment template, currently used to confirm a worldpay
+    card order has been successful
+    :param email: The address to send the email to, sent as a stirng
+    :param name: The name to be placed on the email template to be sent to the user
+    :return: Returns the response object obtained from the paypal gateway method, as defined in swagger
+    """
     base_url = settings.NOTIFY_URL
 
     header = {'content-type': 'application/json'}
