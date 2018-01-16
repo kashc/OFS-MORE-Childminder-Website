@@ -30,7 +30,7 @@ NOTIFY_URL = 'http://130.130.52.132:8095'
 PAYMENT_URL = 'http://130.130.52.132:8089'
 
 # Visa Validation
-VISA_VALIDATION = True
+VISA_VALIDATION = False
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
