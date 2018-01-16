@@ -11,7 +11,7 @@ from datetime import date
 from django.test import TestCase
 from uuid import UUID
 
-from .models import (ApplicantHomeAddress,
+from application.models import (ApplicantHomeAddress,
                      ApplicantName,
                      ApplicantPersonalDetails,
                      Application,

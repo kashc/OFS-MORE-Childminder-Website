@@ -13,10 +13,9 @@ from django.test import TestCase
 from django.urls import resolve
 from uuid import UUID
 
-# Test suite for start page
-from . import models
+from application import models
 
-from .views import (application_saved,
+from application.views import (application_saved,
                     card_payment_details,
                     confirmation,
                     contact_email,
