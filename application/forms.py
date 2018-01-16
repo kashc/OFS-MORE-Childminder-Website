@@ -1,6 +1,6 @@
 """
 OFS-MORE-CCN3: Apply to be a Childminder Beta
--- Forms --
+-- forms.py --
 
 @author: Informed Solutions
 """
@@ -26,17 +26,144 @@ from .models import (Application,
                      UserDetails)
 
 
-# Type of childcare form
-class TypeOfChildcareForm(GOVUKForm):
+class AccountForm(GOVUKForm):
+    """
+    GOV.UK form for the Account selection page
+    """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
+
+class ContactEmailForm(GOVUKForm):
+    """
+    GOV.UK form for the Your login and contact details: email page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    email_address = forms.EmailField()
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your login and contact details: email form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(ContactEmailForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            this_user = Application.objects.get(pk=self.application_id_local)
+            login_id = this_user.login_id.login_id
+            if UserDetails.objects.get(login_id=login_id).login_id != '':
+                self.fields['email_address'].initial = UserDetails.objects.get(login_id=login_id).email
+
+    def clean_email_address(self):
+        """
+        Email address validation
+        :return: string
+        """
+        email_address = self.cleaned_data['email_address']
+        # RegEx for valid e-mail addresses
+        if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
+            raise forms.ValidationError('TBC')
+        if len(email_address) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return email_address
+
+
+class ContactPhoneForm(GOVUKForm):
+    """
+    GOV.UK form for the Your login and contact details: phone page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    mobile_number = forms.CharField(label='Mobile phone number')
+    add_phone_number = forms.CharField(label='Additional phone number (optional)', required=False)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your login and contact details: phone form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(ContactPhoneForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            this_user = Application.objects.get(pk=self.application_id_local)
+            login_id = this_user.login_id.login_id
+            self.fields['mobile_number'].initial = UserDetails.objects.get(login_id=login_id).mobile_number
+            self.fields['add_phone_number'].initial = UserDetails.objects.get(login_id=login_id).add_phone_number
+
+    def clean_mobile_number(self):
+        """
+        Mobile number validation
+        :return: string
+        """
+        mobile_number = self.cleaned_data['mobile_number']
+        # Allow for spaces
+        no_space_mobile_number = mobile_number.replace(' ', '')
+        # RegEx for valid mobile numbers
+        if re.match("^(07\d{8,12}|447\d{7,11})$", no_space_mobile_number) is None:
+            raise forms.ValidationError('TBC')
+        if len(no_space_mobile_number) > 11:
+            raise forms.ValidationError('TBC')
+        return mobile_number
+
+    def clean_add_phone_number(self):
+        """
+        Phone number validation
+        :return: string
+        """
+        add_phone_number = self.cleaned_data['add_phone_number']
+        # Allow for spaces
+        no_space_add_phone_number = add_phone_number.replace(' ', '')
+        if add_phone_number != '':
+            # RegEx for valid phone numbers
+            if re.match("^(0\d{8,12}|447\d{7,11})$", no_space_add_phone_number) is None:
+                raise forms.ValidationError('TBC')
+            if len(no_space_add_phone_number) > 11:
+                raise forms.ValidationError('TBC')
+        return add_phone_number
+
+
+class QuestionForm(GOVUKForm):
+    """
+    GOV.UK form for the Your login and contact details: knowledge based question page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    question = forms.CharField(label='Knowledge based question', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your login and contact details: knowledge based question form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(QuestionForm, self).__init__(*args, **kwargs)
+
+
+class ContactSummaryForm(GOVUKForm):
+    """
+    GOV.UK form for the Your login and contact details: summary page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+class TypeOfChildcareForm(GOVUKForm):
+    """
+    GOV.UK form for the Type of childcare task
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
     CHILDCARE_AGE_CHOICES = (
         ('0-5', 'Birth up to 5 years old'),
         ('5-8', '5 to 8 years old'),
         ('8over', '8 years and over'),
     )
-
     type_of_childcare = forms.MultipleChoiceField(
         required=True,
         widget=CheckboxSelectMultiple,
@@ -45,190 +172,83 @@ class TypeOfChildcareForm(GOVUKForm):
     )
 
     def __init__(self, *args, **kwargs):
-
+        """
+        Method to configure the initialisation of the Type of childcare form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
         self.application_id_local = kwargs.pop('id')
         super(TypeOfChildcareForm, self).__init__(*args, **kwargs)
-
         # If information was previously entered, display it on the form
         if ChildcareType.objects.filter(application_id=self.application_id_local).count() > 0:
-
             zero_to_five_status = ChildcareType.objects.get(application_id=self.application_id_local).zero_to_five
             five_to_eight_status = ChildcareType.objects.get(application_id=self.application_id_local).five_to_eight
             eight_plus_status = ChildcareType.objects.get(application_id=self.application_id_local).eight_plus
-
             if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
                 self.fields['type_of_childcare'].initial = ['0-5', '5-8', '8over']
-
             elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
                 self.fields['type_of_childcare'].initial = ['0-5', '5-8']
-
             elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
                 self.fields['type_of_childcare'].initial = ['0-5', '8over']
-
             elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
                 self.fields['type_of_childcare'].initial = ['5-8', '8over']
-
             elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
                 self.fields['type_of_childcare'].initial = ['0-5']
-
             elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
                 self.fields['type_of_childcare'].initial = ['5-8']
-
             elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
                 self.fields['type_of_childcare'].initial = ['8over']
-
             elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is False):
                 self.fields['type_of_childcare'].initial = []
 
 
-# Form for account selection
-class AccountForm(GOVUKForm):
-    field_label_classes = 'form-label-bold'
-    auto_replace_widgets = True
-
-
-# Form for login
 class EmailLoginForm(GOVUKForm):
+    """
+    GOV.UK form for the page to log back into an application
+    """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-
     email_address = forms.EmailField()
 
     def clean_email_address(self):
+        """
+        Email address validation
+        :return: string
+        """
         email_address = self.cleaned_data['email_address']
-
+        # RegEx for valid e-mail addresses
         if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
             raise forms.ValidationError('Please enter a valid e-mail address.')
-
         return email_address
-
-
-# Your login and contact details form: e-mail address   
-class ContactEmailForm(GOVUKForm):
-    field_label_classes = 'form-label-bold'
-    auto_replace_widgets = True
-
-    email_address = forms.EmailField()
-
-    def __init__(self, *args, **kwargs):
-
-        self.application_id_local = kwargs.pop('id')
-        super(ContactEmailForm, self).__init__(*args, **kwargs)
-
-        # If information was previously entered, display it on the form
-        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
-
-            this_user = Application.objects.get(pk=self.application_id_local)
-            login_id = this_user.login_id.login_id
-
-            if UserDetails.objects.get(login_id=login_id).login_id != '':
-                self.fields['email_address'].initial = UserDetails.objects.get(login_id=login_id).email
-
-    # Email address validation
-    def clean_email_address(self):
-
-        email_address = self.cleaned_data['email_address']
-
-        if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
-            raise forms.ValidationError('TBC')
-
-        if len(email_address) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
-
-        return email_address
-
-    # Your login and contact details form: phone numbers
-
-
-class ContactPhoneForm(GOVUKForm):
-    field_label_classes = 'form-label-bold'
-    auto_replace_widgets = True
-
-    mobile_number = forms.CharField(label='Mobile phone number')
-    add_phone_number = forms.CharField(label='Additional phone number (optional)', required=False)
-
-    def __init__(self, *args, **kwargs):
-
-        self.application_id_local = kwargs.pop('id')
-        super(ContactPhoneForm, self).__init__(*args, **kwargs)
-
-        # If information was previously entered, display it on the form
-        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
-            this_user = Application.objects.get(pk=self.application_id_local)
-            login_id = this_user.login_id.login_id
-
-            self.fields['mobile_number'].initial = UserDetails.objects.get(login_id=login_id).mobile_number
-            self.fields['add_phone_number'].initial = UserDetails.objects.get(login_id=login_id).add_phone_number
-
-    # Mobile number validation
-    def clean_mobile_number(self):
-
-        mobile_number = self.cleaned_data['mobile_number']
-        # Allow for spaces
-        no_space_mobile_number = mobile_number.replace(' ', '')
-
-        if re.match("^(07\d{8,12}|447\d{7,11})$", no_space_mobile_number) is None:
-            raise forms.ValidationError('TBC')
-
-        if len(no_space_mobile_number) > 11:
-            raise forms.ValidationError('TBC')
-
-        return mobile_number
-
-    # Phone number validation
-    def clean_add_phone_number(self):
-
-        add_phone_number = self.cleaned_data['add_phone_number']
-        # Allow for spaces
-        no_space_add_phone_number = add_phone_number.replace(' ', '')
-
-        if add_phone_number != '':
-
-            if re.match("^(0\d{8,12}|447\d{7,11})$", no_space_add_phone_number) is None:
-                raise forms.ValidationError('TBC')
-
-            if len(no_space_add_phone_number) > 11:
-                raise forms.ValidationError('TBC')
-
-        return add_phone_number
 
 
 class VerifyPhoneForm(GOVUKForm):
+    """
+    GOV.UK form for the page to verify an SMS code
+    """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-
     magic_link_sms = forms.CharField(label='Security code', required=True)
 
     def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the SMS code verification form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
         self.magic_link_email = kwargs.pop('id')
         super(VerifyPhoneForm, self).__init__(*args, **kwargs)
 
     def clean_magic_link_sms(self):
+        """
+        SMS code validation
+        :return: string
+        """
         magic_link_sms = self.cleaned_data['magic_link_sms']
-
         if (UserDetails.objects.filter(magic_link_sms=magic_link_sms, magic_link_email=self.magic_link_email).count()
                 == 0):
             raise forms.ValidationError('TBC')
-
         return magic_link_sms
-
-
-# Your login and contact details form: knowledge-based question 
-class QuestionForm(GOVUKForm):
-    field_label_classes = 'form-label-bold'
-    auto_replace_widgets = True
-
-    question = forms.CharField(label='Knowledge based question', required=True)
-
-    def __init__(self, *args, **kwargs):
-        self.application_id_local = kwargs.pop('id')
-        super(QuestionForm, self).__init__(*args, **kwargs)
-
-
-# Your login and contact details form: summary page  
-class ContactSummaryForm(GOVUKForm):
-    field_label_classes = 'form-label-bold'
-    auto_replace_widgets = True
 
 
 # Your personal details form: guidance page  
