@@ -1865,16 +1865,22 @@ def payment_selection(request):
         form = PaymentForm(request.POST)
         if form.is_valid():
             payment_method = form.cleaned_data['payment_method']
+            application_url_base = request.scheme + '://' + request.META['HTTP_HOST']
             if payment_method == 'Credit':
                 return HttpResponseRedirect(settings.URL_PREFIX + '/payment-details/?id=' + application_id_local)
             elif payment_method == 'PayPal':
                 paypal_url = payment.make_paypal_payment("GB", 3500, "GBP", "Childminder Registration Fee",
-                                                         application_id_local,
-                                                         request.scheme + '://' + request.META['HTTP_HOST'] +
+                                                         application_id_local, application_url_base +
                                                          "/childminder/confirmation/?id=" + application_id_local,
-                                                         settings.PAYMENT_URL + "/payment/?id=" + application_id_local,
-                                                         settings.PAYMENT_URL + "/payment/?id=" + application_id_local,
-                                                         settings.PAYMENT_URL + "/payment/?id=" + application_id_local)
+
+                                                         application_url_base +
+                                                         "/childminder/payment/?id=" + application_id_local,
+
+                                                         application_url_base +
+                                                         "/childminder/payment/?id=" + application_id_local,
+
+                                                         application_url_base +
+                                                         "/childminder/payment/?id=" + application_id_local)
                 return HttpResponseRedirect(paypal_url)
         else:
             variables = {
