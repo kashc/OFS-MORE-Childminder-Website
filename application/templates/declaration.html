@@ -39,7 +39,7 @@
             </div>
         </details>
     </div>
-    <form>
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
         <div class="grid-row">
             <h2 class="heading-medium">
                 Ready to apply?
