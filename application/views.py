@@ -1944,7 +1944,8 @@ def card_payment_details(request):
                 }
 
                 # Go to payment confirmation page                         
-                return HttpResponseRedirect(request, '/confirmation/?id=' + application_id_local, variables)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/confirmation/?id=' + application_id_local +
+                                            '&orderCode=' + parsed_payment_response["orderCode"], variables)
 
             else:
                 variables = {
@@ -1955,7 +1956,7 @@ def card_payment_details(request):
                 }
 
             # Return to the application's task list    
-            return HttpResponseRedirect(request, '/payment-details/?id=' + application_id_local, variables)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/payment-details/?id=' + application_id_local, variables)
 
         # If there are invalid details
         else:
