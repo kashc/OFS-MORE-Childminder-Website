@@ -7,6 +7,7 @@ python manage.py makemigrations application
 # Apply database migrations
 echo "Apply database migrations"
 python manage.py migrate
+python manage.py migrate application
 
 # Start server
 echo "Starting server"
