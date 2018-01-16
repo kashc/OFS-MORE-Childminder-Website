@@ -1198,172 +1198,108 @@ def dbs_check_summary(request):
             return render(request, 'dbs-check-summary.html', variables)
 
 
-# View for the Your health task: intro
 def health_intro(request):
+    """
+    Method returning the template for the Your health: intro page (for a given application)
+    and navigating to the Your health: intro page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your health: intro template
+    """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-
         form = HealthIntroForm()
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
         variables = {
             'form': form,
             'application_id': application_id_local,
             'health_status': application.health_status
         }
-
-        # Access the task page
         return render(request, 'health-intro.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
         form = HealthIntroForm(request.POST)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-            if Application.objects.get(pk=application_id_local).health_status != 'COMPLETED':
+            if application.health_status != 'COMPLETED':
                 status.update(application_id_local, 'health_status', 'IN_PROGRESS')
-
-            # Go to the phone numbers page
             return HttpResponseRedirect(settings.URL_PREFIX + '/health/booklet?id=' + application_id_local)
-
-        # If there are invalid details
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'health-intro.html', variables)
 
 
-# View for the Your health task: booklet
 def health_booklet(request):
-    # Get current date and time
+    """
+    Method returning the template for the Your health: booklet page (for a given application)
+    and navigating to the Your health: summary page when successfully completed;
+    business logic is applied to either create or update the associated Health_Declaration_Booklet record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your health: booklet template
+    """
     current_date = datetime.datetime.today()
-
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-
         form = HealthBookletForm(id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
         variables = {
             'form': form,
             'application_id': application_id_local,
             'health_status': application.health_status
         }
-
-        # Access the task page
         return render(request, 'health-booklet.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
         form = HealthBookletForm(request.POST, id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-            # Perform business logic to create or update Your health record in database
+            # Create or update Health_Declaration_Booklet record
             hdb_record = health_check_logic(application_id_local, form)
             hdb_record.save()
-
-            # Update application date updated
-            application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
-
-            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-            if Application.objects.get(pk=application_id_local).health_status != 'COMPLETED':
+            if application.health_status != 'COMPLETED':
                 status.update(application_id_local, 'health_status', 'COMPLETED')
-
-            # Go to the phone numbers page
             return HttpResponseRedirect(settings.URL_PREFIX + '/health/check-answers?id=' + application_id_local)
-
-        # If there are invalid details
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'health-booklet.html', variables)
 
 
-# View for the Your health task: summary
 def health_check_answers(request):
+    """
+    Method returning the template for the Your health: summary page (for a given application)
+    displaying entered data for this task and navigating to the task list when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your health: summary template
+    """
     if request.method == 'GET':
-        # If the Your health form is not completed
         application_id_local = request.GET["id"]
-
-        # Retrieve answers
-        send_hdb_declare = HealthDeclarationBooklet.objects.get(
-            application_id=application_id_local).send_hdb_declare
-
+        send_hdb_declare = HealthDeclarationBooklet.objects.get(application_id=application_id_local).send_hdb_declare
         form = HealthBookletForm(id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
         variables = {
             'form': form,
             'application_id': application_id_local,
             'send_hdb_declare': send_hdb_declare,
             'health_status': application.health_status,
         }
-
-        # Access the task page
         return render(request, 'health-check-answers.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
         form = HealthBookletForm(request.POST, id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Go to the details page
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
-
-        # If there are invalid details
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'health-check-answers.html', variables)
 
 
