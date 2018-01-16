@@ -1,8 +1,8 @@
 """
 OFS-MORE-CCN3: Apply to be a Childminder Beta
--- Views --
+-- views.py --
 
-author: Informed Solutions
+@author: Informed Solutions
 """
 
 import datetime
@@ -87,32 +87,30 @@ from .models import (Application,
                      UserDetails)
 
 
-# View for the start page
 def start_page(request):
-    # Access the task page
+    """
+    Method returning the template for the start page
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered start page template
+    """
     return render(request, 'start-page.html')
 
 
-# View for the account selection page
 def account_selection(request):
+    """
+    Method returning the template for the account selection page and navigating to the account: email page when
+    clicking on the Create an account button, which triggers the creation of a new application
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered account selection template
+    """
     if request.method == 'GET':
         form = AccountForm()
-
         variables = {
             'form': form,
         }
-
-        # Access the task page
         return render(request, 'account-account.html', variables)
-
     if request.method == 'POST':
-
-        form = AccountForm()
-
-        # Create a blank user
         user = UserDetails.objects.create()
-
-        # Create a new application
         application = Application.objects.create(
             application_type='CHILDMINDER',
             login_id=user,
@@ -132,33 +130,240 @@ def account_selection(request):
             date_updated=datetime.datetime.today(),
             date_accepted=None
         )
-
         application_id_local = str(application.application_id)
-
-        # Return to the application's task list
         return HttpResponseRedirect(settings.URL_PREFIX + '/account/email?id=' + application_id_local)
-
     else:
-
+        form = AccountForm()
         variables = {
             'form': form
         }
-
-        # Return to the same page
         return render(request, 'account-account.html', variables)
 
 
-# View for the task list
-def log_in(request):
+def contact_email(request):
+    """
+    Method returning the template for the Your login and contact details: email page (for a given application)
+    and navigating to the Your login and contact details: phone number page when successfully completed;
+    business logic is applied to either create or update the associated User_Details record; the page redirects
+    the applicant to the login page if they have previously applied
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your login and contact details: email template
+    """
+    current_date = datetime.datetime.today()
     if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = ContactEmailForm(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'login_details_status': application.login_details_status
+        }
+        return render(request, 'contact-email.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = ContactEmailForm(request.POST, id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            # Send login e-mail link if applicant has previously applied
+            email = form.cleaned_data['email_address']
+            if UserDetails.objects.filter(email=email).exists():
+                acc = UserDetails.objects.get(email=email)
+                domain = request.META.get('HTTP_REFERER', "")
+                domain = domain[:-54]
+                link = magic_link.generate_random(12, "link")
+                expiry = int(time.time())
+                acc.email_expiry_date = expiry
+                acc.magic_link_email = link
+                acc.save()
+                magic_link.magic_link_email(email, domain + 'validate/' + link)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/email-sent?id=' + application_id_local)
+            else:
+                # Create or update User_Details record
+                user_details_record = login_contact_logic(application_id_local, form)
+                user_details_record.save()
+                application.date_updated = current_date
+                application.save()
+                response = HttpResponseRedirect(settings.URL_PREFIX + '/account/phone?id=' + application_id_local)
+                # Create session and issue cookie to user
+                CustomAuthenticationHandler.create_session(response, application.login_id.email)
+                return response
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'login_details_status': application.login_details_status
+            }
+            return render(request, 'contact-email.html', variables)
 
-        # Retrieve the application's ID
+
+def contact_phone(request):
+    """
+    Method returning the template for the Your login and contact details: phone number page (for a given application)
+    and navigating to the Your login and contact details: question page when successfully completed;
+    business logic is applied to either create or update the associated User_Details record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your login and contact details: phone template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = ContactPhoneForm(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'login_details_status': application.login_details_status
+        }
+        return render(request, 'contact-phone.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = ContactPhoneForm(request.POST, id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            # Update User_Details record
+            user_details_record = login_contact_logic_phone(application_id_local, form)
+            user_details_record.save()
+            application.date_updated = current_date
+            application.save()
+            return HttpResponseRedirect(settings.URL_PREFIX + '/account/question?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'login_details_status': application.login_details_status
+            }
+            return render(request, 'contact-phone.html', variables)
+
+
+def contact_question(request):
+    """
+    Method returning the template for the Your login and contact details: question page (for a given application)
+    and navigating to the Your login and contact details: summary page when successfully completed;
+    business logic is applied to either create or update the associated User_Details record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your login and contact details: question template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = QuestionForm(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'login_details_status': application.login_details_status
+        }
+        return render(request, 'contact-question.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = QuestionForm(request.POST, id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            # Do not update User_Details record (awaiting confirmation from Ofsted)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/account/summary?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'login_details_status': application.login_details_status
+            }
+            return render(request, 'contact-question.html', variables)
+
+
+def contact_summary(request):
+    """
+    Method returning the template for the Your login and contact details: summary page (for a given application)
+    displaying entered data for this task and navigating to the Type of childcare page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your login and contact details: summary template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        application = Application.objects.get(pk=application_id_local)
+        login_id = application.login_id.login_id
+        user_details = UserDetails.objects.get(login_id=login_id)
+        email = user_details.email
+        mobile_number = user_details.mobile_number
+        add_phone_number = user_details.add_phone_number
+        if application.login_details_status != 'COMPLETED':
+            status.update(application_id_local, 'login_details_status', 'COMPLETED')
+        form = ContactSummaryForm()
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'email': email,
+            'mobile_number': mobile_number,
+            'add_phone_number': add_phone_number,
+            'login_details_status': application.login_details_status,
+            'childcare_type_status': application.childcare_type_status
+        }
+        return render(request, 'contact-summary.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = ContactSummaryForm()
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            status.update(application_id_local, 'login_details_status', 'COMPLETED')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/childcare?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'login_details_status': application.login_details_status
+            }
+            return render(request, 'contact-summary.html', variables)
+
+
+def type_of_childcare(request):
+    """
+    Method returning the template for the Type of childcare page (for a given application) and navigating to
+    the task list when successfully completed; business logic is applied to either create or update the
+    associated Childcare_Type record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Type of childcare template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = TypeOfChildcareForm(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'childcare_type_status': application.childcare_type_status
+        }
+        return render(request, 'childcare.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = TypeOfChildcareForm(request.POST, id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            # Create or update Childcare_Type record
+            childcare_type_record = childcare_type_logic(application_id_local, form)
+            childcare_type_record.save()
+            application.date_updated = current_date
+            application.save()
+            status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'childcare_type_status': application.childcare_type_status
+            }
+            return render(request, 'childcare.html', variables)
+
+
+def task_list(request):
+    """
+    Method returning the template for the task-list (with current task status) for an applicant's application;
+    logic is built in to enable the Declarations and Confirm your details tasks when all other tasks are complete
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered task list template
+    """
+    if request.method == 'GET':
         application_id = request.GET["id"]
-
-        # Retrieve application from database
         application = Application.objects.get(pk=application_id)
-
-        # Generate a context for task statuses
         application_status_context = dict({
             'application_id': application_id,
             'login_details_status': application.login_details_status,
@@ -174,416 +379,51 @@ def log_in(request):
             'all_complete': False,
             'confirm_details': False
         })
-
-        # Temporarily disable Declarations task if other tasks are still in progress
         temp_context = application_status_context
         del temp_context['declaration_status']
-
+        # Enable/disable Declarations and Confirm your details tasks depending on task completion
         if ('NOT_STARTED' in temp_context.values()) or ('IN_PROGRESS' in temp_context.values()):
-
             application_status_context['all_complete'] = False
-
         else:
-
-            # Enable Declarations task when all other tasks are complete
             application_status_context['all_complete'] = True
             application_status_context['declaration_status'] = application.declarations_status
-
-            # When the Declarations task is complete, enable button to confirm details
-            if (application_status_context['declaration_status'] == 'COMPLETED'):
-
+            if application_status_context['declaration_status'] == 'COMPLETED':
                 application_status_context['confirm_details'] = True
-
-            # Otherwise, disable the button to confirm details    
             else:
-
                 application_status_context['confirm_details'] = False
-
-    # Access the task page
     return render(request, 'task-list.html', application_status_context)
 
 
-# View for the Type of childcare task
-def type_of_childcare(request):
-    # Get current date and time
-    current_date = datetime.datetime.today()
-
-    if request.method == 'GET':
-        # If the Type of childcare form is not completed
-        application_id_local = request.GET["id"]
-
-        form = TypeOfChildcareForm(id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'childcare_type_status': application.childcare_type_status
-        }
-
-        # Access the task page
-        return render(request, 'childcare.html', variables)
-
-    if request.method == 'POST':
-
-        # Retrieve the application's ID
-        application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
-        form = TypeOfChildcareForm(request.POST, id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
-        if form.is_valid():
-
-            # Perform business logic to create or update Type of childcare record in database
-            childcare_type_record = childcare_type_logic(application_id_local, form)
-            childcare_type_record.save()
-
-            # Update application date updated
-            application.date_updated = current_date
-            application.save()
-
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
-
-            # Return to the application's task list
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
-
-        # If there are invalid details
-        else:
-
-            variables = {
-                'form': form,
-                'application_id': application_id_local,
-                'childcare_type_status': application.childcare_type_status
-            }
-
-            # Return to the same page
-            return render(request, 'childcare.html', variables)
-
-
-# View for the Your login and contact details task: e-mail address
-def contact_email(request):
-    # Get current date and time
-    current_date = datetime.datetime.today()
-
-    if request.method == 'GET':
-        # If the Your login and contact details form is not completed
-        application_id_local = request.GET["id"]
-
-        form = ContactEmailForm(id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'login_details_status': application.login_details_status
-        }
-
-        # Access the task page
-        return render(request, 'contact-email.html', variables)
-
-    if request.method == 'POST':
-
-        # Retrieve the application's ID
-        application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
-        form = ContactEmailForm(request.POST, id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
-        if form.is_valid():
-
-            email = form.cleaned_data['email_address']
-
-            if UserDetails.objects.filter(email=email).exists():
-
-                # Retrieve corresponding application
-                acc = UserDetails.objects.get(email=email)
-                # Get url and substring just the domain
-                domain = request.META.get('HTTP_REFERER', "")
-                domain = domain[:-54]
-                # Generate random link
-                link = magic_link.generate_random(12, "link")
-                # Get current epoch so the link can be time-boxed
-                expiry = int(time.time())
-                # Save link and expiry
-                acc.email_expiry_date = expiry
-                acc.magic_link_email = link
-                acc.save()
-                # Send magic link email
-                r = magic_link.magic_link_email(email, domain + 'validate/' + link)
-                # Note that this is the same response whether the email is valid or not
-                return HttpResponseRedirect(settings.URL_PREFIX + '/email-sent?id=' + application_id_local)
-
-            else:
-
-                # Perform business logic to create or update Your login and contact details record in database
-                login_and_contact_details_record = login_contact_logic(application_id_local, form)
-                login_and_contact_details_record.save()
-
-                application.date_updated = current_date
-                application.save()
-
-                response = HttpResponseRedirect(settings.URL_PREFIX + '/account/phone?id=' + application_id_local)
-
-                # create session and issue cookie to user
-                CustomAuthenticationHandler.create_session(response, application.login_id.email)
-
-                # Go to the phone numbers page
-                return response
-
-        # If there are invalid details
-        else:
-
-            variables = {
-                'form': form,
-                'application_id': application_id_local,
-                'login_details_status': application.login_details_status
-            }
-
-            # Return to the same page
-            return render(request, 'contact-email.html', variables)
-
-
-# View for the Your login and contact details task: phone numbers
-def contact_phone(request):
-    # Get current date and time
-    current_date = datetime.datetime.today()
-
-    if request.method == 'GET':
-        # If the Your login and contact details form is not completed
-        application_id_local = request.GET["id"]
-
-        form = ContactPhoneForm(id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'login_details_status': application.login_details_status
-        }
-
-        # Access the task page
-        return render(request, 'contact-phone.html', variables)
-
-    if request.method == 'POST':
-
-        # Retrieve the application's ID
-        application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
-        form = ContactPhoneForm(request.POST, id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
-        if form.is_valid():
-
-            # Perform business logic to create or update Your login and contact details record in database
-            login_and_contact_details_record = login_contact_logic_phone(application_id_local, form)
-            login_and_contact_details_record.save()
-
-            # Update application date updated
-            application.date_updated = current_date
-            application.save()
-
-            # Return to the application's task list    
-            return HttpResponseRedirect(settings.URL_PREFIX + '/account/question?id=' + application_id_local)
-
-        # If there are invalid details
-        else:
-
-            variables = {
-                'form': form,
-                'application_id': application_id_local,
-                'login_details_status': application.login_details_status
-            }
-
-            # Return to the same page
-            return render(request, 'contact-phone.html', variables)
-
-
-# View for the Your login and contact details task: knowledge-based question
-def contact_question(request):
-    if request.method == 'GET':
-        # If the Your login and contact details form is not completed
-        application_id_local = request.GET["id"]
-
-        form = QuestionForm(id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'login_details_status': application.login_details_status
-        }
-
-        # Access the task page
-        return render(request, 'question.html', variables)
-
-    if request.method == 'POST':
-
-        # Retrieve the application's ID
-        application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
-        form = QuestionForm(request.POST, id=application_id_local)
-
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
-        if form.is_valid():
-
-            # Return to the application's task list    
-            return HttpResponseRedirect(settings.URL_PREFIX + '/account/summary?id=' + application_id_local)
-
-        # If there are invalid details
-        else:
-
-            variables = {
-                'form': form,
-                'application_id': application_id_local,
-                'login_details_status': application.login_details_status
-            }
-
-            # Return to the same page
-            return render(request, 'question.html', variables)
-
-
-# View for the Your login and contact details task: phone numbers
-def contact_summary(request):
-    if request.method == 'GET':
-
-        # If the Your login and contact details form is not completed
-        application_id_local = request.GET["id"]
-
-        # Get associated user login ID
-        login_id = Application.objects.get(pk=application_id_local).login_id.login_id
-
-        # Retrieve answers
-        email = UserDetails.objects.get(login_id=login_id).email
-        mobile_number = UserDetails.objects.get(login_id=login_id).mobile_number
-        add_phone_number = UserDetails.objects.get(login_id=login_id).add_phone_number
-
-        # Update the status of the task to 'COMPLETED'
-        if Application.objects.get(pk=application_id_local).login_details_status != 'COMPLETED':
-            status.update(application_id_local, 'login_details_status', 'COMPLETED')
-
-        form = ContactSummaryForm()
-
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'email': email,
-            'mobile_number': mobile_number,
-            'add_phone_number': add_phone_number,
-            'login_details_status': application.login_details_status,
-            'childcare_type_status': application.childcare_type_status
-        }
-
-        # Access the task page
-        return render(request, 'contact-summary.html', variables)
-
-    if request.method == 'POST':
-
-        # Retrieve the application's ID
-        application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
-        form = ContactSummaryForm()
-
-        # Retrieve application from database for Back button/Return to list link logic
-        application = Application.objects.get(pk=application_id_local)
-
-        # If the form is successfully submitted (with valid details)
-        if form.is_valid():
-
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'login_details_status', 'COMPLETED')
-
-            # Return to the application's task list    
-            return HttpResponseRedirect(settings.URL_PREFIX + '/childcare?id=' + application_id_local)
-
-        # If there are invalid details
-        else:
-
-            variables = {
-                'form': form,
-                'application_id': application_id_local,
-                'login_details_status': application.login_details_status
-            }
-
-            # Return to the same page
-            return render(request, 'contact-summary.html', variables)
-
-
-# View for the Your personal details task: guidance
 def personal_details_guidance(request):
+    """
+    Method returning the template for the Your personal details: guidance page (for a given application)
+    and navigating to the Your login and contact details: name page when successfully completed;
+    business logic is applied to either create or update the associated Applicant_Personal_Details record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your login and contact details: question template
+    """
     if request.method == 'GET':
-        # If the Your login and contact details form is not completed
         application_id_local = request.GET["id"]
-
         form = PersonalDetailsGuidanceForm()
-
-        # Retrieve application from database for Back button/Return to list link logic
         application = Application.objects.get(pk=application_id_local)
-
         variables = {
             'form': form,
             'application_id': application_id_local,
             'personal_details_status': application.personal_details_status
         }
-
-        # Access the task page
         return render(request, 'personal-details-guidance.html', variables)
-
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the Your login and contact details form
         form = PersonalDetailsGuidanceForm(request.POST)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed    
             if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
                 status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-
-            # Go to the phone numbers page   
             return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/name?id=' + application_id_local)
-
-        # If there are invalid details
         else:
-
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'personal-details-guidance.html', variables)
 
 
@@ -2164,7 +2004,7 @@ def references_first_reference_address(request):
 
                 # Return to the application's task list
                 return HttpResponseRedirect(settings.URL_PREFIX +
-                    '/references/first-reference-address/?id=' + application_id_local + '&manual=False')
+                                            '/references/first-reference-address/?id=' + application_id_local + '&manual=False')
 
             else:
 
@@ -2435,7 +2275,7 @@ def references_second_reference_address(request):
 
                 # Return to the application's task list
                 return HttpResponseRedirect(settings.URL_PREFIX +
-                    '/references/second-reference-address/?id=' + application_id_local + '&manual=False')
+                                            '/references/second-reference-address/?id=' + application_id_local + '&manual=False')
 
             else:
 
@@ -2804,11 +2644,12 @@ def payment_view(request):
             elif (payment_method == 'PayPal'):
 
                 # Stay on the same page
-                paypal_url = payment.make_paypal_payment("GB", 3500, "GBP", "Childminder Registration Fee", application_id_local,
-                              "http://127.0.0.1:8000/childminder/confirmation/?id=" + application_id_local,
-                              "http://127.0.0.1:8000/childminder/payment/?id=" + application_id_local,
-                              "http://127.0.0.1:8000/childminder/payment/?id=" + application_id_local,
-                              "http://127.0.0.1:8000/childminder/payment/?id=" + application_id_local)
+                paypal_url = payment.make_paypal_payment("GB", 3500, "GBP", "Childminder Registration Fee",
+                                                         application_id_local,
+                                                         "http://127.0.0.1:8000/childminder/confirmation/?id=" + application_id_local,
+                                                         "http://127.0.0.1:8000/childminder/payment/?id=" + application_id_local,
+                                                         "http://127.0.0.1:8000/childminder/payment/?id=" + application_id_local,
+                                                         "http://127.0.0.1:8000/childminder/payment/?id=" + application_id_local)
 
                 return HttpResponseRedirect(paypal_url)
 
@@ -2896,6 +2737,7 @@ def card_payment_details(request):
             # Return to the same page
             return render(request, 'payment-details.html', variables)
 
+
 def payment_confirmation(request):
     if request.method == 'GET':
 
@@ -2916,7 +2758,6 @@ def payment_confirmation(request):
             variables = {'form': form, 'application_id': application_id_local}
 
             return HttpResponseRedirect(settings.URL_PREFIX + '/payment/?id=' + application_id_local, variables)
-
 
 
 # View the Application saved page

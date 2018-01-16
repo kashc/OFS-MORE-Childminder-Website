@@ -16,7 +16,7 @@ from application import views, magic_link
 
 urlpatterns = [
     url(r'^$', views.start_page, name='start-page.html'),
-    url(r'^task-list/', views.log_in, name='morebeta'),
+    url(r'^task-list/', views.task_list, name='morebeta'),
     url(r'^childcare/', views.type_of_childcare, name='Type-Of-Childcare-View'),
     url(r'^account/email/', views.contact_email, name='Contact-Email-View'),
     url(r'^account/phone/', views.contact_phone, name='Contact-Phone-View'),
