@@ -1008,40 +1008,38 @@ def first_aid_training_summary(request):
             return render(request, 'first-aid-summary.html', variables)
 
 
-# View for the Early Years knowledge task
 def eyfs(request):
+    """
+    Method returning the template for the Early Years knowledge page (for a given application) and navigating to
+    the task list when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Early Years knowledge template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = EYFSForm()
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'eyfs_training_status': application.eyfs_training_status
+        }
+        if application.eyfs_training_status != 'COMPLETED':
+            status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
+        return render(request, 'eyfs.html', variables)
     if request.method == 'POST':
-
-        # Retrieve the application's ID
         application_id_local = request.POST["id"]
-
-        # Initialise the Early Years knowledge form
         form = EYFSForm(request.POST)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-            # Update the status of the task to 'COMPLETED'
             status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
-
-        # Return to the application's task list    
-        return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
-
-    # If the Early Years knowledge form is not completed
-    application_id_local = request.GET["id"]
-
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if Application.objects.get(pk=application_id_local).eyfs_training_status != 'COMPLETED':
-        status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
-
-    form = EYFSForm()
-
-    variables = {
-        'form': form,
-        'application_id': application_id_local
-    }
-
-    # Access the task page
-    return render(request, 'eyfs.html', variables)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            # Return to the same page
+            return render(request, 'eyfs.html', variables)
 
 
 # View for the Your criminal record (DBS) check: guidance
