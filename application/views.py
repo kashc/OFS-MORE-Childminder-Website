@@ -1873,14 +1873,11 @@ def payment(request):
             elif payment_method == 'PayPal':
                 paypal_url = payment.make_paypal_payment("GB", 3500, "GBP", "Childminder Registration Fee",
                                                          application_id_local,
-                                                         "http://127.0.0.1:8000/childminder/confirmation/?id="
-                                                         + application_id_local,
-                                                         "http://127.0.0.1:8000/childminder/payment/?id="
-                                                         + application_id_local,
-                                                         "http://127.0.0.1:8000/childminder/payment/?id="
-                                                         + application_id_local,
-                                                         "http://127.0.0.1:8000/childminder/payment/?id="
-                                                         + application_id_local)
+                                                         request.scheme + '://' + request.META['HTTP_HOST'] +
+                                                         "/childminder/confirmation/?id=" + application_id_local,
+                                                         settings.PAYMENT_URL + "/payment/?id=" + application_id_local,
+                                                         settings.PAYMENT_URL + "/payment/?id=" + application_id_local,
+                                                         settings.PAYMENT_URL + "/payment/?id=" + application_id_local)
                 return HttpResponseRedirect(paypal_url)
         else:
             variables = {

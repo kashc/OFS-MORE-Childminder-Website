@@ -54,6 +54,7 @@ def make_paypal_payment(shopper_country_code, amount, currency_code, order_descr
 
     # We deal with the entire object as parsing out just the requestURL in the payment API may be undesirbale for other
     # services
+    print(json.loads(response.text))
     response_url = json.loads(response.text)["redirectURL"]
 
     return response_url
