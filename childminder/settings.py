@@ -128,6 +128,8 @@ STATIC_URL = URL_PREFIX + '/static/'
 
 AUTHENTICATION_URL = URL_PREFIX + '/existing-application/'
 
+PUBLIC_APPLICATION_URL = 'http://localhost:8000/childminder'
+
 AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/$',
     r'^' + URL_PREFIX + '/account/account/$',
