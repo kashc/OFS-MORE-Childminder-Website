@@ -517,10 +517,10 @@ def personal_details_home_address(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         manual = request.GET["manual"]
+        application = Application.objects.get(pk=application_id_local)
         # Switch between manual address entry and postcode search
         if manual == 'False':
             form = PersonalDetailsHomeAddressForm(id=application_id_local)
-            application = Application.objects.get(pk=application_id_local)
             variables = {
                 'form': form,
                 'application_id': application_id_local,
@@ -529,7 +529,6 @@ def personal_details_home_address(request):
             return render(request, 'personal-details-home-address.html', variables)
         elif manual == 'True':
             form = PersonalDetailsHomeAddressManualForm(id=application_id_local)
-            application = Application.objects.get(pk=application_id_local)
             variables = {
                 'form': form,
                 'application_id': application_id_local,
@@ -539,10 +538,10 @@ def personal_details_home_address(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         manual = request.POST["manual"]
+        application = Application.objects.get(pk=application_id_local)
         # Switch between manual address entry and postcode search
         if manual == 'False':
             form = PersonalDetailsHomeAddressForm(request.POST, id=application_id_local)
-            application = Application.objects.get(pk=application_id_local)
             if form.is_valid():
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/personal-details/home-address/?id=' + application_id_local +
@@ -556,14 +555,12 @@ def personal_details_home_address(request):
                 return render(request, 'personal-details-home-address.html', variables)
         if manual == 'True':
             form = PersonalDetailsHomeAddressManualForm(request.POST, id=application_id_local)
-            application = Application.objects.get(pk=application_id_local)
             if form.is_valid():
                 if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
                     status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
                 # Create or update Application_Home_Address record
                 home_address_record = personal_home_address_logic(application_id_local, form)
                 home_address_record.save()
-                application = Application.objects.get(pk=application_id_local)
                 application.date_updated = current_date
                 application.save()
                 return HttpResponseRedirect(
@@ -1848,7 +1845,7 @@ def confirmation(request):
             return render(request, 'confirm.html', variables)
 
 
-def payment(request):
+def payment_selection(request):
     """
     Method returning the template for the Payment page (for a given application) and navigating to
     the card payment details page or PayPal site when successfully completed
@@ -1997,22 +1994,3 @@ def application_saved(request):
                 'application_id': application_id_local
             }
             return render(request, 'application-saved.html', variables)
-
-
-# Reset view, to set all tasks to To Do
-def reset(request):
-    # Create a list of task statuses
-    SECTION_LIST = ['login_details_status', 'personal_details_status', 'childcare_type_status',
-                    'first_aid_training_status', 'eyfs_training_status', 'criminal_record_check_status',
-                    'health_status', 'references_status', 'people_in_home_status', 'declarations_status']
-
-    # Retrieve the application's ID     
-    application_id_local = request.GET["id"]
-
-    # For each task in the list of task statuses
-    for section in SECTION_LIST:
-        # Set the progress status to To Do
-        status.update(application_id_local, section, 'NOT_STARTED')
-
-    # Access the task list   
-    return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
