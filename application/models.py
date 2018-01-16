@@ -1,18 +1,18 @@
 """
 OFS-MORE-CCN3: Apply to be a Childminder Beta
--- Models --
+-- models.py --
 
 @author: Informed Solutions
 """
-
 
 from django.db import models
 from uuid import uuid4
 
 
-# USER_DETAILS entity
 class UserDetails(models.Model):
-    
+    """
+    Model for USER_DETAILS table
+    """
     login_id = models.UUIDField(primary_key=True, default=uuid4)
     email = models.CharField(max_length=100, blank=True)
     mobile_number = models.CharField(max_length=20, blank=True)
@@ -21,16 +21,15 @@ class UserDetails(models.Model):
     sms_expiry_date = models.IntegerField(blank=True, null=True)
     magic_link_email = models.CharField(max_length=100, blank=True, null=True)
     magic_link_sms = models.CharField(max_length=100, blank=True, null=True)
-    
-    # Set table name
+
     class Meta:
-        
         db_table = 'USER_DETAILS'
 
 
-# APPLICATION entity
 class Application(models.Model):
-    
+    """
+    Model for APPLICATION table
+    """
     APP_STATUS = (
         ('ARC_REVIEW', 'ARC_REVIEW'),
         ('CANCELLED', 'CANCELLED'),
@@ -43,21 +42,18 @@ class Application(models.Model):
         ('SUBMITTED', 'SUBMITTED'),
         ('WITHDRAWN', 'WITHDRAWN')
     )
-    
     APP_TYPE = (
         ('CHILDMINDER', 'CHILDMINDER'),
         ('NANNY', 'NANNY'),
         ('NURSERY', 'NURSERY'),
         ('SOCIAL_CARE', 'SOCIAL_CARE')
     )
-    
     TASK_STATUS = (
         ('NOT_STARTED', 'NOT_STARTED'),
         ('IN_PROGRESS', 'IN_PROGRESS'),
         ('COMPLETE', 'COMPLETE'),
         ('FURTHER_INFORMATION', 'FURTHER_INFORMATION')
     )
-    
     application_id = models.UUIDField(primary_key=True, default=uuid4)
     login_id = models.ForeignKey(UserDetails, on_delete=models.CASCADE, db_column='login_id', blank=True, null=True)
     application_type = models.CharField(choices=APP_TYPE, max_length=50, blank=True)
@@ -76,46 +72,43 @@ class Application(models.Model):
     date_created = models.DateTimeField(blank=True, null=True)
     date_updated = models.DateTimeField(blank=True, null=True)
     date_accepted = models.DateTimeField(blank=True, null=True)
-    
-    # Set table name
-    class Meta:
-        
-        db_table = 'APPLICATION'
-        
 
-# CHILDCARE_TYPE entity
+    class Meta:
+        db_table = 'APPLICATION'
+
+
 class ChildcareType(models.Model):
-    
+    """
+    Model for CHILDCARE_TYPE table
+    """
     childcare_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     zero_to_five = models.BooleanField()
     five_to_eight = models.BooleanField()
     eight_plus = models.BooleanField()
-    
-    # Set table name
+
     class Meta:
-        
         db_table = 'CHILDCARE_TYPE'
 
 
-# APPLICANT_PERSONAL_DETAILS entity
 class ApplicantPersonalDetails(models.Model):
-    
+    """
+    Model for APPLICANT_PERSONAL_DETAILS table
+    """
     personal_detail_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     birth_day = models.IntegerField(blank=True, null=True)
     birth_month = models.IntegerField(blank=True, null=True)
     birth_year = models.IntegerField(blank=True, null=True)
-    
-    # Set table name
+
     class Meta:
-        
         db_table = 'APPLICANT_PERSONAL_DETAILS'
 
 
-# APPLICANT_NAME entity
 class ApplicantName(models.Model):
-    
+    """
+    Model for APPLICANT_NAME table
+    """
     name_id = models.UUIDField(primary_key=True, default=uuid4)
     personal_detail_id = models.ForeignKey(ApplicantPersonalDetails, on_delete=models.CASCADE,
                                            db_column='personal_detail_id')
@@ -123,16 +116,15 @@ class ApplicantName(models.Model):
     first_name = models.CharField(max_length=100, blank=True)
     middle_names = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
-    
-    # Set table name
+
     class Meta:
-        
         db_table = 'APPLICANT_NAME'
 
 
-# APPLICANT_HOME_ADDRESS entity
 class ApplicantHomeAddress(models.Model):
-    
+    """
+    Model for APPLICANT_HOME_ADDRESS table
+    """
     home_address_id = models.UUIDField(primary_key=True, default=uuid4)
     personal_detail_id = models.ForeignKey(ApplicantPersonalDetails, on_delete=models.CASCADE,
                                            db_column='personal_detail_id')
@@ -146,16 +138,15 @@ class ApplicantHomeAddress(models.Model):
     current_address = models.NullBooleanField(blank=True, null=True)
     move_in_month = models.IntegerField(blank=True)
     move_in_year = models.IntegerField(blank=True)
-    
-    # Set table name
+
     class Meta:
-        
         db_table = 'APPLICANT_HOME_ADDRESS'
 
 
-# FIRST_AID_TRAINING entity
 class FirstAidTraining(models.Model):
-    
+    """
+    Model for FIRST_AID_TRAINING table
+    """
     first_aid_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     training_organisation = models.CharField(max_length=100)
@@ -163,44 +154,41 @@ class FirstAidTraining(models.Model):
     course_day = models.IntegerField()
     course_month = models.IntegerField()
     course_year = models.IntegerField()
-    
-    # Set table name
-    class Meta:
 
+    class Meta:
         db_table = 'FIRST_AID_TRAINING'
 
 
-# CRIMINAL_RECORD_CHECK entity
 class CriminalRecordCheck(models.Model):
-
+    """
+    Model for CRIMINAL_RECORD_CHECK table
+    """
     criminal_record_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     dbs_certificate_number = models.CharField(max_length=50, blank=True)
     cautions_convictions = models.BooleanField(blank=True)
     send_certificate_declare = models.NullBooleanField(blank=True)
-    
-    # Set table name
-    class Meta:
 
+    class Meta:
         db_table = 'CRIMINAL_RECORD_CHECK'
 
 
-# HEALTH_DECLARATION_BOOKLET entity
 class HealthDeclarationBooklet(models.Model):
-    
+    """
+    Model for HEALTH_DECLARATION_BOOKLET table
+    """
     hdb_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     send_hdb_declare = models.NullBooleanField(blank=True)
-    
-    # Set table name
+
     class Meta:
-        
         db_table = 'HEALTH_DECLARATION_BOOKLET'
 
 
-# REFERENCE entity
 class Reference(models.Model):
-    
+    """
+    Model for REFERENCE table
+    """
     reference_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     reference = models.IntegerField(blank=True)
@@ -217,16 +205,15 @@ class Reference(models.Model):
     postcode = models.CharField(max_length=8, blank=True)
     phone_number = models.CharField(max_length=50, blank=True)
     email = models.CharField(max_length=100, blank=True)
-    
-    # Set table name
+
     class Meta:
-        
         db_table = 'REFERENCE'
 
 
-# ADULT_IN_HOME entity
 class AdultInHome(models.Model):
-    
+    """
+    Model for ADULT_IN_HOME table
+    """
     adult_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     first_name = models.CharField(max_length=100, blank=True)
@@ -238,16 +225,15 @@ class AdultInHome(models.Model):
     relationship = models.CharField(max_length=100, blank=True)
     dbs_certificate_number = models.CharField(max_length=50, blank=True)
     email = models.CharField(max_length=100, blank=True)
-    
-    # Set table name
+
     class Meta:
-
         db_table = 'ADULT_IN_HOME'
-        
 
-# CHILD_IN_HOME entity
+
 class ChildInHome(models.Model):
-    
+    """
+    Model for CHILD_IN_HOME table
+    """
     child_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     first_name = models.CharField(max_length=100, blank=True)
@@ -257,8 +243,6 @@ class ChildInHome(models.Model):
     birth_month = models.IntegerField(blank=True)
     birth_year = models.IntegerField(blank=True)
     relationship = models.CharField(max_length=100, blank=True)
-    
-    # Set table name
+
     class Meta:
-        
         db_table = 'CHILD_IN_HOME'
