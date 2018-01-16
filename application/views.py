@@ -1786,94 +1786,91 @@ def other_people(request):
             return render(request, 'other-people.html', variables)
 
 
-# View for the Declaration task
 def declaration(request):
-    if request.method == 'POST':
-
-        # Retrieve the application's ID         
-        application_id_local = request.POST["id"]
-
-        # Initialise the Declaration form
-        form = DeclarationForm(request.POST)
-
-        # If the form is successfully submitted (with valid details) 
-        if form.is_valid():
-            # Update the status of the task to 'COMPLETED'
-            status.update(application_id_local, 'declarations_status', 'COMPLETED')
-
-        # Return to the application's task list         
-        return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
-
-    # If the People in your home form is not completed    
-    application_id_local = request.GET["id"]
-
-    # Update the status of the task to 'IN_PROGRESS' if the task has not yet been completed
-    if Application.objects.get(pk=application_id_local).declarations_status != 'COMPLETED':
-        status.update(application_id_local, 'declarations_status', 'COMPLETED')
-
-    form = DeclarationForm()
-
-    # Access the task page
-    return render(request, 'declaration.html', {'application_id': application_id_local})
-
-
-# View for the Confirm your details page
-def confirmation(request):
-    if request.method == 'POST':
-
-        # Retrieve the application's ID
-        application_id_local = request.POST["id"]
-
-        # Initialise the Confirm your details form        
-        form = ConfirmForm(request.POST)
-
-        # If the form is successfully submitted (with valid details)
-        if form.is_valid():
-            # Return to the application's task list
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
-
-    # If the Confirm your details form is not completed     
-    application_id_local = request.GET["id"]
-    form = ConfirmForm()
-
-    # Access the page
-    return render(request, 'confirm.html', {'application_id': application_id_local})
-
-
-# View the Payment page
-def payment_view(request):
+    """
+    Method returning the template for the Declaration page (for a given application) and navigating to
+    the task list when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Declaration template
+    """
     if request.method == 'GET':
-        # Get the application
         application_id_local = request.GET["id"]
-
-        # As not data is saved for this, a blank payment form is generated with each get request       
-        form = PaymentForm()
-
-        # Access the task page
-        return render(request, 'payment.html', {'form': form, 'application_id': application_id_local})
-
+        form = DeclarationForm()
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'declarations_status': application.declarations_status
+        }
+        # Set task to completed, as form is still to be created in later sprint
+        if application.declarations_status != 'COMPLETED':
+            status.update(application_id_local, 'declarations_status', 'COMPLETED')
+        return render(request, 'declaration.html', variables)
     if request.method == 'POST':
-
-        # Retrieve the application's ID        
         application_id_local = request.POST["id"]
-
-        # Initialise the Payment form        
-        form = PaymentForm(request.POST)
-
-        # If the form is successfully submitted (with valid details)
+        form = DeclarationForm(request.POST)
         if form.is_valid():
+            status.update(application_id_local, 'declarations_status', 'COMPLETED')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'declaration.html', variables)
 
-            # Get selected payment method
+
+def confirmation(request):
+    """
+    Method returning the template for the Confirmation page (for a given application) and navigating to
+    the task list when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Confirmation template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = ConfirmForm()
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+        }
+        return render(request, 'confirm.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = ConfirmForm(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'confirm.html', variables)
+
+
+def payment(request):
+    """
+    Method returning the template for the Payment page (for a given application) and navigating to
+    the card payment details page or PayPal site when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Payment template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = PaymentForm()
+        variables = {
+            'form': form,
+            'application_id': application_id_local
+        }
+        return render(request, 'payment.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = PaymentForm(request.POST)
+        if form.is_valid():
             payment_method = form.cleaned_data['payment_method']
-
             if payment_method == 'Credit':
-
-                # Navigate to the payment details page
                 return HttpResponseRedirect(settings.URL_PREFIX + '/payment-details/?id=' + application_id_local)
-
             elif payment_method == 'PayPal':
-
-                # Stay on the same page
                 paypal_url = payment.make_paypal_payment("GB", 3500, "GBP", "Childminder Registration Fee",
                                                          application_id_local,
                                                          request.scheme + '://' + request.META['HTTP_HOST'] +
@@ -1881,68 +1878,58 @@ def payment_view(request):
                                                          settings.PAYMENT_URL + "/payment/?id=" + application_id_local,
                                                          settings.PAYMENT_URL + "/payment/?id=" + application_id_local,
                                                          settings.PAYMENT_URL + "/payment/?id=" + application_id_local)
-
                 return HttpResponseRedirect(paypal_url)
-
-        # If there are invalid details
         else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'payment.html', variables)
 
-            # Return to the same page
-            return render(request, 'payment.html', {'form': form, 'application_id': application_id_local})
 
-
-# View the Payment Details page
 def card_payment_details(request):
+    """
+    Method returning the template for the Card payment details page (for a given application) and navigating to
+    the payment confirmation page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Card payment details template
+    """
     if request.method == 'GET':
-        # Get the application
         application_id_local = request.GET["id"]
-
-        # As no data is saved for this, a blank payment form is generated with each get request       
         form = PaymentDetailsForm()
-
-        # Access the task page
-        return render(request, 'payment-details.html', {'form': form, 'application_id': application_id_local})
-
+        variables = {
+            'form': form,
+            'application_id': application_id_local
+        }
+        return render(request, 'payment-details.html', variables)
     if request.method == 'POST':
-
-        # Get the application
         application_id_local = request.POST["id"]
-
-        # Initialise the Payment Details form
         form = PaymentDetailsForm(request.POST)
-
-        # If the form is successfully submitted (with valid details)
         if form.is_valid():
-
-            # Retrieve data
             card_number = re.sub('[ -]+', '', request.POST["card_number"])
             cardholders_name = request.POST["cardholders_name"]
             card_security_code = request.POST["card_security_code"]
             expiry_month = request.POST["expiry_date_0"]
             expiry_year = request.POST["expiry_date_1"]
-
             # Make payment
             payment_response = payment.make_payment(3500, cardholders_name, card_number, card_security_code,
                                                     expiry_month, expiry_year, 'GBP', application_id_local,
                                                     application_id_local)
-            # Parse payment response
             parsed_payment_response = json.loads(payment_response.text)
             # If the payment is successful
             if payment_response.status_code == 201:
                 application = Application.objects.get(pk=application_id_local)
                 login_id = application.login_id.login_id
                 login_record = UserDetails.objects.get(pk=login_id)
-                personal_detail_id = ApplicantPersonalDetails.objects.get(
-                    application_id=application_id_local).personal_detail_id
+                personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=
+                                                                          application_id_local).personal_detail_id
                 applicant_name_record = ApplicantName.objects.get(personal_detail_id=personal_detail_id)
-                email_response = payment.payment_email(login_record.email, applicant_name_record.first_name)
-
+                payment.payment_email(login_record.email, applicant_name_record.first_name)
                 variables = {
                     'form': form,
                     'application_id': application_id_local,
                     'order_code': parsed_payment_response["orderCode"],
                 }
-
                 # Go to payment confirmation page                         
                 return HttpResponseRedirect(settings.URL_PREFIX + '/confirmation/?id=' + application_id_local +
                                             '&orderCode=' + parsed_payment_response["orderCode"], variables)
@@ -1959,60 +1946,65 @@ def card_payment_details(request):
             return HttpResponseRedirect(settings.URL_PREFIX + '/payment-details/?id=' + application_id_local, variables)
 
         # If there are invalid details
-        else:
 
+        else:
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-
-            # Return to the same page
             return render(request, 'payment-details.html', variables)
 
 
 def payment_confirmation(request):
+    """
+    Method returning the template for the Payment confirmation page (for a given application)
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Payment confirmation template
+    """
     if request.method == 'GET':
-
         application_id_local = request.GET['id']
         order_code = request.GET['orderCode']
-
+        # If the payment has been successfully processed
         if payment.check_payment(order_code) == 200:
             variables = {
                 'application_id': application_id_local,
                 'order_code': request.GET["orderCode"],
             }
-
             return render(request, 'payment-confirmation.html', variables)
         else:
-
             form = PaymentForm()
-
-            variables = {'form': form, 'application_id': application_id_local}
-
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
             return HttpResponseRedirect(settings.URL_PREFIX + '/payment/?id=' + application_id_local, variables)
 
 
-# View the Application saved page
 def application_saved(request):
+    """
+    Method returning the template for the Application saved page (for a given application)
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Application saved template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = ApplicationSavedForm()
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+        }
+        return render(request, 'application-saved.html', variables)
     if request.method == 'POST':
-
-        # Retrieve the application's ID         
         application_id_local = request.POST["id"]
-
-        # Initialise the Application saved form        
         form = ApplicationSavedForm(request.POST)
-
-        # If the form is successfully submitted (with valid details)        
         if form.is_valid():
-            # Stay on the same page
             return HttpResponseRedirect(settings.URL_PREFIX + '/application-saved/?id=' + application_id_local)
-
-    # If the Application saved form is not completed
-    application_id_local = request.GET["id"]
-    form = ApplicationSavedForm()
-
-    # Access the page
-    return render(request, 'application-saved.html', {'form': form, 'application_id': application_id_local})
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'application-saved.html', variables)
 
 
 # Reset view, to set all tasks to To Do

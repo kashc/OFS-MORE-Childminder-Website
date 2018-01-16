@@ -62,7 +62,7 @@ urlpatterns = [
     url(r'^other-people/', views.other_people, name='Other-People-View'),
     url(r'^declaration/', views.declaration, name='Declaration-View'),
     url(r'^confirm-your-answers/', views.confirmation, name='Confirmation-View'),
-    url(r'^payment/', views.payment_view, name='Payment-View'),
+    url(r'^payment/', views.payment, name='Payment-View'),
     url(r'^payment-details/', views.card_payment_details, name='Payment-Details-View'),
     url(r'^application-saved/', views.application_saved, name='Application-Saved-View'),
     url(r'^admin/', admin.site.urls),
