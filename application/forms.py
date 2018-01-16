@@ -101,9 +101,7 @@ class ContactPhoneForm(GOVUKForm):
         :return: string
         """
         mobile_number = self.cleaned_data['mobile_number']
-        # Allow for spaces
         no_space_mobile_number = mobile_number.replace(' ', '')
-        # RegEx for valid mobile numbers
         if re.match("^(07\d{8,12}|447\d{7,11})$", no_space_mobile_number) is None:
             raise forms.ValidationError('TBC')
         if len(no_space_mobile_number) > 11:
@@ -116,10 +114,8 @@ class ContactPhoneForm(GOVUKForm):
         :return: string
         """
         add_phone_number = self.cleaned_data['add_phone_number']
-        # Allow for spaces
         no_space_add_phone_number = add_phone_number.replace(' ', '')
         if add_phone_number != '':
-            # RegEx for valid phone numbers
             if re.match("^(0\d{8,12}|447\d{7,11})$", no_space_add_phone_number) is None:
                 raise forms.ValidationError('TBC')
             if len(no_space_add_phone_number) > 11:
@@ -216,7 +212,6 @@ class EmailLoginForm(GOVUKForm):
         :return: string
         """
         email_address = self.cleaned_data['email_address']
-        # RegEx for valid e-mail addresses
         if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
             raise forms.ValidationError('Please enter a valid e-mail address.')
         return email_address
@@ -251,31 +246,36 @@ class VerifyPhoneForm(GOVUKForm):
         return magic_link_sms
 
 
-# Your personal details form: guidance page  
 class PersonalDetailsGuidanceForm(GOVUKForm):
+    """
+    GOV.UK form for the Your personal details: guidance page
+    """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
 
-# Your personal details form: names   
 class PersonalDetailsNameForm(GOVUKForm):
+    """
+    GOV.UK form for the Your personal details: name page
+    """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-
     first_name = forms.CharField(label='First name')
     middle_names = forms.CharField(label='Middle names (if you have any)', required=False)
     last_name = forms.CharField(label='Last name')
 
     def __init__(self, *args, **kwargs):
-
+        """
+        Method to configure the initialisation of the Your personal details: name form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsNameForm, self).__init__(*args, **kwargs)
-
         # If information was previously entered, display it on the form        
         if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             personal_detail_id = ApplicantPersonalDetails.objects.get(
                 application_id=self.application_id_local).personal_detail_id
-
             self.fields['first_name'].initial = ApplicantName.objects.get(
                 personal_detail_id=personal_detail_id).first_name
             self.fields['middle_names'].initial = ApplicantName.objects.get(
@@ -283,60 +283,62 @@ class PersonalDetailsNameForm(GOVUKForm):
             self.fields['last_name'].initial = ApplicantName.objects.get(
                 personal_detail_id=personal_detail_id).last_name
 
-    # First name validation
     def clean_first_name(self):
-
+        """
+        First name validation
+        :return: string
+        """
         first_name = self.cleaned_data['first_name']
-
         if re.match("^[A-Za-z- ]+$", first_name) is None:
             raise forms.ValidationError('TBC')
-
         if len(first_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
-
         return first_name
 
-    # Middle names validation
     def clean_middle_names(self):
-
+        """
+        Middle names validation
+        :return: string
+        """
         middle_names = self.cleaned_data['middle_names']
-
         if middle_names != '':
-
             if re.match("^[A-Za-z- ]+$", middle_names) is None:
                 raise forms.ValidationError('TBC')
-
             if len(middle_names) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
-
         return middle_names
 
-    # Last name validation
     def clean_last_name(self):
-
+        """
+        Last name validation
+        :return: string
+        """
         last_name = self.cleaned_data['last_name']
-
         if re.match("^[A-Za-z- ]+$", last_name) is None:
             raise forms.ValidationError('TBC')
-
         if len(last_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
-
         return last_name
 
 
-# Your personal details form: date of birth 
 class PersonalDetailsDOBForm(GOVUKForm):
+    """
+    Method to configure the initialisation of the Your personal details: date of birth form
+    :param args: arguments passed to the form
+    :param kwargs: keyword arguments passed to the form, e.g. application ID
+    """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-
     date_of_birth = SplitDateField(label='Date of birth', help_text='For example, 31 03 1980')
 
     def __init__(self, *args, **kwargs):
-
+        """
+        Method to configure the initialisation of the Your personal details: date of birth form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsDOBForm, self).__init__(*args, **kwargs)
-
         # If information was previously entered, display it on the form        
         if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             self.fields['date_of_birth'].initial = [
@@ -344,48 +346,56 @@ class PersonalDetailsDOBForm(GOVUKForm):
                 ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).birth_month,
                 ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).birth_year]
 
-    # First name validation
     def clean_date_of_birth(self):
-
+        """
+        Date of birth validation (calculate if age is less than 18)
+        :return: string
+        """
         birth_day = self.cleaned_data['date_of_birth'].day
         birth_month = self.cleaned_data['date_of_birth'].month
         birth_year = self.cleaned_data['date_of_birth'].year
-
         applicant_dob = date(birth_year, birth_month, birth_day)
         today = date.today()
         age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
-
         if age < 18:
             raise forms.ValidationError('You have to be 18 to childmind.')
-
         return birth_day, birth_month, birth_year
 
 
-# Your personal details form: home address   
 class PersonalDetailsHomeAddressForm(GOVUKForm):
+    """
+    Method to configure the initialisation of the Your personal details: home address form for postcode search
+    :param args: arguments passed to the form
+    :param kwargs: keyword arguments passed to the form, e.g. application ID
+    """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-
     postcode = forms.CharField(label='Postcode')
 
     def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: home address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsHomeAddressForm, self).__init__(*args, **kwargs)
-
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
-
         if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
             self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                                current_address=True).postcode
 
 
-# Your personal details form: home address   
 class PersonalDetailsHomeAddressManualForm(GOVUKForm):
+    """
+    Method to configure the initialisation of the Your personal details: home address form for manual entry
+    :param args: arguments passed to the form
+    :param kwargs: keyword arguments passed to the form, e.g. application ID
+    """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-
     street_name_and_number = forms.CharField(label='Street name and number')
     street_name_and_number2 = forms.CharField(label='Street name and number 2', required=False)
     town = forms.CharField(label='Town or city')
@@ -393,135 +403,147 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
     postcode = forms.CharField(label='Postcode')
 
     def __init__(self, *args, **kwargs):
-
+        """
+        Method to configure the initialisation of the Your personal details: home address form for manual entry
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsHomeAddressManualForm, self).__init__(*args, **kwargs)
-
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
+        applicant_home_address = ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
+                                                                     current_address=True)
+        if applicant_home_address.count() > 0:
+            self.fields['street_name_and_number'].initial = applicant_home_address.street_line1
+            self.fields['street_name_and_number2'].initial = applicant_home_address.street_line2
+            self.fields['town'].initial = applicant_home_address.town
+            self.fields['county'].initial = applicant_home_address.county
+            self.fields['postcode'].initial = applicant_home_address.postcode
 
-        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
-            self.fields['street_name_and_number'].initial = ApplicantHomeAddress.objects.get(
-                personal_detail_id=personal_detail_id, current_address=True).street_line1
-            self.fields['street_name_and_number2'].initial = ApplicantHomeAddress.objects.get(
-                personal_detail_id=personal_detail_id, current_address=True).street_line2
-            self.fields['town'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                           current_address=True).town
-            self.fields['county'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                             current_address=True).county
-            self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                               current_address=True).postcode
-
-    # Street name and number validation
     def clean_street_name_and_number(self):
-
+        """
+        Street name and number validation
+        :return: string
+        """
         street_name_and_number = self.cleaned_data['street_name_and_number']
-
         if len(street_name_and_number) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
-
         return street_name_and_number
 
     def clean_street_name_and_number2(self):
-
+        """
+        Street name and number line 2 validation
+        :return: string
+        """
         street_name_and_number2 = self.cleaned_data['street_name_and_number2']
-
         if len(street_name_and_number2) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
-
         return street_name_and_number2
 
-        # Town validation
-
     def clean_town(self):
-
+        """
+        Town validation
+        :return: string
+        """
         town = self.cleaned_data['town']
-
         if re.match("^[A-Za-z- ]+$", town) is None:
             raise forms.ValidationError('TBC.')
-
         if len(town) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
-
         return town
 
-        # County validation
-
     def clean_county(self):
-
+        """
+        County validation
+        :return: string
+        """
         county = self.cleaned_data['county']
-
         if county != '':
-
             if re.match("^[A-Za-z- ]+$", county) is None:
                 raise forms.ValidationError('TBC.')
-
             if len(county) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
-
         return county
 
-    # Postcode validation
     def clean_postcode(self):
-
+        """
+        Postcode validation
+        :return: string
+        """
         postcode = self.cleaned_data['postcode']
-
         if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
             raise forms.ValidationError('TBC.')
-
         return postcode
 
 
-# Your personal details form: location of care  
 class PersonalDetailsLocationOfCareForm(GOVUKForm):
+    """
+    Method to configure the initialisation of the Your personal details: location of care
+    :param args: arguments passed to the form
+    :param kwargs: keyword arguments passed to the form, e.g. application ID
+    """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-
-    options = (('True', 'Yes'), ('False', 'No'))
-
+    options = (
+        ('True', 'Yes'),
+        ('False', 'No')
+    )
     location_of_care = forms.ChoiceField(label='Is this where you will be looking after the children?', choices=options,
                                          widget=InlineRadioSelect, required=True)
 
     def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: location of care
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsLocationOfCareForm, self).__init__(*args, **kwargs)
-
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
-
         if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
             self.fields['location_of_care'].initial = ApplicantHomeAddress.objects.get(
                 personal_detail_id=personal_detail_id, current_address=True).childcare_address
 
 
-# Your personal details form: home address   
 class PersonalDetailsChildcareAddressForm(GOVUKForm):
+    """
+    Method to configure the initialisation of the Your personal details: childcare address for postcode search
+    :param args: arguments passed to the form
+    :param kwargs: keyword arguments passed to the form, e.g. application ID
+    """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-
     postcode = forms.CharField(label='Postcode')
 
     def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: childcare address for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsChildcareAddressForm, self).__init__(*args, **kwargs)
-
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
-
         if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
                                                childcare_address='True').count() > 0:
             self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                                childcare_address='True').postcode
 
 
-# Your personal details form: childcare address   
 class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
+    """
+    Method to configure the initialisation of the Your personal details: childcare address for manual entry
+    :param args: arguments passed to the form
+    :param kwargs: keyword arguments passed to the form, e.g. application ID
+    """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-
     street_name_and_number = forms.CharField(label='Street name and number')
     street_name_and_number2 = forms.CharField(label='Street name and number 2', required=False)
     town = forms.CharField(label='Town or city')
@@ -529,92 +551,87 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
     postcode = forms.CharField(label='Postcode')
 
     def __init__(self, *args, **kwargs):
-
+        """
+        Method to configure the initialisation of the Your personal details: childcare address for manual entry
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsChildcareAddressManualForm, self).__init__(*args, **kwargs)
-
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
+        childcare_address = ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
+                                                                childcare_address='True')
+        if childcare_address.count() > 0:
+            self.fields['street_name_and_number'].initial = childcare_address.street_line1
+            self.fields['street_name_and_number2'].initial = childcare_address.street_line2
+            self.fields['town'].initial = childcare_address.town
+            self.fields['county'].initial = childcare_address.county
+            self.fields['postcode'].initial = childcare_address.postcode
 
-        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
-                                               childcare_address='True').count() > 0:
-            personal_detail_id = ApplicantPersonalDetails.objects.get(
-                application_id=self.application_id_local).personal_detail_id
-
-            self.fields['street_name_and_number'].initial = ApplicantHomeAddress.objects.get(
-                personal_detail_id=personal_detail_id, childcare_address='True').street_line1
-            self.fields['street_name_and_number2'].initial = ApplicantHomeAddress.objects.get(
-                personal_detail_id=personal_detail_id, childcare_address='True').street_line2
-            self.fields['town'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                           childcare_address='True').town
-            self.fields['county'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                             childcare_address='True').county
-            self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                               childcare_address='True').postcode
-
-    # Street name and number validation
     def clean_street_name_and_number(self):
-
+        """
+        Street name and number validation
+        :return: string
+        """
         street_name_and_number = self.cleaned_data['street_name_and_number']
-
         if len(street_name_and_number) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
-
         return street_name_and_number
 
     def clean_street_name_and_number2(self):
-
+        """
+        Street name and number line 2 validation
+        :return: string
+        """
         street_name_and_number2 = self.cleaned_data['street_name_and_number2']
-
         if len(street_name_and_number2) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
-
         return street_name_and_number2
 
-        # Town validation
-
     def clean_town(self):
-
+        """
+        Town validation
+        :return: string
+        """
         town = self.cleaned_data['town']
-
         if re.match("^[A-Za-z-]+$", town) is None:
             raise forms.ValidationError('TBC')
-
         if len(town) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
-
         return town
 
-        # County validation
-
     def clean_county(self):
-
+        """
+        County validation
+        :return: string
+        """
         county = self.cleaned_data['county']
-
         if county != '':
-
             if re.match("^[A-Za-z-]+$", county) is None:
                 raise forms.ValidationError('TBC')
-
             if len(county) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
-
         return county
 
-    # Postcode validation
     def clean_postcode(self):
-
+        """
+        Postcode validation
+        :return: string
+        """
         postcode = self.cleaned_data['postcode']
-
         if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
             raise forms.ValidationError('TBC')
-
         return postcode
 
 
-# Your personal details form: summary page  
 class PersonalDetailsSummaryForm(GOVUKForm):
+    """
+    Method to configure the initialisation of the Your personal details: summary
+    :param args: arguments passed to the form
+    :param kwargs: keyword arguments passed to the form, e.g. application ID
+    """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
