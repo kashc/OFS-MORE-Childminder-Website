@@ -24,10 +24,10 @@ SMS_EXPIRY = 1
 EMAIL_EXPIRY = 1
 
 # Base URL of notify gateway
-
 NOTIFY_URL = 'http://130.130.52.132:8095'
 
-PAYMENT_URL = 'http://130.130.52.132:8089'
+#PAYMENT_URL = 'http://130.130.52.132:8089'
+PAYMENT_URL = 'http://127.0.0.1:8080/payment-gateway'
 
 # Visa Validation
 VISA_VALIDATION = False
@@ -89,23 +89,23 @@ WSGI_APPLICATION = 'childminder.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'postgres',
-#         'USER': 'ofsted',
-#         'PASSWORD': 'OfstedB3ta',
-#         'HOST': '130.130.52.132',
-#         'PORT': '5462',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'postgres',
+        'USER': 'ofsted',
+        'PASSWORD': 'OfstedB3ta',
+        'HOST': '130.130.52.132',
+        'PORT': '5462',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': 'db.sqlite3',
+#     }
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

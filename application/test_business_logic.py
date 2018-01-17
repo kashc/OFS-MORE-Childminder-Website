@@ -61,7 +61,8 @@ class TestChildcareTypeLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         test_childcare_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         ChildcareType.objects.create(
@@ -119,7 +120,8 @@ class TestPersonalLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         test_personal_detail_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         ApplicantPersonalDetails.objects.create(
@@ -174,7 +176,8 @@ class TestPersonalLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         ApplicantPersonalDetails.objects.create(
             personal_detail_id=(UUID(test_personal_detail_id)),
@@ -239,7 +242,8 @@ class TestPersonalLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         ApplicantPersonalDetails.objects.create(
             personal_detail_id=(UUID(test_personal_detail_id)),
@@ -302,7 +306,8 @@ class TestPersonalLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         ApplicantPersonalDetails.objects.create(
             personal_detail_id=(UUID(test_personal_detail_id)),
@@ -367,7 +372,8 @@ class TestPersonalLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         ApplicantPersonalDetails.objects.create(
             personal_detail_id=(UUID(test_personal_detail_id)),
@@ -430,7 +436,8 @@ class TestPersonalLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         ApplicantPersonalDetails.objects.create(
             personal_detail_id=(UUID(test_personal_detail_id)),
@@ -523,7 +530,8 @@ class TestFirstAidTrainingLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         FirstAidTraining.objects.create(
@@ -570,7 +578,8 @@ class TestFirstAidTrainingLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         test_first_aid = FirstAidTraining.objects.create(
@@ -624,7 +633,8 @@ class TestFirstAidTrainingLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         test_first_aid = FirstAidTraining.objects.create(
@@ -678,7 +688,8 @@ class TestFirstAidTrainingLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         test_first_aid = FirstAidTraining.objects.create(
@@ -745,7 +756,8 @@ class TestDBSCheckLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         test_criminal_record_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         CriminalRecordCheck.objects.create(
@@ -802,7 +814,8 @@ class TestHealthLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         test_hdb_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         HealthDeclarationBooklet.objects.create(
@@ -858,7 +871,8 @@ class TestReferencesLogic(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
 
     def delete(self):

@@ -123,7 +123,8 @@ class TypeOfChildcareTest(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         assert (models.Application.objects.get(pk=test_application_id).childcare_type_status != 'COMPLETED')
 
@@ -214,7 +215,8 @@ class LoginAndContactDetailsTest(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         assert (models.Application.objects.get(pk=test_application_id).login_details_status != 'COMPLETED')
 
@@ -341,7 +343,8 @@ class PersonalDetailsTest(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         assert (models.Application.objects.get(pk=test_application_id).personal_details_status != 'COMPLETED')
 
@@ -456,7 +459,8 @@ class FirstAidTrainingTest(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         assert (models.Application.objects.get(pk=test_application_id).first_aid_training_status != 'COMPLETED')
 
@@ -511,7 +515,8 @@ class EYFSTest(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         assert (models.Application.objects.get(pk=test_application_id).eyfs_training_status != 'COMPLETED')
 
@@ -603,7 +608,8 @@ class DBSCheckTest(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         assert (models.Application.objects.get(pk=test_application_id).criminal_record_check_status != 'COMPLETED')
 
@@ -742,7 +748,8 @@ class ReferencesTest(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         assert (models.Application.objects.get(pk=test_application_id).references_status != 'COMPLETED')
 
@@ -797,7 +804,8 @@ class OtherPeopleTest(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         assert (models.Application.objects.get(pk=test_application_id).people_in_home_status != 'COMPLETED')
 
@@ -851,7 +859,8 @@ class DeclarationTest(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         assert (models.Application.objects.get(pk=test_application_id).declarations_status != 'COMPLETED')
 
@@ -950,7 +959,8 @@ class TaskStatusTest(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         application_status_context = dict({
             'application_id': test_application_id,
@@ -1002,7 +1012,8 @@ class TaskStatusTest(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         application_status_context = dict({
             'application_id': test_application_id,
@@ -1054,7 +1065,8 @@ class TaskStatusTest(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         application_status_context = dict({
             'application_id': test_application_id,
@@ -1107,7 +1119,8 @@ class TaskStatusTest(TestCase):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         application_status_context = dict({
             'application_id': test_application_id,
@@ -1157,7 +1170,8 @@ class TaskStatusTest(TestCase):
             declarations_status='IN_PROGRESS',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         application_status_context = dict({
             'application_id': test_application_id,
@@ -1207,7 +1221,8 @@ class TaskStatusTest(TestCase):
             declarations_status='COMPLETED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         application_status_context = dict({
             'application_id': test_application_id,

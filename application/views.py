@@ -11,10 +11,10 @@ import re
 import time
 
 from datetime import date
-
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from uuid import UUID
 
 from .middleware import CustomAuthenticationHandler
 from . import magic_link, payment, status
@@ -128,7 +128,8 @@ def account_selection(request):
             declarations_status='NOT_STARTED',
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
-            date_accepted=None
+            date_accepted=None,
+            order_code=None
         )
         application_id_local = str(application.application_id)
         return HttpResponseRedirect(settings.URL_PREFIX + '/account/email?id=' + application_id_local)
@@ -1899,12 +1900,21 @@ def card_payment_details(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = PaymentDetailsForm()
-        variables = {
-            'form': form,
-            'application_id': application_id_local
-        }
-        return render(request, 'payment-details.html', variables)
+        paid = Application.objects.get(pk=application_id_local).order_code
+        print(paid)
+        if paid is None:
+            form = PaymentDetailsForm()
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'payment-details.html', variables)
+        elif paid is not None:
+            variables = {
+                'application_id': application_id_local,
+                'order_code': paid
+            }
+            return render(request, 'paid.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = PaymentDetailsForm(request.POST)
@@ -1928,15 +1938,16 @@ def card_payment_details(request):
                                                                           application_id_local).personal_detail_id
                 applicant_name_record = ApplicantName.objects.get(personal_detail_id=personal_detail_id)
                 payment.payment_email(login_record.email, applicant_name_record.first_name)
+                order_code = parsed_payment_response["orderCode"]
                 variables = {
                     'form': form,
                     'application_id': application_id_local,
-                    'order_code': parsed_payment_response["orderCode"],
+                    'order_code': order_code
                 }
-                # Go to payment confirmation page                         
+                application.order_code = UUID(order_code)
+                application.save()
                 return HttpResponseRedirect(settings.URL_PREFIX + '/confirmation/?id=' + application_id_local +
-                                            '&orderCode=' + parsed_payment_response["orderCode"], variables)
-
+                                            '&orderCode=' + order_code, variables)
             else:
                 variables = {
                     'form': form,
@@ -1944,12 +1955,7 @@ def card_payment_details(request):
                     'error_flag': 1,
                     'error_message': parsed_payment_response["message"],
                 }
-
-            # Return to the application's task list    
             return HttpResponseRedirect(settings.URL_PREFIX + '/payment-details/?id=' + application_id_local, variables)
-
-        # If there are invalid details
-
         else:
             variables = {
                 'form': form,
