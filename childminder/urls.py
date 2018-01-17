@@ -83,3 +83,6 @@ if settings.URL_PREFIX:
         pat.regex = re.compile(r"^%s/%s" % (settings.URL_PREFIX[1:], pat.regex.pattern[1:]))
         prefixed_url_pattern.append(pat)
     urlpatterns = prefixed_url_pattern
+
+handler404 = views.error_404
+handler500 = views.error_500
