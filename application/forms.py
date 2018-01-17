@@ -176,10 +176,11 @@ class TypeOfChildcareForm(GOVUKForm):
         self.application_id_local = kwargs.pop('id')
         super(TypeOfChildcareForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form
+        childcare_record = ChildcareType.objects.get(application_id=self.application_id_local)
         if ChildcareType.objects.filter(application_id=self.application_id_local).count() > 0:
-            zero_to_five_status = ChildcareType.objects.get(application_id=self.application_id_local).zero_to_five
-            five_to_eight_status = ChildcareType.objects.get(application_id=self.application_id_local).five_to_eight
-            eight_plus_status = ChildcareType.objects.get(application_id=self.application_id_local).eight_plus
+            zero_to_five_status = childcare_record.zero_to_five
+            five_to_eight_status = childcare_record.five_to_eight
+            eight_plus_status = childcare_record.eight_plus
             if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
                 self.fields['type_of_childcare'].initial = ['0-5', '5-8', '8over']
             elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
@@ -272,16 +273,14 @@ class PersonalDetailsNameForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsNameForm, self).__init__(*args, **kwargs)
-        # If information was previously entered, display it on the form        
+        # If information was previously entered, display it on the form
         if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             personal_detail_id = ApplicantPersonalDetails.objects.get(
                 application_id=self.application_id_local).personal_detail_id
-            self.fields['first_name'].initial = ApplicantName.objects.get(
-                personal_detail_id=personal_detail_id).first_name
-            self.fields['middle_names'].initial = ApplicantName.objects.get(
-                personal_detail_id=personal_detail_id).middle_names
-            self.fields['last_name'].initial = ApplicantName.objects.get(
-                personal_detail_id=personal_detail_id).last_name
+            applicant_name_record = ApplicantName.objects.get(personal_detail_id=personal_detail_id)
+            self.fields['first_name'].initial = applicant_name_record.first_name
+            self.fields['middle_names'].initial = applicant_name_record.middle_names
+            self.fields['last_name'].initial = applicant_name_record.last_name
 
     def clean_first_name(self):
         """
@@ -339,10 +338,10 @@ class PersonalDetailsDOBForm(GOVUKForm):
         super(PersonalDetailsDOBForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form        
         if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
-            self.fields['date_of_birth'].initial = [
-                ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).birth_day,
-                ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).birth_month,
-                ApplicantPersonalDetails.objects.get(application_id=self.application_id_local).birth_year]
+            personal_details_record = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local)
+            self.fields['date_of_birth'].initial = [personal_details_record.birth_day,
+                                                    personal_details_record.birth_month,
+                                                    personal_details_record.birth_year]
 
     def clean_date_of_birth(self):
         """
@@ -391,7 +390,7 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     street_name_and_number = forms.CharField(label='Street name and number')
-    street_name_and_number2 = forms.CharField(label='Street name and number', required=False)
+    street_name_and_number2 = forms.CharField(label='Street name and number 2', required=False)
     town = forms.CharField(label='Town or city')
     county = forms.CharField(label='County (optional)', required=False)
     postcode = forms.CharField(label='Postcode')
@@ -407,9 +406,10 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
-        applicant_home_address = ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
-                                                                     current_address=True)
-        if applicant_home_address.count() > 0:
+        applicant_home_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                  current_address=True)
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
+                                               current_address=True).count() > 0:
             self.fields['street_name_and_number'].initial = applicant_home_address.street_line1
             self.fields['street_name_and_number2'].initial = applicant_home_address.street_line2
             self.fields['town'].initial = applicant_home_address.town
@@ -549,9 +549,10 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
-        childcare_address = ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
-                                                                childcare_address='True')
-        if childcare_address.count() > 0:
+        childcare_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                             childcare_address='True')
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
+                                               childcare_address='True').count() > 0:
             self.fields['street_name_and_number'].initial = childcare_address.street_line1
             self.fields['street_name_and_number2'].initial = childcare_address.street_line2
             self.fields['town'].initial = childcare_address.town
@@ -650,14 +651,12 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
         super(FirstAidTrainingDetailsForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form        
         if FirstAidTraining.objects.filter(application_id=self.application_id_local).count() > 0:
-            self.fields['first_aid_training_organisation'].initial = FirstAidTraining.objects.get(
-                application_id=self.application_id_local).training_organisation
-            self.fields['title_of_training_course'].initial = FirstAidTraining.objects.get(
-                application_id=self.application_id_local).course_title
-            self.fields['course_date'].initial = [
-                FirstAidTraining.objects.get(application_id=self.application_id_local).course_day,
-                FirstAidTraining.objects.get(application_id=self.application_id_local).course_month,
-                FirstAidTraining.objects.get(application_id=self.application_id_local).course_year]
+            first_aid_record = FirstAidTraining.objects.get(application_id=self.application_id_local)
+            self.fields['first_aid_training_organisation'].initial = first_aid_record.training_organisation
+            self.fields['title_of_training_course'].initial = first_aid_record.course_title
+            self.fields['course_date'].initial = [first_aid_record.course_day,
+                                                  first_aid_record.course_month,
+                                                  first_aid_record.course_year]
 
 
 class FirstAidTrainingDeclarationForm(GOVUKForm):
@@ -739,10 +738,9 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
         super(DBSCheckDBSDetailsForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form 
         if CriminalRecordCheck.objects.filter(application_id=self.application_id_local).count() > 0:
-            self.fields['dbs_certificate_number'].initial = CriminalRecordCheck.objects.get(
-                application_id=self.application_id_local).dbs_certificate_number
-            self.fields['convictions'].initial = CriminalRecordCheck.objects.get(
-                application_id=self.application_id_local).cautions_convictions
+            dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id_local)
+            self.fields['dbs_certificate_number'].initial = dbs_record.dbs_certificate_number
+            self.fields['convictions'].initial = dbs_record.cautions_convictions
 
     def clean_dbs_certificate_number(self):
         """
@@ -775,11 +773,11 @@ class DBSCheckUploadDBSForm(GOVUKForm):
         super(DBSCheckUploadDBSForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form
         if CriminalRecordCheck.objects.filter(application_id=self.application_id_local).count() > 0:
-            if CriminalRecordCheck.objects.get(
-                    application_id=self.application_id_local).send_certificate_declare is True:
+            dbs_record_declare = CriminalRecordCheck.objects.get(
+                application_id=self.application_id_local).send_certificate_declare
+            if dbs_record_declare is True:
                 self.fields['declaration'].initial = '1'
-            elif CriminalRecordCheck.objects.get(
-                    application_id=self.application_id_local).send_certificate_declare is False:
+            elif dbs_record_declare is False:
                 self.fields['declaration'].initial = '0'
 
 
@@ -817,11 +815,11 @@ class HealthBookletForm(GOVUKForm):
         super(HealthBookletForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form
         if HealthDeclarationBooklet.objects.filter(application_id=self.application_id_local).count() > 0:
-            if HealthDeclarationBooklet.objects.get(
-                    application_id=self.application_id_local).send_hdb_declare is True:
+            hdb_declare = HealthDeclarationBooklet.objects.get(
+                application_id=self.application_id_local).send_hdb_declare
+            if hdb_declare is True:
                 self.fields['send_hdb_declare'].initial = '1'
-            elif HealthDeclarationBooklet.objects.get(
-                    application_id=self.application_id_local).send_hdb_declare is False:
+            elif hdb_declare is False:
                 self.fields['send_hdb_declare'].initial = '0'
 
 
@@ -855,15 +853,11 @@ class FirstReferenceForm(GOVUKForm):
         super(FirstReferenceForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form        
         if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
-            self.fields['first_name'].initial = Reference.objects.get(
-                application_id=self.application_id_local, reference=1).first_name
-            self.fields['last_name'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                     reference=1).last_name
-            self.fields['relationship'].initial = Reference.objects.get(
-                application_id=self.application_id_local, reference=1).relationship
-            self.fields['time_known'].initial = [Reference.objects.get(
-                application_id=self.application_id_local, reference=1).years_known, Reference.objects.get(
-                application_id=self.application_id_local, reference=1).months_known]
+            reference_record = Reference.objects.get(application_id=self.application_id_local, reference=1)
+            self.fields['first_name'].initial = reference_record.first_name
+            self.fields['last_name'].initial = reference_record.last_name
+            self.fields['relationship'].initial = reference_record.relationship
+            self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
 
     def clean_time_known(self):
         """
@@ -926,20 +920,13 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
         super(ReferenceFirstReferenceAddressManualForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
-            self.fields['street_name_and_number'].initial = Reference.objects.get(
-                application_id=self.application_id_local,
-                reference=1).street_line1
-            self.fields['street_name_and_number2'].initial = Reference.objects.get(
-                application_id=self.application_id_local,
-                reference=1).street_line2
-            self.fields['town'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                reference=1).town
-            self.fields['county'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                  reference=1).county
-            self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                    reference=1).postcode
-            self.fields['country'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                   reference=1).country
+            reference_record = Reference.objects.get(application_id=self.application_id_local, reference=1)
+            self.fields['street_name_and_number'].initial = reference_record.street_line1
+            self.fields['street_name_and_number2'].initial = reference_record.street_line2
+            self.fields['town'].initial = reference_record.town
+            self.fields['county'].initial = reference_record.county
+            self.fields['postcode'].initial = reference_record.postcode
+            self.fields['country'].initial = reference_record.country
 
     def clean_street_name_and_number(self):
         """
@@ -1016,10 +1003,10 @@ class ReferenceFirstReferenceContactForm(GOVUKForm):
         super(ReferenceFirstReferenceContactForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
-            self.fields['phone_number'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                        reference=1).phone_number
-            self.fields['email_address'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                         reference=1).email
+            reference_record = Reference.objects.get(application_id=self.application_id_local,
+                                                     reference=1)
+            self.fields['phone_number'].initial = reference_record.phone_number
+            self.fields['email_address'].initial = reference_record.email
 
     def clean_phone_number(self):
         """
@@ -1070,15 +1057,11 @@ class SecondReferenceForm(GOVUKForm):
         super(SecondReferenceForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
-            self.fields['first_name'].initial = Reference.objects.get(
-                application_id=self.application_id_local, reference=2).first_name
-            self.fields['last_name'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                     reference=2).last_name
-            self.fields['relationship'].initial = Reference.objects.get(
-                application_id=self.application_id_local, reference=2).relationship
-            self.fields['time_known'].initial = [Reference.objects.get(
-                application_id=self.application_id_local, reference=2).years_known, Reference.objects.get(
-                application_id=self.application_id_local, reference=2).months_known]
+            reference_record = Reference.objects.get(application_id=self.application_id_local, reference=2)
+            self.fields['first_name'].initial = reference_record.first_name
+            self.fields['last_name'].initial = reference_record.last_name
+            self.fields['relationship'].initial = reference_record.relationship
+            self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
 
     def clean_time_known(self):
         """
@@ -1141,20 +1124,13 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         super(ReferenceSecondReferenceAddressManualForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
-            self.fields['street_name_and_number'].initial = Reference.objects.get(
-                application_id=self.application_id_local,
-                reference=2).street_line1
-            self.fields['street_name_and_number2'].initial = Reference.objects.get(
-                application_id=self.application_id_local,
-                reference=2).street_line2
-            self.fields['town'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                reference=2).town
-            self.fields['county'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                  reference=2).county
-            self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                    reference=2).postcode
-            self.fields['country'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                   reference=2).country
+            reference_record = Reference.objects.get(application_id=self.application_id_local, reference=2)
+            self.fields['street_name_and_number'].initial = reference_record.street_line1
+            self.fields['street_name_and_number2'].initial = reference_record.street_line2
+            self.fields['town'].initial = reference_record.town
+            self.fields['county'].initial = reference_record.county
+            self.fields['postcode'].initial = reference_record.postcode
+            self.fields['country'].initial = reference_record.country
 
     def clean_street_name_and_number(self):
         """
@@ -1231,10 +1207,9 @@ class ReferenceSecondReferenceContactForm(GOVUKForm):
         super(ReferenceSecondReferenceContactForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
-            self.fields['phone_number'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                        reference=2).phone_number
-            self.fields['email_address'].initial = Reference.objects.get(application_id=self.application_id_local,
-                                                                         reference=2).email
+            reference_record = Reference.objects.get(application_id=self.application_id_local, reference=2)
+            self.fields['phone_number'].initial = reference_record.phone_number
+            self.fields['email_address'].initial = reference_record.email
 
     def clean_phone_number(self):
         """

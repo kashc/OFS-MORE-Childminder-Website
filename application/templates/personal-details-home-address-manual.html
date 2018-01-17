@@ -24,26 +24,7 @@
             <h1 class="form-title heading-large">
                 Your home address
             </h1>
-            <legend id='{{form.street_name_and_number.id_for_label}}-label' class="form-label-bold">
-                {{form.street_name_and_number.label}}
-            </legend>
-            {{form.street_name_and_number}}
-            </br>
-            </br>
-            <legend id='{{form.street_name_and_number2.id_for_label}}-label' class="form-label-bold"></legend>
-            {{form.street_name_and_number2}}
-            </br>
-            </br>
-            <legend id='{{form.town.id_for_label}}-label' class="form-label-bold">{{form.town.label}}</legend>
-            {{form.town}}
-            </br>
-            </br>
-            <legend id='{{form.county.id_for_label}}-label' class="form-label-bold">{{form.county.label}}</legend>
-            {{form.county}}
-            </br>
-            </br>
-            <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
-            {{form.postcode}}
+            {{form.as_div}}
             {% csrf_token %}
             </br>
             </br>
