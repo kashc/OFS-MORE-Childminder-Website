@@ -132,7 +132,7 @@ def payment_email(email, name):
         "templateId": "9c677777-95e0-424a-aaca-f9a4eec3c6b2"
     }
 
-    response = requests.post(base_url + "/notify-gateway/api/v1/notifications/email/", json.dumps(payload),
+    response = requests.post(base_url + "/api/v1/notifications/email/", json.dumps(payload),
                              headers=header)
 
     return response

@@ -1,6 +1,14 @@
-from django.conf import settings  # import the settings file
-from django.http import HttpResponseRedirect
+"""
+OFS-MORE-CCN3: Apply to be a Childminder Beta
+-- middleware.py --
+
+@author: Informed Solutions
+"""
+
 from re import compile
+
+from django.conf import settings  # import the settings file
+from django.http import HttpResponseRedirect, HttpResponseServerError
 
 from .models import Application
 
@@ -49,9 +57,9 @@ class CustomAuthenticationHandler(object):
             application = Application.objects.get(pk=application_id)
 
             # Check the email address stored in the session matches that found on the application
-            # and if not redirect to authentication url
+            # and if not raise generic exception
             if application.login_id.email != self.get_session_user(request):
-                return HttpResponseRedirect(settings.AUTHENTICATION_URL)
+                raise Exception
 
         # If request has not been blocked at this point in the execution flow, allow
         # request to continue processing as normal
