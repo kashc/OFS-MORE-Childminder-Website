@@ -31,9 +31,7 @@ def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, code, 
     failure
     """
     base_url = settings.PAYMENT_URL
-
     header = {'content-type': 'application/json'}
-
     payload = {
         "amount": amount,
         "cardHolderName": name,
@@ -45,9 +43,7 @@ def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, code, 
         "customerOrderCode": code,
         "orderDescription": desc
     }
-
     response = requests.post(base_url + "/api/v1/payments/card/", json.dumps(payload), headers=header)
-
     return response
 
 
@@ -56,8 +52,8 @@ def make_paypal_payment(shopper_country_code, amount, currency_code, order_descr
     """
     Function used to obtain the redirect url that will allow a user to authorise a payment through paypal base off of
     the below parameters
-    :param shopper_country_code:The country from which the user is accessing the service
-    :param amount: the amount of money to be charge to the users paypal account
+    :param shopper_country_code: The country from which the user is accessing the service
+    :param amount: the amount of money to be charge to the users PayPal account
     :param currency_code: Currency code that should be charged, sent as a string, see below for full list:
     https://developer.worldpay.com/jsonapi/faq/articles/what-currencies-can-i-accept-payments-in
     :param order_description: This is the order description the user will see attached to their payment when on PayPal,
@@ -74,9 +70,7 @@ def make_paypal_payment(shopper_country_code, amount, currency_code, order_descr
     This is taken from the JSON object the payment gateway gives us, returned as a string
     """
     base_url = settings.PAYMENT_URL
-
     header = {'content-type': 'application/json'}
-
     payload = {
         "shopperCountryCode": shopper_country_code,
         "amount": amount,
@@ -88,41 +82,35 @@ def make_paypal_payment(shopper_country_code, amount, currency_code, order_descr
         "failureUrl": failure_url,
         "cancellationUrl": cancel_url,
     }
-
     response = requests.post(base_url + "/api/v1/payments/paypal/", json.dumps(payload), headers=header)
-
-    # We deal with the entire object as parsing out just the requestURL in the payment API may be undesirbale for other
+    # We deal with the entire object as parsing out just the requestURL in the payment API may be undesirable for other
     # services
     response_url = json.loads(response.text)["redirectURL"]
-
     return response_url
 
 
 def check_payment(order_code):
     """
-    A function to confirm a worldpay order code exists in worldpay's records
+    A function to confirm a worldpay order code exists in Worldpay's records
     :param order_code: the order code of the payment that needs to be checked
     :return: a status code to confirm whether this payment exists or not, these responses are defined in swagger
     """
     base_url = settings.PAYMENT_URL
     header = {'content-type': 'application/json'}
     response = requests.get(base_url + "/api/v1/payments/" + order_code, headers=header)
-
     return response.status_code
 
 
 def payment_email(email, name):
     """
-    A function to send an email through the notify gateway with a payment template, currently used to confirm a worldpay
+    A function to send an email through the notify gateway with a payment template, currently used to confirm a Worldpay
     card order has been successful
-    :param email: The address to send the email to, sent as a stirng
+    :param email: The address to send the email to, sent as a string
     :param name: The name to be placed on the email template to be sent to the user
-    :return: Returns the response object obtained from the paypal gateway method, as defined in swagger
+    :return: Returns the response object obtained from the PayPal gateway method, as defined in swagger
     """
     base_url = settings.NOTIFY_URL
-
     header = {'content-type': 'application/json'}
-
     payload = {
         "email": email,
         "personalisation": {
@@ -131,8 +119,6 @@ def payment_email(email, name):
         "reference": "string",
         "templateId": "9c677777-95e0-424a-aaca-f9a4eec3c6b2"
     }
-
     response = requests.post(base_url + "/notify-gateway/api/v1/notifications/email/", json.dumps(payload),
                              headers=header)
-
     return response
