@@ -14,6 +14,7 @@ from datetime import date
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.views.decorators.cache import never_cache
 from uuid import UUID
 
 from .middleware import CustomAuthenticationHandler
@@ -1855,12 +1856,21 @@ def payment_selection(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = PaymentForm()
-        variables = {
-            'form': form,
-            'application_id': application_id_local
-        }
-        return render(request, 'payment.html', variables)
+        paid = Application.objects.get(pk=application_id_local).order_code
+        print(paid)
+        if paid is None:
+            form = PaymentForm()
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'payment.html', variables)
+        elif paid is not None:
+            variables = {
+                'application_id': application_id_local,
+                'order_code': paid
+            }
+            return render(request, 'paid.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = PaymentForm(request.POST)
@@ -1891,6 +1901,7 @@ def payment_selection(request):
             return render(request, 'payment.html', variables)
 
 
+@never_cache
 def card_payment_details(request):
     """
     Method returning the template for the Card payment details page (for a given application) and navigating to
