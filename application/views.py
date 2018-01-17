@@ -88,6 +88,16 @@ from .models import (Application,
                      UserDetails)
 
 
+def error_404(request):
+    data = {}
+    return render(request, '404.html', data)
+
+
+def error_500(request):
+    data = {}
+    return render(request, '500.html', data)
+
+
 def start_page(request):
     """
     Method returning the template for the start page
