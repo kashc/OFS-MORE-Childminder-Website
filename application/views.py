@@ -643,8 +643,8 @@ def personal_details_location_of_care(request):
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
             elif home_address_record.childcare_address == 'False':
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/personal-details/childcare-address?id=' + application_id_local + '&manual=False')
+                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address?id=' +
+                                            application_id_local + '&manual=False')
         else:
             variables = {
                 'form': form,

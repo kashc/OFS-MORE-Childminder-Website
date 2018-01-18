@@ -85,3 +85,15 @@ def globalise_url_prefix(request):
     """
     # return URL_PREFIX value defined in django settings.py for use by global view template
     return {'URL_PREFIX': settings.URL_PREFIX}
+
+
+def globalise_server_name(request):
+    """
+    Middleware function to pass the server name to the footer
+    :param request:
+    :return: a dictionary containing the globalised server name
+    """
+    if hasattr(settings, 'SERVER_LABEL'):
+        return {'SERVER_LABEL': settings.SERVER_LABEL}
+    else:
+        return {'SERVER_LABEL': None}

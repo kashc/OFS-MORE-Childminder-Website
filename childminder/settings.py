@@ -37,6 +37,9 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
+# Server name
+SERVER_LABEL = 'Test_1'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -81,6 +84,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'govuk_template_base.context_processors.govuk_template_base',
                 "application.middleware.globalise_url_prefix",
+                "application.middleware.globalise_server_name"
             ],
         },
     },
@@ -91,23 +95,23 @@ WSGI_APPLICATION = 'childminder.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'ofsted',
-        'PASSWORD': 'OfstedB3ta',
-        'HOST': '130.130.52.132',
-        'PORT': '5462',
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'postgres',
+#         'USER': 'ofsted',
+#         'PASSWORD': 'OfstedB3ta',
+#         'HOST': '130.130.52.132',
+#         'PORT': '5462',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db.sqlite3',
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
