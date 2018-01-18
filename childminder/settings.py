@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
+# Server name for showing server that responded to request under load balancing conditions
+SERVER_LABEL = 'Test_1'
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
@@ -26,7 +29,7 @@ EMAIL_EXPIRY = 1
 # Base URL of notify gateway
 NOTIFY_URL = 'http://130.130.52.132:8095'
 
-#PAYMENT_URL = 'http://130.130.52.132:8089'
+# Base URL of payment gateway
 PAYMENT_URL = 'http://127.0.0.1:8080/payment-gateway'
 
 # Visa Validation
@@ -36,9 +39,6 @@ VISA_VALIDATION = False
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-
-# Server name
-SERVER_LABEL = 'Test_1'
 
 # Application definition
 
@@ -95,23 +95,23 @@ WSGI_APPLICATION = 'childminder.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'ofsted',
-        'PASSWORD': 'OfstedB3ta',
-        'HOST': '130.130.52.132',
-        'PORT': '5462',
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'postgres',
+#         'USER': 'ofsted',
+#         'PASSWORD': 'OfstedB3ta',
+#         'HOST': '130.130.52.132',
+#         'PORT': '5462',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db.sqlite3',
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
