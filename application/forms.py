@@ -176,8 +176,8 @@ class TypeOfChildcareForm(GOVUKForm):
         self.application_id_local = kwargs.pop('id')
         super(TypeOfChildcareForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form
-        childcare_record = ChildcareType.objects.get(application_id=self.application_id_local)
         if ChildcareType.objects.filter(application_id=self.application_id_local).count() > 0:
+            childcare_record = ChildcareType.objects.get(application_id=self.application_id_local)
             zero_to_five_status = childcare_record.zero_to_five
             five_to_eight_status = childcare_record.five_to_eight
             eight_plus_status = childcare_record.eight_plus

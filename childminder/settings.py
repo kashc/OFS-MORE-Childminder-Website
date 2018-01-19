@@ -36,7 +36,7 @@ PAYMENT_URL = 'http://127.0.0.1:8080/payment-gateway'
 VISA_VALIDATION = False
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
