@@ -7,23 +7,15 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 import re
 from datetime import date
-from django.conf import settings
 from django import forms
+from django.conf import settings
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
-from .customfields import ExpirySplitDateWidget, ExpirySplitDateField, TimeKnownField
-from .models import (Application,
-                     ApplicantHomeAddress,
-                     ApplicantName,
-                     ApplicantPersonalDetails,
-                     ChildcareType,
-                     CriminalRecordCheck,
-                     FirstAidTraining,
-                     HealthDeclarationBooklet,
-                     Reference,
-                     UserDetails)
+from .customfields import ExpirySplitDateField, ExpirySplitDateWidget, TimeKnownField
+from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, ChildcareType,
+                     CriminalRecordCheck, FirstAidTraining, HealthDeclarationBooklet, Reference, UserDetails)
 
 
 class AccountForm(GOVUKForm):
@@ -1372,3 +1364,14 @@ class ApplicationSavedForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
+
+
+class SecurityQuestion(GOVUKForm):
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+    question = forms.CharField(label='Knowledge based question', required=True)
+
+    def __init__(self, *args, **kwargs):
+        self.application_id_local = kwargs.pop('id')
+        super(SecurityQuestion, self).__init__(*args, **kwargs)
