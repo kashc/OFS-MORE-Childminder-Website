@@ -975,6 +975,19 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
             raise forms.ValidationError('TBC')
         return postcode
 
+    def clean_country(self):
+        """
+        Country validation
+        :return: string
+        """
+        country = self.cleaned_data['country']
+        if country != '':
+            if re.match("^[A-Za-z- ]+$", country) is None:
+                raise forms.ValidationError('TBC')
+            if len(country) > 100:
+                raise forms.ValidationError('Please enter 100 characters or less.')
+        return country
+
 
 class ReferenceFirstReferenceContactForm(GOVUKForm):
     """
@@ -1178,6 +1191,19 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
             raise forms.ValidationError('TBC')
         return postcode
+
+    def clean_country(self):
+        """
+        Country validation
+        :return: string
+        """
+        country = self.cleaned_data['country']
+        if country != '':
+            if re.match("^[A-Za-z- ]+$", country) is None:
+                raise forms.ValidationError('TBC')
+            if len(country) > 100:
+                raise forms.ValidationError('Please enter 100 characters or less.')
+        return country
 
 
 class ReferenceSecondReferenceContactForm(GOVUKForm):
