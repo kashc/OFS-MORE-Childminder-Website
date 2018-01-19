@@ -23,15 +23,17 @@
                     I am applying for the first time
                 </h3>
                 <div class="form-group" style="margin-top: 20px;">
-                    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
-                        <input type="submit" class="button button-start" value="Create my account" alt='Create my account'>
+                    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+                        <input type="submit" class="button button-start" value="Create my account"
+                               alt='Create my account'>
                         {{form.as_div}}
                         {% csrf_token %}
-                        <input type="hidden" id="id" name="id" value="{{application_id}}" />
+                        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
                     </form>
                 </div>
             </div>
-            <div class="column-half" style="border-left-color: #BFC1C3; border-left-width: 5px; border-left-style: solid;">
+            <div class="column-half"
+                 style="border-left-color: #BFC1C3; border-left-width: 5px; border-left-style: solid;">
                 <h3 class="heading-small">
                     I already have an account
                 </h3>
@@ -44,25 +46,30 @@
     <div class="column-two-thirds">
         <h2 class="heading-medium">Before you start</h2>
         <details role="group">
-            <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">How much does it cost?</span></summary>
+            <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">How much does it cost?</span>
+            </summary>
             <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
                 <p>It costs £35 to register, or £103 if you are only caring for children over 5.</p>
                 <p>Criminal record (DBS) checks cost £52.10 each.</p>
-                <p>First aid courses cost around £100 and you may have to pay for early years training, which costs about £200.</p>
+                <p>First aid courses cost around £100 and you may have to pay for early years training, which costs
+                    about £200.</p>
                 <ul>
                     <li><a href="#" target="_blank">Read more about childminder costs</a></li>
                 </ul>
             </div>
         </details>
         <details role="group">
-            <summary role="button" aria-controls="details-content-1" aria-expanded="false"><span class="summary">Where can I get help?</span></summary>
+            <summary role="button" aria-controls="details-content-1" aria-expanded="false"><span class="summary">Where can I get help?</span>
+            </summary>
             <div class="panel panel-border-narrow" id="details-content-1" aria-hidden="true">
                 <p>You can get free help and advice from your local council.</p>
                 <p>Membership groups like Pacey provide training, guidance and advice.</p>
                 <p>You could also get advice from other childminders on forums.</p>
                 <ul>
-                    <li><a href="http://findyourfis.familyandchildcaretrust.org/kb5/findyourfis/home.page" target="_blank">Find your council's family information service</a></li>
-                    <li><a href="https://www.pacey.org.uk/" target="_blank">Pacey (Professional Association for Childcare and Early Years)</a></li>
+                    <li><a href="http://findyourfis.familyandchildcaretrust.org/kb5/findyourfis/home.page"
+                           target="_blank">Find your council's family information service</a></li>
+                    <li><a href="https://www.pacey.org.uk/" target="_blank">Pacey (Professional Association for
+                        Childcare and Early Years)</a></li>
                     <li><a href="http://www.childmindinghelp.co.uk/forum/" target="_blank">Childminding Forum</a></li>
                 </ul>
             </div>

@@ -7,13 +7,11 @@
 
 <div class="column-two-thirds">
     <div class="grid-row" style="padding-top: 30px;">
-        <a href="javascript:history.back()" style="margin-right: 10px; line-height: 28px">
-            <svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
-                <polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
-            </svg>
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
+           style="margin-right: 10px; line-height: 28px">
             Back
         </a>
-</div>
+    </div>
     <div class="grid-row">
         <h1 class="form-title heading-large">
             Declaration and consent
@@ -32,14 +30,19 @@
                 <p>You should go on a training course if you don&#39;t understand the EYFS.</p>
                 <p>EYFS courses cost around &#163;200. Ask your council for details.</p>
                 <ul class="list list-bullet">
-                    <li><a href="https://www.gov.uk/government/publications/early-years-foundation-stage-framework--2" class="external-link" target="_blank">Early Years Foundation Stage</a></li>
-                    <li><a href="https://www.pacey.org.uk/training-and-qualifications/training-from-pacey/pre-registration-courses/" class="external-link" target="_blank">Professional Association for Childcare and Early Years (PACEY)</a></li>
-                    <li><a href="http://www.ndna.org.uk/NDNA/Training/EYFS.aspx" class="external-link" target="_blank">National Day Nurseries Association</a></li>
+                    <li><a href="https://www.gov.uk/government/publications/early-years-foundation-stage-framework--2"
+                           class="external-link" target="_blank">Early Years Foundation Stage</a></li>
+                    <li>
+                        <a href="https://www.pacey.org.uk/training-and-qualifications/training-from-pacey/pre-registration-courses/"
+                           class="external-link" target="_blank">Professional Association for Childcare and Early Years
+                            (PACEY)</a></li>
+                    <li><a href="http://www.ndna.org.uk/NDNA/Training/EYFS.aspx" class="external-link" target="_blank">National
+                        Day Nurseries Association</a></li>
                 </ul>
             </div>
         </details>
     </div>
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <div class="grid-row">
             <h2 class="heading-medium">
                 Ready to apply?
@@ -84,7 +87,7 @@
                 </div>
             </fieldset>
         </div>
-        <input type="hidden" value="{{application_id}}" name = "id" />
+        <input type="hidden" value="{{application_id}}" name="id"/>
         <div class="form-group grid-row">
             <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="button">Confirm and pay your fee</a>
         </div>

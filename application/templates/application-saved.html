@@ -6,25 +6,25 @@
 {% block inner_content %}
 
 <form action="application-saved" method="post" class="form">
-	<div class="grid-row">
-		<div class="column-two-thirds">
-			<h1 class="form-title heading-large">
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="form-title heading-large">
                 Application saved
             </h1>
-		    <p>You have saved your information in your childminder application.</p>
-		    <p>We have sent you a link so you can come back at any time.</p>
-		</div>
-	</div>
-	{{form.as_div}}
+            <p>You have saved your information in your childminder application.</p>
+            <p>We have sent you a link so you can come back at any time.</p>
+        </div>
+    </div>
+    {{form.as_div}}
     {% csrf_token %}
-	<input type="hidden" value="{{application_id}}" name = "id" />
-	<div class="grid-row">
-		<div class="column-two-thirds">
-		    <div class="form-group">
-		    	<a href="{{ URL_PREFIX }}/existing-application">Log into your application</a>
-			</div>
-		</div>
-	</div>
+    <input type="hidden" value="{{application_id}}" name="id"/>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <div class="form-group">
+                <a href="{{ URL_PREFIX }}/existing-application">Log into your application</a>
+            </div>
+        </div>
+    </div>
 </form>
-            
+
 {% endblock %}

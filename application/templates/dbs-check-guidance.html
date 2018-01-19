@@ -6,33 +6,31 @@
 {% block inner_content %}
 
 <div class="column-full">
-	<div class="grid-row" style="padding-top: 30px;">
-		<!-- Back button -->
-		<a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" style="margin-right: 10px; line-height: 28px" alt="Back to application list">
-			<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
-				<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
-			</svg>
-			Back
-		</a>
-	</div>
-	<!-- Form -->
-	<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
-		<!-- Content -->
-		<div class="grid-row">
-			<h1 class="form-title heading-large">
-				Criminal record (DBS) check
-			</h1>
-			<p>You have to apply for a criminal record (DBS) check.</p>
-			<p>This must be an enhanced check for a home-based childcare role.</p>
-			<p>The check costs &#163;52.10.</p>
-			<p>It can take about 6 weeks to get your certificate.</p>
-			<p>We ask about other DBS checks in the 'people in your home' section.</p>
-			{{form.as_div}}
-			{% csrf_token %}
-			<input type="submit" class="button" value="Continue" alt='Continue to DBS details'>
-			<input type="hidden" id="id" name="id" value="{{application_id}}" />
-		</div>
-	</form>
+    <div class="grid-row" style="padding-top: 30px;">
+        <!-- Back button -->
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
+           style="margin-right: 10px; line-height: 28px" alt="Back to application list">
+            Back
+        </a>
+    </div>
+    <!-- Form -->
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        <!-- Content -->
+        <div class="grid-row">
+            <h1 class="form-title heading-large">
+                Criminal record (DBS) check
+            </h1>
+            <p>You have to apply for a criminal record (DBS) check.</p>
+            <p>This must be an enhanced check for a home-based childcare role.</p>
+            <p>The check costs &#163;52.10.</p>
+            <p>It can take about 6 weeks to get your certificate.</p>
+            <p>We ask about other DBS checks in the 'people in your home' section.</p>
+            {{form.as_div}}
+            {% csrf_token %}
+            <input type="submit" class="button" value="Continue" alt='Continue to DBS details'>
+            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+        </div>
+    </form>
 </div>
 
 {% endblock %}

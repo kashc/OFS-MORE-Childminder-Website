@@ -6,31 +6,25 @@
 {% block inner_content %}
 
 <form action="eyfs" method="post" class="form">
-	<div class="grid-row" style="padding-top: 30px;">
-    	<a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" style="margin-right: 10px; line-height: 28px">
-        	<svg width="18px" height="17px" viewBox="0 -30 10 110" xml:space="preserve">
-        		<polyline fill="solid" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "></polyline>
-        	</svg>
-        	Back
-    	</a>
-	</div>
-    <div class="grid-row">
+    <div style="padding-top: 30px;">
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
+           style="margin-right: 10px; line-height: 28px">
+            Back
+        </a>
+    </div>
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <h1 class="form-title heading-large">
-        	Early Years Foundation Stage
+            Early Years Foundation Stage
         </h1>
         <p>Some text on this page to illustrate that you need to have EYFS knowledge.</p>
-    </div>
-	{% csrf_token %}
-	{{form.as_div}}
-	<input type="hidden" value="{{application_id}}" name = "id" />
-    <div class="form-group grid-row">
-    	<input type="submit" class="button" value="Save and continue">
-	</div>
-	<div class="grid-row">
-    	<div class="form-group">
-    		<a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-		</div>
-	</div>
-</form>
-            
-{% endblock %}
+        {% csrf_token %}
+        {{form.as_div}}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Save and continue">
+        <br>
+        <br>
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+        </div>
+    </form>
+
+    {% endblock %}
