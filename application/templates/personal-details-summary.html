@@ -17,7 +17,7 @@
     <div class="grid-row">
         <h1 class="form-title heading-large">Check your answers: your personal details</h1>
     </div>
-    <table class="check-your-answers grid-row">
+    <table class="check-your-answers grid-row" style="table-layout: fixed; width: 100%">
         <thead>
         <tr>
             <th colspan="3">
@@ -33,11 +33,11 @@
                 Your name
             </td>
             {% if middle_names %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{first_name}} {{middle_names}} {{last_name}}
             </td>
             {% elif not middle_names %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{first_name}} {{last_name}}
             </td>
             {% endif %}
@@ -52,35 +52,35 @@
                 Your date of birth
             </td>
             {% if birth_month == 1 %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{birth_day}} January {{birth_year}}
             </td>
             {% elif birth_month == 2 %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{birth_day}} February {{birth_year}}
             </td>
             {% elif birth_month == 3 %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{birth_day}} March {{birth_year}}
             </td>
             {% elif birth_month == 4 %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{birth_day}} April {{birth_year}}
             </td>
             {% elif birth_month == 5 %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{birth_day}} May {{birth_year}}
             </td>
             {% elif birth_month == 6 %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{birth_day}} June {{birth_year}}
             </td>
             {% elif birth_month == 7 %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{birth_day}} July {{birth_year}}
             </td>
             {% elif birth_month == 8 %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{birth_day}} August {{birth_year}}
             </td>
             {% elif birth_month == 9 %}
@@ -90,13 +90,13 @@
             {% elif birth_month == 10 %}
             <td>
                 {{birth_day}} October {{birth_year}}
-            </td>
+            </td style="word-wrap: break-word">
             {% elif birth_month == 11 %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{birth_day}} November {{birth_year}}
             </td>
             {% elif birth_month == 12 %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{birth_day}} December {{birth_year}}
             </td>
             {% endif %}
@@ -124,7 +124,7 @@
                 Home address
             </td>
             {% if street_line2 and county %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{street_line1}}
                 </br>
                 {{street_line2}}
@@ -136,7 +136,7 @@
                 {{postcode}}
             </td>
             {% elif street_line2 and not county %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{street_line1}}
                 </br>
                 {{street_line2}}
@@ -146,7 +146,7 @@
                 {{postcode}}
             </td>
             {% elif not street_line2 and county %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{street_line1}}
                 </br>
                 {{town}}
@@ -156,7 +156,7 @@
                 {{postcode}}
             </td>
             {% elif not street_line2 and not county %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{street_line1}}
                 </br>
                 {{town}}
@@ -176,12 +176,12 @@
                 Childcare location
             </td>
             {% if location_of_childcare == True %}
-            <td>
+            <td style="word-wrap: break-word">
                 Same as home address
             </td>
             {% elif location_of_childcare == False %}
             {% if childcare_street_line2 and childcare_county %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{childcare_street_line1}}
                 </br>
                 {{childcare_street_line2}}
@@ -193,7 +193,7 @@
                 {{childcare_postcode}}
             </td>
             {% elif childcare_street_line2 and not childcare_county %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{childcare_street_line1}}
                 </br>
                 {{childcare_street_line2}}
@@ -203,7 +203,7 @@
                 {{childcare_postcode}}
             </td>
             {% elif not childcare_street_line2 and childcare_county %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{childcare_street_line1}}
                 </br>
                 {{childcare_town}}
@@ -213,7 +213,7 @@
                 {{childcare_postcode}}
             </td>
             {% elif not childcare_street_line2 and not childcare_county %}
-            <td>
+            <td style="word-wrap: break-word">
                 {{childcare_street_line1}}
                 </br>
                 {{childcare_town}}

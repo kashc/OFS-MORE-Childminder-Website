@@ -19,7 +19,7 @@
     <div class="grid-row">
         <h1 class="form-title heading-large">Check your answers: your health</h1>
     </div>
-    <table class="check-your-answers grid-row">
+    <table class="check-your-answers grid-row" style="table-layout: fixed; width: 100%">
         <thead>
         <tr>
             <th colspan="3">
@@ -35,11 +35,11 @@
                 Will you submit a health declaration booklet to Ofsted?
             </td>
             {% if send_hdb_declare is True %}
-            <td>
+            <td style="word-wrap: break-word">
                 Yes
             </td>
             {% elif send_hdb_declare is False %}
-            <td>
+            <td style="word-wrap: break-word">
                 No
             </td>
             {% endif %}

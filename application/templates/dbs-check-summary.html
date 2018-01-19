@@ -27,7 +27,7 @@
     <div class="grid-row">
         <h1 class="form-title heading-large">Check your answers: your criminal record check</h1>
     </div>
-    <table class="check-your-answers grid-row">
+    <table class="check-your-answers grid-row" style="table-layout: fixed; width: 100%">
         <thead>
             <tr>
                 <th colspan="3">
@@ -42,7 +42,7 @@
                 <td>
                     DBS certificate number
                 </td>
-                <td>
+                <td style="word-wrap: break-word">
                     {{dbs_certificate_number}}
                 </td>
                 <td class="change-answer">
@@ -56,11 +56,11 @@
                     Do you have any cautions or convictions?
                 </td>
                 {% if cautions_convictions is True %}
-                <td>
+                <td style="word-wrap: break-word">
                     Yes
                 </td>
                 {% elif cautions_convictions is False %}
-                <td>
+                <td style="word-wrap: break-word">
                     No
                 </td>
                 {% endif %}
@@ -72,15 +72,15 @@
             </tr>
             {% if cautions_convictions is True %}
             <tr>
-                <td>
+                <td style="word-wrap: break-word">
                     Will you send your DBS certificate to Ofsted?
                 </td>
                 {% if declaration is True %}
-                <td>
+                <td style="word-wrap: break-word">
                     Yes
                 </td>
                 {% elif declaration is False %}
-                <td>
+                <td style="word-wrap: break-word">
                     No
                 </td>
                 {% endif %}
