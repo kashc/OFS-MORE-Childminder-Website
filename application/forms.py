@@ -577,7 +577,7 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         :return: string
         """
         town = self.cleaned_data['town']
-        if re.match("^[A-Za-z-]+$", town) is None:
+        if re.match("^[A-Za-z- ]+$", town) is None:
             raise forms.ValidationError('TBC')
         if len(town) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -590,7 +590,7 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         """
         county = self.cleaned_data['county']
         if county != '':
-            if re.match("^[A-Za-z-]+$", county) is None:
+            if re.match("^[A-Za-z- ]+$", county) is None:
                 raise forms.ValidationError('TBC')
             if len(county) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
@@ -946,7 +946,7 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
         :return: string
         """
         town = self.cleaned_data['town']
-        if re.match("^[A-Za-z-]+$", town) is None:
+        if re.match("^[A-Za-z- ]+$", town) is None:
             raise forms.ValidationError('TBC')
         if len(town) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -959,7 +959,7 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
         """
         county = self.cleaned_data['county']
         if county != '':
-            if re.match("^[A-Za-z-]+$", county) is None:
+            if re.match("^[A-Za-z- ]+$", county) is None:
                 raise forms.ValidationError('TBC')
             if len(county) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1150,7 +1150,7 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         :return: string
         """
         town = self.cleaned_data['town']
-        if re.match("^[A-Za-z-]+$", town) is None:
+        if re.match("^[A-Za-z- ]+$", town) is None:
             raise forms.ValidationError('TBC')
         if len(town) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1163,7 +1163,7 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         """
         county = self.cleaned_data['county']
         if county != '':
-            if re.match("^[A-Za-z-]+$", county) is None:
+            if re.match("^[A-Za-z- ]+$", county) is None:
                 raise forms.ValidationError('TBC')
             if len(county) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
