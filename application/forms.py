@@ -381,8 +381,8 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    street_name_and_number = forms.CharField(label='Street name and number')
-    street_name_and_number2 = forms.CharField(label='Street name and number 2', required=False)
+    street_name_and_number = forms.CharField(label='Address line 1')
+    street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city')
     county = forms.CharField(label='County (optional)', required=False)
     postcode = forms.CharField(label='Postcode')
@@ -524,8 +524,8 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    street_name_and_number = forms.CharField(label='Street name and number')
-    street_name_and_number2 = forms.CharField(label='Street name and number 2', required=False)
+    street_name_and_number = forms.CharField(label='Address line 1')
+    street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city')
     county = forms.CharField(label='County (optional)', required=False)
     postcode = forms.CharField(label='Postcode')
@@ -895,8 +895,8 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    street_name_and_number = forms.CharField(label='Street name and number')
-    street_name_and_number2 = forms.CharField(label='Street name and number 2', required=False)
+    street_name_and_number = forms.CharField(label='Address line 1')
+    street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city')
     county = forms.CharField(label='County (optional)', required=False)
     postcode = forms.CharField(label='Postcode')
@@ -1099,8 +1099,8 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    street_name_and_number = forms.CharField(label='Street name and number')
-    street_name_and_number2 = forms.CharField(label='Street name and number 2', required=False)
+    street_name_and_number = forms.CharField(label='Address line 1')
+    street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city')
     county = forms.CharField(label='County (optional)', required=False)
     postcode = forms.CharField(label='Postcode')
