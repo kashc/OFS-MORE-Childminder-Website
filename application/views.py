@@ -1959,6 +1959,7 @@ def card_payment_details(request):
                                                                           application_id_local).personal_detail_id
                 applicant_name_record = ApplicantName.objects.get(personal_detail_id=personal_detail_id)
                 payment.payment_email(login_record.email, applicant_name_record.first_name)
+                print('Email sent')
                 order_code = parsed_payment_response["orderCode"]
                 variables = {
                     'form': form,
