@@ -23,6 +23,7 @@
 
 .grid-row {
   margin: 0 -15px;
+  float: left\9;  /* IE8 and below */
 }
 
 .grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after, .form-group:after, .form-block:after, .breadcrumbs ol:after, .task-list-item:after {
