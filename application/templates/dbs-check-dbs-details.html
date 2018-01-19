@@ -9,18 +9,18 @@
 {{form.error_summary}}
 
 <div class="column-full">
-    <div class="grid-row" style="padding-top: 30px;">
+    <div class="form-group grid-row" style="padding-top: 30px;">
         <a href="{{ URL_PREFIX }}/dbs-check/guidance?id={{application_id}}" class="link-back" style="margin-right: 10px; line-height: 28px" alt="Back to application list">
             Back
         </a>
     </div>
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
-        <div class="grid-row">
+        <div class="form-group grid-row">
             <h1 class="form-title heading-large">
                 Your criminal record (DBS) check details
             </h1>
         </div>
-        <div class="grid-row">
+        <div class="form-group grid-row">
             <p>Please give us details of your Disclosure and Barring Service (DBS) certificate.</p>
             <p>Ofsted is separate from DBS and won't have this information.</p>
             <details style="margin-bottom: 15px;" role="group">
