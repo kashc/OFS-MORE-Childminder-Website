@@ -406,10 +406,10 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
-        applicant_home_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                  current_address=True)
         if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
                                                current_address=True).count() > 0:
+            applicant_home_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                      current_address=True)
             self.fields['street_name_and_number'].initial = applicant_home_address.street_line1
             self.fields['street_name_and_number2'].initial = applicant_home_address.street_line2
             self.fields['town'].initial = applicant_home_address.town
@@ -549,10 +549,10 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
-        childcare_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                             childcare_address='True')
         if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
                                                childcare_address='True').count() > 0:
+            childcare_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                 childcare_address='True')
             self.fields['street_name_and_number'].initial = childcare_address.street_line1
             self.fields['street_name_and_number2'].initial = childcare_address.street_line2
             self.fields['town'].initial = childcare_address.town
