@@ -397,3 +397,17 @@ def get_card_expiry_years():
         now = datetime.datetime.now()
         year_list.append((now.year + year_iterable, (str(now.year + year_iterable))))
     return year_list
+
+
+def login_contact_security_question(application_id_local, form):
+    """
+    Business logic to create or update a User_Details record with phone number details
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: a UserDetails object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    security_answer = form.cleaned_data.get('security_answer')
+    login_and_contact_details_record = this_application.login_id
+    login_and_contact_details_record.security_answer = security_answer
+    return login_and_contact_details_record

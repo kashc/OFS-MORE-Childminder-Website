@@ -270,6 +270,14 @@ def contact_question(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             # Do not update User_Details record (awaiting confirmation from Ofsted)
+            login_id = application.login_id.login_id
+            acc = UserDetails.objects.get(login_id=login_id)
+            security_answer = form.clean_security_answer()
+            security_question = form.clean_security_question()
+            acc.security_question = security_question
+            acc.security_answer = security_answer
+            acc.save()
+
             return HttpResponseRedirect(settings.URL_PREFIX + '/account/summary?id=' + application_id_local)
         else:
             variables = {

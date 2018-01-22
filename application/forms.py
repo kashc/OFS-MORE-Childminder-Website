@@ -121,8 +121,8 @@ class QuestionForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    question = forms.CharField(label='Knowledge based question', required=True)
-
+    security_question = forms.CharField(label='Knowledge based question', required=True)
+    security_answer = forms.CharField(label='Knowledge based answer', required=True)
     def __init__(self, *args, **kwargs):
         """
         Method to configure the initialisation of the Your login and contact details: knowledge based question form
@@ -132,6 +132,14 @@ class QuestionForm(GOVUKForm):
         self.application_id_local = kwargs.pop('id')
         super(QuestionForm, self).__init__(*args, **kwargs)
 
+    def clean_security_question(self):
+        security_question = self.cleaned_data['security_question']
+
+        return security_question
+
+    def clean_security_answer(self):
+        security_answer = self.cleaned_data['security_answer']
+        return security_answer
 
 class ContactSummaryForm(GOVUKForm):
     """
@@ -253,19 +261,15 @@ class VerifySecurityQuestionForm(GOVUKForm):
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
-        self.security_answer = kwargs.pop('id')
+        self.application_id_local = kwargs.pop('id')
         super(VerifySecurityQuestionForm, self).__init__(*args, **kwargs)
 
-    def clean_magic_link_sms(self):
-        """
-        SMS code validation
-        :return: string
-        """
+    def clean_security_answer(self):
+
         security_answer = self.cleaned_data['security_answer']
-        if (UserDetails.objects.filter(magic_link_email=self.security_answer).count()
-                == 0):
-            raise forms.ValidationError('TBC')
+
         return security_answer
+
 
 class PersonalDetailsGuidanceForm(GOVUKForm):
     """
@@ -1420,12 +1424,3 @@ class ApplicationSavedForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class SecurityQuestion(GOVUKForm):
-    field_label_classes = 'form-label-bold'
-    auto_replace_widgets = True
-
-    question = forms.CharField(label='Knowledge based question', required=True)
-
-    def __init__(self, *args, **kwargs):
-        self.application_id_local = kwargs.pop('id')
-        super(SecurityQuestion, self).__init__(*args, **kwargs)
