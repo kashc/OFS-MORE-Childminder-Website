@@ -1892,7 +1892,7 @@ def payment_selection(request):
             elif payment_method == 'PayPal':
                 paypal_url = payment.make_paypal_payment("GB", 3500, "GBP", "Childminder Registration Fee",
                                                          application_id_local, application_url_base +
-                                                         "/confirmation/?id=" + application_id_local,
+                                                         "/paypal-payment-completion/?id=" + application_id_local,
 
                                                          application_url_base +
                                                          "/payment/?id=" + application_id_local,
@@ -1985,6 +1985,27 @@ def card_payment_details(request):
             }
             return render(request, 'payment-details.html', variables)
 
+
+def paypal_payment_completion(request):
+    if request.method == 'GET':
+        application_id_local = request.GET['id']
+        order_code = request.GET['orderCode']
+        # If the payment has been successfully processed
+        if payment.check_payment(order_code) == 200:
+            variables = {
+                'application_id': application_id_local,
+                'order_code': request.GET["orderCode"],
+            }
+
+            application = Application.objects.get(pk=application_id_local)
+            application.order_code = UUID(order_code)
+            application.save()
+
+            return HttpResponseRedirect(settings.URL_PREFIX + '/confirmation/?id=' + application_id_local +
+                                        '&orderCode=' + order_code, variables)
+        else:
+            print('HELP')
+            return render(request, '500.html')
 
 def payment_confirmation(request):
     """
