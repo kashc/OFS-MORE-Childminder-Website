@@ -5,8 +5,16 @@
 
 {% block inner_content %}
 
+<head>
+    <style>
+        #content {
+            margin: auto;
+        }
+
+    </style>
+</head>
 <div class="column-full">
-    <div class="grid-row" style="padding-top: 30px;">
+    <div class="form-group grid-row" style="padding-top: 30px;">
         <!-- Back button -->
         <a href="{{ URL_PREFIX }}/account/question?id={{application_id}}" class="link-back"
            style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
@@ -17,7 +25,7 @@
         <h1 class="form-title heading-large">Check your answers: your login details</h1>
     </div>
     <!-- Login details -->
-    <table class="check-your-answers grid-row" style="table-layout: fixed; width: 100%">
+    <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
         <thead>
         <tr>
             <th colspan="3">

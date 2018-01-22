@@ -8,6 +8,14 @@
 <!-- Initialise error summary for page -->
 {{form.error_summary}}
 
+<head>
+    <style>
+        #content {
+            margin: auto;
+        }
+
+    </style>
+</head>
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
         <!-- Back button -->
@@ -27,8 +35,6 @@
             <h2 class="form-title heading-medium">
                 I declare that:
             </h2>
-        </div>
-        <div class="form-group grid-row">
             {{form.as_div}}
             {% csrf_token %}
             <input type="submit" class="button" value="Continue" alt='Continue to declaration'>
