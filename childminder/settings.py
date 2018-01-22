@@ -97,21 +97,11 @@ WSGI_APPLICATION = 'childminder.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'ofsted',
-        'PASSWORD': 'OfstedB3ta',
-        'HOST': '130.130.52.132',
-        'PORT': '5462',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db.sqlite3',
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': 'db.sqlite3',
-#     }
-# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

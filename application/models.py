@@ -21,6 +21,8 @@ class UserDetails(models.Model):
     sms_expiry_date = models.IntegerField(blank=True, null=True)
     magic_link_email = models.CharField(max_length=100, blank=True, null=True)
     magic_link_sms = models.CharField(max_length=100, blank=True, null=True)
+    security_question =models.CharField(max_length=100, blank=True, null=True)
+    security_answer = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         db_table = 'USER_DETAILS'

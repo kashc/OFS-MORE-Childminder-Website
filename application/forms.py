@@ -239,6 +239,34 @@ class VerifyPhoneForm(GOVUKForm):
         return magic_link_sms
 
 
+class VerifySecurityQuestionForm(GOVUKForm):
+    """
+    GOV.UK form for the page to verify an SMS code
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    security_answer = forms.CharField(label='Security Question', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the SMS code verification form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.security_answer = kwargs.pop('id')
+        super(VerifySecurityQuestionForm, self).__init__(*args, **kwargs)
+
+    def clean_magic_link_sms(self):
+        """
+        SMS code validation
+        :return: string
+        """
+        security_answer = self.cleaned_data['security_answer']
+        if (UserDetails.objects.filter(magic_link_email=self.security_answer).count()
+                == 0):
+            raise forms.ValidationError('TBC')
+        return security_answer
+
 class PersonalDetailsGuidanceForm(GOVUKForm):
     """
     GOV.UK form for the Your personal details: guidance page

@@ -75,8 +75,8 @@ urlpatterns = [
     url(r'^code-expired/', TemplateView.as_view(template_name='code-expired.html')),
     url(r'^bad-link/', TemplateView.as_view(template_name='bad-link.html')),
     url(r'^link-resolution-error/', TemplateView.as_view(template_name='link-resolution-error.html')),
-    url(r'^sq_test/', security_question.start),
-    url(r'^security_question/', security_question.load)
+    url(r'^security-question/(?P<id>[\w-]+)/$', security_question.load),
+    url(r'^security-question/$', security_question.load),
 ]
 
 if settings.URL_PREFIX:
