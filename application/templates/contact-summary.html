@@ -11,6 +11,7 @@
             margin: auto;
         }
 
+
     </style>
 </head>
 <div class="column-full">
@@ -83,10 +84,24 @@
                 Knowledge based question
             </td>
             <td style="word-wrap: break-word">
-                Answer
+                {{security_question}}
             </td>
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/account/question?id={{application_id}}#id_question"
+                <a href="{{ URL_PREFIX }}/account/question?id={{application_id}}#id_security_question"
+                   alt='Change knowledge based question'>
+                    Change <span class="visuallyhidden">knowledge based question</span>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Knowledge based answer
+            </td>
+            <td style="word-wrap: break-word">
+                {{security_answer}}
+            </td>
+            <td class="change-answer">
+                <a href="{{ URL_PREFIX }}/account/question?id={{application_id}}#id_security_answer"
                    alt='Change answer to knowledge based question'>
                     Change <span class="visuallyhidden">answer to knowledge based question</span>
                 </a>

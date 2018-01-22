@@ -123,6 +123,7 @@ class QuestionForm(GOVUKForm):
     auto_replace_widgets = True
     security_question = forms.CharField(label='Knowledge based question', required=True)
     security_answer = forms.CharField(label='Knowledge based answer', required=True)
+
     def __init__(self, *args, **kwargs):
         """
         Method to configure the initialisation of the Your login and contact details: knowledge based question form
@@ -131,15 +132,25 @@ class QuestionForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(QuestionForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            this_user = Application.objects.get(pk=self.application_id_local)
+            login_id = this_user.login_id.login_id
+            self.fields['security_question'].initial = UserDetails.objects.get(login_id=login_id).security_question
+            self.fields['security_answer'].initial = UserDetails.objects.get(login_id=login_id).security_answer
 
     def clean_security_question(self):
         security_question = self.cleaned_data['security_question']
-
+        if len(security_question) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
         return security_question
 
     def clean_security_answer(self):
         security_answer = self.cleaned_data['security_answer']
+        if len(security_answer) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
         return security_answer
+
 
 class ContactSummaryForm(GOVUKForm):
     """
@@ -253,7 +264,7 @@ class VerifySecurityQuestionForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    security_answer = forms.CharField(label='Security Question', required=True)
+    security_answer = forms.CharField(label='Security question', required=True)
 
     def __init__(self, *args, **kwargs):
         """
@@ -265,9 +276,9 @@ class VerifySecurityQuestionForm(GOVUKForm):
         super(VerifySecurityQuestionForm, self).__init__(*args, **kwargs)
 
     def clean_security_answer(self):
-
         security_answer = self.cleaned_data['security_answer']
-
+        if UserDetails.objects.filter(security_answer=security_answer).count() == 0:
+            raise forms.ValidationError('TBC')
         return security_answer
 
 
@@ -1422,5 +1433,3 @@ class ApplicationSavedForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-
-
