@@ -1,20 +1,26 @@
 from django.conf import settings
-from django.contrib.sites import requests
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .middleware import CustomAuthenticationHandler
 from .forms import VerifySecurityQuestionForm
+from .middleware import CustomAuthenticationHandler
 from .models import Application, UserDetails
 
 
 def load(request):
+    """
+
+    :param request: django request
+    :return: render html content
+    """
+    # Load form and security question
     application_id_local = request.GET['id']
     # Initialise the Your login and contact details form
     form = VerifySecurityQuestionForm(request.POST, id=application_id_local)
     application = Application.objects.get(pk=application_id_local)
     login_id = application.login_id.login_id
     acc = UserDetails.objects.get(login_id=login_id)
+    # Get security question
     security_question = acc.security_question
     if request.method == 'POST':
 
@@ -40,4 +46,5 @@ def load(request):
             }
             # Return to the same page
             return render(request, 'security_question.html', variables)
-    return render(request, 'security_question.html', {'form': form, 'application_id':application_id_local, 'question':security_question})
+    return render(request, 'security_question.html',
+                  {'form': form, 'application_id': application_id_local, 'question': security_question})

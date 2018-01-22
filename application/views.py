@@ -9,15 +9,14 @@ import datetime
 import json
 import re
 import time
-
 from datetime import date
+from uuid import UUID
+
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.cache import never_cache
-from uuid import UUID
 
-from .middleware import CustomAuthenticationHandler
 from . import magic_link, payment, status
 from .business_logic import (childcare_type_logic,
                              dbs_check_logic,
@@ -33,59 +32,22 @@ from .business_logic import (childcare_type_logic,
                              personal_name_logic,
                              references_first_reference_logic,
                              references_second_reference_logic)
-from .forms import (AccountForm,
-                    ApplicationSavedForm,
-                    ConfirmForm,
-                    ContactEmailForm,
-                    ContactPhoneForm,
-                    ContactSummaryForm,
-                    DBSCheckDBSDetailsForm,
-                    DBSCheckGuidanceForm,
-                    DBSCheckSummaryForm,
-                    DBSCheckUploadDBSForm,
-                    DeclarationForm,
-                    EYFSForm,
-                    FirstAidTrainingDeclarationForm,
-                    FirstAidTrainingDetailsForm,
-                    FirstAidTrainingGuidanceForm,
-                    FirstAidTrainingRenewForm,
-                    FirstAidTrainingSummaryForm,
-                    FirstAidTrainingTrainingForm,
-                    HealthBookletForm,
-                    HealthIntroForm,
-                    OtherPeopleForm,
-                    PaymentDetailsForm,
-                    PaymentForm,
-                    PersonalDetailsChildcareAddressForm,
-                    PersonalDetailsChildcareAddressManualForm,
-                    PersonalDetailsDOBForm,
-                    PersonalDetailsGuidanceForm,
-                    PersonalDetailsHomeAddressForm,
-                    PersonalDetailsHomeAddressManualForm,
-                    PersonalDetailsLocationOfCareForm,
-                    PersonalDetailsNameForm,
-                    PersonalDetailsSummaryForm,
-                    QuestionForm,
-                    FirstReferenceForm,
-                    ReferenceIntroForm,
-                    ReferenceFirstReferenceAddressForm,
-                    ReferenceFirstReferenceAddressManualForm,
-                    ReferenceFirstReferenceContactForm,
-                    ReferenceSecondReferenceAddressForm,
-                    ReferenceSecondReferenceAddressManualForm,
-                    ReferenceSecondReferenceContactForm,
-                    ReferenceSummaryForm,
-                    SecondReferenceForm,
-                    TypeOfChildcareForm)
-from .models import (Application,
-                     ApplicantHomeAddress,
-                     ApplicantName,
-                     ApplicantPersonalDetails,
-                     CriminalRecordCheck,
-                     FirstAidTraining,
-                     HealthDeclarationBooklet,
-                     Reference,
-                     UserDetails)
+from .forms import (AccountForm, ApplicationSavedForm, ConfirmForm, ContactEmailForm, ContactPhoneForm,
+                    ContactSummaryForm, DBSCheckDBSDetailsForm, DBSCheckGuidanceForm, DBSCheckSummaryForm,
+                    DBSCheckUploadDBSForm, DeclarationForm, EYFSForm, FirstAidTrainingDeclarationForm,
+                    FirstAidTrainingDetailsForm, FirstAidTrainingGuidanceForm, FirstAidTrainingRenewForm,
+                    FirstAidTrainingSummaryForm, FirstAidTrainingTrainingForm, FirstReferenceForm, HealthBookletForm,
+                    HealthIntroForm, OtherPeopleForm, PaymentDetailsForm, PaymentForm,
+                    PersonalDetailsChildcareAddressForm, PersonalDetailsChildcareAddressManualForm,
+                    PersonalDetailsDOBForm, PersonalDetailsGuidanceForm, PersonalDetailsHomeAddressForm,
+                    PersonalDetailsHomeAddressManualForm, PersonalDetailsLocationOfCareForm, PersonalDetailsNameForm,
+                    PersonalDetailsSummaryForm, QuestionForm, ReferenceFirstReferenceAddressForm,
+                    ReferenceFirstReferenceAddressManualForm, ReferenceFirstReferenceContactForm, ReferenceIntroForm,
+                    ReferenceSecondReferenceAddressForm, ReferenceSecondReferenceAddressManualForm,
+                    ReferenceSecondReferenceContactForm, ReferenceSummaryForm, SecondReferenceForm, TypeOfChildcareForm)
+from .middleware import CustomAuthenticationHandler
+from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, CriminalRecordCheck,
+                     FirstAidTraining, HealthDeclarationBooklet, Reference, UserDetails)
 
 
 def error_404(request):
@@ -268,8 +230,9 @@ def contact_question(request):
         application_id_local = request.POST["id"]
         form = QuestionForm(request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
+        # If form is not empty
         if form.is_valid():
-            # Do not update User_Details record (awaiting confirmation from Ofsted)
+            # Save security question and answer
             login_id = application.login_id.login_id
             acc = UserDetails.objects.get(login_id=login_id)
             security_answer = form.clean_security_answer()
