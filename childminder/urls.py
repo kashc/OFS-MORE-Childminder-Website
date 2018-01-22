@@ -64,6 +64,7 @@ urlpatterns = [
     url(r'^confirm-your-answers/', views.confirmation, name='Confirmation-View'),
     url(r'^payment/', views.payment_selection, name='Payment-View'),
     url(r'^payment-details/', views.card_payment_details, name='Payment-Details-View'),
+    url(r'^paypal-payment-completion/', views.paypal_payment_completion, name='Paypal-Payment-Completion-View'),
     url(r'^application-saved/', views.application_saved, name='Application-Saved-View'),
     url(r'^admin/', admin.site.urls),
     url(r'^existing-application/', magic_link.existing_application, name='Existing-Application'),
