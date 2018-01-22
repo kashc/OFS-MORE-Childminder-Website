@@ -5,21 +5,29 @@
 
 {% block inner_content %}
 
+<head>
+    <style>
+        #content {
+            margin: auto;
+        }
+
+    </style>
+</head>
 <div class="column-two-thirds">
-    <div class="grid-row" style="padding-top: 30px;">
+    <div class="form-group grid-row" style="padding-top: 30px;">
         <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
            style="margin-right: 10px; line-height: 28px">
             Back
         </a>
     </div>
-    <div class="grid-row">
+    <div class="form-group grid-row">
         <h1 class="form-title heading-large">
             Declaration and consent
         </h1>
         <p>Ofsted will have to check your details, inspect your home and interview you after you apply.</p>
         <p>The interview will include questions on the Early Years Foundation Stage (EYFS).</p>
     </div>
-    <div class="grid-row">
+    <div class="form-group grid-row">
         <details role="group">
             <summary role="button" aria-controls="details-content-0" aria-expanded="false">
                 <span class="summary">What is the EYFS?</span>
@@ -43,7 +51,7 @@
         </details>
     </div>
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="grid-row">
+        <div class="form-group grid-row">
             <h2 class="heading-medium">
                 Ready to apply?
             </h2>

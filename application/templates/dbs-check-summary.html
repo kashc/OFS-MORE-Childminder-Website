@@ -5,8 +5,16 @@
 
 {% block inner_content %}
 
+<head>
+    <style>
+        #content {
+            margin: auto;
+        }
+
+    </style>
+</head>
 <div class="column-full">
-    <div class="grid-row" style="padding-top: 30px;">
+    <div class="form-group grid-row" style="padding-top: 30px;">
         <!-- Back button -->
         {% if cautions_convictions is True %}
         <a href="{{ URL_PREFIX }}/dbs-check/upload-dbs?id={{application_id}}" class="link-back"
@@ -23,7 +31,7 @@
     <div class="grid-row">
         <h1 class="form-title heading-large">Check your answers: your criminal record check</h1>
     </div>
-    <table class="check-your-answers grid-row" style="table-layout: fixed; width: 100%">
+    <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
         <thead>
         <tr>
             <th colspan="3">
