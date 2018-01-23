@@ -14,46 +14,49 @@ from django.urls import resolve
 from uuid import UUID
 
 from application import models
-
+from application.magic_link import (existing_application,
+                                    sms_verification)
 from application.views import (application_saved,
-                    card_payment_details,
-                    confirmation,
-                    contact_email,
-                    contact_phone,
-                    contact_question,
-                    contact_summary,
-                    dbs_check_dbs_details,
-                    dbs_check_guidance,
-                    dbs_check_summary,
-                    dbs_check_upload_dbs,
-                    declaration,
-                    eyfs,
-                    first_aid_training_declaration,
-                    first_aid_training_details,
-                    first_aid_training_guidance,
-                    first_aid_training_renew,
-                    first_aid_training_summary,
-                    first_aid_training_training,
-                    other_people,
-                    payment,
-                    personal_details_childcare_address,
-                    personal_details_dob,
-                    personal_details_guidance,
-                    personal_details_home_address,
-                    personal_details_location_of_care,
-                    personal_details_name,
-                    personal_details_summary,
-                    references_intro,
-                    references_first_reference,
-                    references_first_reference_address,
-                    references_first_reference_contact_details,
-                    references_second_reference,
-                    references_second_reference_address,
-                    references_second_reference_contact_details,
-                    references_summary,
-                    start_page,
-                    task_list,
-                    type_of_childcare)
+                               account_selection,
+                               card_payment_details,
+                               confirmation,
+                               contact_email,
+                               contact_phone,
+                               contact_question,
+                               contact_summary,
+                               dbs_check_dbs_details,
+                               dbs_check_guidance,
+                               dbs_check_summary,
+                               dbs_check_upload_dbs,
+                               declaration,
+                               eyfs,
+                               first_aid_training_declaration,
+                               first_aid_training_details,
+                               first_aid_training_guidance,
+                               first_aid_training_renew,
+                               first_aid_training_summary,
+                               first_aid_training_training,
+                               other_people,
+                               payment,
+                               payment_confirmation,
+                               personal_details_childcare_address,
+                               personal_details_dob,
+                               personal_details_guidance,
+                               personal_details_home_address,
+                               personal_details_location_of_care,
+                               personal_details_name,
+                               personal_details_summary,
+                               references_intro,
+                               references_first_reference,
+                               references_first_reference_address,
+                               references_first_reference_contact_details,
+                               references_second_reference,
+                               references_second_reference_address,
+                               references_second_reference_contact_details,
+                               references_summary,
+                               start_page,
+                               task_list,
+                               type_of_childcare)
 
 
 class StartPageTest(TestCase):
@@ -884,6 +887,13 @@ class ConfirmationTest(TestCase):
             self.assertEqual(0, 0)
 
 
+class AccountSelectionTest(TestCase):
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/account/account/')
+        self.assertEqual(found.func, account_selection)
+
+
 class PaymentTest(TestCase):
 
     def test_url_resolves_to_page(self):
@@ -910,6 +920,30 @@ class PaymentTest(TestCase):
         except:
             self.assertEqual(0, 0)
 
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/paypal-payment-completion/')
+        self.assertEqual(found.func, paypal_payment_completion)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/paypal-payment-completion/?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/confirmation/')
+        self.assertEqual(found.func, payment_confirmation)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/confirmation/?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
 
 class ApplicationSavedTest(TestCase):
 
@@ -921,6 +955,42 @@ class ApplicationSavedTest(TestCase):
         c = Client()
         try:
             c.get(settings.URL_PREFIX + '/application-saved/?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+
+class ExistingApplicationTest(TestCase):
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/existing-application/')
+        self.assertEqual(found.func, existing_application)
+
+
+class ValidateMagicLinkEmailTest(TestCase):
+
+    def test_page_not_displayed_without_magic_link_code(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/validate/')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+
+class ValidateMagicLinkSMSTest(TestCase):
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/verify-phone/')
+        self.assertEqual(found.func, sms_verification)
+
+
+class ValidateMagicLinkSecurityQuestionTest(TestCase):
+
+    def test_page_not_displayed_without_magic_link_code(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/security-question/')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)

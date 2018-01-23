@@ -1982,6 +1982,7 @@ def paypal_payment_completion(request):
             print('HELP')
             return render(request, '500.html')
 
+
 def payment_confirmation(request):
     """
     Method returning the template for the Payment confirmation page (for a given application)
