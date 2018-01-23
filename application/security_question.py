@@ -1,3 +1,10 @@
+"""
+OFS-MORE-CCN3: Apply to be a Childminder Beta
+-- security_question.py --
+
+@author: Informed Solutions
+"""
+
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render

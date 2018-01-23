@@ -190,4 +190,6 @@ def sms_verification(request):
                 else:
                     print(4)
                     return HttpResponseRedirect(settings.URL_PREFIX + '/verify-phone/?id=' + id)
-    return render(request, 'verify-phone.html', {'form': form, 'id': id, 'url': settings.URL_PREFIX +'/security-question?id='+str(application.application_id)})
+    return render(request, 'verify-phone.html', {'form': form, 'id': id,
+                                                 'url': settings.URL_PREFIX + '/security-question?id=' + str(
+                                                     application.application_id)})

@@ -51,11 +51,21 @@ from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetai
 
 
 def error_404(request):
+    """
+    Method returning the 404 error template
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered 404 error template
+    """
     data = {}
     return render(request, '404.html', data)
 
 
 def error_500(request):
+    """
+    Method returning the 500 error template
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered 500 error template
+    """
     data = {}
     return render(request, '500.html', data)
 
