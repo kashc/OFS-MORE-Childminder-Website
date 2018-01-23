@@ -5,14 +5,6 @@
 
 {% block inner_content %}
 
-<head>
-    <style>
-        #content {
-            margin: auto;
-        }
-
-    </style>
-</head>
 <form action="eyfs" method="post" class="form">
     <div style="padding-top: 30px;">
         <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
@@ -33,5 +25,6 @@
         <br>
         <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
     </form>
+</form>
 
-    {% endblock %}
+{% endblock %}
