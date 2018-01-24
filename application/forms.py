@@ -14,8 +14,17 @@ from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
 from .customfields import ExpirySplitDateField, ExpirySplitDateWidget, TimeKnownField
-from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, ChildcareType,
-                     CriminalRecordCheck, FirstAidTraining, HealthDeclarationBooklet, Reference, UserDetails)
+from .models import (ApplicantHomeAddress,
+                     ApplicantName,
+                     ApplicantPersonalDetails,
+                     Application,
+                     ChildcareType,
+                     CriminalRecordCheck,
+                     EYFS,
+                     FirstAidTraining,
+                     HealthDeclarationBooklet,
+                     Reference,
+                     UserDetails)
 
 
 class AccountForm(GOVUKForm):
@@ -735,6 +744,33 @@ class EYFSGuidanceForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
+
+
+class EYFSKnowledgeForm(GOVUKForm):
+    """
+    GOV.UK form for the Early Years knowledge: knowledge page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    options = (
+        ('True', 'Yes'),
+        ('False', 'No')
+    )
+    understand_eyfs = forms.ChoiceField(label='Do you understand the Early Years Foundation Stage?', choices=options,
+                                        widget=InlineRadioSelect, required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Early Years knowledge: knowledge form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(EYFSKnowledgeForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if EYFS.objects.filter(application_id=self.application_id_local).count() > 0:
+            eyfs_record = EYFS.objects.get(application_id=self.application_id_local)
+            self.fields['understand_eyfs'].initial = eyfs_record.eyfs_understand
 
 
 class DBSCheckGuidanceForm(GOVUKForm):

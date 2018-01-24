@@ -40,6 +40,7 @@ urlpatterns = [
     url(r'^first-aid/training/', views.first_aid_training_training, name='First-Aid-Training-Training-View'),
     url(r'^first-aid/summary/', views.first_aid_training_summary, name='First-Aid-Training-Summary-View'),
     url(r'^eyfs/guidance/', views.eyfs_guidance, name='EYFS-Guidance-View'),
+    url(r'^eyfs/knowledge/', views.eyfs_knowledge, name='EYFS-Knowledge-View'),
     url(r'^dbs-check/guidance/', views.dbs_check_guidance, name='DBS-Check-Guidance-View'),
     url(r'^dbs-check/dbs-details/', views.dbs_check_dbs_details, name='DBS-Check-DBS-Details-View'),
     url(r'^dbs-check/upload-dbs/', views.dbs_check_upload_dbs, name='DBS-Check-Upload-DBS-View'),

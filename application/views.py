@@ -20,6 +20,7 @@ from django.views.decorators.cache import never_cache
 from . import magic_link, payment, status
 from .business_logic import (childcare_type_logic,
                              dbs_check_logic,
+                             eyfs_knowledge_logic,
                              first_aid_logic,
                              health_check_logic,
                              login_contact_logic,
@@ -32,22 +33,61 @@ from .business_logic import (childcare_type_logic,
                              personal_name_logic,
                              references_first_reference_logic,
                              references_second_reference_logic)
-from .forms import (AccountForm, ApplicationSavedForm, ConfirmForm, ContactEmailForm, ContactPhoneForm,
-                    ContactSummaryForm, DBSCheckDBSDetailsForm, DBSCheckGuidanceForm, DBSCheckSummaryForm,
-                    DBSCheckUploadDBSForm, DeclarationForm, EYFSGuidanceForm, FirstAidTrainingDeclarationForm,
-                    FirstAidTrainingDetailsForm, FirstAidTrainingGuidanceForm, FirstAidTrainingRenewForm,
-                    FirstAidTrainingSummaryForm, FirstAidTrainingTrainingForm, FirstReferenceForm, HealthBookletForm,
-                    HealthIntroForm, OtherPeopleForm, PaymentDetailsForm, PaymentForm,
-                    PersonalDetailsChildcareAddressForm, PersonalDetailsChildcareAddressManualForm,
-                    PersonalDetailsDOBForm, PersonalDetailsGuidanceForm, PersonalDetailsHomeAddressForm,
-                    PersonalDetailsHomeAddressManualForm, PersonalDetailsLocationOfCareForm, PersonalDetailsNameForm,
-                    PersonalDetailsSummaryForm, QuestionForm, ReferenceFirstReferenceAddressForm,
-                    ReferenceFirstReferenceAddressManualForm, ReferenceFirstReferenceContactForm, ReferenceIntroForm,
-                    ReferenceSecondReferenceAddressForm, ReferenceSecondReferenceAddressManualForm,
-                    ReferenceSecondReferenceContactForm, ReferenceSummaryForm, SecondReferenceForm, TypeOfChildcareForm)
+from .forms import (AccountForm,
+                    ApplicationSavedForm,
+                    ConfirmForm,
+                    ContactEmailForm,
+                    ContactPhoneForm,
+                    ContactSummaryForm,
+                    DBSCheckDBSDetailsForm,
+                    DBSCheckGuidanceForm,
+                    DBSCheckSummaryForm,
+                    DBSCheckUploadDBSForm,
+                    DeclarationForm,
+                    EYFSGuidanceForm,
+                    EYFSKnowledgeForm,
+                    FirstAidTrainingDeclarationForm,
+                    FirstAidTrainingDetailsForm,
+                    FirstAidTrainingGuidanceForm,
+                    FirstAidTrainingRenewForm,
+                    FirstAidTrainingSummaryForm,
+                    FirstAidTrainingTrainingForm,
+                    FirstReferenceForm,
+                    HealthBookletForm,
+                    HealthIntroForm,
+                    OtherPeopleForm,
+                    PaymentDetailsForm,
+                    PaymentForm,
+                    PersonalDetailsChildcareAddressForm,
+                    PersonalDetailsChildcareAddressManualForm,
+                    PersonalDetailsDOBForm,
+                    PersonalDetailsGuidanceForm,
+                    PersonalDetailsHomeAddressForm,
+                    PersonalDetailsHomeAddressManualForm,
+                    PersonalDetailsLocationOfCareForm,
+                    PersonalDetailsNameForm,
+                    PersonalDetailsSummaryForm,
+                    QuestionForm,
+                    ReferenceFirstReferenceAddressForm,
+                    ReferenceFirstReferenceAddressManualForm,
+                    ReferenceFirstReferenceContactForm,
+                    ReferenceIntroForm,
+                    ReferenceSecondReferenceAddressForm,
+                    ReferenceSecondReferenceAddressManualForm,
+                    ReferenceSecondReferenceContactForm,
+                    ReferenceSummaryForm,
+                    SecondReferenceForm,
+                    TypeOfChildcareForm)
 from .middleware import CustomAuthenticationHandler
-from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, CriminalRecordCheck,
-                     FirstAidTraining, HealthDeclarationBooklet, Reference, UserDetails)
+from .models import (ApplicantHomeAddress,
+                     ApplicantName,
+                     ApplicantPersonalDetails,
+                     Application,
+                     CriminalRecordCheck,
+                     FirstAidTraining,
+                     HealthDeclarationBooklet,
+                     Reference,
+                     UserDetails)
 
 
 def error_404(request):
@@ -1028,13 +1068,57 @@ def eyfs_guidance(request):
         if form.is_valid():
             if application.eyfs_training_status != 'COMPLETED':
                 status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/knowledge?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
             return render(request, 'eyfs-guidance.html', variables)
+
+
+def eyfs_knowledge(request):
+    """
+    Method returning the template for the Early Years knowledge: knowledge page (for a given application)
+    and navigating to the Early Years knowledge: training or question page when successfully completed;
+    business logic is applied to either create or update the associated EYFS record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Early Years knowledge: knowledge template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = EYFSKnowledgeForm(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'eyfs_training_status': application.eyfs_training_status
+        }
+        return render(request, 'eyfs-knowledge.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = EYFSKnowledgeForm(request.POST, id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            if application.eyfs_training_status != 'COMPLETED':
+                status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
+            # Create or update EYFS record
+            eyfs_record = eyfs_knowledge_logic(application_id_local, form)
+            eyfs_record.save()
+            application.date_updated = current_date
+            application.save()
+            understand_eyfs = form.cleaned_data['understand_eyfs']
+            if understand_eyfs == 'True':
+                return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/question?id=' + application_id_local)
+            elif understand_eyfs == 'False':
+                return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/training?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'eyfs-knowledge.html', variables)
 
 
 def dbs_check_guidance(request):
