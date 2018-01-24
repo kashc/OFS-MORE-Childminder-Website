@@ -199,7 +199,7 @@ class HealthDeclarationBooklet(models.Model):
     send_hdb_declare = models.NullBooleanField(blank=True)
 
     class Meta:
-        db_table = 'HEALTH_DECLARATION_BOOKLET'
+        db_table = 'HDB'
 
 
 class Reference(models.Model):
