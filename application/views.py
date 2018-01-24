@@ -34,7 +34,7 @@ from .business_logic import (childcare_type_logic,
                              references_second_reference_logic)
 from .forms import (AccountForm, ApplicationSavedForm, ConfirmForm, ContactEmailForm, ContactPhoneForm,
                     ContactSummaryForm, DBSCheckDBSDetailsForm, DBSCheckGuidanceForm, DBSCheckSummaryForm,
-                    DBSCheckUploadDBSForm, DeclarationForm, EYFSForm, FirstAidTrainingDeclarationForm,
+                    DBSCheckUploadDBSForm, DeclarationForm, EYFSGuidanceForm, FirstAidTrainingDeclarationForm,
                     FirstAidTrainingDetailsForm, FirstAidTrainingGuidanceForm, FirstAidTrainingRenewForm,
                     FirstAidTrainingSummaryForm, FirstAidTrainingTrainingForm, FirstReferenceForm, HealthBookletForm,
                     HealthIntroForm, OtherPeopleForm, PaymentDetailsForm, PaymentForm,
@@ -1002,16 +1002,16 @@ def first_aid_training_summary(request):
             return render(request, 'first-aid-summary.html', variables)
 
 
-def eyfs(request):
+def eyfs_guidance(request):
     """
-    Method returning the template for the Early Years knowledge page (for a given application) and navigating to
-    the task list when successfully completed
+    Method returning the template for the Early Years knowledge guidance page (for a given application) and navigating
+    to the EYFS knowledge page when successfully completed
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Early Years knowledge template
+    :return: an HttpResponse object with the rendered Early Years knowledge: guidance template
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = EYFSForm()
+        form = EYFSGuidanceForm()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -1020,19 +1020,21 @@ def eyfs(request):
         }
         if application.eyfs_training_status != 'COMPLETED':
             status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
-        return render(request, 'eyfs.html', variables)
+        return render(request, 'eyfs-guidance.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = EYFSForm(request.POST)
+        form = EYFSGuidanceForm(request.POST)
+        application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
-            status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
+            if application.eyfs_training_status != 'COMPLETED':
+                status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-            return render(request, 'eyfs.html', variables)
+            return render(request, 'eyfs-guidance.html', variables)
 
 
 def dbs_check_guidance(request):

@@ -729,9 +729,9 @@ class FirstAidTrainingSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class EYFSForm(GOVUKForm):
+class EYFSGuidanceForm(GOVUKForm):
     """
-    GOV.UK form for the Early Years knowledge page
+    GOV.UK form for the Early Years knowledge: guidance page
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True

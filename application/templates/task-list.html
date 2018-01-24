@@ -134,9 +134,21 @@
                 </tr>
                 <tr id="eyfs">
                     <td class="task" style="padding-right: 10px; word-wrap: break-word;">
-                        <a href="{{ URL_PREFIX }}/eyfs?id={{application_id}}">
+                        {% if eyfs_training_status == 'NOT_STARTED' %}
+                        <a href="{{ URL_PREFIX }}/eyfs/guidance?id={{application_id}}">
                             <span class="task-name">Early Years knowledge</span>
                         </a>
+                        {% endif %}
+                        {% if eyfs_training_status == 'IN_PROGRESS' %}
+                        <a href="{{ URL_PREFIX }}/eyfs/guidance?id={{application_id}}">
+                            <span class="task-name">Early Years knowledge</span>
+                        </a>
+                        {% endif %}
+                        {% if eyfs_training_status == 'COMPLETED' %}
+                        <a href="{{ URL_PREFIX }}/eyfs/summary?id={{application_id}}">
+                            <span class="task-name">Early Years knowledge</span>
+                        </a>
+                        {% endif %}
                     </td>
                     {% if eyfs_training_status == 'NOT_STARTED' %}
                     <td class="numeric">
