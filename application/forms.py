@@ -169,22 +169,31 @@ class ContactSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class TypeOfChildcareForm(GOVUKForm):
+class TypeOfChildcareGuidanceForm(GOVUKForm):
+    """
+    GOV.UK form for the Type of childcare: guidance page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+class TypeOfChildcareAgeGroupsForm(GOVUKForm):
     """
     GOV.UK form for the Type of childcare task
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     CHILDCARE_AGE_CHOICES = (
-        ('0-5', 'Birth up to 5 years old'),
-        ('5-8', '5 to 8 years old'),
-        ('8over', '8 years and over'),
+        ('0-5', '0 to 5 year olds'),
+        ('5-8', '5 to 7 year olds'),
+        ('8over', '8 years or older'),
     )
     type_of_childcare = forms.MultipleChoiceField(
         required=True,
         widget=CheckboxSelectMultiple,
         choices=CHILDCARE_AGE_CHOICES,
-        label='Which ages of children do you intend to childmind?',
+        label='What age groups will you be caring for?',
+        help_text='Tick all that apply'
     )
 
     def __init__(self, *args, **kwargs):
@@ -194,7 +203,7 @@ class TypeOfChildcareForm(GOVUKForm):
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
         self.application_id_local = kwargs.pop('id')
-        super(TypeOfChildcareForm, self).__init__(*args, **kwargs)
+        super(TypeOfChildcareAgeGroupsForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form
         if ChildcareType.objects.filter(application_id=self.application_id_local).count() > 0:
             childcare_record = ChildcareType.objects.get(application_id=self.application_id_local)
@@ -217,6 +226,14 @@ class TypeOfChildcareForm(GOVUKForm):
                 self.fields['type_of_childcare'].initial = ['8over']
             elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is False):
                 self.fields['type_of_childcare'].initial = []
+
+
+class TypeOfChildcareRegisterForm(GOVUKForm):
+    """
+    GOV.UK form for the Type of childcare: register page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
 
 
 class EmailLoginForm(GOVUKForm):

@@ -82,12 +82,15 @@ from .forms import (AccountForm,
                     ReferenceSecondReferenceContactForm,
                     ReferenceSummaryForm,
                     SecondReferenceForm,
-                    TypeOfChildcareForm)
+                    TypeOfChildcareAgeGroupsForm,
+                    TypeOfChildcareGuidanceForm,
+                    TypeOfChildcareRegisterForm)
 from .middleware import CustomAuthenticationHandler
 from .models import (ApplicantHomeAddress,
                      ApplicantName,
                      ApplicantPersonalDetails,
                      Application,
+                     ChildcareType,
                      CriminalRecordCheck,
                      EYFS,
                      FirstAidTraining,
@@ -345,7 +348,7 @@ def contact_summary(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             status.update(application_id_local, 'login_details_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/childcare?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/childcare/guidance?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -355,28 +358,63 @@ def contact_summary(request):
             return render(request, 'contact-summary.html', variables)
 
 
-def type_of_childcare(request):
+def type_of_childcare_guidance(request):
     """
-    Method returning the template for the Type of childcare page (for a given application) and navigating to
-    the task list when successfully completed; business logic is applied to either create or update the
-    associated Childcare_Type record
+    Method returning the template for the Type of childcare: guidance page (for a given application) and navigating
+    to the Type of childcare: childcare ages page when successfully completed
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Type of childcare template
+    :return: an HttpResponse object with the rendered Type of childcare: guidance template
     """
-    current_date = datetime.datetime.today()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = TypeOfChildcareForm(id=application_id_local)
+        form = TypeOfChildcareGuidanceForm()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
             'application_id': application_id_local,
             'childcare_type_status': application.childcare_type_status
         }
-        return render(request, 'childcare.html', variables)
+        if application.childcare_type_status != 'COMPLETED':
+            status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
+        return render(request, 'childcare-guidance.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = TypeOfChildcareForm(request.POST, id=application_id_local)
+        form = TypeOfChildcareGuidanceForm(request.POST)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            if application.childcare_type_status != 'COMPLETED':
+                status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/childcare/age-groups?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'childcare-guidance.html', variables)
+
+
+def type_of_childcare_age_groups(request):
+    """
+    Method returning the template for the Type of childcare: age groups page (for a given application) and navigating
+    to the task list when successfully completed; business logic is applied to either create or update the
+    associated Childcare_Type record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Type of childcare: age groups template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = TypeOfChildcareAgeGroupsForm(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'childcare_type_status': application.childcare_type_status
+        }
+        return render(request, 'childcare-age-groups.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = TypeOfChildcareAgeGroupsForm(request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             # Create or update Childcare_Type record
@@ -385,14 +423,64 @@ def type_of_childcare(request):
             application.date_updated = current_date
             application.save()
             status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/childcare/register?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
                 'application_id': application_id_local,
                 'childcare_type_status': application.childcare_type_status
             }
-            return render(request, 'childcare.html', variables)
+            return render(request, 'childcare-age-groups.html', variables)
+
+
+def type_of_childcare_register(request):
+    """
+    Method returning the template for the correct Type of childcare: register page (for a given application)
+    and navigating to the task list when successfully confirmed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the correct rendered Type of childcare: register template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = TypeOfChildcareRegisterForm()
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'childcare_type_status': application.childcare_type_status
+        }
+        childcare_record = ChildcareType.objects.get(application_id=application_id_local)
+        zero_to_five_status = childcare_record.zero_to_five
+        five_to_eight_status = childcare_record.five_to_eight
+        eight_plus_status = childcare_record.eight_plus
+        if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
+            return render(request, 'childcare-register-both.html', variables)
+        elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
+            return render(request, 'childcare-register-both.html', variables)
+        elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
+            return render(request, 'childcare-register-both.html', variables)
+        elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
+            return render(request, 'childcare-register-CR-voluntary-compulsory.html', variables)
+        elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
+            return render(request, 'childcare-register-EYR.html', variables)
+        elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
+            return render(request, 'childcare-register-CR.html', variables)
+        elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
+            return render(request, 'childcare-register-VCR.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = TypeOfChildcareRegisterForm(request.POST)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            if application.childcare_type_status != 'COMPLETED':
+                status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'childcare-guidance.html', variables)
 
 
 def task_list(request):

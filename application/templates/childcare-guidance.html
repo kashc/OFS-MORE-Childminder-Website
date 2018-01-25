@@ -1,12 +1,9 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Type of childcare{% endblock %}
+{% block page_title %}Type of Childcare{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
-
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
 
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
@@ -29,25 +26,20 @@
     </div>
     <!-- Form -->
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
         <div class="form-group grid-row">
             <h1 class="form-title heading-large">
-                Who you'll be caring for
+                Type of childcare
             </h1>
-            <p>We need to understand which ages of children you wish to childmind.</p>
-            <p>This is so that we ensure that you submit only the relevant information, and sign up to the correct
-                register.</p>
-            {{form.as_div}}
+            <p>You will need to say what age groups you will be looking after.</p>
+            <p>This is so you can join the right childminder register.</p>
+            <p>There are different registers for preschool and school-aged children.</p>
             {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-        </br>
-        <!-- Return to task list -->
-        <div class="form-group grid-row">
-            {% if childcare_type_status == 'COMPLETED' %}
+            {{form.as_div}}
+            <input type="hidden" value="{{application_id}}" name="id"/>
+            <input type="submit" class="button" value="Save and continue">
+            <br>
+            <br>
             <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-            {% endif %}
         </div>
     </form>
 </div>
