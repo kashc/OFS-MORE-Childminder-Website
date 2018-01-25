@@ -1196,12 +1196,13 @@ def eyfs_questions(request):
         form = EYFSQuestionsForm(request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
-            status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
             # Create or update EYFS record
             eyfs_record = eyfs_questions_logic(application_id_local, form)
             eyfs_record.save()
             application.date_updated = current_date
             application.save()
+            if application.eyfs_training_status != 'COMPLETED':
+                status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/summary?id=' + application_id_local)
         else:
             variables = {

@@ -29,7 +29,11 @@ from application.views import (application_saved,
                                dbs_check_summary,
                                dbs_check_upload_dbs,
                                declaration,
-                               eyfs,
+                               eyfs_guidance,
+                               eyfs_knowledge,
+                               eyfs_questions,
+                               eyfs_summary,
+                               eyfs_training,
                                first_aid_training_declaration,
                                first_aid_training_details,
                                first_aid_training_guidance,
@@ -477,13 +481,61 @@ class FirstAidTrainingTest(TestCase):
 class EYFSTest(TestCase):
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/eyfs/')
-        self.assertEqual(found.func, eyfs)
+        found = resolve(settings.URL_PREFIX + '/eyfs/guidance/')
+        self.assertEqual(found.func, eyfs_guidance)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/eyfs/?id=')
+            c.get(settings.URL_PREFIX + '/eyfs/guidance?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/eyfs/knowledge/')
+        self.assertEqual(found.func, eyfs_knowledge)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/eyfs/knowledge?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/eyfs/training/')
+        self.assertEqual(found.func, eyfs_training)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/eyfs/training?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/eyfs/questions/')
+        self.assertEqual(found.func, eyfs_questions)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/eyfs/questions?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/eyfs/summary/')
+        self.assertEqual(found.func, eyfs_summary)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/eyfs/summary?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
