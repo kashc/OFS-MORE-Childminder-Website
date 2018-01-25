@@ -37,7 +37,7 @@ from .business_logic import (childcare_type_logic,
                              references_second_reference_logic)
 from .forms import (AccountForm,
                     ApplicationSavedForm,
-                    ConfirmForm,
+                    DeclarationSummaryForm,
                     ContactEmailForm,
                     ContactPhoneForm,
                     ContactSummaryForm,
@@ -2116,32 +2116,72 @@ def declaration(request):
             return render(request, 'declaration.html', variables)
 
 
-def confirmation(request):
+def declaration_summary(request):
     """
-    Method returning the template for the Confirmation page (for a given application) and navigating to
-    the task list when successfully completed
+    Method returning the template for the Declaration: summary page (for a given application) and navigating to
+    the Declaration: declaration page when successfully completed
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Confirmation template
+    :return: an HttpResponse object with the rendered Declaration: summary template
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = ConfirmForm()
+        form = DeclarationSummaryForm()
+        application = Application.objects.get(application_id=application_id_local)
+        login_detail_id = application.login_id.login_id
+        login_record = UserDetails.objects.get(login_id=login_detail_id)
+        childcare_record = ChildcareType.objects.get(application_id=application_id_local)
+        applicant_record = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+        personal_detail_id = applicant_record.personal_detail_id
+        applicant_name_record = ApplicantName.objects.get(personal_detail_id=personal_detail_id)
+        applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                         current_address=True)
+        applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                              childcare_address=True)
+        first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
         variables = {
             'form': form,
             'application_id': application_id_local,
+            'login_details_email': login_record.email,
+            'login_details_mobile_number': login_record.mobile_number,
+            'login_details_alternative_phone_number': login_record.add_phone_number,
+            'childcare_type_zero_to_five': childcare_record.zero_to_five,
+            'childcare_type_five_to_eight': childcare_record.five_to_eight,
+            'childcare_type_eight_plus': childcare_record.eight_plus,
+            'personal_details_first_name': applicant_name_record.first_name,
+            'personal_details_middle_names': applicant_name_record.middle_names,
+            'personal_details_last_name': applicant_name_record.last_name,
+            'personal_details_birth_day': applicant_record.birth_day,
+            'personal_details_birth_month': applicant_record.birth_month,
+            'personal_details_birth_year': applicant_record.birth_year,
+            'home_address_street_line1': applicant_home_address_record.street_line1,
+            'home_address_street_line2': applicant_home_address_record.street_line2,
+            'home_address_town': applicant_home_address_record.town,
+            'home_address_county': applicant_home_address_record.county,
+            'home_address_postcode': applicant_home_address_record.postcode,
+            'childcare_street_line1': applicant_childcare_address_record.street_line1,
+            'childcare_street_line2': applicant_childcare_address_record.street_line2,
+            'childcare_town': applicant_childcare_address_record.town,
+            'childcare_county': applicant_childcare_address_record.county,
+            'childcare_postcode': applicant_childcare_address_record.postcode,
+            'location_of_childcare': applicant_home_address_record.childcare_address,
+            'first_aid_training_organisation': first_aid_record.training_organisation,
+            'first_aid_training_course': first_aid_record.course_title,
+            'first_aid_certificate_day': first_aid_record.course_day,
+            'first_aid_certificate_month': first_aid_record.course_month,
+            'first_aid_certificate_year': first_aid_record.course_year
         }
-        return render(request, 'confirm.html', variables)
+        return render(request, 'declaration-summary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = ConfirmForm(request.POST)
+        form = DeclarationSummaryForm(request.POST)
         if form.is_valid():
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/declaration/declaration?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-            return render(request, 'confirm.html', variables)
+            return render(request, 'declaration-summary.html', variables)
 
 
 def payment_selection(request):

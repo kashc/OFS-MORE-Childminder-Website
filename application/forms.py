@@ -1431,7 +1431,7 @@ class DeclarationForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class ConfirmForm(GOVUKForm):
+class DeclarationSummaryForm(GOVUKForm):
     """
     GOV.UK form for the Confirm your details page
     """
