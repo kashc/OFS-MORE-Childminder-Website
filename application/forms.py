@@ -226,6 +226,8 @@ class TypeOfChildcareAgeGroupsForm(GOVUKForm):
                 self.fields['type_of_childcare'].initial = ['8over']
             elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is False):
                 self.fields['type_of_childcare'].initial = []
+        self.fields['type_of_childcare'].error_messages = {
+            'required': 'You must select at least one age group to continue with your application'}
 
 
 class TypeOfChildcareRegisterForm(GOVUKForm):
