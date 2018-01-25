@@ -756,7 +756,7 @@ class EYFSKnowledgeForm(GOVUKForm):
         ('True', 'Yes'),
         ('False', 'No')
     )
-    understand_eyfs = forms.ChoiceField(label='Do you understand the Early Years Foundation Stage?', choices=options,
+    eyfs_understand = forms.ChoiceField(label='Do you understand the Early Years Foundation Stage?', choices=options,
                                         widget=InlineRadioSelect, required=True)
 
     def __init__(self, *args, **kwargs):
@@ -770,7 +770,7 @@ class EYFSKnowledgeForm(GOVUKForm):
         # If information was previously entered, display it on the form
         if EYFS.objects.filter(application_id=self.application_id_local).count() > 0:
             eyfs_record = EYFS.objects.get(application_id=self.application_id_local)
-            self.fields['understand_eyfs'].initial = eyfs_record.eyfs_understand
+            self.fields['eyfs_understand'].initial = eyfs_record.eyfs_understand
 
 
 class EYFSTrainingForm(GOVUKForm):
@@ -793,6 +793,37 @@ class EYFSTrainingForm(GOVUKForm):
         if EYFS.objects.filter(application_id=self.application_id_local).count() > 0:
             eyfs_record = EYFS.objects.get(application_id=self.application_id_local)
             self.fields['eyfs_training_declare'].initial = eyfs_record.eyfs_training_declare
+
+
+class EYFSQuestionsForm(GOVUKForm):
+    """
+    GOV.UK form for the EYFS: training page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    eyfs_questions_declare = forms.BooleanField(label='I am happy to answer questions about my early years knowledge',
+                                                required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Early Years knowledge: questions form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(EYFSQuestionsForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if EYFS.objects.filter(application_id=self.application_id_local).count() > 0:
+            eyfs_record = EYFS.objects.get(application_id=self.application_id_local)
+            self.fields['eyfs_questions_declare'].initial = eyfs_record.eyfs_questions_declare
+
+
+class EYFSSummaryForm(GOVUKForm):
+    """
+    GOV.UK form for the Early Years knowledge: summary page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
 
 
 class DBSCheckGuidanceForm(GOVUKForm):

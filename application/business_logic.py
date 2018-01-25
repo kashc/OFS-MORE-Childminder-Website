@@ -307,6 +307,25 @@ def eyfs_training_logic(application_id_local, form):
     return eyfs_record
 
 
+def eyfs_questions_logic(application_id_local, form):
+    """
+    Business logic to create or update an EYFS record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: an EYFS object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    eyfs_questions_declare = form.cleaned_data.get('eyfs_questions_declare')
+    # If the user entered information for this task for the first time
+    if EYFS.objects.filter(application_id=application_id_local).count() == 0:
+        eyfs_record = EYFS(eyfs_questions_declare=eyfs_questions_declare, application_id=this_application)
+    # If the user previously entered information for this task
+    elif EYFS.objects.filter(application_id=application_id_local).count() > 0:
+        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        eyfs_record.eyfs_questions_declare = eyfs_questions_declare
+    return eyfs_record
+
+
 def dbs_check_logic(application_id_local, form):
     """
     Business logic to create or update a Criminal_Record_Check record

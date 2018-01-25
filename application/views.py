@@ -21,6 +21,7 @@ from . import magic_link, payment, status
 from .business_logic import (childcare_type_logic,
                              dbs_check_logic,
                              eyfs_knowledge_logic,
+                             eyfs_questions_logic,
                              eyfs_training_logic,
                              first_aid_logic,
                              health_check_logic,
@@ -47,6 +48,8 @@ from .forms import (AccountForm,
                     DeclarationForm,
                     EYFSGuidanceForm,
                     EYFSKnowledgeForm,
+                    EYFSQuestionsForm,
+                    EYFSSummaryForm,
                     EYFSTrainingForm,
                     FirstAidTrainingDeclarationForm,
                     FirstAidTrainingDetailsForm,
@@ -86,6 +89,7 @@ from .models import (ApplicantHomeAddress,
                      ApplicantPersonalDetails,
                      Application,
                      CriminalRecordCheck,
+                     EYFS,
                      FirstAidTraining,
                      HealthDeclarationBooklet,
                      Reference,
@@ -1110,10 +1114,13 @@ def eyfs_knowledge(request):
             eyfs_record.save()
             application.date_updated = current_date
             application.save()
-            understand_eyfs = form.cleaned_data['understand_eyfs']
-            if understand_eyfs == 'True':
-                return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/question?id=' + application_id_local)
-            elif understand_eyfs == 'False':
+            eyfs_understand = form.cleaned_data['eyfs_understand']
+            if eyfs_understand == 'True':
+                eyfs_record = EYFS.objects.get(application_id=application_id_local)
+                eyfs_record.eyfs_training_declare = False
+                eyfs_record.save()
+                return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/questions?id=' + application_id_local)
+            elif eyfs_understand == 'False':
                 return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/training?id=' + application_id_local)
         else:
             variables = {
@@ -1154,14 +1161,91 @@ def eyfs_training(request):
             eyfs_record.save()
             application.date_updated = current_date
             application.save()
-            eyfs_training_declare = form.cleaned_data['eyfs_training_declare']
-            return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/question?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/questions?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
             return render(request, 'eyfs-training.html', variables)
+
+
+def eyfs_questions(request):
+    """
+    Method returning the template for the Early Years knowledge: questions page (for a given application)
+    and navigating to the Early Years knowledge: summary page when successfully completed;
+    business logic is applied to either create or update the associated EYFS record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Early Years knowledge: questions template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = EYFSQuestionsForm(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'eyfs_training_declare': eyfs_record.eyfs_training_declare,
+            'eyfs_training_status': application.eyfs_training_status
+        }
+        return render(request, 'eyfs-questions.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = EYFSQuestionsForm(request.POST, id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
+            # Create or update EYFS record
+            eyfs_record = eyfs_questions_logic(application_id_local, form)
+            eyfs_record.save()
+            application.date_updated = current_date
+            application.save()
+            return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/summary?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'eyfs-questions.html', variables)
+
+
+def eyfs_summary(request):
+    """
+    Method returning the template for the Early Years knowledge: summary page (for a given application)
+    displaying entered data for this task and navigating to the task list when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Early years knowledge: summary template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        eyfs_understand = eyfs_record.eyfs_understand
+        eyfs_training_declare = eyfs_record.eyfs_training_declare
+        eyfs_questions_declare = eyfs_record.eyfs_questions_declare
+        form = EYFSSummaryForm()
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'eyfs_understand': eyfs_understand,
+            'eyfs_training_declare': eyfs_training_declare,
+            'eyfs_questions_declare': eyfs_questions_declare,
+            'eyfs_training_status': application.eyfs_training_status,
+        }
+        return render(request, 'eyfs-summary.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = EYFSSummaryForm(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'eyfs-summary.html', variables)
 
 
 def dbs_check_guidance(request):
