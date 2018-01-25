@@ -61,7 +61,9 @@ from application.views import (application_saved,
                                references_summary,
                                start_page,
                                task_list,
-                               type_of_childcare)
+                               type_of_childcare_age_groups,
+                               type_of_childcare_guidance,
+                               type_of_childcare_register)
 
 
 class StartPageTest(TestCase):
@@ -89,13 +91,37 @@ class TaskListTest(TestCase):
 class TypeOfChildcareTest(TestCase):
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/childcare/')
-        self.assertEqual(found.func, type_of_childcare)
+        found = resolve(settings.URL_PREFIX + '/childcare/guidance/')
+        self.assertEqual(found.func, type_of_childcare_guidance)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/childcare/?id=')
+            c.get(settings.URL_PREFIX + '/childcare/guidance?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/childcare/age-groups/')
+        self.assertEqual(found.func, type_of_childcare_age_groups)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/childcare/age-groups?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/childcare/register/')
+        self.assertEqual(found.func, type_of_childcare_register)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/childcare/register?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
