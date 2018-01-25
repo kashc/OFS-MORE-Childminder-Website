@@ -773,6 +773,28 @@ class EYFSKnowledgeForm(GOVUKForm):
             self.fields['understand_eyfs'].initial = eyfs_record.eyfs_understand
 
 
+class EYFSTrainingForm(GOVUKForm):
+    """
+    GOV.UK form for the EYFS: training page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    eyfs_training_declare = forms.BooleanField(label='I will go on an early years training course', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Early Years knowledge: training form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(EYFSTrainingForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if EYFS.objects.filter(application_id=self.application_id_local).count() > 0:
+            eyfs_record = EYFS.objects.get(application_id=self.application_id_local)
+            self.fields['eyfs_training_declare'].initial = eyfs_record.eyfs_training_declare
+
+
 class DBSCheckGuidanceForm(GOVUKForm):
     """
     GOV.UK form for the Your criminal record (DBS) check: guidance page
