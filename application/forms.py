@@ -14,7 +14,8 @@ from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
 from .customfields import ExpirySplitDateField, ExpirySplitDateWidget, TimeKnownField
-from .models import (ApplicantHomeAddress,
+from .models import (AdultInHome,
+                     ApplicantHomeAddress,
                      ApplicantName,
                      ApplicantPersonalDetails,
                      Application,
@@ -1415,12 +1416,38 @@ class ReferenceSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class OtherPeopleForm(GOVUKForm):
+class OtherPeopleGuidanceForm(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: guidance page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+class OtherPeopleAdultQuestionForm(GOVUKForm):
     """
     GOV.UK form for the People in your home page
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
+    options = (
+        ('True', 'Yes'),
+        ('False', 'No')
+    )
+    adults_in_home = forms.ChoiceField(label='Does anyone aged 16 or over live or work in your home?', choices=options,
+                                       widget=InlineRadioSelect, required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the People in your home: adult question form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(OtherPeopleAdultQuestionForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        self.fields['adults_in_home'].initial = Application.objects.get(
+            application_id=self.application_id_local).adults_in_home
 
 
 class DeclarationForm(GOVUKForm):

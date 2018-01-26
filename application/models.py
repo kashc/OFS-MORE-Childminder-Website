@@ -70,6 +70,8 @@ class Application(models.Model):
     health_status = models.CharField(choices=TASK_STATUS, max_length=50)
     references_status = models.CharField(choices=TASK_STATUS, max_length=50)
     people_in_home_status = models.CharField(choices=TASK_STATUS, max_length=50)
+    adults_in_home = models.NullBooleanField(blank=True, null=True)
+    children_in_home = models.NullBooleanField(blank=True, null=True)
     declarations_status = models.CharField(choices=TASK_STATUS, max_length=50)
     date_created = models.DateTimeField(blank=True, null=True)
     date_updated = models.DateTimeField(blank=True, null=True)
@@ -233,6 +235,7 @@ class AdultInHome(models.Model):
     """
     adult_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
+    adult = models.IntegerField(null=True, blank=True)
     first_name = models.CharField(max_length=100, blank=True)
     middle_names = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
@@ -253,6 +256,7 @@ class ChildInHome(models.Model):
     """
     child_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
+    child = models.IntegerField(null=True, blank=True)
     first_name = models.CharField(max_length=100, blank=True)
     middle_names = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
