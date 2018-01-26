@@ -899,13 +899,25 @@ class OtherPeopleTest(TestCase):
 class DeclarationTest(TestCase):
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/declaration/')
+        found = resolve(settings.URL_PREFIX + '/declaration/summary/')
         self.assertEqual(found.func, declaration)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/declaration/?id=')
+            c.get(settings.URL_PREFIX + '/declaration/summary?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/declaration/declaration/')
+        self.assertEqual(found.func, declaration)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/declaration/declaration?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -949,21 +961,6 @@ class DeclarationTest(TestCase):
     def delete(self):
         models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
-
-
-class ConfirmationTest(TestCase):
-
-    def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/confirm-your-answers/')
-        self.assertEqual(found.func, confirmation)
-
-    def test_page_not_displayed_without_id(self):
-        c = Client()
-        try:
-            c.get(settings.URL_PREFIX + '/confirm-your-answers/?id=')
-            self.assertEqual(1, 0)
-        except:
-            self.assertEqual(0, 0)
 
 
 class AccountSelectionTest(TestCase):
