@@ -2140,6 +2140,9 @@ def declaration_summary(request):
         first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
         dbs_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
         hdb_record = HealthDeclarationBooklet.objects.get(application_id=application_id_local)
+        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
+        second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -2173,7 +2176,36 @@ def declaration_summary(request):
             'first_aid_certificate_year': first_aid_record.course_year,
             'dbs_certificate_number': dbs_record.dbs_certificate_number,
             'cautions_convictions': dbs_record.cautions_convictions,
-            'send_hdb_declare': hdb_record.send_hdb_declare
+            'send_hdb_declare': hdb_record.send_hdb_declare,
+            'eyfs_understand': eyfs_record.eyfs_understand,
+            'eyfs_training_declare': eyfs_record.eyfs_training_declare,
+            'eyfs_questions_declare': eyfs_record.eyfs_questions_declare,
+            'first_reference_first_name': first_reference_record.first_name,
+            'first_reference_last_name': first_reference_record.last_name,
+            'first_reference_relationship': first_reference_record.relationship,
+            'first_reference_years_known': first_reference_record.years_known,
+            'first_reference_months_known': first_reference_record.months_known,
+            'first_reference_street_line1': first_reference_record.street_line1,
+            'first_reference_street_line2': first_reference_record.street_line2,
+            'first_reference_town': first_reference_record.town,
+            'first_reference_county': first_reference_record.county,
+            'first_reference_postcode': first_reference_record.postcode,
+            'first_reference_country': first_reference_record.country,
+            'first_reference_phone_number': first_reference_record.phone_number,
+            'first_reference_email': first_reference_record.email,
+            'second_reference_first_name': second_reference_record.first_name,
+            'second_reference_last_name': second_reference_record.last_name,
+            'second_reference_relationship': second_reference_record.relationship,
+            'second_reference_years_known': second_reference_record.years_known,
+            'second_reference_months_known': second_reference_record.months_known,
+            'second_reference_street_line1': second_reference_record.street_line1,
+            'second_reference_street_line2': second_reference_record.street_line2,
+            'second_reference_town': second_reference_record.town,
+            'second_reference_county': second_reference_record.county,
+            'second_reference_postcode': second_reference_record.postcode,
+            'second_reference_country': second_reference_record.country,
+            'second_reference_phone_number': second_reference_record.phone_number,
+            'second_reference_email': second_reference_record.email
         }
         return render(request, 'declaration-summary.html', variables)
     if request.method == 'POST':
