@@ -67,6 +67,7 @@ urlpatterns = [
     url(r'^references/summary/', views.references_summary, name='References-Summary-View'),
     url(r'^other-people/guidance/', views.other_people_guidance, name='Other-People-Guidance-View'),
     url(r'^other-people/adult-question/', views.other_people_adult_question, name='Other-People-Adult-Question-View'),
+    url(r'^other-people/adult-details/', views.other_people_adult_details, name='Other-People-Adult-Details-View'),
     url(r'^declaration/declaration/', views.declaration, name='Declaration-View'),
     url(r'^declaration/summary/', views.declaration_summary, name='Declaration-Summary-View'),
     url(r'^payment/', views.payment_selection, name='Payment-View'),

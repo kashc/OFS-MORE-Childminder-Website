@@ -1003,6 +1003,30 @@ class FirstReferenceForm(GOVUKForm):
             self.fields['relationship'].initial = reference_record.relationship
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
 
+    def clean_first_name(self):
+        """
+        First name validation
+        :return: string
+        """
+        first_name = self.cleaned_data['first_name']
+        if re.match("^[A-Za-z- ]+$", first_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(first_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return first_name
+
+    def clean_last_name(self):
+        """
+        Last name validation
+        :return: string
+        """
+        last_name = self.cleaned_data['last_name']
+        if re.match("^[A-Za-z- ]+$", last_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(last_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return last_name
+
     def clean_time_known(self):
         """
         Time known validation: reference must be known for 1 year or more
@@ -1220,6 +1244,30 @@ class SecondReferenceForm(GOVUKForm):
             self.fields['relationship'].initial = reference_record.relationship
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
 
+    def clean_first_name(self):
+        """
+        First name validation
+        :return: string
+        """
+        first_name = self.cleaned_data['first_name']
+        if re.match("^[A-Za-z- ]+$", first_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(first_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return first_name
+
+    def clean_last_name(self):
+        """
+        Last name validation
+        :return: string
+        """
+        last_name = self.cleaned_data['last_name']
+        if re.match("^[A-Za-z- ]+$", last_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(last_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return last_name
+
     def clean_time_known(self):
         """
         Time known validation: reference must be known for 1 year or more
@@ -1426,7 +1474,7 @@ class OtherPeopleGuidanceForm(GOVUKForm):
 
 class OtherPeopleAdultQuestionForm(GOVUKForm):
     """
-    GOV.UK form for the People in your home page
+    GOV.UK form for the People in your home: adult question page
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -1448,6 +1496,77 @@ class OtherPeopleAdultQuestionForm(GOVUKForm):
         # If information was previously entered, display it on the form
         self.fields['adults_in_home'].initial = Application.objects.get(
             application_id=self.application_id_local).adults_in_home
+
+
+class OtherPeopleAdultDetailsForm(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: adult details page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    first_name = forms.CharField(label='First name', required=True)
+    middle_names = forms.CharField(label='Middle names (if they have any)', required=False)
+    last_name = forms.CharField(label='Last name', required=True)
+    date_of_birth = SplitDateField(label='Date of birth', help_text='For example, 31 03 1980')
+    relationship = forms.CharField(label='How are they related to you?', help_text='For instance, husband or daughter',
+                                   required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the People in your home: adult details form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.adult = kwargs.pop('adult')
+        super(OtherPeopleAdultDetailsForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).count() > 0:
+            adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
+            self.fields['first_name'].initial = adult_record.first_name
+            self.fields['middle_names'].initial = adult_record.middle_names
+            self.fields['last_name'].initial = adult_record.last_name
+            self.fields['date_of_birth'].initial = [adult_record.birth_day,
+                                                    adult_record.birth_month,
+                                                    adult_record.birth_year]
+            self.fields['relationship'].initial = adult_record.relationship
+
+    def clean_first_name(self):
+        """
+        First name validation
+        :return: string
+        """
+        first_name = self.cleaned_data['first_name']
+        if re.match("^[A-Za-z- ]+$", first_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(first_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return first_name
+
+    def clean_middle_names(self):
+        """
+        Middle names validation
+        :return: string
+        """
+        middle_names = self.cleaned_data['middle_names']
+        if middle_names != '':
+            if re.match("^[A-Za-z- ]+$", middle_names) is None:
+                raise forms.ValidationError('TBC')
+            if len(middle_names) > 100:
+                raise forms.ValidationError('Please enter 100 characters or less.')
+        return middle_names
+
+    def clean_last_name(self):
+        """
+        Last name validation
+        :return: string
+        """
+        last_name = self.cleaned_data['last_name']
+        if re.match("^[A-Za-z- ]+$", last_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(last_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return last_name
 
 
 class DeclarationForm(GOVUKForm):

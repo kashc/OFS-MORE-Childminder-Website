@@ -13,6 +13,7 @@ from datetime import date
 from uuid import UUID
 
 from django.conf import settings
+from django.forms import formset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.cache import never_cache
@@ -60,6 +61,7 @@ from .forms import (AccountForm,
                     FirstReferenceForm,
                     HealthBookletForm,
                     HealthIntroForm,
+                    OtherPeopleAdultDetailsForm,
                     OtherPeopleAdultQuestionForm,
                     OtherPeopleGuidanceForm,
                     PaymentDetailsForm,
@@ -87,7 +89,8 @@ from .forms import (AccountForm,
                     TypeOfChildcareGuidanceForm,
                     TypeOfChildcareRegisterForm)
 from .middleware import CustomAuthenticationHandler
-from .models import (ApplicantHomeAddress,
+from .models import (AdultInHome,
+                     ApplicantHomeAddress,
                      ApplicantName,
                      ApplicantPersonalDetails,
                      Application,
@@ -2106,17 +2109,72 @@ def other_people_adult_question(request):
         application_id_local = request.POST["id"]
         form = OtherPeopleAdultQuestionForm(request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
+        number_of_adults = AdultInHome.objects.filter(application_id=application_id_local).count()
         if form.is_valid():
             application.adults_in_home = form.cleaned_data.get('adults_in_home')
             application.save()
             status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/other-people/adult-details?id=' + application_id_local + '&adults=' + str(
+                    number_of_adults))
         else:
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
             return render(request, 'other-people-adult-question.html', variables)
+
+
+def other_people_adult_details(request):
+    """
+    Method returning the template for the People in your home: adult details page (for a given application) and
+    navigating to the People in your home: adult DBS page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered People in your home: adult details template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        number_of_adults = int(request.GET["adults"])
+        application = Application.objects.get(pk=application_id_local)
+        adults_list = []
+        for i in range(1, number_of_adults + 1):
+            adults_list.append(i)
+        form_list = []
+        for i in range(1, number_of_adults + 1):
+            form = OtherPeopleAdultDetailsForm(id=application_id_local, adult=i, prefix=i)
+            form_list.append(form)
+        variables = {
+            'form_list': form_list,
+            'application_id': application_id_local,
+            'number_of_adults': number_of_adults,
+            'adults_list': adults_list,
+            'add_adult': number_of_adults + 1,
+            'people_in_home_status': application.people_in_home_status
+        }
+        if application.people_in_home_status != 'COMPLETED':
+            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+        return render(request, 'other-people-adult-details.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = OtherPeopleAdultDetailsForm(request.POST, id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        number_of_adults = AdultInHome.objects.filter(application_id=application_id_local).count()
+        adults_list = []
+        for i in range(1, number_of_adults + 1):
+            adults_list.append(i)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'number_of_adults': number_of_adults,
+            'adults_list': adults_list,
+            'add_adult': number_of_adults + 1,
+            'people_in_home_status': application.people_in_home_status
+        }
+        if form.is_valid():
+            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local, variables)
+        else:
+            return render(request, 'other-people-adult-details.html', variables)
 
 
 def declaration(request):
