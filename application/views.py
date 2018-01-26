@@ -2138,6 +2138,8 @@ def declaration_summary(request):
         applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                               childcare_address=True)
         first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+        dbs_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
+        hdb_record = HealthDeclarationBooklet.objects.get(application_id=application_id_local)
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -2168,7 +2170,10 @@ def declaration_summary(request):
             'first_aid_training_course': first_aid_record.course_title,
             'first_aid_certificate_day': first_aid_record.course_day,
             'first_aid_certificate_month': first_aid_record.course_month,
-            'first_aid_certificate_year': first_aid_record.course_year
+            'first_aid_certificate_year': first_aid_record.course_year,
+            'dbs_certificate_number': dbs_record.dbs_certificate_number,
+            'cautions_convictions': dbs_record.cautions_convictions,
+            'send_hdb_declare': hdb_record.send_hdb_declare
         }
         return render(request, 'declaration-summary.html', variables)
     if request.method == 'POST':
