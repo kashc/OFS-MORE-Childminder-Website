@@ -13,7 +13,7 @@ from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
-from .customfields import ExpirySplitDateField, ExpirySplitDateWidget, TimeKnownField
+from .customfields import ExpirySelectDateWidget, TimeKnownField
 from .models import (ApplicantHomeAddress,
                      ApplicantName,
                      ApplicantPersonalDetails,
@@ -1475,7 +1475,7 @@ class PaymentDetailsForm(GOVUKForm):
     )
     card_type = forms.ChoiceField(label='Card type', choices=card_type_options, required=True)
     card_number = forms.CharField(label='Card number', required=True)
-    expiry_date = ExpirySplitDateField(label='Expiry date', widget=ExpirySplitDateWidget, required=True)
+    expiry_date = forms.DateField(label='Expiry date', required=True, widget=forms.SelectDateWidget)
     cardholders_name = forms.CharField(label="Cardholder's name", required=True)
     card_security_code = forms.CharField(label='Card security code', required=True)
 

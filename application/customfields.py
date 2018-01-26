@@ -5,10 +5,12 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 """
 
-from datetime import date
+import datetime
+
 from django import forms
 from django.forms import widgets
 from django.utils.timezone import now
+from django.utils.dates import MONTHS
 from django.utils.translation import gettext, gettext_lazy as _
 from govuk_forms.widgets import SplitHiddenDateWidget
 
@@ -76,36 +78,52 @@ class MultiWidget(widgets.MultiWidget, Widget):
         raise NotImplementedError
 
 
-class ExpirySplitDateWidget(MultiWidget):
-    """
-    This is an implementation of the Multiwidget class used to ask for an expiry date of a credit card, this takes base
-    code from the default SplitDateWidget class in govuk-template-forms
-    """
+class ExpirySelectDateWidget(MultiWidget):
     template_name = 'govuk_forms/widgets/split-date.html'
-    subwidget_group_classes = ('form-group form-group-month',
-                               'form-group form-group-year')
-    subwidget_label_classes = ('form-label', 'form-label')  # or form-label-bold
-    subwidget_labels = (_('Month'), _('Year'))
+    select_widget = widgets.Select
+    none_value = (0, _('Not set'))
+    subwidget_group_classes = ('form-group form-group-day-select',
+                               'form-group form-group-month-select',
+                               'form-group form-group-year-select')
+    subwidget_label_classes = ('form-label', 'form-label', 'form-label')  # or form-label-bold
+    subwidget_labels = (_('Day'), _('Month'), _('Year'))
 
-    def __init__(self, attrs=None):
-        """
-        Initialisation of the class which defines the two date widgets (month and year) that will be used in the widget
-        :param attrs: Any attributes to be passed to the individual widget definitions
-        """
-        date_widgets = (widgets.NumberInput(attrs=attrs),
-                        widgets.NumberInput(attrs=attrs),)
-        super().__init__(date_widgets, attrs)
+    def __init__(self, attrs=None, years=None, months=None, empty_label=None):
+        this_year = datetime.date.today().year
+        self.years = [(i, i) for i in years or range(this_year, this_year + 10)]
+        self.months = [(month_value, month_name) for month_value, month_name in (months or MONTHS).items()]
+        self.days = [(i, i) for i in range(1, 32)]
+
+        if isinstance(empty_label, (list, tuple)):
+            self.year_none_value = (0, empty_label[0])
+            self.month_none_value = (0, empty_label[1])
+            self.day_none_value = (0, empty_label[2])
+        else:
+            none_value = (0, empty_label) if empty_label is not None else self.none_value
+            self.year_none_value = none_value
+            self.month_none_value = none_value
+            self.day_none_value = none_value
+
+        date_widgets = (self.select_widget(attrs=attrs, choices=self.days),
+                        self.select_widget(attrs=attrs, choices=self.months),
+                        self.select_widget(attrs=attrs, choices=self.years))
+        super().__init__(date_widgets, attrs=attrs)
+
+    def get_context(self, name, value, attrs):
+        iterators = zip(
+            self.widgets,
+            (self.days, self.months, self.years),
+            (self.day_none_value, self.month_none_value, self.year_none_value)
+        )
+        for widget, choices, none_value in iterators:
+            widget.is_required = self.is_required
+            widget.choices = choices if self.is_required else [none_value] + choices
+        return super().get_context(name, value, attrs)
 
     def decompress(self, value):
-        """
-        Cleaning/Decompressing this class will result in this method being called, this will return the two entry parts
-        should they exist, will returned nothing if called with empty parameters
-        :param value: The object that contains the value of both the expiry month and the expiry year
-        :return:
-        """
         if value:
-            return [value.month, value.year]
-        return [None, None]
+            return [value.day, value.month, value.year]
+        return [None, None, None]
 
 
 class YearField(forms.IntegerField):
@@ -155,70 +173,6 @@ class YearField(forms.IntegerField):
                 value += self.century
         return super().clean(value)
 
-
-class ExpirySplitDateField(forms.MultiValueField):
-    """
-    This class defines the validation for the month field and also the overall ordering and organisation for the two
-    fields
-    """
-    widget = ExpirySplitDateWidget
-    hidden_widget = SplitHiddenDateWidget
-    default_error_messages = {
-        'invalid': _('Enter a valid date.')
-    }
-
-    def __init__(self, *args, **kwargs):
-        """
-        Standard constructor that defines what the month field should do, and which errors should be raised should
-        certain events occur
-        :param args: Standard arguments parameter
-        :param kwargs: Standard key word arguments parameter
-        """
-        month_bounds_error = gettext('Month should be between 1 and 12.')
-
-        # Field definition
-        self.fields = [
-            forms.IntegerField(min_value=1, max_value=12, error_messages={
-                'min_value': month_bounds_error,
-                'max_value': month_bounds_error,
-                'invalid': gettext('Enter month as a number.')
-            }),
-            # Uses a clean year field defined above
-            YearField(),
-        ]
-
-        super().__init__(self.fields, *args, **kwargs)
-
-    def compress(self, data_list):
-        """
-        Uses compress as there are multiple values (compress is a replacement for clean in these cases
-        :param data_list: The object containing each of the values
-        :return: Returns the cleaned value object
-        """
-        if data_list:
-            try:
-                if any(item in self.empty_values for item in data_list):
-                    raise ValueError
-                return data_list[1], data_list[0]
-            except ValueError:
-                raise forms.ValidationError(self.error_messages['invalid'], code='invalid')
-        return None
-
-    def widget_attrs(self, widget):
-        """
-        Populates the attributes of the widget with the values defined in the original widget creation
-        :param widget: The widget to have its parameters populated
-        :return: returns the attributes
-        """
-        attrs = super().widget_attrs(widget)
-        if not isinstance(widget, ExpirySplitDateWidget):
-            return attrs
-        for subfield, subwidget in zip(self.fields, widget.widgets):
-            if subfield.min_value is not None:
-                subwidget.attrs['min'] = subfield.min_value
-            if subfield.max_value is not None:
-                subwidget.attrs['max'] = subfield.max_value
-        return attrs
 
 
 class TimeKnownSplitDateWidget(MultiWidget):
@@ -308,7 +262,7 @@ class TimeKnownField(forms.MultiValueField):
         :return: returns the attributes
         """
         attrs = super().widget_attrs(widget)
-        if not isinstance(widget, ExpirySplitDateWidget):
+        if not isinstance(widget, ExpirySelectDateWidget):
             return attrs
         for subfield, subwidget in zip(self.fields, widget.widgets):
             if subfield.min_value is not None:
