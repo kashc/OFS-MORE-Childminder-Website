@@ -1630,6 +1630,32 @@ class OtherPeopleAdultPermissionForm(GOVUKForm):
             self.fields['permission_declare'].initial = adult_record.permission_declare
 
 
+class OtherPeopleChildrenQuestionForm(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: children question page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    options = (
+        ('True', 'Yes'),
+        ('False', 'No')
+    )
+    children_in_home = forms.ChoiceField(label='Do you live with any children under 16?', choices=options,
+                                         widget=InlineRadioSelect, required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the People in your home: children question form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(OtherPeopleChildrenQuestionForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        self.fields['children_in_home'].initial = Application.objects.get(
+            application_id=self.application_id_local).children_in_home
+
+
 class DeclarationForm(GOVUKForm):
     """
     GOV.UK form for the Declaration page

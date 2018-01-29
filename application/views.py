@@ -65,6 +65,7 @@ from .forms import (AccountForm,
                     OtherPeopleAdultDetailsForm,
                     OtherPeopleAdultPermissionForm,
                     OtherPeopleAdultQuestionForm,
+                    OtherPeopleChildrenQuestionForm,
                     OtherPeopleGuidanceForm,
                     PaymentDetailsForm,
                     PaymentForm,
@@ -97,6 +98,7 @@ from .models import (AdultInHome,
                      ApplicantPersonalDetails,
                      Application,
                      ChildcareType,
+                     ChildInHome,
                      CriminalRecordCheck,
                      EYFS,
                      FirstAidTraining,
@@ -2091,7 +2093,8 @@ def other_people_guidance(request):
 def other_people_adult_question(request):
     """
     Method returning the template for the People in your home: adult question page (for a given application) and
-    navigating to the People in your home: adult details page when successfully completed
+    navigating to the People in your home: adult details or People in your home: children details page when
+    successfully completed
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: adult question template
     """
@@ -2113,12 +2116,16 @@ def other_people_adult_question(request):
         application = Application.objects.get(pk=application_id_local)
         number_of_adults = AdultInHome.objects.filter(application_id=application_id_local).count()
         if form.is_valid():
-            application.adults_in_home = form.cleaned_data.get('adults_in_home')
+            data = form.cleaned_data.get('adults_in_home')
+            application.adults_in_home = data
             application.save()
-            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/other-people/adult-details?id=' + application_id_local + '&adults=' + str(
-                    number_of_adults))
+            if data == 'True':
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/other-people/adult-details?id=' + application_id_local + '&adults=' + str(
+                        number_of_adults))
+            elif data == 'False':
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/other-people/children-question?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -2308,8 +2315,8 @@ def other_people_adult_permission(request):
                 'people_in_home_status': application.people_in_home_status
             }
             status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local,
-                                        variables)
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/other-people/children-question?id=' + application_id_local, variables)
         # If there is an invalid form
         elif False in valid_list:
             variables = {
@@ -2320,6 +2327,44 @@ def other_people_adult_permission(request):
                 'people_in_home_status': application.people_in_home_status
             }
             return render(request, 'other-people-adult-permission.html', variables)
+
+
+def other_people_children_question(request):
+    """
+    Method returning the template for the People in your home: children question page (for a given application) and
+    navigating to the People in your home: children details page or summary page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered People in your home: children question template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = OtherPeopleChildrenQuestionForm(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'people_in_home_status': application.people_in_home_status
+        }
+        if application.people_in_home_status != 'COMPLETED':
+            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+        return render(request, 'other-people-children-question.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = OtherPeopleChildrenQuestionForm(request.POST, id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        number_of_children = ChildInHome.objects.filter(application_id=application_id_local).count()
+        if form.is_valid():
+            application.children_in_home = form.cleaned_data.get('children_in_home')
+            application.save()
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/other-people/children-details?id=' + application_id_local + '&children=' + str(
+                    number_of_children))
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'other-people-children-question.html', variables)
 
 
 def declaration(request):

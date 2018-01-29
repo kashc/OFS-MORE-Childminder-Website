@@ -70,6 +70,7 @@ urlpatterns = [
     url(r'^other-people/adult-details/', views.other_people_adult_details, name='Other-People-Adult-Details-View'),
     url(r'^other-people/adult-dbs/', views.other_people_adult_dbs, name='Other-People-Adult-DBS-View'),
     url(r'^other-people/adult-permission/', views.other_people_adult_permission, name='Other-People-Adult-Permission-View'),
+    url(r'^other-people/children-question/', views.other_people_children_question, name='Other-People-Children-Question-View'),
     url(r'^declaration/declaration/', views.declaration, name='Declaration-View'),
     url(r'^declaration/summary/', views.declaration_summary, name='Declaration-Summary-View'),
     url(r'^payment/', views.payment_selection, name='Payment-View'),
