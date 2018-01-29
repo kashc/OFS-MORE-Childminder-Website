@@ -463,17 +463,17 @@ def other_people_logic(application_id_local, form, adult):
     first_name = form.cleaned_data.get('first_name')
     middle_names = form.cleaned_data.get('middle_names')
     last_name = form.cleaned_data.get('last_name')
-    birth_day = form.cleaned_data.get('date_of_birth')[0]
-    birth_month = form.cleaned_data.get('date_of_birth')[1]
-    birth_year = form.cleaned_data.get('date_of_birth')[2]
+    birth_day = form.cleaned_data.get('date_of_birth').day
+    birth_month = form.cleaned_data.get('date_of_birth').month
+    birth_year = form.cleaned_data.get('date_of_birth').year
     relationship = form.cleaned_data.get('relationship')
     # If the user entered information for this task for the first time
-    if AdultInHome.objects.filter(application_id=this_application, adult=adult) == 0:
+    if AdultInHome.objects.filter(application_id=this_application, adult=adult).count() == 0:
         adult_record = AdultInHome(first_name=first_name, middle_names=middle_names, last_name=last_name,
                                    birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
-                                   relationship=relationship, application_id_local=this_application)
+                                   relationship=relationship, application_id=this_application, adult=adult)
     # If the user previously entered information for this task
-    elif AdultInHome.objects.filter(application_id=this_application, adult=adult) > 0:
+    elif AdultInHome.objects.filter(application_id=this_application, adult=adult).count() > 0:
         adult_record = AdultInHome.objects.get(application_id=this_application, adult=adult)
         adult_record.first_name = first_name
         adult_record.middle_names = middle_names
