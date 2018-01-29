@@ -63,6 +63,7 @@ from .forms import (AccountForm,
                     HealthIntroForm,
                     OtherPeopleAdultDBSForm,
                     OtherPeopleAdultDetailsForm,
+                    OtherPeopleAdultPermissionForm,
                     OtherPeopleAdultQuestionForm,
                     OtherPeopleGuidanceForm,
                     PaymentDetailsForm,
@@ -2241,6 +2242,72 @@ def other_people_adult_dbs(request):
                 'people_in_home_status': application.people_in_home_status
             }
             status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/other-people/adult-permission?id=' + application_id_local + '&adults=' + number_of_adults,
+                variables)
+        # If there is an invalid form
+        elif False in valid_list:
+            variables = {
+                'form_list': form_list,
+                'application_id': application_id_local,
+                'number_of_adults': number_of_adults,
+                'add_adult': int(number_of_adults) + 1,
+                'people_in_home_status': application.people_in_home_status
+            }
+            return render(request, 'other-people-adult-dbs.html', variables)
+
+
+def other_people_adult_permission(request):
+    """
+    Method returning the template for the People in your home: adult permission page (for a given application) and
+    navigating to the People in your home: children question page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered People in your home: adult permission template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        number_of_adults = int(request.GET["adults"])
+        application = Application.objects.get(pk=application_id_local)
+        # Generate a list of forms to iterate through in the HTML
+        form_list = []
+        for i in range(1, number_of_adults + 1):
+            form = OtherPeopleAdultPermissionForm(id=application_id_local, adult=i, prefix=i)
+            form_list.append(form)
+        variables = {
+            'form_list': form_list,
+            'application_id': application_id_local,
+            'number_of_adults': number_of_adults,
+            'add_adult': number_of_adults + 1,
+            'people_in_home_status': application.people_in_home_status
+        }
+        if application.people_in_home_status != 'COMPLETED':
+            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+        return render(request, 'other-people-adult-permission.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        number_of_adults = request.POST["adults"]
+        application = Application.objects.get(pk=application_id_local)
+        # Generate a list of forms to iterate through in the HTML
+        form_list = []
+        # List to allow for the validation of each form
+        valid_list = []
+        for i in range(1, int(number_of_adults) + 1):
+            form = OtherPeopleAdultPermissionForm(request.POST, id=application_id_local, adult=i, prefix=i)
+            form_list.append(form)
+            if form.is_valid():
+                adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=i)
+                adult_record.permission_declare = form.cleaned_data.get('permission_declare')
+                adult_record.save()
+                valid_list.append(True)
+            else:
+                valid_list.append(False)
+        # If all forms are valid
+        if False not in valid_list:
+            variables = {
+                'application_id': application_id_local,
+                'people_in_home_status': application.people_in_home_status
+            }
+            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local,
                                         variables)
         # If there is an invalid form
@@ -2252,7 +2319,7 @@ def other_people_adult_dbs(request):
                 'add_adult': int(number_of_adults) + 1,
                 'people_in_home_status': application.people_in_home_status
             }
-            return render(request, 'other-people-adult-dbs.html', variables)
+            return render(request, 'other-people-adult-permission.html', variables)
 
 
 def declaration(request):

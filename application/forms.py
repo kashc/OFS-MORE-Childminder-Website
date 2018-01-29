@@ -1606,6 +1606,30 @@ class OtherPeopleAdultDBSForm(GOVUKForm):
         return dbs_certificate_number
 
 
+class OtherPeopleAdultPermissionForm(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: adult permission page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    permission_declare = forms.BooleanField(required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the People in your home: adult permission form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.adult = kwargs.pop('adult')
+        super(OtherPeopleAdultPermissionForm, self).__init__(*args, **kwargs)
+        self.fields['permission_declare'].label = self.adult
+        # If information was previously entered, display it on the form
+        if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).count() > 0:
+            adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
+            self.fields['permission_declare'].initial = adult_record.permission_declare
+
+
 class DeclarationForm(GOVUKForm):
     """
     GOV.UK form for the Declaration page

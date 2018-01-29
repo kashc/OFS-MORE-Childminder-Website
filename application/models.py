@@ -244,6 +244,7 @@ class AdultInHome(models.Model):
     birth_year = models.IntegerField(blank=True)
     relationship = models.CharField(max_length=100, blank=True)
     dbs_certificate_number = models.CharField(max_length=50, blank=True)
+    permission_declare = models.NullBooleanField(blank=True)
     email = models.CharField(max_length=100, blank=True)
 
     class Meta:
