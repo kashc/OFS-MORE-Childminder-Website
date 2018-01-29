@@ -19,7 +19,6 @@ from application.magic_link import (existing_application,
 from application.views import (application_saved,
                                account_selection,
                                card_payment_details,
-                               confirmation,
                                contact_email,
                                contact_phone,
                                contact_question,
@@ -29,7 +28,12 @@ from application.views import (application_saved,
                                dbs_check_summary,
                                dbs_check_upload_dbs,
                                declaration,
-                               eyfs,
+                               declaration_summary,
+                               eyfs_guidance,
+                               eyfs_knowledge,
+                               eyfs_questions,
+                               eyfs_summary,
+                               eyfs_training,
                                first_aid_training_declaration,
                                first_aid_training_details,
                                first_aid_training_guidance,
@@ -57,7 +61,9 @@ from application.views import (application_saved,
                                references_summary,
                                start_page,
                                task_list,
-                               type_of_childcare)
+                               type_of_childcare_age_groups,
+                               type_of_childcare_guidance,
+                               type_of_childcare_register)
 
 
 class StartPageTest(TestCase):
@@ -85,13 +91,37 @@ class TaskListTest(TestCase):
 class TypeOfChildcareTest(TestCase):
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/childcare/')
-        self.assertEqual(found.func, type_of_childcare)
+        found = resolve(settings.URL_PREFIX + '/childcare/guidance/')
+        self.assertEqual(found.func, type_of_childcare_guidance)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/childcare/?id=')
+            c.get(settings.URL_PREFIX + '/childcare/guidance?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/childcare/age-groups/')
+        self.assertEqual(found.func, type_of_childcare_age_groups)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/childcare/age-groups?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/childcare/register/')
+        self.assertEqual(found.func, type_of_childcare_register)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/childcare/register?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -477,13 +507,61 @@ class FirstAidTrainingTest(TestCase):
 class EYFSTest(TestCase):
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/eyfs/')
-        self.assertEqual(found.func, eyfs)
+        found = resolve(settings.URL_PREFIX + '/eyfs/guidance/')
+        self.assertEqual(found.func, eyfs_guidance)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/eyfs/?id=')
+            c.get(settings.URL_PREFIX + '/eyfs/guidance?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/eyfs/knowledge/')
+        self.assertEqual(found.func, eyfs_knowledge)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/eyfs/knowledge?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/eyfs/training/')
+        self.assertEqual(found.func, eyfs_training)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/eyfs/training?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/eyfs/questions/')
+        self.assertEqual(found.func, eyfs_questions)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/eyfs/questions?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/eyfs/summary/')
+        self.assertEqual(found.func, eyfs_summary)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/eyfs/summary?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -821,13 +899,25 @@ class OtherPeopleTest(TestCase):
 class DeclarationTest(TestCase):
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/declaration/')
+        found = resolve(settings.URL_PREFIX + '/declaration/summary/')
         self.assertEqual(found.func, declaration)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/declaration/?id=')
+            c.get(settings.URL_PREFIX + '/declaration/summary?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/declaration/declaration/')
+        self.assertEqual(found.func, declaration)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/declaration/declaration?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -871,21 +961,6 @@ class DeclarationTest(TestCase):
     def delete(self):
         models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
-
-
-class ConfirmationTest(TestCase):
-
-    def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/confirm-your-answers/')
-        self.assertEqual(found.func, confirmation)
-
-    def test_page_not_displayed_without_id(self):
-        c = Client()
-        try:
-            c.get(settings.URL_PREFIX + '/confirm-your-answers/?id=')
-            self.assertEqual(1, 0)
-        except:
-            self.assertEqual(0, 0)
 
 
 class AccountSelectionTest(TestCase):

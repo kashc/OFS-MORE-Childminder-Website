@@ -109,7 +109,7 @@
         </form>
         {% endif %}
         {% if childcare_type_status != 'COMPLETED' %}
-        <form action="{{ URL_PREFIX }}/childcare?id={{application_id}}" method="get">
+        <form action="{{ URL_PREFIX }}/childcare/guidance?id={{application_id}}" method="get">
             <input type="submit" class="button" value="Confirm and continue"/>
             <input type="hidden" value="{{application_id}}" name="id"/>
         </form>

@@ -14,8 +14,17 @@ from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 
 from .customfields import ExpirySplitDateField, ExpirySplitDateWidget, TimeKnownField
-from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, ChildcareType,
-                     CriminalRecordCheck, FirstAidTraining, HealthDeclarationBooklet, Reference, UserDetails)
+from .models import (ApplicantHomeAddress,
+                     ApplicantName,
+                     ApplicantPersonalDetails,
+                     Application,
+                     ChildcareType,
+                     CriminalRecordCheck,
+                     EYFS,
+                     FirstAidTraining,
+                     HealthDeclarationBooklet,
+                     Reference,
+                     UserDetails)
 
 
 class AccountForm(GOVUKForm):
@@ -160,22 +169,31 @@ class ContactSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class TypeOfChildcareForm(GOVUKForm):
+class TypeOfChildcareGuidanceForm(GOVUKForm):
+    """
+    GOV.UK form for the Type of childcare: guidance page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+class TypeOfChildcareAgeGroupsForm(GOVUKForm):
     """
     GOV.UK form for the Type of childcare task
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     CHILDCARE_AGE_CHOICES = (
-        ('0-5', 'Birth up to 5 years old'),
-        ('5-8', '5 to 8 years old'),
-        ('8over', '8 years and over'),
+        ('0-5', '0 to 5 year olds'),
+        ('5-8', '5 to 7 year olds'),
+        ('8over', '8 years or older'),
     )
     type_of_childcare = forms.MultipleChoiceField(
         required=True,
         widget=CheckboxSelectMultiple,
         choices=CHILDCARE_AGE_CHOICES,
-        label='Which ages of children do you intend to childmind?',
+        label='What age groups will you be caring for?',
+        help_text='Tick all that apply'
     )
 
     def __init__(self, *args, **kwargs):
@@ -185,7 +203,7 @@ class TypeOfChildcareForm(GOVUKForm):
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
         self.application_id_local = kwargs.pop('id')
-        super(TypeOfChildcareForm, self).__init__(*args, **kwargs)
+        super(TypeOfChildcareAgeGroupsForm, self).__init__(*args, **kwargs)
         # If information was previously entered, display it on the form
         if ChildcareType.objects.filter(application_id=self.application_id_local).count() > 0:
             childcare_record = ChildcareType.objects.get(application_id=self.application_id_local)
@@ -208,6 +226,16 @@ class TypeOfChildcareForm(GOVUKForm):
                 self.fields['type_of_childcare'].initial = ['8over']
             elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is False):
                 self.fields['type_of_childcare'].initial = []
+        self.fields['type_of_childcare'].error_messages = {
+            'required': 'You must select at least one age group to continue with your application'}
+
+
+class TypeOfChildcareRegisterForm(GOVUKForm):
+    """
+    GOV.UK form for the Type of childcare: register page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
 
 
 class EmailLoginForm(GOVUKForm):
@@ -729,9 +757,89 @@ class FirstAidTrainingSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class EYFSForm(GOVUKForm):
+class EYFSGuidanceForm(GOVUKForm):
     """
-    GOV.UK form for the Early Years knowledge page
+    GOV.UK form for the Early Years knowledge: guidance page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+class EYFSKnowledgeForm(GOVUKForm):
+    """
+    GOV.UK form for the Early Years knowledge: knowledge page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    options = (
+        ('True', 'Yes'),
+        ('False', 'No')
+    )
+    eyfs_understand = forms.ChoiceField(label='Do you understand the Early Years Foundation Stage?', choices=options,
+                                        widget=InlineRadioSelect, required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Early Years knowledge: knowledge form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(EYFSKnowledgeForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if EYFS.objects.filter(application_id=self.application_id_local).count() > 0:
+            eyfs_record = EYFS.objects.get(application_id=self.application_id_local)
+            self.fields['eyfs_understand'].initial = eyfs_record.eyfs_understand
+
+
+class EYFSTrainingForm(GOVUKForm):
+    """
+    GOV.UK form for the EYFS: training page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    eyfs_training_declare = forms.BooleanField(label='I will go on an early years training course', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Early Years knowledge: training form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(EYFSTrainingForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if EYFS.objects.filter(application_id=self.application_id_local).count() > 0:
+            eyfs_record = EYFS.objects.get(application_id=self.application_id_local)
+            self.fields['eyfs_training_declare'].initial = eyfs_record.eyfs_training_declare
+
+
+class EYFSQuestionsForm(GOVUKForm):
+    """
+    GOV.UK form for the EYFS: training page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    eyfs_questions_declare = forms.BooleanField(label='I am happy to answer questions about my early years knowledge',
+                                                required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Early Years knowledge: questions form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(EYFSQuestionsForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if EYFS.objects.filter(application_id=self.application_id_local).count() > 0:
+            eyfs_record = EYFS.objects.get(application_id=self.application_id_local)
+            self.fields['eyfs_questions_declare'].initial = eyfs_record.eyfs_questions_declare
+
+
+class EYFSSummaryForm(GOVUKForm):
+    """
+    GOV.UK form for the Early Years knowledge: summary page
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -1323,7 +1431,7 @@ class DeclarationForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class ConfirmForm(GOVUKForm):
+class DeclarationSummaryForm(GOVUKForm):
     """
     GOV.UK form for the Confirm your details page
     """

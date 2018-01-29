@@ -54,7 +54,7 @@
                 </tr>
                 <tr id="children">
                     <td class="task" style="padding-right: 10px; word-wrap: break-word;">
-                        <a href="{{ URL_PREFIX }}/childcare?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/childcare/guidance?id={{application_id}}">
                             <span class="task-name">Type of childcare</span>
                         </a>
                     </td>
@@ -134,9 +134,21 @@
                 </tr>
                 <tr id="eyfs">
                     <td class="task" style="padding-right: 10px; word-wrap: break-word;">
-                        <a href="{{ URL_PREFIX }}/eyfs?id={{application_id}}">
+                        {% if eyfs_training_status == 'NOT_STARTED' %}
+                        <a href="{{ URL_PREFIX }}/eyfs/guidance?id={{application_id}}">
                             <span class="task-name">Early Years knowledge</span>
                         </a>
+                        {% endif %}
+                        {% if eyfs_training_status == 'IN_PROGRESS' %}
+                        <a href="{{ URL_PREFIX }}/eyfs/guidance?id={{application_id}}">
+                            <span class="task-name">Early Years knowledge</span>
+                        </a>
+                        {% endif %}
+                        {% if eyfs_training_status == 'COMPLETED' %}
+                        <a href="{{ URL_PREFIX }}/eyfs/summary?id={{application_id}}">
+                            <span class="task-name">Early Years knowledge</span>
+                        </a>
+                        {% endif %}
                     </td>
                     {% if eyfs_training_status == 'NOT_STARTED' %}
                     <td class="numeric">
@@ -268,7 +280,7 @@
                 {% if all_complete == True %}
                 <tr id="review">
                     <td class="task" style="padding-right: 10px; word-wrap: break-word;">
-                        <a href="{{ URL_PREFIX }}/declaration/?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/declaration/declaration?id={{application_id}}">
                             <span class="task-name">Declaration</span>
                         </a>
                     </td>
@@ -299,7 +311,7 @@
     </div>
     {% endif %}
     {% if confirm_details %}
-    <form action="{{ URL_PREFIX }}/confirm-your-answers" method="get">
+    <form action="{{ URL_PREFIX }}/declaration/summary" method="get">
         <div class="column-two-thirds">
             <div class="form-group" style="margin-top: 20px;">
                 <input type=submit class="button button-start" value="Confirm your details"/>

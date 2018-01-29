@@ -20,6 +20,9 @@ from django.views.decorators.cache import never_cache
 from . import magic_link, payment, status
 from .business_logic import (childcare_type_logic,
                              dbs_check_logic,
+                             eyfs_knowledge_logic,
+                             eyfs_questions_logic,
+                             eyfs_training_logic,
                              first_aid_logic,
                              health_check_logic,
                              login_contact_logic,
@@ -32,22 +35,68 @@ from .business_logic import (childcare_type_logic,
                              personal_name_logic,
                              references_first_reference_logic,
                              references_second_reference_logic)
-from .forms import (AccountForm, ApplicationSavedForm, ConfirmForm, ContactEmailForm, ContactPhoneForm,
-                    ContactSummaryForm, DBSCheckDBSDetailsForm, DBSCheckGuidanceForm, DBSCheckSummaryForm,
-                    DBSCheckUploadDBSForm, DeclarationForm, EYFSForm, FirstAidTrainingDeclarationForm,
-                    FirstAidTrainingDetailsForm, FirstAidTrainingGuidanceForm, FirstAidTrainingRenewForm,
-                    FirstAidTrainingSummaryForm, FirstAidTrainingTrainingForm, FirstReferenceForm, HealthBookletForm,
-                    HealthIntroForm, OtherPeopleForm, PaymentDetailsForm, PaymentForm,
-                    PersonalDetailsChildcareAddressForm, PersonalDetailsChildcareAddressManualForm,
-                    PersonalDetailsDOBForm, PersonalDetailsGuidanceForm, PersonalDetailsHomeAddressForm,
-                    PersonalDetailsHomeAddressManualForm, PersonalDetailsLocationOfCareForm, PersonalDetailsNameForm,
-                    PersonalDetailsSummaryForm, QuestionForm, ReferenceFirstReferenceAddressForm,
-                    ReferenceFirstReferenceAddressManualForm, ReferenceFirstReferenceContactForm, ReferenceIntroForm,
-                    ReferenceSecondReferenceAddressForm, ReferenceSecondReferenceAddressManualForm,
-                    ReferenceSecondReferenceContactForm, ReferenceSummaryForm, SecondReferenceForm, TypeOfChildcareForm)
+from .forms import (AccountForm,
+                    ApplicationSavedForm,
+                    DeclarationSummaryForm,
+                    ContactEmailForm,
+                    ContactPhoneForm,
+                    ContactSummaryForm,
+                    DBSCheckDBSDetailsForm,
+                    DBSCheckGuidanceForm,
+                    DBSCheckSummaryForm,
+                    DBSCheckUploadDBSForm,
+                    DeclarationForm,
+                    EYFSGuidanceForm,
+                    EYFSKnowledgeForm,
+                    EYFSQuestionsForm,
+                    EYFSSummaryForm,
+                    EYFSTrainingForm,
+                    FirstAidTrainingDeclarationForm,
+                    FirstAidTrainingDetailsForm,
+                    FirstAidTrainingGuidanceForm,
+                    FirstAidTrainingRenewForm,
+                    FirstAidTrainingSummaryForm,
+                    FirstAidTrainingTrainingForm,
+                    FirstReferenceForm,
+                    HealthBookletForm,
+                    HealthIntroForm,
+                    OtherPeopleForm,
+                    PaymentDetailsForm,
+                    PaymentForm,
+                    PersonalDetailsChildcareAddressForm,
+                    PersonalDetailsChildcareAddressManualForm,
+                    PersonalDetailsDOBForm,
+                    PersonalDetailsGuidanceForm,
+                    PersonalDetailsHomeAddressForm,
+                    PersonalDetailsHomeAddressManualForm,
+                    PersonalDetailsLocationOfCareForm,
+                    PersonalDetailsNameForm,
+                    PersonalDetailsSummaryForm,
+                    QuestionForm,
+                    ReferenceFirstReferenceAddressForm,
+                    ReferenceFirstReferenceAddressManualForm,
+                    ReferenceFirstReferenceContactForm,
+                    ReferenceIntroForm,
+                    ReferenceSecondReferenceAddressForm,
+                    ReferenceSecondReferenceAddressManualForm,
+                    ReferenceSecondReferenceContactForm,
+                    ReferenceSummaryForm,
+                    SecondReferenceForm,
+                    TypeOfChildcareAgeGroupsForm,
+                    TypeOfChildcareGuidanceForm,
+                    TypeOfChildcareRegisterForm)
 from .middleware import CustomAuthenticationHandler
-from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, CriminalRecordCheck,
-                     FirstAidTraining, HealthDeclarationBooklet, Reference, UserDetails)
+from .models import (ApplicantHomeAddress,
+                     ApplicantName,
+                     ApplicantPersonalDetails,
+                     Application,
+                     ChildcareType,
+                     CriminalRecordCheck,
+                     EYFS,
+                     FirstAidTraining,
+                     HealthDeclarationBooklet,
+                     Reference,
+                     UserDetails)
 
 
 def error_404(request):
@@ -299,7 +348,7 @@ def contact_summary(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             status.update(application_id_local, 'login_details_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/childcare?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/childcare/guidance?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -309,28 +358,63 @@ def contact_summary(request):
             return render(request, 'contact-summary.html', variables)
 
 
-def type_of_childcare(request):
+def type_of_childcare_guidance(request):
     """
-    Method returning the template for the Type of childcare page (for a given application) and navigating to
-    the task list when successfully completed; business logic is applied to either create or update the
-    associated Childcare_Type record
+    Method returning the template for the Type of childcare: guidance page (for a given application) and navigating
+    to the Type of childcare: childcare ages page when successfully completed
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Type of childcare template
+    :return: an HttpResponse object with the rendered Type of childcare: guidance template
     """
-    current_date = datetime.datetime.today()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = TypeOfChildcareForm(id=application_id_local)
+        form = TypeOfChildcareGuidanceForm()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
             'application_id': application_id_local,
             'childcare_type_status': application.childcare_type_status
         }
-        return render(request, 'childcare.html', variables)
+        if application.childcare_type_status != 'COMPLETED':
+            status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
+        return render(request, 'childcare-guidance.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = TypeOfChildcareForm(request.POST, id=application_id_local)
+        form = TypeOfChildcareGuidanceForm(request.POST)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            if application.childcare_type_status != 'COMPLETED':
+                status.update(application_id_local, 'childcare_type_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/childcare/age-groups?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'childcare-guidance.html', variables)
+
+
+def type_of_childcare_age_groups(request):
+    """
+    Method returning the template for the Type of childcare: age groups page (for a given application) and navigating
+    to the task list when successfully completed; business logic is applied to either create or update the
+    associated Childcare_Type record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Type of childcare: age groups template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = TypeOfChildcareAgeGroupsForm(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'childcare_type_status': application.childcare_type_status
+        }
+        return render(request, 'childcare-age-groups.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = TypeOfChildcareAgeGroupsForm(request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             # Create or update Childcare_Type record
@@ -339,14 +423,64 @@ def type_of_childcare(request):
             application.date_updated = current_date
             application.save()
             status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/childcare/register?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
                 'application_id': application_id_local,
                 'childcare_type_status': application.childcare_type_status
             }
-            return render(request, 'childcare.html', variables)
+            return render(request, 'childcare-age-groups.html', variables)
+
+
+def type_of_childcare_register(request):
+    """
+    Method returning the template for the correct Type of childcare: register page (for a given application)
+    and navigating to the task list when successfully confirmed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the correct rendered Type of childcare: register template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = TypeOfChildcareRegisterForm()
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'childcare_type_status': application.childcare_type_status
+        }
+        childcare_record = ChildcareType.objects.get(application_id=application_id_local)
+        zero_to_five_status = childcare_record.zero_to_five
+        five_to_eight_status = childcare_record.five_to_eight
+        eight_plus_status = childcare_record.eight_plus
+        if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
+            return render(request, 'childcare-register-both.html', variables)
+        elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
+            return render(request, 'childcare-register-both.html', variables)
+        elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
+            return render(request, 'childcare-register-both.html', variables)
+        elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
+            return render(request, 'childcare-register-CR-voluntary-compulsory.html', variables)
+        elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
+            return render(request, 'childcare-register-EYR.html', variables)
+        elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
+            return render(request, 'childcare-register-CR.html', variables)
+        elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
+            return render(request, 'childcare-register-VCR.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = TypeOfChildcareRegisterForm(request.POST)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            if application.childcare_type_status != 'COMPLETED':
+                status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'childcare-guidance.html', variables)
 
 
 def task_list(request):
@@ -1002,16 +1136,16 @@ def first_aid_training_summary(request):
             return render(request, 'first-aid-summary.html', variables)
 
 
-def eyfs(request):
+def eyfs_guidance(request):
     """
-    Method returning the template for the Early Years knowledge page (for a given application) and navigating to
-    the task list when successfully completed
+    Method returning the template for the Early Years knowledge guidance page (for a given application) and navigating
+    to the EYFS knowledge page when successfully completed
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Early Years knowledge template
+    :return: an HttpResponse object with the rendered Early Years knowledge: guidance template
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = EYFSForm()
+        form = EYFSGuidanceForm()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -1020,19 +1154,187 @@ def eyfs(request):
         }
         if application.eyfs_training_status != 'COMPLETED':
             status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
-        return render(request, 'eyfs.html', variables)
+        return render(request, 'eyfs-guidance.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = EYFSForm(request.POST)
+        form = EYFSGuidanceForm(request.POST)
+        application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
-            status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
+            if application.eyfs_training_status != 'COMPLETED':
+                status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/knowledge?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'eyfs-guidance.html', variables)
+
+
+def eyfs_knowledge(request):
+    """
+    Method returning the template for the Early Years knowledge: knowledge page (for a given application)
+    and navigating to the Early Years knowledge: training or question page when successfully completed;
+    business logic is applied to either create or update the associated EYFS record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Early Years knowledge: knowledge template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = EYFSKnowledgeForm(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'eyfs_training_status': application.eyfs_training_status
+        }
+        return render(request, 'eyfs-knowledge.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = EYFSKnowledgeForm(request.POST, id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            if application.eyfs_training_status != 'COMPLETED':
+                status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
+            # Create or update EYFS record
+            eyfs_record = eyfs_knowledge_logic(application_id_local, form)
+            eyfs_record.save()
+            application.date_updated = current_date
+            application.save()
+            eyfs_understand = form.cleaned_data['eyfs_understand']
+            if eyfs_understand == 'True':
+                eyfs_record = EYFS.objects.get(application_id=application_id_local)
+                eyfs_record.eyfs_training_declare = False
+                eyfs_record.save()
+                return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/questions?id=' + application_id_local)
+            elif eyfs_understand == 'False':
+                return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/training?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'eyfs-knowledge.html', variables)
+
+
+def eyfs_training(request):
+    """
+    Method returning the template for the Early Years knowledge: training page (for a given application)
+    and navigating to the Early Years knowledge: question page when successfully completed;
+    business logic is applied to either create or update the associated EYFS record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Early Years knowledge: training template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = EYFSTrainingForm(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'eyfs_training_status': application.eyfs_training_status
+        }
+        return render(request, 'eyfs-training.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = EYFSTrainingForm(request.POST, id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            if application.eyfs_training_status != 'COMPLETED':
+                status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
+            # Create or update EYFS record
+            eyfs_record = eyfs_training_logic(application_id_local, form)
+            eyfs_record.save()
+            application.date_updated = current_date
+            application.save()
+            return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/questions?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'eyfs-training.html', variables)
+
+
+def eyfs_questions(request):
+    """
+    Method returning the template for the Early Years knowledge: questions page (for a given application)
+    and navigating to the Early Years knowledge: summary page when successfully completed;
+    business logic is applied to either create or update the associated EYFS record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Early Years knowledge: questions template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = EYFSQuestionsForm(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'eyfs_training_declare': eyfs_record.eyfs_training_declare,
+            'eyfs_training_status': application.eyfs_training_status
+        }
+        return render(request, 'eyfs-questions.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = EYFSQuestionsForm(request.POST, id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            # Create or update EYFS record
+            eyfs_record = eyfs_questions_logic(application_id_local, form)
+            eyfs_record.save()
+            application.date_updated = current_date
+            application.save()
+            if application.eyfs_training_status != 'COMPLETED':
+                status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/summary?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'eyfs-questions.html', variables)
+
+
+def eyfs_summary(request):
+    """
+    Method returning the template for the Early Years knowledge: summary page (for a given application)
+    displaying entered data for this task and navigating to the task list when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Early years knowledge: summary template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        eyfs_understand = eyfs_record.eyfs_understand
+        eyfs_training_declare = eyfs_record.eyfs_training_declare
+        eyfs_questions_declare = eyfs_record.eyfs_questions_declare
+        form = EYFSSummaryForm()
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'eyfs_understand': eyfs_understand,
+            'eyfs_training_declare': eyfs_training_declare,
+            'eyfs_questions_declare': eyfs_questions_declare,
+            'eyfs_training_status': application.eyfs_training_status,
+        }
+        return render(request, 'eyfs-summary.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = EYFSSummaryForm(request.POST)
+        if form.is_valid():
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-            return render(request, 'eyfs.html', variables)
+            return render(request, 'eyfs-summary.html', variables)
 
 
 def dbs_check_guidance(request):
@@ -1814,32 +2116,109 @@ def declaration(request):
             return render(request, 'declaration.html', variables)
 
 
-def confirmation(request):
+def declaration_summary(request):
     """
-    Method returning the template for the Confirmation page (for a given application) and navigating to
-    the task list when successfully completed
+    Method returning the template for the Declaration: summary page (for a given application) and navigating to
+    the Declaration: declaration page when successfully completed
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Confirmation template
+    :return: an HttpResponse object with the rendered Declaration: summary template
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = ConfirmForm()
+        form = DeclarationSummaryForm()
+        application = Application.objects.get(application_id=application_id_local)
+        login_detail_id = application.login_id.login_id
+        login_record = UserDetails.objects.get(login_id=login_detail_id)
+        childcare_record = ChildcareType.objects.get(application_id=application_id_local)
+        applicant_record = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+        personal_detail_id = applicant_record.personal_detail_id
+        applicant_name_record = ApplicantName.objects.get(personal_detail_id=personal_detail_id)
+        applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                         current_address=True)
+        applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                              childcare_address=True)
+        first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+        dbs_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
+        hdb_record = HealthDeclarationBooklet.objects.get(application_id=application_id_local)
+        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
+        second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
         variables = {
             'form': form,
             'application_id': application_id_local,
+            'login_details_email': login_record.email,
+            'login_details_mobile_number': login_record.mobile_number,
+            'login_details_alternative_phone_number': login_record.add_phone_number,
+            'childcare_type_zero_to_five': childcare_record.zero_to_five,
+            'childcare_type_five_to_eight': childcare_record.five_to_eight,
+            'childcare_type_eight_plus': childcare_record.eight_plus,
+            'personal_details_first_name': applicant_name_record.first_name,
+            'personal_details_middle_names': applicant_name_record.middle_names,
+            'personal_details_last_name': applicant_name_record.last_name,
+            'personal_details_birth_day': applicant_record.birth_day,
+            'personal_details_birth_month': applicant_record.birth_month,
+            'personal_details_birth_year': applicant_record.birth_year,
+            'home_address_street_line1': applicant_home_address_record.street_line1,
+            'home_address_street_line2': applicant_home_address_record.street_line2,
+            'home_address_town': applicant_home_address_record.town,
+            'home_address_county': applicant_home_address_record.county,
+            'home_address_postcode': applicant_home_address_record.postcode,
+            'childcare_street_line1': applicant_childcare_address_record.street_line1,
+            'childcare_street_line2': applicant_childcare_address_record.street_line2,
+            'childcare_town': applicant_childcare_address_record.town,
+            'childcare_county': applicant_childcare_address_record.county,
+            'childcare_postcode': applicant_childcare_address_record.postcode,
+            'location_of_childcare': applicant_home_address_record.childcare_address,
+            'first_aid_training_organisation': first_aid_record.training_organisation,
+            'first_aid_training_course': first_aid_record.course_title,
+            'first_aid_certificate_day': first_aid_record.course_day,
+            'first_aid_certificate_month': first_aid_record.course_month,
+            'first_aid_certificate_year': first_aid_record.course_year,
+            'dbs_certificate_number': dbs_record.dbs_certificate_number,
+            'cautions_convictions': dbs_record.cautions_convictions,
+            'send_hdb_declare': hdb_record.send_hdb_declare,
+            'eyfs_understand': eyfs_record.eyfs_understand,
+            'eyfs_training_declare': eyfs_record.eyfs_training_declare,
+            'eyfs_questions_declare': eyfs_record.eyfs_questions_declare,
+            'first_reference_first_name': first_reference_record.first_name,
+            'first_reference_last_name': first_reference_record.last_name,
+            'first_reference_relationship': first_reference_record.relationship,
+            'first_reference_years_known': first_reference_record.years_known,
+            'first_reference_months_known': first_reference_record.months_known,
+            'first_reference_street_line1': first_reference_record.street_line1,
+            'first_reference_street_line2': first_reference_record.street_line2,
+            'first_reference_town': first_reference_record.town,
+            'first_reference_county': first_reference_record.county,
+            'first_reference_postcode': first_reference_record.postcode,
+            'first_reference_country': first_reference_record.country,
+            'first_reference_phone_number': first_reference_record.phone_number,
+            'first_reference_email': first_reference_record.email,
+            'second_reference_first_name': second_reference_record.first_name,
+            'second_reference_last_name': second_reference_record.last_name,
+            'second_reference_relationship': second_reference_record.relationship,
+            'second_reference_years_known': second_reference_record.years_known,
+            'second_reference_months_known': second_reference_record.months_known,
+            'second_reference_street_line1': second_reference_record.street_line1,
+            'second_reference_street_line2': second_reference_record.street_line2,
+            'second_reference_town': second_reference_record.town,
+            'second_reference_county': second_reference_record.county,
+            'second_reference_postcode': second_reference_record.postcode,
+            'second_reference_country': second_reference_record.country,
+            'second_reference_phone_number': second_reference_record.phone_number,
+            'second_reference_email': second_reference_record.email
         }
-        return render(request, 'confirm.html', variables)
+        return render(request, 'declaration-summary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = ConfirmForm(request.POST)
+        form = DeclarationSummaryForm(request.POST)
         if form.is_valid():
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/declaration/declaration?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-            return render(request, 'confirm.html', variables)
+            return render(request, 'declaration-summary.html', variables)
 
 
 def payment_selection(request):

@@ -7,9 +7,16 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 import datetime
 
-from .models import (ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application,
-                     ChildcareType, CriminalRecordCheck, FirstAidTraining,
-                     Reference, HealthDeclarationBooklet)
+from .models import (ApplicantHomeAddress,
+                     ApplicantName,
+                     ApplicantPersonalDetails,
+                     Application,
+                     ChildcareType,
+                     CriminalRecordCheck,
+                     EYFS,
+                     FirstAidTraining,
+                     HealthDeclarationBooklet,
+                     Reference)
 
 
 def childcare_type_logic(application_id_local, form):
@@ -260,6 +267,63 @@ def first_aid_logic(application_id_local, form):
         first_aid_training_record.course_month = course_month
         first_aid_training_record.course_year = course_year
     return first_aid_training_record
+
+
+def eyfs_knowledge_logic(application_id_local, form):
+    """
+    Business logic to create or update an EYFS record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: an EYFS object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    eyfs_understand = form.cleaned_data.get('eyfs_understand')
+    # If the user entered information for this task for the first time
+    if EYFS.objects.filter(application_id=application_id_local).count() == 0:
+        eyfs_record = EYFS(eyfs_understand=eyfs_understand, application_id=this_application)
+    # If the user previously entered information for this task
+    elif EYFS.objects.filter(application_id=application_id_local).count() > 0:
+        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        eyfs_record.eyfs_understand = eyfs_understand
+    return eyfs_record
+
+
+def eyfs_training_logic(application_id_local, form):
+    """
+    Business logic to create or update an EYFS record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: an EYFS object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    eyfs_training_declare = form.cleaned_data.get('eyfs_training_declare')
+    # If the user entered information for this task for the first time
+    if EYFS.objects.filter(application_id=application_id_local).count() == 0:
+        eyfs_record = EYFS(eyfs_training_declare=eyfs_training_declare, application_id=this_application)
+    # If the user previously entered information for this task
+    elif EYFS.objects.filter(application_id=application_id_local).count() > 0:
+        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        eyfs_record.eyfs_training_declare = eyfs_training_declare
+    return eyfs_record
+
+
+def eyfs_questions_logic(application_id_local, form):
+    """
+    Business logic to create or update an EYFS record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: an EYFS object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    eyfs_questions_declare = form.cleaned_data.get('eyfs_questions_declare')
+    # If the user entered information for this task for the first time
+    if EYFS.objects.filter(application_id=application_id_local).count() == 0:
+        eyfs_record = EYFS(eyfs_questions_declare=eyfs_questions_declare, application_id=this_application)
+    # If the user previously entered information for this task
+    elif EYFS.objects.filter(application_id=application_id_local).count() > 0:
+        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        eyfs_record.eyfs_questions_declare = eyfs_questions_declare
+    return eyfs_record
 
 
 def dbs_check_logic(application_id_local, form):
