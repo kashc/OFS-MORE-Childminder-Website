@@ -451,7 +451,7 @@ def health_check_logic(application_id_local, form):
     return hdb_record
 
 
-def other_people_logic(application_id_local, form, adult):
+def other_people_adult_details_logic(application_id_local, form, adult):
     """
     Business logic to create or update an AdultInHome record
     :param application_id_local: A string object containing the current application ID

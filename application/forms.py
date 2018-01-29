@@ -1569,6 +1569,43 @@ class OtherPeopleAdultDetailsForm(GOVUKForm):
         return last_name
 
 
+class OtherPeopleAdultDBSForm(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: adult DBS page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
+                                                help_text='12-digit number on their certificate',
+                                                required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the People in your home: adult DBS form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.adult = kwargs.pop('adult')
+        super(OtherPeopleAdultDBSForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).count() > 0:
+            adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
+            self.fields['dbs_certificate_number'].initial = adult_record.dbs_certificate_number
+
+    def clean_dbs_certificate_number(self):
+        """
+        DBS certificate number validation
+        :return: integer
+        """
+        dbs_certificate_number = self.cleaned_data['dbs_certificate_number']
+        if len(str(dbs_certificate_number)) > 12:
+            raise forms.ValidationError('TBC')
+        if len(str(dbs_certificate_number)) < 12:
+            raise forms.ValidationError('TBC')
+        return dbs_certificate_number
+
+
 class DeclarationForm(GOVUKForm):
     """
     GOV.UK form for the Declaration page
