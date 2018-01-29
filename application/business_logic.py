@@ -13,6 +13,7 @@ from .models import (AdultInHome,
                      ApplicantPersonalDetails,
                      Application,
                      ChildcareType,
+                     ChildInHome,
                      CriminalRecordCheck,
                      EYFS,
                      FirstAidTraining,
@@ -463,9 +464,9 @@ def other_people_adult_details_logic(application_id_local, form, adult):
     first_name = form.cleaned_data.get('first_name')
     middle_names = form.cleaned_data.get('middle_names')
     last_name = form.cleaned_data.get('last_name')
-    birth_day = form.cleaned_data.get('date_of_birth').day
-    birth_month = form.cleaned_data.get('date_of_birth').month
-    birth_year = form.cleaned_data.get('date_of_birth').year
+    birth_day = form.cleaned_data.get('date_of_birth')[0]
+    birth_month = form.cleaned_data.get('date_of_birth')[1]
+    birth_year = form.cleaned_data.get('date_of_birth')[2]
     relationship = form.cleaned_data.get('relationship')
     # If the user entered information for this task for the first time
     if AdultInHome.objects.filter(application_id=this_application, adult=adult).count() == 0:
@@ -483,6 +484,40 @@ def other_people_adult_details_logic(application_id_local, form, adult):
         adult_record.birth_year = birth_year
         adult_record.relationship = relationship
     return adult_record
+
+
+def other_people_children_details_logic(application_id_local, form, child):
+    """
+    Business logic to create or update an ChildInHome record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :param adult: adult number (integer)
+    :return: an ChildInHome object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    first_name = form.cleaned_data.get('first_name')
+    middle_names = form.cleaned_data.get('middle_names')
+    last_name = form.cleaned_data.get('last_name')
+    birth_day = form.cleaned_data.get('date_of_birth')[0]
+    birth_month = form.cleaned_data.get('date_of_birth')[1]
+    birth_year = form.cleaned_data.get('date_of_birth')[2]
+    relationship = form.cleaned_data.get('relationship')
+    # If the user entered information for this task for the first time
+    if ChildInHome.objects.filter(application_id=this_application, child=child).count() == 0:
+        child_record = ChildInHome(first_name=first_name, middle_names=middle_names, last_name=last_name,
+                                   birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
+                                   relationship=relationship, application_id=this_application, child=child)
+    # If the user previously entered information for this task
+    elif ChildInHome.objects.filter(application_id=this_application, child=child).count() > 0:
+        child_record = ChildInHome.objects.get(application_id=this_application, child=child)
+        child_record.first_name = first_name
+        child_record.middle_names = middle_names
+        child_record.last_name = last_name
+        child_record.birth_day = birth_day
+        child_record.birth_month = birth_month
+        child_record.birth_year = birth_year
+        child_record.relationship = relationship
+    return child_record
 
 
 def get_card_expiry_years():

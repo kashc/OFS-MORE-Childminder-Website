@@ -12,7 +12,7 @@
 
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{number_of_adults}}" class="link-back"
+        <a href="{{ URL_PREFIX }}/other-people/children-question?id={{application_id}}" class="link-back"
            style="margin-right: 10px; line-height: 28px"
            alt="Back to application list">
             Back
@@ -23,29 +23,31 @@
         <!-- Content -->
         <div class="form-group grid-row">
             <h1 class="form-title heading-large">
-                DBS checks on adults in your home
+                Details of children in your home
             </h1>
-            <details style="margin-bottom: 15px;" role="group">
-                <summary role="button" aria-controls="details-content-0" aria-expanded="true"><span class="summary">How do I get a DBS check?</span>
-                </summary>
-                <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="false">
-                    <p>Apply for a DBS check online using the link below.</p>
-                    <p>DBS checks usually take about 6 weeks and cost £52.10 per person.</p>
-                    <a href="http://ofsteddbsapplication.co.uk/step-one.aspx">Get an Ofsted DBS check</a>
-                </div>
-                <br>
-            </details>
-            <p>Please enter the DBS certificate number for each adult in your home.</p>
+            <p>Please give details of the children you live with.</p>
             {% for form in form_list %}
             <h2 class="form-title heading-medium">
-                {{form.name}}
+                Child {{form.prefix}}
             </h2>
             {{form.as_div}}
             {% endfor %}
             {% csrf_token %}
             <input type="hidden" value="{{application_id}}" name="id"/>
+            {% if zero == 0 %}
+            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{remove_child}}"
+               style="margin-left: 0px;"><b>Remove child</b></a>
+            <br>
+            <br>
+            {% endif %}
+            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{add_child}}"
+               class="button-save-and-exit"
+               style="margin-left: 0px;">Add another child</a>
+            <br>
+            <br>
             <input type="submit" class="button" value="Save and continue">
-            <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
+            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+            <input type="hidden" id="children" name="children" value="{{number_of_children}}"/>
         </div>
     </form>
     </br>

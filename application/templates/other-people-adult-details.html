@@ -12,7 +12,7 @@
 
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/other-people/adult-question?id={{application_id}}" class="link-back"
+        <a href="{{ URL_PREFIX }}/other-people/adult-question?id={{application_id}}&adults={{number_of_adults}}" class="link-back"
            style="margin-right: 10px; line-height: 28px"
            alt="Back to application list">
             Back
@@ -35,6 +35,12 @@
             {% endfor %}
             {% csrf_token %}
             <input type="hidden" value="{{application_id}}" name="id"/>
+            {% if zero == 0 %}
+            <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{remove_adult}}"
+               style="margin-left: 0px;"><b>Remove person</b></a>
+            <br>
+            <br>
+            {% endif %}
             <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{add_adult}}"
                class="button-save-and-exit"
                style="margin-left: 0px;">Add another person</a>
