@@ -7,7 +7,8 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 import datetime
 
-from .models import (ApplicantHomeAddress,
+from .models import (AdultInHome,
+                     ApplicantHomeAddress,
                      ApplicantName,
                      ApplicantPersonalDetails,
                      Application,
@@ -433,7 +434,7 @@ def references_second_reference_logic(application_id_local, form):
 
 def health_check_logic(application_id_local, form):
     """
-    Business logic to create or update a Health_Declaration_Booklet record with first reference details
+    Business logic to create or update a HealthDeclarationBooklet record with first reference details
     :param application_id_local: A string object containing the current application ID
     :param form: A form object containing the data to be stored
     :return: an HealthDeclarationBooklet object to be saved
@@ -448,6 +449,40 @@ def health_check_logic(application_id_local, form):
         hdb_record = HealthDeclarationBooklet.objects.get(application_id=application_id_local)
         hdb_record.send_hdb_declare = send_hdb_declare
     return hdb_record
+
+
+def other_people_logic(application_id_local, form, adult):
+    """
+    Business logic to create or update an AdultInHome record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :param adult: adult number (integer)
+    :return: an AdultInHome object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    first_name = form.cleaned_data.get('first_name')
+    middle_names = form.cleaned_data.get('middle_names')
+    last_name = form.cleaned_data.get('last_name')
+    birth_day = form.cleaned_data.get('date_of_birth')[0]
+    birth_month = form.cleaned_data.get('date_of_birth')[1]
+    birth_year = form.cleaned_data.get('date_of_birth')[2]
+    relationship = form.cleaned_data.get('relationship')
+    # If the user entered information for this task for the first time
+    if AdultInHome.objects.filter(application_id=this_application, adult=adult) == 0:
+        adult_record = AdultInHome(first_name=first_name, middle_names=middle_names, last_name=last_name,
+                                   birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
+                                   relationship=relationship, application_id_local=this_application)
+    # If the user previously entered information for this task
+    elif AdultInHome.objects.filter(application_id=this_application, adult=adult) > 0:
+        adult_record = AdultInHome.objects.get(application_id=this_application, adult=adult)
+        adult_record.first_name = first_name
+        adult_record.middle_names = middle_names
+        adult_record.last_name = last_name
+        adult_record.birth_day = birth_day
+        adult_record.birth_month = birth_month
+        adult_record.birth_year = birth_year
+        adult_record.relationship = relationship
+    return adult_record
 
 
 def get_card_expiry_years():

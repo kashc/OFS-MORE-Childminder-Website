@@ -6,7 +6,9 @@
 {% block inner_content %}
 
 <!-- Initialise error summary for page -->
+{% for form in form_list %}
 {{form.error_summary}}
+{% endfor %}
 
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">

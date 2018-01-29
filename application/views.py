@@ -29,6 +29,7 @@ from .business_logic import (childcare_type_logic,
                              login_contact_logic,
                              login_contact_logic_phone,
                              multiple_childcare_address_logic,
+                             other_people_logic,
                              personal_childcare_address_logic,
                              personal_dob_logic,
                              personal_home_address_logic,
@@ -2156,25 +2157,35 @@ def other_people_adult_details(request):
         return render(request, 'other-people-adult-details.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = OtherPeopleAdultDetailsForm(request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         number_of_adults = AdultInHome.objects.filter(application_id=application_id_local).count()
         adults_list = []
         for i in range(1, number_of_adults + 1):
             adults_list.append(i)
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'number_of_adults': number_of_adults,
-            'adults_list': adults_list,
-            'add_adult': number_of_adults + 1,
-            'people_in_home_status': application.people_in_home_status
-        }
-        if form.is_valid():
-            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local, variables)
-        else:
-            return render(request, 'other-people-adult-details.html', variables)
+        form_list = []
+        for i in range(1, number_of_adults + 1):
+            form = OtherPeopleAdultDetailsForm(id=application_id_local, adult=i, prefix=i)
+            form_list.append(form)
+            print(form.is_valid())
+            if form.is_valid():
+                adult_record = other_people_logic(application_id_local, form, i)
+                adult_record.save()
+                variables = {
+                    'application_id': application_id_local,
+                    'people_in_home_status': application.people_in_home_status
+                }
+                status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
+                #return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local, variables)
+            else:
+                variables = {
+                    'form_list': form_list,
+                    'application_id': application_id_local,
+                    'number_of_adults': number_of_adults,
+                    'adults_list': adults_list,
+                    'add_adult': number_of_adults + 1,
+                    'people_in_home_status': application.people_in_home_status
+                }
+                return render(request, 'other-people-adult-details.html', variables)
 
 
 def declaration(request):
