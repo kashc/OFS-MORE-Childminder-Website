@@ -2050,7 +2050,7 @@ def references_summary(request):
         return render(request, 'references-summary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = ReferencesSummaryForm()
+        form = ReferenceSummaryForm()
         if form.is_valid():
             status.update(application_id_local, 'references_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
@@ -2127,7 +2127,7 @@ def other_people_adult_question(request):
             if data == 'True':
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/other-people/adult-details?id=' + application_id_local + '&adults=' + str(
-                        number_of_adults))
+                        number_of_adults) + '&remove=0')
             elif data == 'False':
                 adults = AdultInHome.objects.filter(application_id=application_id_local)
                 for adult in adults:
@@ -2152,6 +2152,7 @@ def other_people_adult_details(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         number_of_adults = int(request.GET["adults"])
+        remove_person = int(request.GET["remove"])
         zero = 0
         if number_of_adults == 0:
             number_of_adults = 1
@@ -2159,15 +2160,29 @@ def other_people_adult_details(request):
         if number_of_adults == 1:
             zero = ''
         application = Application.objects.get(pk=application_id_local)
+        print('Cleaning up person ' + str(remove_person))
+        # Clean up database for removed persons
+        if AdultInHome.objects.filter(application_id=application_id_local, adult=remove_person).exists() is True:
+            AdultInHome.objects.get(application_id=application_id_local, adult=remove_person).delete()
+        # Allow 1 second for database to process changes
+        time.sleep(1)
+        # Re-assign numbers to persons
+        for i in range(1, number_of_adults + 1):
+            print('Verifying person ' + str(i))
+            if AdultInHome.objects.filter(application_id=application_id_local, adult=i).count() == 0:
+                print('Person ' + str(i) + ' does not exist')
+                next_adult = i + 1
+                if AdultInHome.objects.filter(application_id=application_id_local, adult=next_adult).count() != 0:
+                    next_adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=next_adult)
+                    next_adult_record.adult = i
+                    next_adult_record.save()
+            else:
+                print('Person ' + str(i) + ' exists')
         # Generate a list of forms to iterate through in the HTML
         form_list = []
         for i in range(1, number_of_adults + 1):
             form = OtherPeopleAdultDetailsForm(id=application_id_local, adult=i, prefix=i)
             form_list.append(form)
-        records = AdultInHome.objects.filter(application_id=application_id_local)
-        for record in records:
-            if record.adult > number_of_adults:
-                record.delete()
         variables = {
             'form_list': form_list,
             'application_id': application_id_local,
@@ -2402,7 +2417,7 @@ def other_people_children_question(request):
             if children_in_home == 'True':
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/other-people/children-details?id=' + application_id_local + '&children=' + str(
-                        number_of_children))
+                        number_of_children) + '&remove=0')
             elif children_in_home == 'False':
                 children = ChildInHome.objects.filter(application_id=application_id_local)
                 for child in children:
@@ -2426,6 +2441,7 @@ def other_people_children_details(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         number_of_children = int(request.GET["children"])
+        remove_person = int(request.GET["remove"])
         zero = 0
         if number_of_children == 0:
             number_of_children = 1
@@ -2433,15 +2449,29 @@ def other_people_children_details(request):
         if number_of_children == 1:
             zero = ''
         application = Application.objects.get(pk=application_id_local)
+        print('Cleaning up person ' + str(remove_person))
+        # Clean up database for removed persons
+        if ChildInHome.objects.filter(application_id=application_id_local, child=remove_person).exists() is True:
+            ChildInHome.objects.get(application_id=application_id_local, child=remove_person).delete()
+        # Allow 1 second for database to process changes
+        time.sleep(1)
+        # Re-assign numbers to persons
+        for i in range(1, number_of_children + 1):
+            print('Verifying person ' + str(i))
+            if ChildInHome.objects.filter(application_id=application_id_local, child=i).count() == 0:
+                print('Person ' + str(i) + ' does not exist')
+                next_child = i + 1
+                if ChildInHome.objects.filter(application_id=application_id_local, child=next_child).count() != 0:
+                    next_child_record = ChildInHome.objects.get(application_id=application_id_local, child=next_child)
+                    next_child_record.child = i
+                    next_child_record.save()
+            else:
+                print('Person ' + str(i) + ' exists')
         # Generate a list of forms to iterate through in the HTML
         form_list = []
         for i in range(1, number_of_children + 1):
             form = OtherPeopleChildrenDetailsForm(id=application_id_local, child=i, prefix=i)
             form_list.append(form)
-        records = ChildInHome.objects.filter(application_id=application_id_local)
-        for record in records:
-            if record.child > number_of_children:
-                record.delete()
         variables = {
             'form_list': form_list,
             'application_id': application_id_local,

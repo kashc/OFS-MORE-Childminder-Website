@@ -32,16 +32,16 @@
                 Person {{form.prefix}}
             </h2>
             {{form.as_div}}
+            {% if zero == 0 %}
+            <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{remove_adult}}&remove={{form.prefix}}"
+               style="margin-left: 0px;"><b>Remove person</b></a>
+            {% endif %}
             {% endfor %}
             {% csrf_token %}
             <input type="hidden" value="{{application_id}}" name="id"/>
-            {% if zero == 0 %}
-            <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{remove_adult}}"
-               style="margin-left: 0px;"><b>Remove person</b></a>
             <br>
             <br>
-            {% endif %}
-            <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{add_adult}}"
+            <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{add_adult}}&remove=0"
                class="button-save-and-exit"
                style="margin-left: 0px;">Add another person</a>
             <br>
@@ -51,7 +51,7 @@
             <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
         </div>
     </form>
-    </br>
+    <br>
     <!-- Return to task list -->
     <div class="form-group grid-row">
         <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>

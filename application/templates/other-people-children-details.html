@@ -31,16 +31,16 @@
                 Child {{form.prefix}}
             </h2>
             {{form.as_div}}
+            {% if zero == 0 %}
+            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{remove_child}}&remove={{form.prefix}}"
+               style="margin-left: 0px;"><b>Remove child</b></a>
+            {% endif %}
             {% endfor %}
             {% csrf_token %}
             <input type="hidden" value="{{application_id}}" name="id"/>
-            {% if zero == 0 %}
-            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{remove_child}}"
-               style="margin-left: 0px;"><b>Remove child</b></a>
             <br>
             <br>
-            {% endif %}
-            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{add_child}}"
+            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{add_child}}&remove=0"
                class="button-save-and-exit"
                style="margin-left: 0px;">Add another child</a>
             <br>
