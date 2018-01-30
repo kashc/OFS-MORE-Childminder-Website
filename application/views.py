@@ -42,6 +42,8 @@ from .business_logic import (childcare_type_logic,
                              remove_child)
 from .forms import (AccountForm,
                     ApplicationSavedForm,
+                    DeclarationDeclarationForm,
+                    DeclarationDeclarationForm2,
                     DeclarationSummaryForm,
                     ContactEmailForm,
                     ContactPhoneForm,
@@ -50,7 +52,7 @@ from .forms import (AccountForm,
                     DBSCheckGuidanceForm,
                     DBSCheckSummaryForm,
                     DBSCheckUploadDBSForm,
-                    DeclarationForm,
+                    DeclarationDeclarationForm,
                     EYFSGuidanceForm,
                     EYFSKnowledgeForm,
                     EYFSQuestionsForm,
@@ -2654,7 +2656,7 @@ def other_people_summary(request):
             return render(request, 'other-people-summary.html', variables)
 
 
-def declaration(request):
+def declaration_declaration(request):
     """
     Method returning the template for the Declaration page (for a given application) and navigating to
     the task list when successfully completed
@@ -2663,29 +2665,47 @@ def declaration(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = DeclarationForm()
+        form = DeclarationDeclarationForm(id=application_id_local)
+        form2 = DeclarationDeclarationForm2(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
+            'form2': form2,
             'application_id': application_id_local,
             'declarations_status': application.declarations_status
         }
         # Set task to completed, as form is still to be created in later sprint
         if application.declarations_status != 'COMPLETED':
             status.update(application_id_local, 'declarations_status', 'COMPLETED')
-        return render(request, 'declaration.html', variables)
+        return render(request, 'declaration-declaration.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = DeclarationForm(request.POST)
+        application = Application.objects.get(application_id=application_id_local)
+        form = DeclarationDeclarationForm(request.POST, id=application_id_local)
+        form2 = DeclarationDeclarationForm2(request.POST, id=application_id_local)
         if form.is_valid():
-            status.update(application_id_local, 'declarations_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+            background_check_declare = form.cleaned_data.get('background_check_declare')
+            inspect_home_declare = form.cleaned_data.get('inspect_home_declare')
+            interview_declare = form.cleaned_data.get('interview_declare')
+            eyfs_questions_declare = form.cleaned_data.get('eyfs_questions_declare')
+            application.background_check_declare = background_check_declare
+            application.inspect_home_declare = inspect_home_declare
+            application.interview_declare = interview_declare
+            application.eyfs_questions_declare = eyfs_questions_declare
+            application.save()
+            if form2.is_valid():
+                information_correct_declare = form.cleaned_data.get('information_correct_declare')
+                application.information_correct_declare = information_correct_declare
+                application.save()
+                status.update(application_id_local, 'declarations_status', 'COMPLETED')
+                return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
+                'form2': form2,
                 'application_id': application_id_local
             }
-            return render(request, 'declaration.html', variables)
+            return render(request, 'declaration-declaration.html', variables)
 
 
 def declaration_summary(request):
@@ -2715,6 +2735,48 @@ def declaration_summary(request):
         eyfs_record = EYFS.objects.get(application_id=application_id_local)
         first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
+        adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
+        adult_name_list = []
+        adult_birth_day_list = []
+        adult_birth_month_list = []
+        adult_birth_year_list = []
+        adult_relationship_list = []
+        adult_dbs_list = []
+        adult_permission_list = []
+        children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
+        child_name_list = []
+        child_birth_day_list = []
+        child_birth_month_list = []
+        child_birth_year_list = []
+        child_relationship_list = []
+        form = OtherPeopleSummaryForm()
+        application = Application.objects.get(pk=application_id_local)
+        for adult in adults_list:
+            if adult.middle_names != '':
+                name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
+            elif adult.middle_names == '':
+                name = adult.first_name + ' ' + adult.last_name
+            adult_name_list.append(name)
+            adult_birth_day_list.append(adult.birth_day)
+            adult_birth_month_list.append(adult.birth_month)
+            adult_birth_year_list.append(adult.birth_year)
+            adult_relationship_list.append(adult.relationship)
+            adult_dbs_list.append(adult.dbs_certificate_number)
+            adult_permission_list.append(adult.permission_declare)
+        adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
+                          adult_relationship_list, adult_dbs_list, adult_permission_list)
+        for child in children_list:
+            if child.middle_names != '':
+                name = child.first_name + ' ' + child.middle_names + ' ' + child.last_name
+            elif child.middle_names == '':
+                name = child.first_name + ' ' + child.last_name
+            child_name_list.append(name)
+            child_birth_day_list.append(child.birth_day)
+            child_birth_month_list.append(child.birth_month)
+            child_birth_year_list.append(child.birth_year)
+            child_relationship_list.append(child.relationship)
+        child_lists = zip(child_name_list, child_birth_day_list, child_birth_month_list, child_birth_year_list,
+                          child_relationship_list)
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -2777,7 +2839,14 @@ def declaration_summary(request):
             'second_reference_postcode': second_reference_record.postcode,
             'second_reference_country': second_reference_record.country,
             'second_reference_phone_number': second_reference_record.phone_number,
-            'second_reference_email': second_reference_record.email
+            'second_reference_email': second_reference_record.email,
+            'adults_in_home': application.adults_in_home,
+            'children_in_home': application.children_in_home,
+            'number_of_adults': adults_list.count(),
+            'number_of_children': children_list.count(),
+            'adult_lists': adult_lists,
+            'child_lists': child_lists,
+            'turning_16': application.children_turning_16,
         }
         return render(request, 'declaration-summary.html', variables)
     if request.method == 'POST':
