@@ -505,8 +505,10 @@ def rearrange_adults(number_of_adults, application_id_local):
     :return:
     """
     for i in range(1, number_of_adults + 1):
+        # If there is a gap in the sequence of adult numbers
         if AdultInHome.objects.filter(application_id=application_id_local, adult=i).count() == 0:
             next_adult = i + 1
+            # If there is an adult that has the next number in the sequence, assign the missing number
             if AdultInHome.objects.filter(application_id=application_id_local, adult=next_adult).count() != 0:
                 next_adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=next_adult)
                 next_adult_record.adult = i
@@ -532,8 +534,10 @@ def rearrange_children(number_of_children, application_id_local):
     :return:
     """
     for i in range(1, number_of_children + 1):
+        # If there is a gap in the sequence of child numbers
         if ChildInHome.objects.filter(application_id=application_id_local, child=i).count() == 0:
             next_child = i + 1
+            # If there is a child that has the next number in the sequence, assign the missing number
             if ChildInHome.objects.filter(application_id=application_id_local, child=next_child).count() != 0:
                 next_child_record = ChildInHome.objects.get(application_id=application_id_local, child=next_child)
                 next_child_record.child = i
