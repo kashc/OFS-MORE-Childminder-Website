@@ -2535,7 +2535,7 @@ def other_people_children_details(request):
                 application.children_turning_16 = False
                 application.save()
                 return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/other-people/number-of-children?id=' + application_id_local, variables)
+                    settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local, variables)
         # If there is an invalid form
         elif False in valid_list:
             variables = {
@@ -2591,45 +2591,6 @@ def other_people_approaching_16(request):
                 'application_id': application_id_local
             }
             return render(request, 'other-people-approaching-16.html', variables)
-
-
-def other_people_number_of_children(request):
-    """
-    Method returning the template for the People in your home: number of children page (for a given application)
-    and navigating to the People in your home: summary page when successfully completed
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered People in your home: number of children template
-    """
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        form = OtherPeopleNumberOfChildrenForm()
-        application = Application.objects.get(pk=application_id_local)
-        turning_16 = application.children_turning_16
-        number_of_children = ChildInHome.objects.filter(application_id=application_id_local).count()
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'number_of_children': number_of_children,
-            'turning_16': turning_16,
-            'people_in_home_status': application.people_in_home_status
-        }
-        return render(request, 'other-people-number-of-children.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = OtherPeopleNumberOfChildrenForm(request.POST)
-        application = Application.objects.get(pk=application_id_local)
-        number_of_children = ChildInHome.objects.filter(application_id=application_id_local).count()
-        if form.is_valid():
-            if application.people_in_home_status != 'COMPLETED':
-                status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local)
-        else:
-            variables = {
-                'form': form,
-                'number_of_children': number_of_children,
-                'application_id': application_id_local
-            }
-            return render(request, 'other-people-number-of-children.html', variables)
 
 
 def other_people_summary(request):
@@ -2692,6 +2653,7 @@ def other_people_summary(request):
             'number_of_children': children_list.count(),
             'adult_lists': adult_lists,
             'child_lists': child_lists,
+            'turning_16': application.children_turning_16,
             'people_in_home_status': application.people_in_home_status
         }
         status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
