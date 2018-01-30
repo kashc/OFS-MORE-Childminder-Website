@@ -486,12 +486,66 @@ def other_people_adult_details_logic(application_id_local, form, adult):
     return adult_record
 
 
+def remove_adult(application_id_local, remove_person):
+    """
+    Method to remove an adult from the database
+    :param application_id_local: current application ID
+    :param remove_person: adult to remove (integer)
+    :return:
+    """
+    if AdultInHome.objects.filter(application_id=application_id_local, adult=remove_person).exists() is True:
+        AdultInHome.objects.get(application_id=application_id_local, adult=remove_person).delete()
+
+
+def rearrange_adults(number_of_adults, application_id_local):
+    """
+    Method to rearrange numbers assigned to adults
+    :param number_of_adults: number of adults in database (integer)
+    :param application_id_local: current application ID
+    :return:
+    """
+    for i in range(1, number_of_adults + 1):
+        if AdultInHome.objects.filter(application_id=application_id_local, adult=i).count() == 0:
+            next_adult = i + 1
+            if AdultInHome.objects.filter(application_id=application_id_local, adult=next_adult).count() != 0:
+                next_adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=next_adult)
+                next_adult_record.adult = i
+                next_adult_record.save()
+
+
+def remove_child(application_id_local, remove_person):
+    """
+    Method to remove a child from the database
+    :param application_id_local: current application ID
+    :param remove_person: child to remove (integer)
+    :return:
+    """
+    if ChildInHome.objects.filter(application_id=application_id_local, child=remove_person).exists() is True:
+        ChildInHome.objects.get(application_id=application_id_local, child=remove_person).delete()
+
+
+def rearrange_children(number_of_children, application_id_local):
+    """
+    Method to rearrange numbers assigned to adults
+    :param number_of_children: number of children in database (integer)
+    :param application_id_local: current application ID
+    :return:
+    """
+    for i in range(1, number_of_children + 1):
+        if ChildInHome.objects.filter(application_id=application_id_local, child=i).count() == 0:
+            next_child = i + 1
+            if ChildInHome.objects.filter(application_id=application_id_local, child=next_child).count() != 0:
+                next_child_record = ChildInHome.objects.get(application_id=application_id_local, child=next_child)
+                next_child_record.child = i
+                next_child_record.save()
+
+
 def other_people_children_details_logic(application_id_local, form, child):
     """
     Business logic to create or update an ChildInHome record
     :param application_id_local: A string object containing the current application ID
     :param form: A form object containing the data to be stored
-    :param adult: adult number (integer)
+    :param child: child number (integer)
     :return: an ChildInHome object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)

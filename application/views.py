@@ -35,8 +35,11 @@ from .business_logic import (childcare_type_logic,
                              personal_home_address_logic,
                              personal_location_of_care_logic,
                              personal_name_logic,
+                             rearrange_adults,
                              references_first_reference_logic,
-                             references_second_reference_logic)
+                             references_second_reference_logic,
+                             remove_adult,
+                             remove_child)
 from .forms import (AccountForm,
                     ApplicationSavedForm,
                     DeclarationSummaryForm,
@@ -2160,24 +2163,8 @@ def other_people_adult_details(request):
         if number_of_adults == 1:
             zero = ''
         application = Application.objects.get(pk=application_id_local)
-        print('Cleaning up person ' + str(remove_person))
-        # Clean up database for removed persons
-        if AdultInHome.objects.filter(application_id=application_id_local, adult=remove_person).exists() is True:
-            AdultInHome.objects.get(application_id=application_id_local, adult=remove_person).delete()
-        # Allow 1 second for database to process changes
-        time.sleep(1)
-        # Re-assign numbers to persons
-        for i in range(1, number_of_adults + 1):
-            print('Verifying person ' + str(i))
-            if AdultInHome.objects.filter(application_id=application_id_local, adult=i).count() == 0:
-                print('Person ' + str(i) + ' does not exist')
-                next_adult = i + 1
-                if AdultInHome.objects.filter(application_id=application_id_local, adult=next_adult).count() != 0:
-                    next_adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=next_adult)
-                    next_adult_record.adult = i
-                    next_adult_record.save()
-            else:
-                print('Person ' + str(i) + ' exists')
+        remove_adult(application_id_local, remove_person)
+        rearrange_adults(number_of_adults, application_id_local)
         # Generate a list of forms to iterate through in the HTML
         form_list = []
         for i in range(1, number_of_adults + 1):
@@ -2449,12 +2436,7 @@ def other_people_children_details(request):
         if number_of_children == 1:
             zero = ''
         application = Application.objects.get(pk=application_id_local)
-        print('Cleaning up person ' + str(remove_person))
-        # Clean up database for removed persons
-        if ChildInHome.objects.filter(application_id=application_id_local, child=remove_person).exists() is True:
-            ChildInHome.objects.get(application_id=application_id_local, child=remove_person).delete()
-        # Allow 1 second for database to process changes
-        time.sleep(1)
+        remove_child(application_id_local,remove_person)
         # Re-assign numbers to persons
         for i in range(1, number_of_children + 1):
             print('Verifying person ' + str(i))
