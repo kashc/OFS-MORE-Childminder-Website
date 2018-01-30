@@ -74,6 +74,7 @@ urlpatterns = [
     url(r'^other-people/children-details/', views.other_people_children_details, name='Other-People-Children-Details-View'),
     url(r'^other-people/approaching-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
     url(r'^other-people/number-of-children/', views.other_people_number_of_children, name='Other-People-Number-Of-Children-View'),
+    url(r'^other-people/summary/', views.other_people_summary, name='Other-People-Summary-View'),
     url(r'^declaration/declaration/', views.declaration, name='Declaration-View'),
     url(r'^declaration/summary/', views.declaration_summary, name='Declaration-Summary-View'),
     url(r'^payment/', views.payment_selection, name='Payment-View'),

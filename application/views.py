@@ -71,6 +71,7 @@ from .forms import (AccountForm,
                     OtherPeopleChildrenDetailsForm,
                     OtherPeopleGuidanceForm,
                     OtherPeopleNumberOfChildrenForm,
+                    OtherPeopleSummaryForm,
                     PaymentDetailsForm,
                     PaymentForm,
                     PersonalDetailsChildcareAddressForm,
@@ -2049,7 +2050,7 @@ def references_summary(request):
         return render(request, 'references-summary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = PersonalDetailsSummaryForm()
+        form = ReferencesSummaryForm()
         if form.is_valid():
             status.update(application_id_local, 'references_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
@@ -2128,6 +2129,9 @@ def other_people_adult_question(request):
                     settings.URL_PREFIX + '/other-people/adult-details?id=' + application_id_local + '&adults=' + str(
                         number_of_adults))
             elif data == 'False':
+                adults = AdultInHome.objects.filter(application_id=application_id_local)
+                for adult in adults:
+                    adult.delete()
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/other-people/children-question?id=' + application_id_local)
         else:
@@ -2179,8 +2183,12 @@ def other_people_adult_details(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         number_of_adults = request.POST["adults"]
+        zero = 0
         if number_of_adults == 0:
             number_of_adults = 1
+            zero = ''
+        if number_of_adults == 1:
+            zero = ''
         application = Application.objects.get(pk=application_id_local)
         # Generate a list of forms to iterate through in the HTML
         form_list = []
@@ -2211,6 +2219,8 @@ def other_people_adult_details(request):
                 'application_id': application_id_local,
                 'number_of_adults': number_of_adults,
                 'add_adult': int(number_of_adults) + 1,
+                'remove_adult': int(number_of_adults) - 1,
+                'zero': zero,
                 'people_in_home_status': application.people_in_home_status
             }
             return render(request, 'other-people-adult-details.html', variables)
@@ -2386,11 +2396,18 @@ def other_people_children_question(request):
         application = Application.objects.get(pk=application_id_local)
         number_of_children = ChildInHome.objects.filter(application_id=application_id_local).count()
         if form.is_valid():
-            application.children_in_home = form.cleaned_data.get('children_in_home')
+            children_in_home = form.cleaned_data.get('children_in_home')
+            application.children_in_home = children_in_home
             application.save()
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/other-people/children-details?id=' + application_id_local + '&children=' + str(
-                    number_of_children))
+            if children_in_home == 'True':
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/other-people/children-details?id=' + application_id_local + '&children=' + str(
+                        number_of_children))
+            elif children_in_home == 'False':
+                children = ChildInHome.objects.filter(application_id=application_id_local)
+                for child in children:
+                    child.delete()
+                return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -2440,16 +2457,19 @@ def other_people_children_details(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         number_of_children = request.POST["children"]
+        zero = 0
         if number_of_children == 0:
             number_of_children = 1
+            zero = ''
+        if number_of_children == 1:
+            zero = ''
         application = Application.objects.get(pk=application_id_local)
         # Generate a list of forms to iterate through in the HTML
         form_list = []
         # List to allow for the validation of each form
         valid_list = []
-        # List to check the child's age on each
+        # List to allow for the age verification of each form
         age_list = []
-        child_turning_16 = ''
         for i in range(1, int(number_of_children) + 1):
             form = OtherPeopleChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
             form_list.append(form)
@@ -2470,7 +2490,6 @@ def other_people_children_details(request):
                     age_list.append(False)
             else:
                 valid_list.append(False)
-        print(age_list)
         # If all forms are valid
         if False not in valid_list:
             variables = {
@@ -2478,12 +2497,15 @@ def other_people_children_details(request):
                 'people_in_home_status': application.people_in_home_status,
             }
             if True in age_list:
+                application.children_turning_16 = True
+                application.save()
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/other-people/approaching-16?id=' + application_id_local, variables)
             elif True not in age_list:
+                application.children_turning_16 = False
+                application.save()
                 return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/other-people/number-of-children?id=' + application_id_local + '&turning16=False',
-                    variables)
+                    settings.URL_PREFIX + '/other-people/number-of-children?id=' + application_id_local, variables)
         # If there is an invalid form
         elif False in valid_list:
             variables = {
@@ -2491,6 +2513,8 @@ def other_people_children_details(request):
                 'application_id': application_id_local,
                 'number_of_children': number_of_children,
                 'add_child': int(number_of_children) + 1,
+                'remove_child': int(number_of_children) - 1,
+                'zero': zero,
                 'people_in_home_status': application.people_in_home_status
             }
             return render(request, 'other-people-children-details.html', variables)
@@ -2530,8 +2554,7 @@ def other_people_approaching_16(request):
                 'people_in_home_status': application.people_in_home_status
             }
             return HttpResponseRedirect(
-                settings.URL_PREFIX + '/other-people/number-of-children?id=' + application_id_local + '&turning16=True',
-                variables)
+                settings.URL_PREFIX + '/other-people/number-of-children?id=' + application_id_local, variables)
         else:
             variables = {
                 'form': form,
@@ -2549,15 +2572,15 @@ def other_people_number_of_children(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        turning_16 = request.GET["turning16"]
         form = OtherPeopleNumberOfChildrenForm()
         application = Application.objects.get(pk=application_id_local)
+        turning_16 = application.children_turning_16
         number_of_children = ChildInHome.objects.filter(application_id=application_id_local).count()
         variables = {
             'form': form,
             'application_id': application_id_local,
             'number_of_children': number_of_children,
-            'child_turning_16': turning_16,
+            'turning_16': turning_16,
             'people_in_home_status': application.people_in_home_status
         }
         return render(request, 'other-people-number-of-children.html', variables)
@@ -2577,6 +2600,82 @@ def other_people_number_of_children(request):
                 'application_id': application_id_local
             }
             return render(request, 'other-people-number-of-children.html', variables)
+
+
+def other_people_summary(request):
+    """
+    Method returning the template for the People in your home: summary page (for a given application)
+    displaying entered data for this task and navigating to the task list when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered People in your home: summary template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
+        adult_name_list = []
+        adult_birth_day_list = []
+        adult_birth_month_list = []
+        adult_birth_year_list = []
+        adult_relationship_list = []
+        adult_dbs_list = []
+        children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
+        child_name_list = []
+        child_birth_day_list = []
+        child_birth_month_list = []
+        child_birth_year_list = []
+        child_relationship_list = []
+        form = OtherPeopleSummaryForm()
+        application = Application.objects.get(pk=application_id_local)
+        for adult in adults_list:
+            if adult.middle_names != '':
+                name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
+            elif adult.middle_names == '':
+                name = adult.first_name + ' ' + adult.last_name
+            adult_name_list.append(name)
+            adult_birth_day_list.append(adult.birth_day)
+            adult_birth_month_list.append(adult.birth_month)
+            adult_birth_year_list.append(adult.birth_year)
+            adult_relationship_list.append(adult.relationship)
+            adult_dbs_list.append(adult.dbs_certificate_number)
+        adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
+                          adult_relationship_list, adult_dbs_list)
+        for child in children_list:
+            if child.middle_names != '':
+                name = child.first_name + ' ' + child.middle_names + ' ' + child.last_name
+            elif child.middle_names == '':
+                name = child.first_name + ' ' + child.last_name
+            child_name_list.append(name)
+            child_birth_day_list.append(child.birth_day)
+            child_birth_month_list.append(child.birth_month)
+            child_birth_year_list.append(child.birth_year)
+            child_relationship_list.append(child.relationship)
+        child_lists = zip(child_name_list, child_birth_day_list, child_birth_month_list, child_birth_year_list,
+                          child_relationship_list)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'adults_in_home': application.adults_in_home,
+            'children_in_home': application.children_in_home,
+            'number_of_adults': adults_list.count(),
+            'number_of_children': children_list.count(),
+            'adult_lists': adult_lists,
+            'child_lists': child_lists,
+            'people_in_home_status': application.people_in_home_status
+        }
+        status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
+        return render(request, 'other-people-summary.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = OtherPeopleSummaryForm()
+        if form.is_valid():
+            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'other-people-summary.html', variables)
 
 
 def declaration(request):

@@ -7,13 +7,13 @@
 
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
-        {% if child_turning_16 == 'True' %}
+        {% if turning_16 is True %}
         <a href="{{ URL_PREFIX }}/other-people/approaching-16?id={{application_id}}" class="link-back"
            style="margin-right: 10px; line-height: 28px"
            alt="Back to application list">
             Back
         </a>
-        {% elif child_turning_16 == 'False' %}
+        {% elif turning_16 is False %}
         <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}" class="link-back"
            style="margin-right: 10px; line-height: 28px"
            alt="Back to application list">

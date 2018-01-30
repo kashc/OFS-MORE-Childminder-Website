@@ -72,6 +72,7 @@ class Application(models.Model):
     people_in_home_status = models.CharField(choices=TASK_STATUS, max_length=50)
     adults_in_home = models.NullBooleanField(blank=True, null=True)
     children_in_home = models.NullBooleanField(blank=True, null=True)
+    children_turning_16 = models.NullBooleanField(blank=True, null=True)
     declarations_status = models.CharField(choices=TASK_STATUS, max_length=50)
     date_created = models.DateTimeField(blank=True, null=True)
     date_updated = models.DateTimeField(blank=True, null=True)
@@ -245,7 +246,6 @@ class AdultInHome(models.Model):
     relationship = models.CharField(max_length=100, blank=True)
     dbs_certificate_number = models.CharField(max_length=50, blank=True)
     permission_declare = models.NullBooleanField(blank=True)
-    email = models.CharField(max_length=100, blank=True)
 
     class Meta:
         db_table = 'ADULT_IN_HOME'

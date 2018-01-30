@@ -353,7 +353,7 @@ class PersonalDetailsNameForm(GOVUKForm):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
-        if re.match("^[A-Za-z- ]+$", first_name) is None:
+        if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
             raise forms.ValidationError('TBC')
         if len(first_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -366,7 +366,7 @@ class PersonalDetailsNameForm(GOVUKForm):
         """
         middle_names = self.cleaned_data['middle_names']
         if middle_names != '':
-            if re.match("^[A-Za-z- ]+$", middle_names) is None:
+            if re.match("^[A-zÀ-ÿ- ]+$", middle_names) is None:
                 raise forms.ValidationError('TBC')
             if len(middle_names) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
@@ -378,7 +378,7 @@ class PersonalDetailsNameForm(GOVUKForm):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
-        if re.match("^[A-Za-z- ]+$", last_name) is None:
+        if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
             raise forms.ValidationError('TBC')
         if len(last_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1010,7 +1010,7 @@ class FirstReferenceForm(GOVUKForm):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
-        if re.match("^[A-Za-z- ]+$", first_name) is None:
+        if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
             raise forms.ValidationError('TBC')
         if len(first_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1022,7 +1022,7 @@ class FirstReferenceForm(GOVUKForm):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
-        if re.match("^[A-Za-z- ]+$", last_name) is None:
+        if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
             raise forms.ValidationError('TBC')
         if len(last_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1251,7 +1251,7 @@ class SecondReferenceForm(GOVUKForm):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
-        if re.match("^[A-Za-z- ]+$", first_name) is None:
+        if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
             raise forms.ValidationError('TBC')
         if len(first_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1263,7 +1263,7 @@ class SecondReferenceForm(GOVUKForm):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
-        if re.match("^[A-Za-z- ]+$", last_name) is None:
+        if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
             raise forms.ValidationError('TBC')
         if len(last_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1538,7 +1538,7 @@ class OtherPeopleAdultDetailsForm(GOVUKForm):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
-        if re.match("^[A-Za-z- ]+$", first_name) is None:
+        if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
             raise forms.ValidationError('TBC')
         if len(first_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1551,7 +1551,7 @@ class OtherPeopleAdultDetailsForm(GOVUKForm):
         """
         middle_names = self.cleaned_data['middle_names']
         if middle_names != '':
-            if re.match("^[A-Za-z- ]+$", middle_names) is None:
+            if re.match("^[A-zÀ-ÿ- ]+$", middle_names) is None:
                 raise forms.ValidationError('TBC')
             if len(middle_names) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1563,7 +1563,7 @@ class OtherPeopleAdultDetailsForm(GOVUKForm):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
-        if re.match("^[A-Za-z- ]+$", last_name) is None:
+        if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
             raise forms.ValidationError('TBC')
         if len(last_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1647,7 +1647,7 @@ class OtherPeopleAdultPermissionForm(GOVUKForm):
         if middle_names != '':
             self.fields['permission_declare'].label = first_name + ' ' + middle_names + ' ' + last_name
         elif middle_names == '':
-            self.fields['permission_declare'].label = first_name + last_name
+            self.fields['permission_declare'].label = first_name + ' ' + last_name
         # If information was previously entered, display it on the form
         if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).count() > 0:
             adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
@@ -1719,7 +1719,7 @@ class OtherPeopleChildrenDetailsForm(GOVUKForm):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
-        if re.match("^[A-Za-z- ]+$", first_name) is None:
+        if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
             raise forms.ValidationError('TBC')
         if len(first_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1732,7 +1732,7 @@ class OtherPeopleChildrenDetailsForm(GOVUKForm):
         """
         middle_names = self.cleaned_data['middle_names']
         if middle_names != '':
-            if re.match("^[A-Za-z- ]+$", middle_names) is None:
+            if re.match("^[A-zÀ-ÿ- ]+$", middle_names) is None:
                 raise forms.ValidationError('TBC')
             if len(middle_names) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1744,7 +1744,7 @@ class OtherPeopleChildrenDetailsForm(GOVUKForm):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
-        if re.match("^[A-Za-z- ]+$", last_name) is None:
+        if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
             raise forms.ValidationError('TBC')
         if len(last_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1777,6 +1777,14 @@ class OtherPeopleApproaching16Form(GOVUKForm):
 class OtherPeopleNumberOfChildrenForm(GOVUKForm):
     """
     GOV.UK form for the People in your home: number of children page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+class OtherPeopleSummaryForm(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: summary page
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
