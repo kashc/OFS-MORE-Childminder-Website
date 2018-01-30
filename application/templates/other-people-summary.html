@@ -79,7 +79,7 @@
         </tr>
         </tbody>
     </table>
-    {% for name, day, month, year, relationship, dbs_certificate_number in adult_lists %}
+    {% for name, day, month, year, relationship, dbs_certificate_number, permission in adult_lists %}
     <table class="check-your-answers form-group grid-row">
         <thead>
         <tr>
@@ -186,6 +186,25 @@
             <td class="change-answer">
                 <a href="{{ URL_PREFIX }}/other-people/adult-dbs?id={{application_id}}&adults={{number_of_adults}}" alt='Change adult DBS certificate number'>
                     Change <span class="visuallyhidden">adult DBS certificate number</span>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td style="word-wrap: break-word">
+                Permission for checks
+            </td>
+            {% if permission is True %}
+            <td style="word-wrap: break-word">
+                Yes
+            </td>
+            {% elif permission is False %}
+            <td style="word-wrap: break-word">
+                No
+            </td>
+            {% endif %}
+            <td class="change-answer">
+                <a href="{{ URL_PREFIX }}/other-people/adult-permission?id={{application_id}}&adults={{number_of_adults}}" alt='Change adult permission for checks'>
+                    Change <span class="visuallyhidden">adult permission for checks</span>
                 </a>
             </td>
         </tr>

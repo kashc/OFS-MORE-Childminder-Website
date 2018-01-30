@@ -2618,6 +2618,7 @@ def other_people_summary(request):
         adult_birth_year_list = []
         adult_relationship_list = []
         adult_dbs_list = []
+        adult_permission_list = []
         children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
         child_name_list = []
         child_birth_day_list = []
@@ -2637,8 +2638,9 @@ def other_people_summary(request):
             adult_birth_year_list.append(adult.birth_year)
             adult_relationship_list.append(adult.relationship)
             adult_dbs_list.append(adult.dbs_certificate_number)
+            adult_permission_list.append(adult.permission_declare)
         adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
-                          adult_relationship_list, adult_dbs_list)
+                          adult_relationship_list, adult_dbs_list, adult_permission_list)
         for child in children_list:
             if child.middle_names != '':
                 name = child.first_name + ' ' + child.middle_names + ' ' + child.last_name
