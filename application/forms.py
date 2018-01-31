@@ -700,6 +700,26 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         return postcode
 
 
+class PersonalDetailsChildcareAddressLookupForm(GOVUKForm):
+    """
+    GOV.UK form for the Your personal details: childcare address page for postcode search results
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    address = forms.ChoiceField(label='Address', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: childcare address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.choices = kwargs.pop('choices')
+        super(PersonalDetailsChildcareAddressLookupForm, self).__init__(*args, **kwargs)
+        self.fields['address'].choices = self.choices
+
+
 class PersonalDetailsSummaryForm(GOVUKForm):
     """
     GOV.UK form for the Your personal details: summary page

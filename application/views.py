@@ -907,57 +907,155 @@ def personal_details_childcare_address(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         manual = request.GET["manual"]
+        lookup = request.GET["lookup"]
+        application = Application.objects.get(pk=application_id_local)
         # Switch between manual address entry and postcode search
-        if manual == 'False':
-            form = PersonalDetailsChildcareAddressForm(id=application_id_local)
-            application = Application.objects.get(pk=application_id_local)
-            variables = {
-                'form': form,
-                'application_id': application_id_local,
-                'personal_details_status': application.personal_details_status
-            }
-            return render(request, 'personal-details-childcare-address.html', variables)
-        elif manual == 'True':
-            form = PersonalDetailsChildcareAddressManualForm(id=application_id_local)
-            application = Application.objects.get(pk=application_id_local)
-            variables = {
-                'form': form,
-                'application_id': application_id_local,
-                'personal_details_status': application.personal_details_status
-            }
-            return render(request, 'personal-details-childcare-address-manual.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        manual = request.POST["manual"]
-        # Switch between manual address entry and postcode search
-        if manual == 'False':
-            form = PersonalDetailsChildcareAddressForm(request.POST, id=application_id_local)
-            application = Application.objects.get(pk=application_id_local)
-            if form.is_valid():
-                if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
-                    status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-                return HttpResponseRedirect(settings.URL_PREFIX +
-                                            '/personal-details/childcare-address/?id=' + application_id_local +
-                                            '&manual=False')
-            else:
+        if lookup == 'False':
+            if manual == 'False':
+                form = PersonalDetailsChildcareAddressForm(id=application_id_local)
                 variables = {
                     'form': form,
                     'application_id': application_id_local,
                     'personal_details_status': application.personal_details_status
                 }
                 return render(request, 'personal-details-childcare-address.html', variables)
-        if manual == 'True':
+            elif manual == 'True':
+                form = PersonalDetailsChildcareAddressManualForm(id=application_id_local)
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'personal_details_status': application.personal_details_status
+                }
+                return render(request, 'personal-details-childcare-address-manual.html', variables)
+        # Postcode search page
+        elif lookup == 'True':
+            applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+            childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, childcare_address=True)
+            postcode = childcare_address_record.postcode
+            addresses = AddressHelper.issue_postcode_search(postcode)
+            form = PersonalDetailsChildcareAddressLookupForm(id=application_id_local, choices=addresses)
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'postcode': postcode,
+                'personal_details_status': application.personal_details_status
+            }
+            return render(request, 'personal-details-childcare-address-lookup.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        manual = request.POST["manual"]
+        lookup = request.POST["lookup"]
+        finish = request.POST["finish"]
+        application = Application.objects.get(pk=application_id_local)
+        if finish == 'False':
+            # Switch between manual address entry and postcode search
+            if lookup == 'False':
+                if manual == 'False':
+                    form = PersonalDetailsChildcareAddressForm(request.POST, id=application_id_local)
+                    if form.is_valid():
+                        postcode = form.cleaned_data.get('postcode')
+                        applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+                        childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                                                               childcare_address=True)
+                        childcare_address_record.postcode = postcode
+                        childcare_address_record.save()
+                        application = Application.objects.get(pk=application_id_local)
+                        application.date_updated = current_date
+                        application.save()
+                        return HttpResponseRedirect(
+                            settings.URL_PREFIX + '/personal-details/childcare-address/?id=' + application_id_local +
+                            '&manual=False&lookup=True')
+                    else:
+                        variables = {
+                            'form': form,
+                            'application_id': application_id_local,
+                            'personal_details_status': application.personal_details_status
+                        }
+                        return render(request, 'personal-details-childcare-address.html', variables)
+                if manual == 'True':
+                    form = PersonalDetailsChildcareAddressManualForm(request.POST, id=application_id_local)
+                    selected_address = AddressHelper.get_posted_address(form, 'address')
+
+                    line1 = selected_address['line1']
+                    line2 = selected_address['line2']
+                    town = selected_address['townOrCity']
+                    postcode = selected_address['postcode']
+                    personal_detail_record = ApplicantPersonalDetails.objects.get(
+                        application_id=application_id_local)
+                    personal_detail_id = personal_detail_record.personal_detail_id
+                    # If the user entered information for this task for the first time
+                    if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
+                        childcare_address_record = ApplicantHomeAddress(street_line1=line1,
+                                                                   street_line2=line2,
+                                                                   town=town,
+                                                                   county='',
+                                                                   country='United Kingdom',
+                                                                   postcode=postcode,
+                                                                   childcare_address=True,
+                                                                   current_address=False,
+                                                                   move_in_month=0,
+                                                                   move_in_year=0,
+                                                                   personal_detail_id=personal_detail_record)
+                        childcare_address_record.save()
+                    # If the user previously entered information for this task
+                    elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
+                                                             childcare_address=True).count() > 0:
+                        childcare_address_record = ApplicantHomeAddress.objects.get(
+                            personal_detail_id=personal_detail_id,
+                            childcare_address=True)
+                        childcare_address_record.street_line1 = line1
+                        childcare_address_record.street_line2 = line2
+                        childcare_address_record.town = town
+                        childcare_address_record.county = ''
+                        childcare_address_record.postcode = postcode
+                        childcare_address_record.save()
+
+                    application = Application.objects.get(pk=application_id_local)
+                    application.date_updated = current_date
+                    application.save()
+
+                    if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
+                        status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+                    return HttpResponseRedirect(
+                        settings.URL_PREFIX + '/personal-details/childcare-address?id=' + application_id_local + '&manual=True&lookup=False')
+            elif lookup == 'True':
+                form = PersonalDetailsChildcareAddressLookupForm(request.POST, id=application_id_local, choices=[])
+                if form.is_valid():
+                    postcode = form.cleaned_data.get('postcode')
+                    applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+                    childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                                                           childcare_address=True)
+                    childcare_address_record.postcode = postcode
+                    childcare_address_record.save()
+                    application = Application.objects.get(pk=application_id_local)
+                    application.date_updated = current_date
+                    application.save()
+                    variables = {
+                        'form': form,
+                        'application_id': application_id_local,
+                        'postcode': postcode,
+                        'personal_details_status': application.personal_details_status
+                    }
+                    return HttpResponseRedirect(
+                        settings.URL_PREFIX + '/personal-details/childcare-address/?id=' + application_id_local +
+                        '&manual=False&lookup=True', variables)
+                else:
+                    variables = {
+                        'form': form,
+                        'application_id': application_id_local,
+                        'personal_details_status': application.personal_details_status
+                    }
+                    return render(request, 'personal-details-childcare-address-lookup.html', variables)
+        elif finish == 'True':
             form = PersonalDetailsChildcareAddressManualForm(request.POST, id=application_id_local)
-            application = Application.objects.get(pk=application_id_local)
             if form.is_valid():
-                application = Application.objects.get(pk=application_id_local)
-                if application.personal_details_status != 'COMPLETED':
-                    status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-                # Update Applicant_Home_Address record
                 childcare_address_record = personal_childcare_address_logic(application_id_local, form)
                 childcare_address_record.save()
+                application = Application.objects.get(pk=application_id_local)
                 application.date_updated = current_date
                 application.save()
+                if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
+                    status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
             else:
