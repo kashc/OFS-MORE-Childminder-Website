@@ -688,10 +688,27 @@ def personal_details_home_address(request):
                 }
                 return render(request, 'personal-details-home-address-manual.html', variables)
         elif lookup == 'True':
-            form = PersonalDetailsHomeAddressLookupForm(id=application_id_local)
             applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
             home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
             postcode = home_address_record.postcode
+            # addresses = [
+            #     ('Address', 'Address'),
+            #     ('Address', 'Address')
+            # ]
+            # form = PersonalDetailsHomeAddressLookupForm(id=application_id_local, choices=addresses)
+            headers = {"content-type": "application/json"}
+            response = requests.get("http://130.130.52.132:8002/addressing-service/api/v1/addresses/" + postcode + '/',
+                                    headers=headers, verify=False)
+            if response.status_code == 200:
+                blob = json.loads(response.text)
+                results = blob['results']
+                addresses = []
+                for address in results:
+                    one_line = address['combinedAddress']
+                    addresses.append((one_line, one_line))
+                form = PersonalDetailsHomeAddressLookupForm(id=application_id_local, choices=addresses)
+            else:
+                JsonResponse(json.loads(response.text), status=response.status_code)
             variables = {
                 'form': form,
                 'application_id': application_id_local,
@@ -709,9 +726,15 @@ def personal_details_home_address(request):
             if manual == 'False':
                 form = PersonalDetailsHomeAddressForm(request.POST, id=application_id_local)
                 if form.is_valid():
+                    postcode = form.cleaned_data.get('postcode')
+                    applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+                    home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                                                           current_address=True)
+                    home_address_record.postcode = postcode
+                    home_address_record.save()
                     return HttpResponseRedirect(
                         settings.URL_PREFIX + '/personal-details/home-address/?id=' + application_id_local +
-                        '&manual=False')
+                        '&manual=False&lookup=True')
                 else:
                     variables = {
                         'form': form,
@@ -739,7 +762,7 @@ def personal_details_home_address(request):
                     }
                     return render(request, 'personal-details-home-address-manual.html', variables)
         elif lookup == 'True':
-            form = PersonalDetailsHomeAddressLookupForm(request.POST, id=application_id_local)
+            form = PersonalDetailsHomeAddressLookupForm(request.POST, id=application_id_local, choices=[])
             if form.is_valid():
                 postcode = form.cleaned_data.get('postcode')
                 applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
@@ -747,17 +770,15 @@ def personal_details_home_address(request):
                                                                        current_address=True)
                 home_address_record.postcode = postcode
                 home_address_record.save()
-
-                headers = {"content-type": "application/json"}
-                response = requests.get("http://130.130.52.132:8002/addressing-service/api/v1/addresses/" + postcode + '/',
-                                        headers=headers, verify=False)
-                if response.status_code == 200:
-                    return JsonResponse(json.loads(response.text), status=201)
-                else:
-                    return JsonResponse(json.loads(response.text), status=response.status_code)
-                # return HttpResponseRedirect(
-                #     settings.URL_PREFIX + '/personal-details/home-address/?id=' + application_id_local +
-                #     '&manual=False&lookup=True')
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'postcode': postcode,
+                    'personal_details_status': application.personal_details_status
+                }
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/personal-details/home-address/?id=' + application_id_local +
+                    '&manual=False&lookup=True', variables)
             else:
                 variables = {
                     'form': form,
