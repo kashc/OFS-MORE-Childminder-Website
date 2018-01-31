@@ -543,7 +543,7 @@ class PersonalDetailsHomeAddressLookupForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    postcode = forms.ChoiceField(label='Address')
+    address = forms.ChoiceField(label='Address')
 
     def __init__(self, *args, **kwargs):
         """
@@ -554,7 +554,7 @@ class PersonalDetailsHomeAddressLookupForm(GOVUKForm):
         self.application_id_local = kwargs.pop('id')
         self.choices = kwargs.pop('choices')
         super(PersonalDetailsHomeAddressLookupForm, self).__init__(*args, **kwargs)
-        self.fields['postcode'].choices = self.choices
+        self.fields['address'].choices = self.choices
 
 
 class PersonalDetailsLocationOfCareForm(GOVUKForm):

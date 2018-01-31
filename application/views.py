@@ -692,17 +692,20 @@ def personal_details_home_address(request):
             home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
             postcode = home_address_record.postcode
             # addresses = [
+            #     ('', '2 addresses returned'),
             #     ('Address', 'Address'),
             #     ('Address', 'Address')
             # ]
             # form = PersonalDetailsHomeAddressLookupForm(id=application_id_local, choices=addresses)
             headers = {"content-type": "application/json"}
-            response = requests.get("http://130.130.52.132:8002/addressing-service/api/v1/addresses/" + postcode + '/',
-                                    headers=headers, verify=False)
+            response = requests.get(settings.ADDRESSING_URL + postcode + '/', headers=headers, verify=False)
             if response.status_code == 200:
                 blob = json.loads(response.text)
                 results = blob['results']
+                count = blob['count']
+                results_no = str(count) + ' addresses found'
                 addresses = []
+                addresses.append(('', results_no))
                 for address in results:
                     one_line = address['combinedAddress']
                     addresses.append((one_line, one_line))

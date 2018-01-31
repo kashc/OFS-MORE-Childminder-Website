@@ -22,7 +22,7 @@
             <h2 class="form-title heading-small">Postcode</h2>
             <p>{{postcode}} <a href="{{ URL_PREFIX }}/personal-details/home-address?id={{application_id}}&manual=False&lookup=False">Change</a></p>
             <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
-            {{form.postcode}}
+            {{form.as_div}}
             {% csrf_token %}
             </br>
             <a href="{{ URL_PREFIX }}/personal-details/home-address?id={{application_id}}&manual=True&lookup=False" name="manual"
