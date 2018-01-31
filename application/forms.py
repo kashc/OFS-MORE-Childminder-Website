@@ -543,7 +543,7 @@ class PersonalDetailsHomeAddressLookupForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    address = forms.ChoiceField(label='Address')
+    address = forms.ChoiceField(label='Address', required=True)
 
     def __init__(self, *args, **kwargs):
         """
