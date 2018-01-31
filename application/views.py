@@ -2586,7 +2586,7 @@ def other_people_approaching_16(request):
                 'people_in_home_status': application.people_in_home_status
             }
             return HttpResponseRedirect(
-                settings.URL_PREFIX + '/other-people/number-of-children?id=' + application_id_local, variables)
+                settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local, variables)
         else:
             variables = {
                 'form': form,
