@@ -537,6 +537,28 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         return postcode
 
 
+class PersonalDetailsHomeAddressLookupForm(GOVUKForm):
+    """
+    GOV.UK form for the Your personal details: home address page for postcode search results
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    addresses = (
+        ('Address 1', 'Address 1'),
+        ('Address 2', 'Address 2')
+    )
+    postcode = forms.CharField(label='Address')
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: home address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsHomeAddressLookupForm, self).__init__(*args, **kwargs)
+
+
 class PersonalDetailsLocationOfCareForm(GOVUKForm):
     """
     GOV.UK form for the Your personal details: location of care page

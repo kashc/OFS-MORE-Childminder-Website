@@ -8,12 +8,13 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 import datetime
 import json
 import re
+import requests
 import time
 from datetime import date
 from uuid import UUID
 
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.cache import never_cache
 
@@ -74,7 +75,6 @@ from .forms import (AccountForm,
                     OtherPeopleChildrenQuestionForm,
                     OtherPeopleChildrenDetailsForm,
                     OtherPeopleGuidanceForm,
-                    OtherPeopleNumberOfChildrenForm,
                     OtherPeopleSummaryForm,
                     PaymentDetailsForm,
                     PaymentForm,
@@ -83,6 +83,7 @@ from .forms import (AccountForm,
                     PersonalDetailsDOBForm,
                     PersonalDetailsGuidanceForm,
                     PersonalDetailsHomeAddressForm,
+                    PersonalDetailsHomeAddressLookupForm,
                     PersonalDetailsHomeAddressManualForm,
                     PersonalDetailsLocationOfCareForm,
                     PersonalDetailsNameForm,
@@ -644,7 +645,8 @@ def personal_details_dob(request):
             application.date_updated = current_date
             application.save()
             return HttpResponseRedirect(
-                settings.URL_PREFIX + '/personal-details/home-address?id=' + application_id_local + '&manual=False')
+                settings.URL_PREFIX + '/personal-details/home-address?id=' + application_id_local +
+                '&manual=False&lookup=False')
         else:
             variables = {
                 'form': form,
@@ -665,61 +667,104 @@ def personal_details_home_address(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         manual = request.GET["manual"]
+        lookup = request.GET["lookup"]
         application = Application.objects.get(pk=application_id_local)
         # Switch between manual address entry and postcode search
-        if manual == 'False':
-            form = PersonalDetailsHomeAddressForm(id=application_id_local)
-            variables = {
-                'form': form,
-                'application_id': application_id_local,
-                'personal_details_status': application.personal_details_status
-            }
-            return render(request, 'personal-details-home-address.html', variables)
-        elif manual == 'True':
-            form = PersonalDetailsHomeAddressManualForm(id=application_id_local)
-            variables = {
-                'form': form,
-                'application_id': application_id_local,
-                'personal_details_status': application.personal_details_status
-            }
-            return render(request, 'personal-details-home-address-manual.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        manual = request.POST["manual"]
-        application = Application.objects.get(pk=application_id_local)
-        # Switch between manual address entry and postcode search
-        if manual == 'False':
-            form = PersonalDetailsHomeAddressForm(request.POST, id=application_id_local)
-            if form.is_valid():
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/personal-details/home-address/?id=' + application_id_local +
-                    '&manual=False')
-            else:
+        if lookup == 'False':
+            if manual == 'False':
+                form = PersonalDetailsHomeAddressForm(id=application_id_local)
                 variables = {
                     'form': form,
                     'application_id': application_id_local,
                     'personal_details_status': application.personal_details_status
                 }
                 return render(request, 'personal-details-home-address.html', variables)
-        if manual == 'True':
-            form = PersonalDetailsHomeAddressManualForm(request.POST, id=application_id_local)
-            if form.is_valid():
-                if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
-                    status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-                # Create or update Application_Home_Address record
-                home_address_record = personal_home_address_logic(application_id_local, form)
-                home_address_record.save()
-                application.date_updated = current_date
-                application.save()
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/personal-details/location-of-care?id=' + application_id_local)
-            else:
+            elif manual == 'True':
+                form = PersonalDetailsHomeAddressManualForm(id=application_id_local)
                 variables = {
                     'form': form,
                     'application_id': application_id_local,
                     'personal_details_status': application.personal_details_status
                 }
                 return render(request, 'personal-details-home-address-manual.html', variables)
+        elif lookup == 'True':
+            form = PersonalDetailsHomeAddressLookupForm(id=application_id_local)
+            applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+            home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
+            postcode = home_address_record.postcode
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'postcode': postcode,
+                'personal_details_status': application.personal_details_status
+            }
+            return render(request, 'personal-details-home-address-lookup.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        manual = request.POST["manual"]
+        lookup = request.POST["lookup"]
+        application = Application.objects.get(pk=application_id_local)
+        # Switch between manual address entry and postcode search
+        if lookup == 'False':
+            if manual == 'False':
+                form = PersonalDetailsHomeAddressForm(request.POST, id=application_id_local)
+                if form.is_valid():
+                    return HttpResponseRedirect(
+                        settings.URL_PREFIX + '/personal-details/home-address/?id=' + application_id_local +
+                        '&manual=False')
+                else:
+                    variables = {
+                        'form': form,
+                        'application_id': application_id_local,
+                        'personal_details_status': application.personal_details_status
+                    }
+                    return render(request, 'personal-details-home-address.html', variables)
+            if manual == 'True':
+                form = PersonalDetailsHomeAddressManualForm(request.POST, id=application_id_local)
+                if form.is_valid():
+                    if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
+                        status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+                    # Create or update Application_Home_Address record
+                    home_address_record = personal_home_address_logic(application_id_local, form)
+                    home_address_record.save()
+                    application.date_updated = current_date
+                    application.save()
+                    return HttpResponseRedirect(
+                        settings.URL_PREFIX + '/personal-details/location-of-care?id=' + application_id_local)
+                else:
+                    variables = {
+                        'form': form,
+                        'application_id': application_id_local,
+                        'personal_details_status': application.personal_details_status
+                    }
+                    return render(request, 'personal-details-home-address-manual.html', variables)
+        elif lookup == 'True':
+            form = PersonalDetailsHomeAddressLookupForm(request.POST, id=application_id_local)
+            if form.is_valid():
+                postcode = form.cleaned_data.get('postcode')
+                applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+                home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                                                       current_address=True)
+                home_address_record.postcode = postcode
+                home_address_record.save()
+
+                headers = {"content-type": "application/json"}
+                response = requests.get("http://130.130.52.132:8002/addressing-service/api/v1/addresses/" + postcode + '/',
+                                        headers=headers, verify=False)
+                if response.status_code == 200:
+                    return JsonResponse(json.loads(response.text), status=201)
+                else:
+                    return JsonResponse(json.loads(response.text), status=response.status_code)
+                # return HttpResponseRedirect(
+                #     settings.URL_PREFIX + '/personal-details/home-address/?id=' + application_id_local +
+                #     '&manual=False&lookup=True')
+            else:
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'personal_details_status': application.personal_details_status
+                }
+                return render(request, 'personal-details-home-address-lookup.html', variables)
 
 
 def personal_details_location_of_care(request):

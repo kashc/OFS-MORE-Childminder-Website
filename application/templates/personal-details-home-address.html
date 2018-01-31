@@ -24,13 +24,14 @@
             {% csrf_token %}
             </br>
             </br>
-            <a href="{{ URL_PREFIX }}/personal-details/home-address?id={{application_id}}&manual=True" name="manual"
+            <a href="{{ URL_PREFIX }}/personal-details/home-address?id={{application_id}}&manual=True&lookup=False" name="manual"
                id="manual">Enter address manually</a>
             </br>
             </br>
-            <input type="submit" class="button button-search" value="Find postcode" alt='Continue to declaration'>
+            <input type="submit" class="button button-search" value="Find postcode">
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
             <input type="hidden" id="manual" name="manual" value="False"/>
+            <input type="hidden" id="lookup" name="lookup" value="True"/>
         </div>
         </br>
         <!-- Return to task list -->
