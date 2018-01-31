@@ -36,6 +36,7 @@ from .business_logic import (childcare_type_logic,
                              personal_location_of_care_logic,
                              personal_name_logic,
                              rearrange_adults,
+                             rearrange_children,
                              references_first_reference_logic,
                              references_second_reference_logic,
                              remove_adult,
@@ -2127,11 +2128,14 @@ def other_people_adult_question(request):
             data = form.cleaned_data.get('adults_in_home')
             application.adults_in_home = data
             application.save()
+            # If adults live in your home, navigate to adult details page
             if data == 'True':
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/other-people/adult-details?id=' + application_id_local + '&adults=' + str(
                         number_of_adults) + '&remove=0')
+            # If adults do not live in your home, navigate to children question page
             elif data == 'False':
+                # Delete any existing adults
                 adults = AdultInHome.objects.filter(application_id=application_id_local)
                 for adult in adults:
                     adult.delete()
@@ -2156,14 +2160,21 @@ def other_people_adult_details(request):
         application_id_local = request.GET["id"]
         number_of_adults = int(request.GET["adults"])
         remove_person = int(request.GET["remove"])
-        zero = 0
+        remove_button = True
+        # If there are no adults in the database
         if number_of_adults == 0:
+            # Set the number of adults to 1 to initialise one instance of the form
             number_of_adults = 1
-            zero = ''
+            # Disable the remove person button
+            remove_button = False
+        # If there is only one adult in the database
         if number_of_adults == 1:
-            zero = ''
+            # Disable the remove person button
+            remove_button = False
         application = Application.objects.get(pk=application_id_local)
+        # Remove specific adult if remove button is pressed
         remove_adult(application_id_local, remove_person)
+        # Rearrange adult numbers if there are gaps
         rearrange_adults(number_of_adults, application_id_local)
         # Generate a list of forms to iterate through in the HTML
         form_list = []
@@ -2176,7 +2187,7 @@ def other_people_adult_details(request):
             'number_of_adults': number_of_adults,
             'add_adult': number_of_adults + 1,
             'remove_adult': number_of_adults - 1,
-            'zero': zero,
+            'remove_button': remove_button,
             'people_in_home_status': application.people_in_home_status
         }
         if application.people_in_home_status != 'COMPLETED':
@@ -2185,12 +2196,17 @@ def other_people_adult_details(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         number_of_adults = request.POST["adults"]
-        zero = 0
+        remove_button = True
+        # If there are no adults in the database
         if number_of_adults == 0:
+            # Set the number of adults to 1 to initialise one instance of the form
             number_of_adults = 1
-            zero = ''
+            # Disable the remove person button
+            remove_button = False
+        # If there is only one adult in the database
         if number_of_adults == 1:
-            zero = ''
+            # Disable the remove person button
+            remove_button = False
         application = Application.objects.get(pk=application_id_local)
         # Generate a list of forms to iterate through in the HTML
         form_list = []
@@ -2222,7 +2238,7 @@ def other_people_adult_details(request):
                 'number_of_adults': number_of_adults,
                 'add_adult': int(number_of_adults) + 1,
                 'remove_adult': int(number_of_adults) - 1,
-                'zero': zero,
+                'remove_button': remove_button,
                 'people_in_home_status': application.people_in_home_status
             }
             return render(request, 'other-people-adult-details.html', variables)
@@ -2269,6 +2285,7 @@ def other_people_adult_dbs(request):
         valid_list = []
         for i in range(1, int(number_of_adults) + 1):
             adult = AdultInHome.objects.get(application_id=application_id_local, adult=i)
+            # Generate name to pass to form, for display in HTML
             if adult.middle_names == '':
                 name = adult.first_name + ' ' + adult.last_name
             elif adult.middle_names != '':
@@ -2290,8 +2307,8 @@ def other_people_adult_dbs(request):
             }
             status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
             return HttpResponseRedirect(
-                settings.URL_PREFIX + '/other-people/adult-permission?id=' + application_id_local + '&adults=' + number_of_adults,
-                variables)
+                settings.URL_PREFIX + '/other-people/adult-permission?id=' + application_id_local + '&adults=' +
+                number_of_adults, variables)
         # If there is an invalid form
         elif False in valid_list:
             variables = {
@@ -2406,6 +2423,7 @@ def other_people_children_question(request):
                     settings.URL_PREFIX + '/other-people/children-details?id=' + application_id_local + '&children=' + str(
                         number_of_children) + '&remove=0')
             elif children_in_home == 'False':
+                # Delete any existing children from database
                 children = ChildInHome.objects.filter(application_id=application_id_local)
                 for child in children:
                     child.delete()
@@ -2429,26 +2447,20 @@ def other_people_children_details(request):
         application_id_local = request.GET["id"]
         number_of_children = int(request.GET["children"])
         remove_person = int(request.GET["remove"])
-        zero = 0
+        remove_button = True
+        # If there are no adults in the database
         if number_of_children == 0:
+            # Set the number of children to 1 to initialise one instance of the form
             number_of_children = 1
-            zero = ''
+            # Disable the remove person button
+            remove_button = False
+        # If there is only one child in the database
         if number_of_children == 1:
-            zero = ''
+            # Disable the remove person button
+            remove_button = False
         application = Application.objects.get(pk=application_id_local)
-        remove_child(application_id_local,remove_person)
-        # Re-assign numbers to persons
-        for i in range(1, number_of_children + 1):
-            print('Verifying person ' + str(i))
-            if ChildInHome.objects.filter(application_id=application_id_local, child=i).count() == 0:
-                print('Person ' + str(i) + ' does not exist')
-                next_child = i + 1
-                if ChildInHome.objects.filter(application_id=application_id_local, child=next_child).count() != 0:
-                    next_child_record = ChildInHome.objects.get(application_id=application_id_local, child=next_child)
-                    next_child_record.child = i
-                    next_child_record.save()
-            else:
-                print('Person ' + str(i) + ' exists')
+        remove_child(application_id_local, remove_person)
+        rearrange_children(number_of_children, application_id_local)
         # Generate a list of forms to iterate through in the HTML
         form_list = []
         for i in range(1, number_of_children + 1):
@@ -2459,7 +2471,7 @@ def other_people_children_details(request):
             'application_id': application_id_local,
             'number_of_children': number_of_children,
             'add_child': number_of_children + 1,
-            'zero': zero,
+            'remove_button': remove_button,
             'remove_child': number_of_children - 1,
             'people_in_home_status': application.people_in_home_status
         }
@@ -2469,12 +2481,17 @@ def other_people_children_details(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         number_of_children = request.POST["children"]
-        zero = 0
+        remove_button = True
+        # If there are no adults in the database
         if number_of_children == 0:
+            # Set the number of children to 1 to initialise one instance of the form
             number_of_children = 1
-            zero = ''
+            # Disable the remove person button
+            remove_button = False
+        # If there is only one child in the database
         if number_of_children == 1:
-            zero = ''
+            # Disable the remove person button
+            remove_button = False
         application = Application.objects.get(pk=application_id_local)
         # Generate a list of forms to iterate through in the HTML
         form_list = []
@@ -2489,6 +2506,7 @@ def other_people_children_details(request):
                 child_record = other_people_children_details_logic(application_id_local, form, i)
                 child_record.save()
                 valid_list.append(True)
+                # Calculate child's age
                 birth_day = form.cleaned_data.get('date_of_birth')[0]
                 birth_month = form.cleaned_data.get('date_of_birth')[1]
                 birth_year = form.cleaned_data.get('date_of_birth')[2]
@@ -2508,11 +2526,13 @@ def other_people_children_details(request):
                 'application_id': application_id_local,
                 'people_in_home_status': application.people_in_home_status,
             }
+            # If a child is approaching 16, navigate to approaching 16 page
             if True in age_list:
                 application.children_turning_16 = True
                 application.save()
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/other-people/approaching-16?id=' + application_id_local, variables)
+            # If no child is approaching 16, navigate to summary page
             elif True not in age_list:
                 application.children_turning_16 = False
                 application.save()
@@ -2526,7 +2546,7 @@ def other_people_children_details(request):
                 'number_of_children': number_of_children,
                 'add_child': int(number_of_children) + 1,
                 'remove_child': int(number_of_children) - 1,
-                'zero': zero,
+                'remove_button': remove_button,
                 'people_in_home_status': application.people_in_home_status
             }
             return render(request, 'other-people-children-details.html', variables)

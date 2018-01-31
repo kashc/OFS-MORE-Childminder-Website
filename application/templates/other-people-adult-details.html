@@ -32,7 +32,7 @@
                 Person {{form.prefix}}
             </h2>
             {{form.as_div}}
-            {% if zero == 0 %}
+            {% if remove_button is True %}
             <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{remove_adult}}&remove={{form.prefix}}"
                style="margin-left: 0px;"><b>Remove person</b></a>
             {% endif %}
