@@ -1416,8 +1416,36 @@ input[type=number] {
   .form-date .form-group input {
     width: 100%; }
 
-.form-date .form-group-year {
-  width: 70px; }
+.form-date .form-group-year-select {
+  width: 180px; }
+
+.form-date .form-group-date {
+  width: 120px; }
+
+.form-date .form-group-time {
+  width: 100px; }
+
+@media (max-width: 640px) {
+  .form-date .form-group-date, .form-date .form-group-time {
+    width: 40%; } }
+
+.form-date .form-group-year-select {
+  width: 100px; }
+
+.form-date .form-group-month-select {
+  width: 150px; }
+
+.form-date .form-group-day-select {
+  width: 100px; }
+
+.form-date .form-group-year-select .form-control, .form-date .form-group-month-select .form-control, .form-date .form-group-day-select .form-control {
+  width: 100%; }
+
+@media (max-width: 640px) {
+  .form-date .form-group-year-select, .form-date .form-group-month-select, .form-date .form-group-day-select {
+    width: 50%;
+    margin-bottom: 15px;
+    clear: left; } }
 
 .form-group-error {
   margin-right: 15px;

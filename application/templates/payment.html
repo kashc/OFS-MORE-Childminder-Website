@@ -9,7 +9,7 @@
 {{form.error_summary}}
 
 <div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
+    <div class="form-group grid-row" style="padding-top: 16px;">
         <a href="{{ URL_PREFIX }}/confirm-your-answers?id={{application_id}}" class="link-back"
            style="margin-right: 10px; line-height: 28px">
             Back
@@ -23,7 +23,7 @@
             <p>You need to pay &#163;35 to apply.</p>
             {{form.as_div}}
             {% csrf_token %}
-            <input type="submit" class="button" value="Make payment and apply">
+            <input type="submit" class="button" value="Save and continue">
             <input type="hidden" name="id" value="{{application_id}}"/>
         </div>
         </br>
