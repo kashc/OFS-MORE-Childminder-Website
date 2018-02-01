@@ -702,7 +702,7 @@ def personal_details_home_address(request):
             applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
             home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
             postcode = home_address_record.postcode
-            addresses = address_helper.address_helper.AddressHelper.issue_postcode_search(postcode)
+            addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
             if len(addresses) != 0:
                 form = PersonalDetailsHomeAddressLookupForm(id=application_id_local, choices=addresses)
                 variables = {
