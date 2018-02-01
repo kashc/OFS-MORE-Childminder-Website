@@ -447,6 +447,16 @@ class PersonalDetailsHomeAddressForm(GOVUKForm):
             self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                                current_address=True).postcode
 
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC.')
+        return postcode
+
 
 class PersonalDetailsHomeAddressManualForm(GOVUKForm):
     """
@@ -609,6 +619,16 @@ class PersonalDetailsChildcareAddressForm(GOVUKForm):
                                                childcare_address='True').count() > 0:
             self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                                childcare_address='True').postcode
+
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC.')
+        return postcode
 
 
 class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
@@ -1105,6 +1125,16 @@ class ReferenceFirstReferenceAddressForm(GOVUKForm):
             self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
                                                                     reference=1).postcode
 
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC.')
+        return postcode
+
 
 class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
     """
@@ -1365,6 +1395,16 @@ class ReferenceSecondReferenceAddressForm(GOVUKForm):
         if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
             self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
                                                                     reference=2).postcode
+
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC.')
+        return postcode
 
 
 class ReferenceSecondReferenceAddressManualForm(GOVUKForm):

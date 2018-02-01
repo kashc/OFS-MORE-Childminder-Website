@@ -743,9 +743,8 @@ def personal_details_home_address(request):
                         application = Application.objects.get(pk=application_id_local)
                         application.date_updated = current_date
                         application.save()
-                        return HttpResponseRedirect(
-                            settings.URL_PREFIX + '/personal-details/home-address/?id=' + application_id_local +
-                            '&manual=False&lookup=True')
+                        return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address/?id=' +
+                                                    application_id_local + '&manual=False&lookup=True')
                     else:
                         variables = {
                             'form': form,
@@ -796,8 +795,8 @@ def personal_details_home_address(request):
 
                     if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
                         status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-                    return HttpResponseRedirect(
-                        settings.URL_PREFIX + '/personal-details/home-address?id=' + application_id_local + '&manual=True&lookup=False')
+                    return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address?id=' +
+                                                application_id_local + '&manual=True&lookup=False')
             elif lookup == 'True':
                 form = PersonalDetailsHomeAddressLookupForm(request.POST, id=application_id_local, choices=[])
                 if form.is_valid():
@@ -816,9 +815,8 @@ def personal_details_home_address(request):
                         'postcode': postcode,
                         'personal_details_status': application.personal_details_status
                     }
-                    return HttpResponseRedirect(
-                        settings.URL_PREFIX + '/personal-details/home-address/?id=' + application_id_local +
-                        '&manual=False&lookup=True', variables)
+                    return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address/?id=' +
+                                                application_id_local + '&manual=False&lookup=True', variables)
                 else:
                     variables = {
                         'form': form,
@@ -993,9 +991,8 @@ def personal_details_childcare_address(request):
                         application = Application.objects.get(pk=application_id_local)
                         application.date_updated = current_date
                         application.save()
-                        return HttpResponseRedirect(
-                            settings.URL_PREFIX + '/personal-details/childcare-address/?id=' + application_id_local +
-                            '&manual=False&lookup=True')
+                        return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address/?id=' +
+                                                    application_id_local + '&manual=False&lookup=True')
                     else:
                         variables = {
                             'form': form,
@@ -1047,8 +1044,8 @@ def personal_details_childcare_address(request):
 
                     if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
                         status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-                    return HttpResponseRedirect(
-                        settings.URL_PREFIX + '/personal-details/childcare-address?id=' + application_id_local + '&manual=True&lookup=False')
+                    return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address?id=' +
+                                                application_id_local + '&manual=True&lookup=False')
             elif lookup == 'True':
                 form = PersonalDetailsChildcareAddressLookupForm(request.POST, id=application_id_local, choices=[])
                 if form.is_valid():
@@ -1067,9 +1064,8 @@ def personal_details_childcare_address(request):
                         'postcode': postcode,
                         'personal_details_status': application.personal_details_status
                     }
-                    return HttpResponseRedirect(
-                        settings.URL_PREFIX + '/personal-details/childcare-address/?id=' + application_id_local +
-                        '&manual=False&lookup=True', variables)
+                    return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address/?id=' +
+                                                application_id_local + '&manual=False&lookup=True', variables)
                 else:
                     variables = {
                         'form': form,
@@ -1925,8 +1921,8 @@ def references_first_reference(request):
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
-            return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-address?id='
-                                        + application_id_local + '&manual=False&lookup=False')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-address?id=' +
+                                        application_id_local + '&manual=False&lookup=False')
         else:
             variables = {
                 'form': form,
@@ -2008,9 +2004,8 @@ def references_first_reference_address(request):
                         application = Application.objects.get(pk=application_id_local)
                         application.date_updated = current_date
                         application.save()
-                        return HttpResponseRedirect(
-                            settings.URL_PREFIX + '/references/first-reference-address/?id=' + application_id_local +
-                            '&manual=False&lookup=True')
+                        return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-address/?id=' +
+                                                    application_id_local + '&manual=False&lookup=True')
                     else:
                         variables = {
                             'form': form,
@@ -2037,8 +2032,8 @@ def references_first_reference_address(request):
                 application.save()
                 if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
                     status.update(application_id_local, 'references_status', 'IN_PROGRESS')
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/references/first-reference-address?id=' + application_id_local + '&manual=True&lookup=False')
+                return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-address?id=' +
+                                            application_id_local + '&manual=True&lookup=False')
         elif lookup == 'True':
             form = ReferenceFirstReferenceAddressLookupForm(request.POST, id=application_id_local, choices=[])
             if form.is_valid():
@@ -2055,9 +2050,8 @@ def references_first_reference_address(request):
                     'postcode': postcode,
                     'references_status': application.references_status
                 }
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/references/first-reference-address/?id=' + application_id_local +
-                    '&manual=False&lookup=True', variables)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-address/?id=' +
+                                            application_id_local + '&manual=False&lookup=True', variables)
             else:
                 variables = {
                     'form': form,
@@ -2086,8 +2080,8 @@ def references_first_reference_address(request):
                 reset_declaration(application)
                 if application.references_status != 'COMPLETED':
                     status.update(application_id_local, 'references_status', 'IN_PROGRESS')
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/references/first-reference-contact-details?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-contact-details?id=' +
+                                            application_id_local)
             else:
                 variables = {
                     'form': form,
@@ -2258,9 +2252,8 @@ def references_second_reference_address(request):
                         application = Application.objects.get(pk=application_id_local)
                         application.date_updated = current_date
                         application.save()
-                        return HttpResponseRedirect(
-                            settings.URL_PREFIX + '/references/second-reference-address/?id=' + application_id_local +
-                            '&manual=False&lookup=True')
+                        return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-address/?id=' +
+                                                    application_id_local + '&manual=False&lookup=True')
                     else:
                         variables = {
                             'form': form,
@@ -2287,8 +2280,8 @@ def references_second_reference_address(request):
                 application.save()
                 if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
                     status.update(application_id_local, 'references_status', 'IN_PROGRESS')
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/references/second-reference-address?id=' + application_id_local + '&manual=True&lookup=False')
+                return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-address?id=' +
+                                            application_id_local + '&manual=True&lookup=False')
         elif lookup == 'True':
             form = ReferenceSecondReferenceAddressLookupForm(request.POST, id=application_id_local, choices=[])
             if form.is_valid():
@@ -2305,9 +2298,8 @@ def references_second_reference_address(request):
                     'postcode': postcode,
                     'references_status': application.references_status
                 }
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/references/second-reference-address/?id=' + application_id_local +
-                    '&manual=False&lookup=True', variables)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-address/?id=' +
+                                            application_id_local + '&manual=False&lookup=True', variables)
             else:
                 variables = {
                     'form': form,
@@ -2544,9 +2536,8 @@ def other_people_adult_question(request):
             reset_declaration(application)
             # If adults live in your home, navigate to adult details page
             if data == 'True':
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/other-people/adult-details?id=' + application_id_local + '&adults=' + str(
-                        number_of_adults) + '&remove=0')
+                return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/adult-details?id=' +
+                                            application_id_local + '&adults=' + str(number_of_adults) + '&remove=0')
             # If adults do not live in your home, navigate to children question page
             elif data == 'False':
                 # Delete any existing adults
@@ -2556,8 +2547,8 @@ def other_people_adult_question(request):
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/other-people/children-question?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/children-question?id=' +
+                                            application_id_local)
         else:
             variables = {
                 'form': form,
@@ -2649,9 +2640,8 @@ def other_people_adult_details(request):
                 'application_id': application_id_local,
                 'people_in_home_status': application.people_in_home_status
             }
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/other-people/adult-dbs?id=' + application_id_local + '&adults=' + number_of_adults,
-                variables)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/adult-dbs?id=' + application_id_local +
+                                        '&adults=' + number_of_adults, variables)
         # If there is an invalid form
         elif False in valid_list:
             variables = {
@@ -2734,9 +2724,8 @@ def other_people_adult_dbs(request):
             }
             if application.people_in_home_status != 'COMPLETED':
                 status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/other-people/adult-permission?id=' + application_id_local + '&adults=' +
-                number_of_adults, variables)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/adult-permission?id=' +
+                                        application_id_local + '&adults=' + number_of_adults, variables)
         # If there is an invalid form
         elif False in valid_list:
             variables = {
@@ -2806,8 +2795,8 @@ def other_people_adult_permission(request):
             }
             if application.people_in_home_status != 'COMPLETED':
                 status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/other-people/children-question?id=' + application_id_local, variables)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/children-question?id=' +
+                                        application_id_local, variables)
         # If there is an invalid form
         elif False in valid_list:
             variables = {
@@ -2857,9 +2846,8 @@ def other_people_children_question(request):
             application.save()
             reset_declaration(application)
             if children_in_home == 'True':
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/other-people/children-details?id=' + application_id_local + '&children=' + str(
-                        number_of_children) + '&remove=0')
+                return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/children-details?id=' +
+                                            application_id_local + '&children=' + str(number_of_children) + '&remove=0')
             elif children_in_home == 'False':
                 # Delete any existing children from database
                 children = ChildInHome.objects.filter(application_id=application_id_local)
@@ -2974,16 +2962,16 @@ def other_people_children_details(request):
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/other-people/approaching-16?id=' + application_id_local, variables)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/approaching-16?id=' +
+                                            application_id_local, variables)
             # If no child is approaching 16, navigate to summary page
             elif True not in age_list:
                 application.children_turning_16 = False
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local, variables)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local,
+                                            variables)
         # If there is an invalid form
         elif False in valid_list:
             variables = {
@@ -3389,15 +3377,9 @@ def payment_selection(request):
                 paypal_url = payment.make_paypal_payment("GB", 3500, "GBP", "Childminder Registration Fee",
                                                          application_id_local, application_url_base +
                                                          "/paypal-payment-completion/?id=" + application_id_local,
-
-                                                         application_url_base +
-                                                         "/payment/?id=" + application_id_local,
-
-                                                         application_url_base +
-                                                         "/payment/?id=" + application_id_local,
-
-                                                         application_url_base +
-                                                         "/payment/?id=" + application_id_local)
+                                                         application_url_base + "/payment/?id=" + application_id_local,
+                                                         application_url_base + "/payment/?id=" + application_id_local,
+                                                         application_url_base + "/payment/?id=" + application_id_local)
                 return HttpResponseRedirect(paypal_url)
         else:
             variables = {
