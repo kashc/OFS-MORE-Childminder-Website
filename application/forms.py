@@ -449,6 +449,16 @@ class PersonalDetailsHomeAddressForm(GOVUKForm):
             self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                                current_address=True).postcode
 
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC.')
+        return postcode
+
 
 class PersonalDetailsHomeAddressManualForm(GOVUKForm):
     """
@@ -539,6 +549,26 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         return postcode
 
 
+class PersonalDetailsHomeAddressLookupForm(GOVUKForm):
+    """
+    GOV.UK form for the Your personal details: home address page for postcode search results
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    address = forms.ChoiceField(label='Address', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: home address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.choices = kwargs.pop('choices')
+        super(PersonalDetailsHomeAddressLookupForm, self).__init__(*args, **kwargs)
+        self.fields['address'].choices = self.choices
+
+
 class PersonalDetailsLocationOfCareForm(GOVUKForm):
     """
     GOV.UK form for the Your personal details: location of care page
@@ -591,6 +621,16 @@ class PersonalDetailsChildcareAddressForm(GOVUKForm):
                                                childcare_address='True').count() > 0:
             self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                                childcare_address='True').postcode
+
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC.')
+        return postcode
 
 
 class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
@@ -680,6 +720,26 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
             raise forms.ValidationError('TBC')
         return postcode
+
+
+class PersonalDetailsChildcareAddressLookupForm(GOVUKForm):
+    """
+    GOV.UK form for the Your personal details: childcare address page for postcode search results
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    address = forms.ChoiceField(label='Address', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: childcare address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.choices = kwargs.pop('choices')
+        super(PersonalDetailsChildcareAddressLookupForm, self).__init__(*args, **kwargs)
+        self.fields['address'].choices = self.choices
 
 
 class PersonalDetailsSummaryForm(GOVUKForm):
@@ -1067,6 +1127,16 @@ class ReferenceFirstReferenceAddressForm(GOVUKForm):
             self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
                                                                     reference=1).postcode
 
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC.')
+        return postcode
+
 
 class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
     """
@@ -1166,6 +1236,26 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
             if len(country) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
         return country
+
+
+class ReferenceFirstReferenceAddressLookupForm(GOVUKForm):
+    """
+    GOV.UK form for the 2 references: first reference address page for postcode search results
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    address = forms.ChoiceField(label='Address', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the 2 references: first reference address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.choices = kwargs.pop('choices')
+        super(ReferenceFirstReferenceAddressLookupForm, self).__init__(*args, **kwargs)
+        self.fields['address'].choices = self.choices
 
 
 class ReferenceFirstReferenceContactForm(GOVUKForm):
@@ -1308,6 +1398,16 @@ class ReferenceSecondReferenceAddressForm(GOVUKForm):
             self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
                                                                     reference=2).postcode
 
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC.')
+        return postcode
+
 
 class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
     """
@@ -1407,6 +1507,26 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
             if len(country) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
         return country
+
+
+class ReferenceSecondReferenceAddressLookupForm(GOVUKForm):
+    """
+    GOV.UK form for the 2 references: second reference address page for postcode search results
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    address = forms.ChoiceField(label='Address', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the 2 references: second reference address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.choices = kwargs.pop('choices')
+        super(ReferenceSecondReferenceAddressLookupForm, self).__init__(*args, **kwargs)
+        self.fields['address'].choices = self.choices
 
 
 class ReferenceSecondReferenceContactForm(GOVUKForm):
