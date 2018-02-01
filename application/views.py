@@ -2738,6 +2738,7 @@ def declaration_summary(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = DeclarationSummaryForm()
+        # Retrieve all information related to the application from the database
         application = Application.objects.get(application_id=application_id_local)
         login_detail_id = application.login_id.login_id
         login_record = UserDetails.objects.get(login_id=login_detail_id)
@@ -2756,6 +2757,8 @@ def declaration_summary(request):
         first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
         adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
+        # Generate lists of data for adults and children in your home, to be iteratively displayed on the summary page
+        # The HTML will then parse through each list simultaneously, to display the correct data for each adult/child
         adult_name_list = []
         adult_birth_day_list = []
         adult_birth_month_list = []
@@ -2763,12 +2766,6 @@ def declaration_summary(request):
         adult_relationship_list = []
         adult_dbs_list = []
         adult_permission_list = []
-        children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
-        child_name_list = []
-        child_birth_day_list = []
-        child_birth_month_list = []
-        child_birth_year_list = []
-        child_relationship_list = []
         application = Application.objects.get(pk=application_id_local)
         for adult in adults_list:
             if adult.middle_names != '':
@@ -2784,6 +2781,12 @@ def declaration_summary(request):
             adult_permission_list.append(adult.permission_declare)
         adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
                           adult_relationship_list, adult_dbs_list, adult_permission_list)
+        children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
+        child_name_list = []
+        child_birth_day_list = []
+        child_birth_month_list = []
+        child_birth_year_list = []
+        child_relationship_list = []
         for child in children_list:
             if child.middle_names != '':
                 name = child.first_name + ' ' + child.middle_names + ' ' + child.last_name
@@ -2912,6 +2915,7 @@ def declaration_declaration(request):
         application = Application.objects.get(application_id=application_id_local)
         form = DeclarationDeclarationForm(request.POST, id=application_id_local)
         form2 = DeclarationDeclarationForm2(request.POST, id=application_id_local)
+        # Validate both forms (sets of checkboxes)
         if form.is_valid():
             background_check_declare = form.cleaned_data.get('background_check_declare')
             inspect_home_declare = form.cleaned_data.get('inspect_home_declare')
