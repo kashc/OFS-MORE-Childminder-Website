@@ -17,8 +17,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.cache import never_cache
 
-from source.childminder.application.address_helper import AddressHelper
-from . import magic_link, payment, status
+from . import address_helper, magic_link, payment, status
 from .business_logic import (childcare_type_logic,
                              dbs_check_logic,
                              eyfs_knowledge_logic,
@@ -703,7 +702,7 @@ def personal_details_home_address(request):
             applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
             home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
             postcode = home_address_record.postcode
-            addresses = AddressHelper.issue_postcode_search(postcode)
+            addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
             if len(addresses) != 0:
                 form = PersonalDetailsHomeAddressLookupForm(id=application_id_local, choices=addresses)
                 variables = {
