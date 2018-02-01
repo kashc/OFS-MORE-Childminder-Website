@@ -127,14 +127,14 @@ class YearField(forms.IntegerField):
             # 2-digit dates are a minimum of 10 years ago by default
             era_boundary = self.current_year - self.century - 10
         self.era_boundary = era_boundary
-        bounds_error = gettext('The year cannot be in the past') % {
+        bounds_error = gettext('TBC') % {
             'current_year': self.current_year
         }
         options = {
             'min_value': self.current_year,
             'error_messages': {
                 'min_value': bounds_error,
-                'invalid': gettext('Enter year as a number.'),
+                'invalid': gettext('TBC'),
             }
         }
         options.update(kwargs)
@@ -164,7 +164,7 @@ class ExpirySplitDateField(forms.MultiValueField):
     widget = ExpirySplitDateWidget
     hidden_widget = SplitHiddenDateWidget
     default_error_messages = {
-        'invalid': _('Enter a valid date.')
+        'invalid': _('TBC.')
     }
 
     def __init__(self, *args, **kwargs):
@@ -181,7 +181,7 @@ class ExpirySplitDateField(forms.MultiValueField):
             forms.IntegerField(min_value=1, max_value=12, error_messages={
                 'min_value': month_bounds_error,
                 'max_value': month_bounds_error,
-                'invalid': gettext('Enter month as a number.')
+                'invalid': gettext('TBC.')
             }),
             # Uses a clean year field defined above
             YearField(),

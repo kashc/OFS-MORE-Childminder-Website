@@ -2046,22 +2046,21 @@ class PaymentDetailsForm(GOVUKForm):
         except:
             # At the moment this is a catch all error, in the case of there being multiple error
             # types this must be revisited
-            raise forms.ValidationError('Please enter a valid card number')
+            raise forms.ValidationError('TBC')
         if settings.VISA_VALIDATION:
             if card_type == 'visa':
                 if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:
-                    raise forms.ValidationError('The card number you have entered is not a valid Visa card number')
+                    raise forms.ValidationError('TBC')
         if card_type == 'mastercard':
             if re.match("^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$",
                         card_number) is None:
-                raise forms.ValidationError('The card number you have entered is not a valid MasterCard card number')
+                raise forms.ValidationError('TBC')
         elif card_type == 'american_express':
             if re.match("^3[47][0-9]{13}$", card_number) is None:
-                raise forms.ValidationError(
-                    'The card number you have entered is not a valid American Express card number')
+                raise forms.ValidationError('TBC')
         elif card_type == 'maestro':
             if re.match("^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$", card_number) is None:
-                raise forms.ValidationError('The card number you have entered is not a valid Maestro card number')
+                raise forms.ValidationError('TBC')
         return card_number
 
     def clean_cardholders_name(self):
@@ -2071,7 +2070,7 @@ class PaymentDetailsForm(GOVUKForm):
         """
         cardholders_name = self.cleaned_data['cardholders_name']
         if re.match("^[A-Za-z- ]+$", cardholders_name) is None:
-            raise forms.ValidationError('Please enter a valid name.')
+            raise forms.ValidationError('TBC')
 
     def clean_card_security_code(self):
         """
@@ -2084,9 +2083,9 @@ class PaymentDetailsForm(GOVUKForm):
         except:
             # At the moment this is a catch all error, in the case of there being multiple error
             # types this must be revisited
-            raise forms.ValidationError('The card security code you have entered is invalid')
+            raise forms.ValidationError('TBC')
         if re.match("^[0-9]{3,4}$", card_security_code) is None:
-            raise forms.ValidationError('The card security code you have entered is invalid')
+            raise forms.ValidationError('TBC')
 
 
 class ApplicationSavedForm(GOVUKForm):
