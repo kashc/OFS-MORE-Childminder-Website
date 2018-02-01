@@ -248,9 +248,19 @@
                 </tr>
                 <tr id="other_people">
                     <td class="task" style="padding-right: 10px; word-wrap: break-word;">
+                        {% if people_in_home_status == 'NOT_STARTED' %}
                         <a href="{{ URL_PREFIX }}/other-people/guidance?id={{application_id}}">
                             <span class="task-name">People in your home</span>
                         </a>
+                        {% elif people_in_home_status == 'IN_PROGRESS' %}
+                        <a href="{{ URL_PREFIX }}/other-people/guidance?id={{application_id}}">
+                            <span class="task-name">People in your home</span>
+                        </a>
+                        {% elif people_in_home_status == 'COMPLETED' %}
+                        <a href="{{ URL_PREFIX }}/other-people/summary?id={{application_id}}">
+                            <span class="task-name">People in your home</span>
+                        </a>
+                        {% endif %}
                     </td>
                     {% if people_in_home_status == 'NOT_STARTED' %}
                     <td class="numeric">
@@ -280,7 +290,7 @@
                 {% if all_complete == True %}
                 <tr id="review">
                     <td class="task" style="padding-right: 10px; word-wrap: break-word;">
-                        <a href="{{ URL_PREFIX }}/declaration/declaration?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/declaration/summary?id={{application_id}}">
                             <span class="task-name">Declaration</span>
                         </a>
                     </td>

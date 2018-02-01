@@ -27,7 +27,7 @@ from application.views import (application_saved,
                                dbs_check_guidance,
                                dbs_check_summary,
                                dbs_check_upload_dbs,
-                               declaration,
+                               declaration_declaration,
                                declaration_summary,
                                eyfs_guidance,
                                eyfs_knowledge,
@@ -40,7 +40,15 @@ from application.views import (application_saved,
                                first_aid_training_renew,
                                first_aid_training_summary,
                                first_aid_training_training,
-                               other_people,
+                               other_people_guidance,
+                               other_people_adult_question,
+                               other_people_adult_details,
+                               other_people_adult_dbs,
+                               other_people_adult_permission,
+                               other_people_children_question,
+                               other_people_children_details,
+                               other_people_approaching_16,
+                               other_people_summary,
                                payment,
                                payment_confirmation,
                                paypal_payment_completion,
@@ -844,13 +852,109 @@ class ReferencesTest(TestCase):
 class OtherPeopleTest(TestCase):
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/other-people/')
-        self.assertEqual(found.func, other_people)
+        found = resolve(settings.URL_PREFIX + '/other-people/guidance/')
+        self.assertEqual(found.func, other_people_guidance)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/other-people/?id=')
+            c.get(settings.URL_PREFIX + '/other-people/guidance?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/other-people/adult-question/')
+        self.assertEqual(found.func, other_people_adult_question)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/other-people/adult-question?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/other-people/adult-details/')
+        self.assertEqual(found.func, other_people_adult_details)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/other-people/adult-details?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/other-people/adult-dbs/')
+        self.assertEqual(found.func, other_people_adult_dbs)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/other-people/adult-dbs?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/other-people/adult-permission/')
+        self.assertEqual(found.func, other_people_adult_permission)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/other-people/adult-permission?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/other-people/children-question/')
+        self.assertEqual(found.func, other_people_children_question)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/other-people/children-question?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/other-people/children-details/')
+        self.assertEqual(found.func, other_people_children_details)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/other-people/children-details?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/other-people/approaching-16/')
+        self.assertEqual(found.func, other_people_approaching_16)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/other-people/approaching-16?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/other-people/summary/')
+        self.assertEqual(found.func, other_people_summary)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/other-people/summary?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -900,7 +1004,7 @@ class DeclarationTest(TestCase):
 
     def test_url_resolves_to_page(self):
         found = resolve(settings.URL_PREFIX + '/declaration/summary/')
-        self.assertEqual(found.func, declaration)
+        self.assertEqual(found.func, declaration_summary)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
@@ -912,7 +1016,7 @@ class DeclarationTest(TestCase):
 
     def test_url_resolves_to_page(self):
         found = resolve(settings.URL_PREFIX + '/declaration/declaration/')
-        self.assertEqual(found.func, declaration)
+        self.assertEqual(found.func, declaration_declaration)
 
     def test_page_not_displayed_without_id(self):
         c = Client()

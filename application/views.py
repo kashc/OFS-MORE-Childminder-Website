@@ -28,15 +28,24 @@ from .business_logic import (childcare_type_logic,
                              login_contact_logic,
                              login_contact_logic_phone,
                              multiple_childcare_address_logic,
+                             other_people_adult_details_logic,
+                             other_people_children_details_logic,
                              personal_childcare_address_logic,
                              personal_dob_logic,
                              personal_home_address_logic,
                              personal_location_of_care_logic,
                              personal_name_logic,
+                             rearrange_adults,
+                             rearrange_children,
                              references_first_reference_logic,
-                             references_second_reference_logic)
+                             references_second_reference_logic,
+                             remove_adult,
+                             remove_child,
+                             reset_declaration)
 from .forms import (AccountForm,
                     ApplicationSavedForm,
+                    DeclarationDeclarationForm,
+                    DeclarationDeclarationForm2,
                     DeclarationSummaryForm,
                     ContactEmailForm,
                     ContactPhoneForm,
@@ -45,7 +54,7 @@ from .forms import (AccountForm,
                     DBSCheckGuidanceForm,
                     DBSCheckSummaryForm,
                     DBSCheckUploadDBSForm,
-                    DeclarationForm,
+                    DeclarationDeclarationForm,
                     EYFSGuidanceForm,
                     EYFSKnowledgeForm,
                     EYFSQuestionsForm,
@@ -60,8 +69,15 @@ from .forms import (AccountForm,
                     FirstReferenceForm,
                     HealthBookletForm,
                     HealthIntroForm,
+                    OtherPeopleAdultDBSForm,
+                    OtherPeopleAdultDetailsForm,
+                    OtherPeopleAdultPermissionForm,
                     OtherPeopleAdultQuestionForm,
+                    OtherPeopleApproaching16Form,
+                    OtherPeopleChildrenQuestionForm,
+                    OtherPeopleChildrenDetailsForm,
                     OtherPeopleGuidanceForm,
+                    OtherPeopleSummaryForm,
                     PaymentDetailsForm,
                     PaymentForm,
                     PersonalDetailsChildcareAddressForm,
@@ -87,11 +103,13 @@ from .forms import (AccountForm,
                     TypeOfChildcareGuidanceForm,
                     TypeOfChildcareRegisterForm)
 from .middleware import CustomAuthenticationHandler
-from .models import (ApplicantHomeAddress,
+from .models import (AdultInHome,
+                     ApplicantHomeAddress,
                      ApplicantName,
                      ApplicantPersonalDetails,
                      Application,
                      ChildcareType,
+                     ChildInHome,
                      CriminalRecordCheck,
                      EYFS,
                      FirstAidTraining,
@@ -218,6 +236,7 @@ def contact_email(request):
                 user_details_record.save()
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 response = HttpResponseRedirect(settings.URL_PREFIX + '/account/phone?id=' + application_id_local)
                 # Create session and issue cookie to user
                 CustomAuthenticationHandler.create_session(response, application.login_id.email)
@@ -259,6 +278,7 @@ def contact_phone(request):
             user_details_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/account/question?id=' + application_id_local)
         else:
             variables = {
@@ -300,7 +320,7 @@ def contact_question(request):
             acc.security_question = security_question
             acc.security_answer = security_answer
             acc.save()
-
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/account/summary?id=' + application_id_local)
         else:
             variables = {
@@ -423,6 +443,7 @@ def type_of_childcare_age_groups(request):
             childcare_type_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/childcare/register?id=' + application_id_local)
         else:
@@ -587,6 +608,7 @@ def personal_details_name(request):
             applicant_names_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/dob/?id=' + application_id_local)
         else:
             variables = {
@@ -627,6 +649,7 @@ def personal_details_dob(request):
             application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/personal-details/home-address?id=' + application_id_local + '&manual=False')
         else:
@@ -695,6 +718,7 @@ def personal_details_home_address(request):
                 home_address_record.save()
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/personal-details/location-of-care?id=' + application_id_local)
             else:
@@ -757,6 +781,7 @@ def personal_details_location_of_care(request):
             application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             # Delete childcare address if it is marked the same as the home address
             multiple_childcare_address_logic(personal_detail_id)
             if home_address_record.childcare_address == 'True':
@@ -835,6 +860,7 @@ def personal_details_childcare_address(request):
                 childcare_address_record.save()
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
             else:
@@ -982,6 +1008,7 @@ def first_aid_training_details(request):
             first_aid_training_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             # Calculate certificate age and determine which page to navigate to
             certificate_day = form.cleaned_data['course_date'].day
             certificate_month = form.cleaned_data['course_date'].month
@@ -1203,11 +1230,13 @@ def eyfs_knowledge(request):
             eyfs_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             eyfs_understand = form.cleaned_data['eyfs_understand']
             if eyfs_understand == 'True':
                 eyfs_record = EYFS.objects.get(application_id=application_id_local)
                 eyfs_record.eyfs_training_declare = False
                 eyfs_record.save()
+                reset_declaration(application)
                 return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/questions?id=' + application_id_local)
             elif eyfs_understand == 'False':
                 return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/training?id=' + application_id_local)
@@ -1250,6 +1279,7 @@ def eyfs_training(request):
             eyfs_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/questions?id=' + application_id_local)
         else:
             variables = {
@@ -1290,6 +1320,7 @@ def eyfs_questions(request):
             eyfs_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             if application.eyfs_training_status != 'COMPLETED':
                 status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/summary?id=' + application_id_local)
@@ -1402,6 +1433,7 @@ def dbs_check_dbs_details(request):
             dbs_check_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             cautions_convictions = form.cleaned_data['convictions']
             if cautions_convictions == 'True':
                 return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/upload-dbs?id=' + application_id_local)
@@ -1446,6 +1478,7 @@ def dbs_check_upload_dbs(request):
             dbs_check_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             if application.criminal_record_check_status != 'COMPLETED':
                 status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/summary?id=' + application_id_local)
@@ -1556,6 +1589,7 @@ def health_booklet(request):
             hdb_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             if application.health_status != 'COMPLETED':
                 status.update(application_id_local, 'health_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/health/check-answers?id=' + application_id_local)
@@ -1663,6 +1697,7 @@ def references_first_reference(request):
             references_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-address?id='
                                         + application_id_local + '&manual=False')
         else:
@@ -1742,6 +1777,7 @@ def references_first_reference_address(request):
                 application = Application.objects.get(pk=application_id_local)
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 if application.references_status != 'COMPLETED':
                     status.update(application_id_local, 'references_status', 'IN_PROGRESS')
                 return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-contact-details?id='
@@ -1790,6 +1826,7 @@ def references_first_reference_contact_details(request):
             application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference?id=' + application_id_local)
         else:
             variables = {
@@ -1830,6 +1867,7 @@ def references_second_reference(request):
             references_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-address?id=' +
                                         application_id_local + '&manual=False')
         else:
@@ -1911,6 +1949,7 @@ def references_second_reference_address(request):
                 application = Application.objects.get(pk=application_id_local)
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-contact-details?id='
                                             + application_id_local)
             else:
@@ -1955,6 +1994,7 @@ def references_second_reference_contact_details(request):
             references_first_reference_address_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/summary?id=' + application_id_local)
         else:
             variables = {
@@ -2038,7 +2078,7 @@ def references_summary(request):
         return render(request, 'references-summary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = PersonalDetailsSummaryForm()
+        form = ReferenceSummaryForm()
         if form.is_valid():
             status.update(application_id_local, 'references_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
@@ -2086,10 +2126,12 @@ def other_people_guidance(request):
 def other_people_adult_question(request):
     """
     Method returning the template for the People in your home: adult question page (for a given application) and
-    navigating to the People in your home: adult details page when successfully completed
+    navigating to the People in your home: adult details or People in your home: children details page when
+    successfully completed
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: adult question template
     """
+    current_date = datetime.datetime.today()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = OtherPeopleAdultQuestionForm(id=application_id_local)
@@ -2106,11 +2148,30 @@ def other_people_adult_question(request):
         application_id_local = request.POST["id"]
         form = OtherPeopleAdultQuestionForm(request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
+        number_of_adults = AdultInHome.objects.filter(application_id=application_id_local).count()
         if form.is_valid():
-            application.adults_in_home = form.cleaned_data.get('adults_in_home')
+            data = form.cleaned_data.get('adults_in_home')
+            application.adults_in_home = data
             application.save()
-            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+            application.date_updated = current_date
+            application.save()
+            reset_declaration(application)
+            # If adults live in your home, navigate to adult details page
+            if data == 'True':
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/other-people/adult-details?id=' + application_id_local + '&adults=' + str(
+                        number_of_adults) + '&remove=0')
+            # If adults do not live in your home, navigate to children question page
+            elif data == 'False':
+                # Delete any existing adults
+                adults = AdultInHome.objects.filter(application_id=application_id_local)
+                for adult in adults:
+                    adult.delete()
+                application.date_updated = current_date
+                application.save()
+                reset_declaration(application)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/other-people/children-question?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -2119,38 +2180,558 @@ def other_people_adult_question(request):
             return render(request, 'other-people-adult-question.html', variables)
 
 
-def declaration(request):
+def other_people_adult_details(request):
     """
-    Method returning the template for the Declaration page (for a given application) and navigating to
-    the task list when successfully completed
+    Method returning the template for the People in your home: adult details page (for a given application) and
+    navigating to the People in your home: adult DBS page when successfully completed
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Declaration template
+    :return: an HttpResponse object with the rendered People in your home: adult details template
     """
+    current_date = datetime.datetime.today()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = DeclarationForm()
+        number_of_adults = int(request.GET["adults"])
+        remove_person = int(request.GET["remove"])
+        remove_button = True
+        # If there are no adults in the database
+        if number_of_adults == 0:
+            # Set the number of adults to 1 to initialise one instance of the form
+            number_of_adults = 1
+            # Disable the remove person button
+            remove_button = False
+        # If there is only one adult in the database
+        if number_of_adults == 1:
+            # Disable the remove person button
+            remove_button = False
         application = Application.objects.get(pk=application_id_local)
+        # Remove specific adult if remove button is pressed
+        remove_adult(application_id_local, remove_person)
+        # Rearrange adult numbers if there are gaps
+        rearrange_adults(number_of_adults, application_id_local)
+        # Generate a list of forms to iterate through in the HTML
+        form_list = []
+        for i in range(1, number_of_adults + 1):
+            form = OtherPeopleAdultDetailsForm(id=application_id_local, adult=i, prefix=i)
+            form_list.append(form)
+        variables = {
+            'form_list': form_list,
+            'application_id': application_id_local,
+            'number_of_adults': number_of_adults,
+            'add_adult': number_of_adults + 1,
+            'remove_adult': number_of_adults - 1,
+            'remove_button': remove_button,
+            'people_in_home_status': application.people_in_home_status
+        }
+        if application.people_in_home_status != 'COMPLETED':
+            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+        return render(request, 'other-people-adult-details.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        number_of_adults = request.POST["adults"]
+        remove_button = True
+        # If there are no adults in the database
+        if number_of_adults == 0:
+            # Set the number of adults to 1 to initialise one instance of the form
+            number_of_adults = 1
+            # Disable the remove person button
+            remove_button = False
+        # If there is only one adult in the database
+        if number_of_adults == 1:
+            # Disable the remove person button
+            remove_button = False
+        application = Application.objects.get(pk=application_id_local)
+        # Generate a list of forms to iterate through in the HTML
+        form_list = []
+        # List to allow for the validation of each form
+        valid_list = []
+        for i in range(1, int(number_of_adults) + 1):
+            form = OtherPeopleAdultDetailsForm(request.POST, id=application_id_local, adult=i, prefix=i)
+            form_list.append(form)
+            form.error_summary_title = 'There is a problem with this form (Person ' + str(i) + ')'
+            if form.is_valid():
+                adult_record = other_people_adult_details_logic(application_id_local, form, i)
+                adult_record.save()
+                application.date_updated = current_date
+                application.save()
+                reset_declaration(application)
+                valid_list.append(True)
+            else:
+                valid_list.append(False)
+        # If all forms are valid
+        if False not in valid_list:
+            variables = {
+                'application_id': application_id_local,
+                'people_in_home_status': application.people_in_home_status
+            }
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/other-people/adult-dbs?id=' + application_id_local + '&adults=' + number_of_adults,
+                variables)
+        # If there is an invalid form
+        elif False in valid_list:
+            variables = {
+                'form_list': form_list,
+                'application_id': application_id_local,
+                'number_of_adults': number_of_adults,
+                'add_adult': int(number_of_adults) + 1,
+                'remove_adult': int(number_of_adults) - 1,
+                'remove_button': remove_button,
+                'people_in_home_status': application.people_in_home_status
+            }
+            return render(request, 'other-people-adult-details.html', variables)
+
+
+def other_people_adult_dbs(request):
+    """
+    Method returning the template for the People in your home: adult DBS page (for a given application) and
+    navigating to the People in your home: adult permission page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered People in your home: adult DBS template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        number_of_adults = int(request.GET["adults"])
+        application = Application.objects.get(pk=application_id_local)
+        # Generate a list of forms to iterate through in the HTML
+        form_list = []
+        for i in range(1, number_of_adults + 1):
+            adult = AdultInHome.objects.get(application_id=application_id_local, adult=i)
+            if adult.middle_names == '':
+                name = adult.first_name + ' ' + adult.last_name
+            elif adult.middle_names != '':
+                name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
+            form = OtherPeopleAdultDBSForm(id=application_id_local, adult=i, prefix=i, name=name)
+            form_list.append(form)
+        variables = {
+            'form_list': form_list,
+            'application_id': application_id_local,
+            'number_of_adults': number_of_adults,
+            'add_adult': number_of_adults + 1,
+            'people_in_home_status': application.people_in_home_status
+        }
+        if application.people_in_home_status != 'COMPLETED':
+            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+        return render(request, 'other-people-adult-dbs.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        number_of_adults = request.POST["adults"]
+        application = Application.objects.get(pk=application_id_local)
+        # Generate a list of forms to iterate through in the HTML
+        form_list = []
+        # List to allow for the validation of each form
+        valid_list = []
+        for i in range(1, int(number_of_adults) + 1):
+            adult = AdultInHome.objects.get(application_id=application_id_local, adult=i)
+            # Generate name to pass to form, for display in HTML
+            if adult.middle_names == '':
+                name = adult.first_name + ' ' + adult.last_name
+            elif adult.middle_names != '':
+                name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
+            form = OtherPeopleAdultDBSForm(request.POST, id=application_id_local, adult=i, prefix=i, name=name)
+            form_list.append(form)
+            form.error_summary_title = 'There is a problem with this form (Person ' + str(i) + ')'
+            if form.is_valid():
+                adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=i)
+                adult_record.dbs_certificate_number = form.cleaned_data.get('dbs_certificate_number')
+                adult_record.save()
+                application.date_updated = current_date
+                application.save()
+                reset_declaration(application)
+                valid_list.append(True)
+            else:
+                valid_list.append(False)
+        # If all forms are valid
+        if False not in valid_list:
+            variables = {
+                'application_id': application_id_local,
+                'people_in_home_status': application.people_in_home_status
+            }
+            if application.people_in_home_status != 'COMPLETED':
+                status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/other-people/adult-permission?id=' + application_id_local + '&adults=' +
+                number_of_adults, variables)
+        # If there is an invalid form
+        elif False in valid_list:
+            variables = {
+                'form_list': form_list,
+                'application_id': application_id_local,
+                'number_of_adults': number_of_adults,
+                'add_adult': int(number_of_adults) + 1,
+                'people_in_home_status': application.people_in_home_status
+            }
+            return render(request, 'other-people-adult-dbs.html', variables)
+
+
+def other_people_adult_permission(request):
+    """
+    Method returning the template for the People in your home: adult permission page (for a given application) and
+    navigating to the People in your home: children question page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered People in your home: adult permission template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        number_of_adults = int(request.GET["adults"])
+        application = Application.objects.get(pk=application_id_local)
+        # Generate a list of forms to iterate through in the HTML
+        form_list = []
+        for i in range(1, number_of_adults + 1):
+            form = OtherPeopleAdultPermissionForm(id=application_id_local, adult=i, prefix=i)
+            form_list.append(form)
+        variables = {
+            'form_list': form_list,
+            'application_id': application_id_local,
+            'number_of_adults': number_of_adults,
+            'add_adult': number_of_adults + 1,
+            'people_in_home_status': application.people_in_home_status
+        }
+        if application.people_in_home_status != 'COMPLETED':
+            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+        return render(request, 'other-people-adult-permission.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        number_of_adults = request.POST["adults"]
+        application = Application.objects.get(pk=application_id_local)
+        # Generate a list of forms to iterate through in the HTML
+        form_list = []
+        # List to allow for the validation of each form
+        valid_list = []
+        for i in range(1, int(number_of_adults) + 1):
+            form = OtherPeopleAdultPermissionForm(request.POST, id=application_id_local, adult=i, prefix=i)
+            form_list.append(form)
+            form.error_summary_title = 'There is a problem with this form (Person ' + str(i) + ')'
+            if form.is_valid():
+                adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=i)
+                adult_record.permission_declare = form.cleaned_data.get('permission_declare')
+                adult_record.save()
+                application.date_updated = current_date
+                application.save()
+                reset_declaration(application)
+                valid_list.append(True)
+            else:
+                valid_list.append(False)
+        # If all forms are valid
+        if False not in valid_list:
+            variables = {
+                'application_id': application_id_local,
+                'people_in_home_status': application.people_in_home_status
+            }
+            if application.people_in_home_status != 'COMPLETED':
+                status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/other-people/children-question?id=' + application_id_local, variables)
+        # If there is an invalid form
+        elif False in valid_list:
+            variables = {
+                'form_list': form_list,
+                'application_id': application_id_local,
+                'number_of_adults': number_of_adults,
+                'add_adult': int(number_of_adults) + 1,
+                'people_in_home_status': application.people_in_home_status
+            }
+            return render(request, 'other-people-adult-permission.html', variables)
+
+
+def other_people_children_question(request):
+    """
+    Method returning the template for the People in your home: children question page (for a given application) and
+    navigating to the People in your home: children details page or summary page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered People in your home: children question template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = OtherPeopleChildrenQuestionForm(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        number_of_adults = AdultInHome.objects.filter(application_id=application_id_local).count()
+        adults_in_home = application.adults_in_home
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'declarations_status': application.declarations_status
+            'number_of_adults': number_of_adults,
+            'adults_in_home': adults_in_home,
+            'people_in_home_status': application.people_in_home_status
         }
-        # Set task to completed, as form is still to be created in later sprint
-        if application.declarations_status != 'COMPLETED':
-            status.update(application_id_local, 'declarations_status', 'COMPLETED')
-        return render(request, 'declaration.html', variables)
+        if application.people_in_home_status != 'COMPLETED':
+            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+        return render(request, 'other-people-children-question.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = DeclarationForm(request.POST)
+        form = OtherPeopleChildrenQuestionForm(request.POST, id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        number_of_children = ChildInHome.objects.filter(application_id=application_id_local).count()
         if form.is_valid():
-            status.update(application_id_local, 'declarations_status', 'COMPLETED')
+            children_in_home = form.cleaned_data.get('children_in_home')
+            application.children_in_home = children_in_home
+            application.save()
+            application.date_updated = current_date
+            application.save()
+            reset_declaration(application)
+            if children_in_home == 'True':
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/other-people/children-details?id=' + application_id_local + '&children=' + str(
+                        number_of_children) + '&remove=0')
+            elif children_in_home == 'False':
+                # Delete any existing children from database
+                children = ChildInHome.objects.filter(application_id=application_id_local)
+                for child in children:
+                    child.delete()
+                reset_declaration(application)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'other-people-children-question.html', variables)
+
+
+def other_people_children_details(request):
+    """
+    Method returning the template for the People in your home: children details page (for a given application) and
+    navigating to the People in your home: approaching 16 page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered People in your home: children details template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        number_of_children = int(request.GET["children"])
+        remove_person = int(request.GET["remove"])
+        remove_button = True
+        # If there are no adults in the database
+        if number_of_children == 0:
+            # Set the number of children to 1 to initialise one instance of the form
+            number_of_children = 1
+            # Disable the remove person button
+            remove_button = False
+        # If there is only one child in the database
+        if number_of_children == 1:
+            # Disable the remove person button
+            remove_button = False
+        application = Application.objects.get(pk=application_id_local)
+        remove_child(application_id_local, remove_person)
+        rearrange_children(number_of_children, application_id_local)
+        # Generate a list of forms to iterate through in the HTML
+        form_list = []
+        for i in range(1, number_of_children + 1):
+            form = OtherPeopleChildrenDetailsForm(id=application_id_local, child=i, prefix=i)
+            form_list.append(form)
+        variables = {
+            'form_list': form_list,
+            'application_id': application_id_local,
+            'number_of_children': number_of_children,
+            'add_child': number_of_children + 1,
+            'remove_button': remove_button,
+            'remove_child': number_of_children - 1,
+            'people_in_home_status': application.people_in_home_status
+        }
+        if application.people_in_home_status != 'COMPLETED':
+            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+        return render(request, 'other-people-children-details.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        number_of_children = request.POST["children"]
+        remove_button = True
+        # If there are no adults in the database
+        if number_of_children == 0:
+            # Set the number of children to 1 to initialise one instance of the form
+            number_of_children = 1
+            # Disable the remove person button
+            remove_button = False
+        # If there is only one child in the database
+        if number_of_children == 1:
+            # Disable the remove person button
+            remove_button = False
+        application = Application.objects.get(pk=application_id_local)
+        # Generate a list of forms to iterate through in the HTML
+        form_list = []
+        # List to allow for the validation of each form
+        valid_list = []
+        # List to allow for the age verification of each form
+        age_list = []
+        for i in range(1, int(number_of_children) + 1):
+            form = OtherPeopleChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
+            form_list.append(form)
+            form.error_summary_title = 'There is a problem with this form (Child ' + str(i) + ')'
+            if form.is_valid():
+                child_record = other_people_children_details_logic(application_id_local, form, i)
+                child_record.save()
+                reset_declaration(application)
+                valid_list.append(True)
+                # Calculate child's age
+                birth_day = form.cleaned_data.get('date_of_birth')[0]
+                birth_month = form.cleaned_data.get('date_of_birth')[1]
+                birth_year = form.cleaned_data.get('date_of_birth')[2]
+                applicant_dob = date(birth_year, birth_month, birth_day)
+                today = date.today()
+                age = today.year - applicant_dob.year - (
+                        (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
+                if 15 <= age < 16:
+                    age_list.append(True)
+                elif age < 15:
+                    age_list.append(False)
+            else:
+                valid_list.append(False)
+        # If all forms are valid
+        if False not in valid_list:
+            variables = {
+                'application_id': application_id_local,
+                'people_in_home_status': application.people_in_home_status,
+            }
+            # If a child is approaching 16, navigate to approaching 16 page
+            if True in age_list:
+                application.children_turning_16 = True
+                application.date_updated = current_date
+                application.save()
+                reset_declaration(application)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/other-people/approaching-16?id=' + application_id_local, variables)
+            # If no child is approaching 16, navigate to summary page
+            elif True not in age_list:
+                application.children_turning_16 = False
+                application.date_updated = current_date
+                application.save()
+                reset_declaration(application)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local, variables)
+        # If there is an invalid form
+        elif False in valid_list:
+            variables = {
+                'form_list': form_list,
+                'application_id': application_id_local,
+                'number_of_children': number_of_children,
+                'add_child': int(number_of_children) + 1,
+                'remove_child': int(number_of_children) - 1,
+                'remove_button': remove_button,
+                'people_in_home_status': application.people_in_home_status
+            }
+            return render(request, 'other-people-children-details.html', variables)
+
+
+def other_people_approaching_16(request):
+    """
+    Method returning the template for the People in your home: approaching 16 page (for a given application)
+    and navigating to the People in your home: number of children page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered People in your home: approaching 16 template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = OtherPeopleApproaching16Form()
+        application = Application.objects.get(pk=application_id_local)
+        number_of_children = ChildInHome.objects.filter(application_id=application_id_local).count()
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'number_of_children': number_of_children,
+            'people_in_home_status': application.people_in_home_status
+        }
+        return render(request, 'other-people-approaching-16.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = OtherPeopleApproaching16Form(request.POST)
+        application = Application.objects.get(pk=application_id_local)
+        number_of_children = ChildInHome.objects.filter(application_id=application_id_local).count()
+        if form.is_valid():
+            if application.people_in_home_status != 'COMPLETED':
+                status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+            variables = {
+                'form': form,
+                'number_of_children': number_of_children,
+                'application_id': application_id_local,
+                'people_in_home_status': application.people_in_home_status
+            }
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local, variables)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'other-people-approaching-16.html', variables)
+
+
+def other_people_summary(request):
+    """
+    Method returning the template for the People in your home: summary page (for a given application)
+    displaying entered data for this task and navigating to the task list when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered People in your home: summary template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
+        adult_name_list = []
+        adult_birth_day_list = []
+        adult_birth_month_list = []
+        adult_birth_year_list = []
+        adult_relationship_list = []
+        adult_dbs_list = []
+        adult_permission_list = []
+        children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
+        child_name_list = []
+        child_birth_day_list = []
+        child_birth_month_list = []
+        child_birth_year_list = []
+        child_relationship_list = []
+        form = OtherPeopleSummaryForm()
+        application = Application.objects.get(pk=application_id_local)
+        for adult in adults_list:
+            if adult.middle_names != '':
+                name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
+            elif adult.middle_names == '':
+                name = adult.first_name + ' ' + adult.last_name
+            adult_name_list.append(name)
+            adult_birth_day_list.append(adult.birth_day)
+            adult_birth_month_list.append(adult.birth_month)
+            adult_birth_year_list.append(adult.birth_year)
+            adult_relationship_list.append(adult.relationship)
+            adult_dbs_list.append(adult.dbs_certificate_number)
+            adult_permission_list.append(adult.permission_declare)
+        adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
+                          adult_relationship_list, adult_dbs_list, adult_permission_list)
+        for child in children_list:
+            if child.middle_names != '':
+                name = child.first_name + ' ' + child.middle_names + ' ' + child.last_name
+            elif child.middle_names == '':
+                name = child.first_name + ' ' + child.last_name
+            child_name_list.append(name)
+            child_birth_day_list.append(child.birth_day)
+            child_birth_month_list.append(child.birth_month)
+            child_birth_year_list.append(child.birth_year)
+            child_relationship_list.append(child.relationship)
+        child_lists = zip(child_name_list, child_birth_day_list, child_birth_month_list, child_birth_year_list,
+                          child_relationship_list)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'adults_in_home': application.adults_in_home,
+            'children_in_home': application.children_in_home,
+            'number_of_adults': adults_list.count(),
+            'number_of_children': children_list.count(),
+            'adult_lists': adult_lists,
+            'child_lists': child_lists,
+            'turning_16': application.children_turning_16,
+            'people_in_home_status': application.people_in_home_status
+        }
+        status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
+        return render(request, 'other-people-summary.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = OtherPeopleSummaryForm()
+        if form.is_valid():
+            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
-            return render(request, 'declaration.html', variables)
+            return render(request, 'other-people-summary.html', variables)
 
 
 def declaration_summary(request):
@@ -2163,6 +2744,7 @@ def declaration_summary(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = DeclarationSummaryForm()
+        # Retrieve all information related to the application from the database
         application = Application.objects.get(application_id=application_id_local)
         login_detail_id = application.login_id.login_id
         login_record = UserDetails.objects.get(login_id=login_detail_id)
@@ -2180,6 +2762,58 @@ def declaration_summary(request):
         eyfs_record = EYFS.objects.get(application_id=application_id_local)
         first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
+        # Retrieve lists of adults and children, ordered by adult/child number for iteration by the HTML
+        adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
+        children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
+        # Generate lists of data for adults in your home, to be iteratively displayed on the summary page
+        # The HTML will then parse through each list simultaneously, to display the correct data for each adult
+        adult_name_list = []
+        adult_birth_day_list = []
+        adult_birth_month_list = []
+        adult_birth_year_list = []
+        adult_relationship_list = []
+        adult_dbs_list = []
+        adult_permission_list = []
+        application = Application.objects.get(pk=application_id_local)
+        for adult in adults_list:
+            # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
+            # Concatenate the adult's name for display, displaying any middle names if present
+            if adult.middle_names != '':
+                name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
+            elif adult.middle_names == '':
+                name = adult.first_name + ' ' + adult.last_name
+            adult_name_list.append(name)
+            adult_birth_day_list.append(adult.birth_day)
+            adult_birth_month_list.append(adult.birth_month)
+            adult_birth_year_list.append(adult.birth_year)
+            adult_relationship_list.append(adult.relationship)
+            adult_dbs_list.append(adult.dbs_certificate_number)
+            adult_permission_list.append(adult.permission_declare)
+        # Zip the appended lists together for the HTML to simultaneously parse
+        adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
+                          adult_relationship_list, adult_dbs_list, adult_permission_list)
+        # Generate lists of data for adults in your home, to be iteratively displayed on the summary page
+        # The HTML will then parse through each list simultaneously, to display the correct data for each adult
+        child_name_list = []
+        child_birth_day_list = []
+        child_birth_month_list = []
+        child_birth_year_list = []
+        child_relationship_list = []
+        for child in children_list:
+            # For each child, append the correct attribute (e.g. name, relationship) to the relevant list
+            # Concatenate the child's name for display, displaying any middle names if present
+            if child.middle_names != '':
+                name = child.first_name + ' ' + child.middle_names + ' ' + child.last_name
+            elif child.middle_names == '':
+                name = child.first_name + ' ' + child.last_name
+            child_name_list.append(name)
+            child_birth_day_list.append(child.birth_day)
+            child_birth_month_list.append(child.birth_month)
+            child_birth_year_list.append(child.birth_year)
+            child_relationship_list.append(child.relationship)
+        # Zip the appended lists together for the HTML to simultaneously parse
+        child_lists = zip(child_name_list, child_birth_day_list, child_birth_month_list, child_birth_year_list,
+                          child_relationship_list)
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -2213,6 +2847,7 @@ def declaration_summary(request):
             'first_aid_certificate_year': first_aid_record.course_year,
             'dbs_certificate_number': dbs_record.dbs_certificate_number,
             'cautions_convictions': dbs_record.cautions_convictions,
+            'declaration': dbs_record.send_certificate_declare,
             'send_hdb_declare': hdb_record.send_hdb_declare,
             'eyfs_understand': eyfs_record.eyfs_understand,
             'eyfs_training_declare': eyfs_record.eyfs_training_declare,
@@ -2242,13 +2877,25 @@ def declaration_summary(request):
             'second_reference_postcode': second_reference_record.postcode,
             'second_reference_country': second_reference_record.country,
             'second_reference_phone_number': second_reference_record.phone_number,
-            'second_reference_email': second_reference_record.email
+            'second_reference_email': second_reference_record.email,
+            'adults_in_home': application.adults_in_home,
+            'children_in_home': application.children_in_home,
+            'number_of_adults': adults_list.count(),
+            'number_of_children': children_list.count(),
+            'adult_lists': adult_lists,
+            'child_lists': child_lists,
+            'turning_16': application.children_turning_16,
         }
+        if application.declarations_status != 'COMPLETED':
+            status.update(application_id_local, 'declarations_status', 'NOT_STARTED')
         return render(request, 'declaration-summary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = DeclarationSummaryForm(request.POST)
+        application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
+            if application.declarations_status != 'COMPLETED':
+                status.update(application_id_local, 'declarations_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/declaration/declaration?id=' + application_id_local)
         else:
             variables = {
@@ -2256,6 +2903,68 @@ def declaration_summary(request):
                 'application_id': application_id_local
             }
             return render(request, 'declaration-summary.html', variables)
+
+
+def declaration_declaration(request):
+    """
+    Method returning the template for the Declaration page (for a given application) and navigating to
+    the task list when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Declaration template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = DeclarationDeclarationForm(id=application_id_local)
+        form2 = DeclarationDeclarationForm2(id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'form2': form2,
+            'application_id': application_id_local,
+            'declarations_status': application.declarations_status
+        }
+        return render(request, 'declaration-declaration.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        application = Application.objects.get(application_id=application_id_local)
+        form = DeclarationDeclarationForm(request.POST, id=application_id_local)
+        form2 = DeclarationDeclarationForm2(request.POST, id=application_id_local)
+        # Validate both forms (sets of checkboxes)
+        if form.is_valid():
+            background_check_declare = form.cleaned_data.get('background_check_declare')
+            inspect_home_declare = form.cleaned_data.get('inspect_home_declare')
+            interview_declare = form.cleaned_data.get('interview_declare')
+            eyfs_questions_declare = form.cleaned_data.get('eyfs_questions_declare')
+            application.background_check_declare = background_check_declare
+            application.inspect_home_declare = inspect_home_declare
+            application.interview_declare = interview_declare
+            application.eyfs_questions_declare = eyfs_questions_declare
+            application.save()
+            application.date_updated = current_date
+            application.save()
+            if form2.is_valid():
+                information_correct_declare = form2.cleaned_data.get('information_correct_declare')
+                application.information_correct_declare = information_correct_declare
+                application.save()
+                application.date_updated = current_date
+                application.save()
+                status.update(application_id_local, 'declarations_status', 'COMPLETED')
+                return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+            else:
+                variables = {
+                    'form': form,
+                    'form2': form2,
+                    'application_id': application_id_local
+                }
+                return render(request, 'declaration-declaration.html', variables)
+        else:
+            variables = {
+                'form': form,
+                'form2': form2,
+                'application_id': application_id_local
+            }
+            return render(request, 'declaration-declaration.html', variables)
 
 
 def payment_selection(request):

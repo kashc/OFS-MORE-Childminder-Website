@@ -6,23 +6,23 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 
 import re
+
 from datetime import date
 from django import forms
 from django.conf import settings
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect
-
 from govuk_forms.fields import SplitDateField
 
 from .customfields import TimeKnownField, ExpirySplitDateWidget, SelectDateWidget, ExpirySplitDateField
-
 from .models import (AdultInHome,
                      ApplicantHomeAddress,
                      ApplicantName,
                      ApplicantPersonalDetails,
                      Application,
                      ChildcareType,
+                     ChildInHome,
                      CriminalRecordCheck,
                      EYFS,
                      FirstAidTraining,
@@ -355,7 +355,7 @@ class PersonalDetailsNameForm(GOVUKForm):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
-        if re.match("^[A-Za-z- ]+$", first_name) is None:
+        if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
             raise forms.ValidationError('TBC')
         if len(first_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -368,7 +368,7 @@ class PersonalDetailsNameForm(GOVUKForm):
         """
         middle_names = self.cleaned_data['middle_names']
         if middle_names != '':
-            if re.match("^[A-Za-z- ]+$", middle_names) is None:
+            if re.match("^[A-zÀ-ÿ- ]+$", middle_names) is None:
                 raise forms.ValidationError('TBC')
             if len(middle_names) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
@@ -380,7 +380,7 @@ class PersonalDetailsNameForm(GOVUKForm):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
-        if re.match("^[A-Za-z- ]+$", last_name) is None:
+        if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
             raise forms.ValidationError('TBC')
         if len(last_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less.')
@@ -1006,6 +1006,30 @@ class FirstReferenceForm(GOVUKForm):
             self.fields['relationship'].initial = reference_record.relationship
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
 
+    def clean_first_name(self):
+        """
+        First name validation
+        :return: string
+        """
+        first_name = self.cleaned_data['first_name']
+        if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(first_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return first_name
+
+    def clean_last_name(self):
+        """
+        Last name validation
+        :return: string
+        """
+        last_name = self.cleaned_data['last_name']
+        if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(last_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return last_name
+
     def clean_time_known(self):
         """
         Time known validation: reference must be known for 1 year or more
@@ -1223,6 +1247,30 @@ class SecondReferenceForm(GOVUKForm):
             self.fields['relationship'].initial = reference_record.relationship
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
 
+    def clean_first_name(self):
+        """
+        First name validation
+        :return: string
+        """
+        first_name = self.cleaned_data['first_name']
+        if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(first_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return first_name
+
+    def clean_last_name(self):
+        """
+        Last name validation
+        :return: string
+        """
+        last_name = self.cleaned_data['last_name']
+        if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(last_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return last_name
+
     def clean_time_known(self):
         """
         Time known validation: reference must be known for 1 year or more
@@ -1426,10 +1474,9 @@ class OtherPeopleGuidanceForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
 
-
 class OtherPeopleAdultQuestionForm(GOVUKForm):
     """
-    GOV.UK form for the People in your home page
+    GOV.UK form for the People in your home: adult question page
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
@@ -1453,12 +1500,369 @@ class OtherPeopleAdultQuestionForm(GOVUKForm):
             application_id=self.application_id_local).adults_in_home
 
 
-class DeclarationForm(GOVUKForm):
+class OtherPeopleAdultDetailsForm(GOVUKForm):
     """
-    GOV.UK form for the Declaration page
+    GOV.UK form for the People in your home: adult details page
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
+    first_name = forms.CharField(label='First name', required=True)
+    middle_names = forms.CharField(label='Middle names (if they have any)', required=False)
+    last_name = forms.CharField(label='Last name', required=True)
+    date_of_birth = SplitDateField(label='Date of birth', help_text='For example, 31 03 1980')
+    relationship = forms.CharField(label='How are they related to you?', help_text='For instance, husband or daughter',
+                                   required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the People in your home: adult details form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.adult = kwargs.pop('adult')
+        super(OtherPeopleAdultDetailsForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).count() > 0:
+            adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
+            self.fields['first_name'].initial = adult_record.first_name
+            self.fields['middle_names'].initial = adult_record.middle_names
+            self.fields['last_name'].initial = adult_record.last_name
+            self.fields['date_of_birth'].initial = [adult_record.birth_day,
+                                                    adult_record.birth_month,
+                                                    adult_record.birth_year]
+            self.fields['relationship'].initial = adult_record.relationship
+
+    def clean_first_name(self):
+        """
+        First name validation
+        :return: string
+        """
+        first_name = self.cleaned_data['first_name']
+        if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(first_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return first_name
+
+    def clean_middle_names(self):
+        """
+        Middle names validation
+        :return: string
+        """
+        middle_names = self.cleaned_data['middle_names']
+        if middle_names != '':
+            if re.match("^[A-zÀ-ÿ- ]+$", middle_names) is None:
+                raise forms.ValidationError('TBC')
+            if len(middle_names) > 100:
+                raise forms.ValidationError('Please enter 100 characters or less.')
+        return middle_names
+
+    def clean_last_name(self):
+        """
+        Last name validation
+        :return: string
+        """
+        last_name = self.cleaned_data['last_name']
+        if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(last_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return last_name
+
+    def clean_date_of_birth(self):
+        """
+        Date of birth validation (calculate if age is less than 16)
+        :return: string
+        """
+        birth_day = self.cleaned_data['date_of_birth'].day
+        birth_month = self.cleaned_data['date_of_birth'].month
+        birth_year = self.cleaned_data['date_of_birth'].year
+        applicant_dob = date(birth_year, birth_month, birth_day)
+        today = date.today()
+        age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
+        if age < 16:
+            raise forms.ValidationError('TBC')
+        return birth_day, birth_month, birth_year
+
+
+class OtherPeopleAdultDBSForm(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: adult DBS page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
+                                                help_text='12-digit number on their certificate',
+                                                required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the People in your home: adult DBS form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.adult = kwargs.pop('adult')
+        self.name = kwargs.pop('name')
+        super(OtherPeopleAdultDBSForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).count() > 0:
+            adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
+            self.fields['dbs_certificate_number'].initial = adult_record.dbs_certificate_number
+
+    def clean_dbs_certificate_number(self):
+        """
+        DBS certificate number validation
+        :return: integer
+        """
+        dbs_certificate_number = self.cleaned_data['dbs_certificate_number']
+        if len(str(dbs_certificate_number)) > 12:
+            raise forms.ValidationError('TBC')
+        if len(str(dbs_certificate_number)) < 12:
+            raise forms.ValidationError('TBC')
+        return dbs_certificate_number
+
+
+class OtherPeopleAdultPermissionForm(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: adult permission page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    permission_declare = forms.BooleanField(required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the People in your home: adult permission form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.adult = kwargs.pop('adult')
+        super(OtherPeopleAdultPermissionForm, self).__init__(*args, **kwargs)
+        adult = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
+        first_name = adult.first_name
+        middle_names = adult.middle_names
+        last_name = adult.last_name
+        if middle_names != '':
+            self.fields['permission_declare'].label = first_name + ' ' + middle_names + ' ' + last_name
+        elif middle_names == '':
+            self.fields['permission_declare'].label = first_name + ' ' + last_name
+        # If information was previously entered, display it on the form
+        if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).count() > 0:
+            adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
+            self.fields['permission_declare'].initial = adult_record.permission_declare
+
+
+class OtherPeopleChildrenQuestionForm(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: children question page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    options = (
+        ('True', 'Yes'),
+        ('False', 'No')
+    )
+    children_in_home = forms.ChoiceField(label='Do you live with any children under 16?', choices=options,
+                                         widget=InlineRadioSelect, required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the People in your home: children question form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(OtherPeopleChildrenQuestionForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        self.fields['children_in_home'].initial = Application.objects.get(
+            application_id=self.application_id_local).children_in_home
+
+
+class OtherPeopleChildrenDetailsForm(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: children details page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    first_name = forms.CharField(label='First name', required=True)
+    middle_names = forms.CharField(label='Middle names (if they have any)', required=False)
+    last_name = forms.CharField(label='Last name', required=True)
+    date_of_birth = SplitDateField(label='Date of birth', help_text='For example, 31 03 1980')
+    relationship = forms.CharField(label='How are they related to you?', help_text='For instance, son or daughter',
+                                   required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the People in your home: children details form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.child = kwargs.pop('child')
+        super(OtherPeopleChildrenDetailsForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if ChildInHome.objects.filter(application_id=self.application_id_local, child=self.child).count() > 0:
+            child_record = ChildInHome.objects.get(application_id=self.application_id_local, child=self.child)
+            self.fields['first_name'].initial = child_record.first_name
+            self.fields['middle_names'].initial = child_record.middle_names
+            self.fields['last_name'].initial = child_record.last_name
+            self.fields['date_of_birth'].initial = [child_record.birth_day,
+                                                    child_record.birth_month,
+                                                    child_record.birth_year]
+            self.fields['relationship'].initial = child_record.relationship
+
+    def clean_first_name(self):
+        """
+        First name validation
+        :return: string
+        """
+        first_name = self.cleaned_data['first_name']
+        if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(first_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return first_name
+
+    def clean_middle_names(self):
+        """
+        Middle names validation
+        :return: string
+        """
+        middle_names = self.cleaned_data['middle_names']
+        if middle_names != '':
+            if re.match("^[A-zÀ-ÿ- ]+$", middle_names) is None:
+                raise forms.ValidationError('TBC')
+            if len(middle_names) > 100:
+                raise forms.ValidationError('Please enter 100 characters or less.')
+        return middle_names
+
+    def clean_last_name(self):
+        """
+        Last name validation
+        :return: string
+        """
+        last_name = self.cleaned_data['last_name']
+        if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
+            raise forms.ValidationError('TBC')
+        if len(last_name) > 100:
+            raise forms.ValidationError('Please enter 100 characters or less.')
+        return last_name
+
+    def clean_date_of_birth(self):
+        """
+        Date of birth validation (calculate if age is more than 16)
+        :return: string
+        """
+        birth_day = self.cleaned_data['date_of_birth'].day
+        birth_month = self.cleaned_data['date_of_birth'].month
+        birth_year = self.cleaned_data['date_of_birth'].year
+        applicant_dob = date(birth_year, birth_month, birth_day)
+        today = date.today()
+        age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
+        if age >= 16:
+            raise forms.ValidationError('TBC')
+        return birth_day, birth_month, birth_year
+
+
+class OtherPeopleApproaching16Form(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: approaching 16 page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+class OtherPeopleNumberOfChildrenForm(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: number of children page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+class OtherPeopleSummaryForm(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: summary page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+class DeclarationDeclarationForm(GOVUKForm):
+    """
+    GOV.UK form for the Declaration: declaration page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    background_check_declare = forms.BooleanField(label='carry out background checks', required=True)
+    inspect_home_declare = forms.BooleanField(label='inspect my home', required=True)
+    interview_declare = forms.BooleanField(label='interview me', required=True)
+    eyfs_questions_declare = forms.BooleanField(label='ask me questions about the EYFS', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Declaration: declaration form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(DeclarationDeclarationForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            background_check_declare = Application.objects.get(
+                application_id=self.application_id_local).background_check_declare
+            if background_check_declare is True:
+                self.fields['background_check_declare'].initial = '1'
+            elif background_check_declare is False:
+                self.fields['background_check_declare'].initial = '0'
+            inspect_home_declare = Application.objects.get(
+                application_id=self.application_id_local).inspect_home_declare
+            if inspect_home_declare is True:
+                self.fields['inspect_home_declare'].initial = '1'
+            elif inspect_home_declare is False:
+                self.fields['inspect_home_declare'].initial = '0'
+            interview_declare = Application.objects.get(
+                application_id=self.application_id_local).interview_declare
+            if interview_declare is True:
+                self.fields['interview_declare'].initial = '1'
+            elif interview_declare is False:
+                self.fields['interview_declare'].initial = '0'
+            eyfs_questions_declare = Application.objects.get(
+                application_id=self.application_id_local).eyfs_questions_declare
+            if eyfs_questions_declare is True:
+                self.fields['eyfs_questions_declare'].initial = '1'
+            elif eyfs_questions_declare is False:
+                self.fields['eyfs_questions_declare'].initial = '0'
+
+
+class DeclarationDeclarationForm2(GOVUKForm):
+    """
+    GOV.UK form for the Declaration: declaration page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    information_correct_declare = forms.BooleanField(label='the information I have given in this form is correct',
+                                                     required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Declaration: declaration form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(DeclarationDeclarationForm2, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            information_correct_declare = Application.objects.get(
+                application_id=self.application_id_local).information_correct_declare
+            if information_correct_declare is True:
+                self.fields['information_correct_declare'].initial = '1'
+            elif information_correct_declare is False:
+                self.fields['information_correct_declare'].initial = '0'
 
 
 class DeclarationSummaryForm(GOVUKForm):

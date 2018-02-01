@@ -1,0 +1,60 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}People in your home{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<!-- Initialise error summary for page -->
+{% for form in form_list %}
+{{form.error_summary}}
+{% endfor %}
+
+<div class="column-full">
+    <div class="form-group grid-row" style="padding-top: 30px;">
+        <a href="{{ URL_PREFIX }}/other-people/children-question?id={{application_id}}" class="link-back"
+           style="margin-right: 10px; line-height: 28px"
+           alt="Back to application list">
+            Back
+        </a>
+    </div>
+    <!-- Form -->
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        <!-- Content -->
+        <div class="form-group grid-row">
+            <h1 class="form-title heading-large">
+                Details of children in your home
+            </h1>
+            <p>Please give details of the children you live with.</p>
+            {% for form in form_list %}
+            <h2 class="form-title heading-medium">
+                Child {{form.prefix}}
+            </h2>
+            {{form.as_div}}
+            {% if remove_button is True %}
+            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{remove_child}}&remove={{form.prefix}}"
+               style="margin-left: 0px;"><b>Remove child</b></a>
+            {% endif %}
+            {% endfor %}
+            {% csrf_token %}
+            <input type="hidden" value="{{application_id}}" name="id"/>
+            <br>
+            <br>
+            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{add_child}}&remove=0"
+               class="button-save-and-exit"
+               style="margin-left: 0px;">Add another child</a>
+            <br>
+            <br>
+            <input type="submit" class="button" value="Save and continue">
+            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+            <input type="hidden" id="children" name="children" value="{{number_of_children}}"/>
+        </div>
+    </form>
+    </br>
+    <!-- Return to task list -->
+    <div class="form-group grid-row">
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+    </div>
+</div>
+
+{% endblock %}

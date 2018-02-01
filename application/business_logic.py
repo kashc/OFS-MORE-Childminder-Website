@@ -7,11 +7,13 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 import datetime
 
-from .models import (ApplicantHomeAddress,
+from .models import (AdultInHome,
+                     ApplicantHomeAddress,
                      ApplicantName,
                      ApplicantPersonalDetails,
                      Application,
                      ChildcareType,
+                     ChildInHome,
                      CriminalRecordCheck,
                      EYFS,
                      FirstAidTraining,
@@ -433,7 +435,7 @@ def references_second_reference_logic(application_id_local, form):
 
 def health_check_logic(application_id_local, form):
     """
-    Business logic to create or update a Health_Declaration_Booklet record with first reference details
+    Business logic to create or update a HealthDeclarationBooklet record with first reference details
     :param application_id_local: A string object containing the current application ID
     :param form: A form object containing the data to be stored
     :return: an HealthDeclarationBooklet object to be saved
@@ -448,6 +450,132 @@ def health_check_logic(application_id_local, form):
         hdb_record = HealthDeclarationBooklet.objects.get(application_id=application_id_local)
         hdb_record.send_hdb_declare = send_hdb_declare
     return hdb_record
+
+
+def other_people_adult_details_logic(application_id_local, form, adult):
+    """
+    Business logic to create or update an AdultInHome record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :param adult: adult number (integer)
+    :return: an AdultInHome object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    first_name = form.cleaned_data.get('first_name')
+    middle_names = form.cleaned_data.get('middle_names')
+    last_name = form.cleaned_data.get('last_name')
+    birth_day = form.cleaned_data.get('date_of_birth')[0]
+    birth_month = form.cleaned_data.get('date_of_birth')[1]
+    birth_year = form.cleaned_data.get('date_of_birth')[2]
+    relationship = form.cleaned_data.get('relationship')
+    # If the user entered information for this task for the first time
+    if AdultInHome.objects.filter(application_id=this_application, adult=adult).count() == 0:
+        adult_record = AdultInHome(first_name=first_name, middle_names=middle_names, last_name=last_name,
+                                   birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
+                                   relationship=relationship, application_id=this_application, adult=adult)
+    # If the user previously entered information for this task
+    elif AdultInHome.objects.filter(application_id=this_application, adult=adult).count() > 0:
+        adult_record = AdultInHome.objects.get(application_id=this_application, adult=adult)
+        adult_record.first_name = first_name
+        adult_record.middle_names = middle_names
+        adult_record.last_name = last_name
+        adult_record.birth_day = birth_day
+        adult_record.birth_month = birth_month
+        adult_record.birth_year = birth_year
+        adult_record.relationship = relationship
+    return adult_record
+
+
+def remove_adult(application_id_local, remove_person):
+    """
+    Method to remove an adult from the database
+    :param application_id_local: current application ID
+    :param remove_person: adult to remove (integer)
+    :return:
+    """
+    if AdultInHome.objects.filter(application_id=application_id_local, adult=remove_person).exists() is True:
+        AdultInHome.objects.get(application_id=application_id_local, adult=remove_person).delete()
+
+
+def rearrange_adults(number_of_adults, application_id_local):
+    """
+    Method to rearrange numbers assigned to adults
+    :param number_of_adults: number of adults in database (integer)
+    :param application_id_local: current application ID
+    :return:
+    """
+    for i in range(1, number_of_adults + 1):
+        # If there is a gap in the sequence of adult numbers
+        if AdultInHome.objects.filter(application_id=application_id_local, adult=i).count() == 0:
+            next_adult = i + 1
+            # If there is an adult that has the next number in the sequence, assign the missing number
+            if AdultInHome.objects.filter(application_id=application_id_local, adult=next_adult).count() != 0:
+                next_adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=next_adult)
+                next_adult_record.adult = i
+                next_adult_record.save()
+
+
+def remove_child(application_id_local, remove_person):
+    """
+    Method to remove a child from the database
+    :param application_id_local: current application ID
+    :param remove_person: child to remove (integer)
+    :return:
+    """
+    if ChildInHome.objects.filter(application_id=application_id_local, child=remove_person).exists() is True:
+        ChildInHome.objects.get(application_id=application_id_local, child=remove_person).delete()
+
+
+def rearrange_children(number_of_children, application_id_local):
+    """
+    Method to rearrange numbers assigned to adults
+    :param number_of_children: number of children in database (integer)
+    :param application_id_local: current application ID
+    :return:
+    """
+    for i in range(1, number_of_children + 1):
+        # If there is a gap in the sequence of child numbers
+        if ChildInHome.objects.filter(application_id=application_id_local, child=i).count() == 0:
+            next_child = i + 1
+            # If there is a child that has the next number in the sequence, assign the missing number
+            if ChildInHome.objects.filter(application_id=application_id_local, child=next_child).count() != 0:
+                next_child_record = ChildInHome.objects.get(application_id=application_id_local, child=next_child)
+                next_child_record.child = i
+                next_child_record.save()
+
+
+def other_people_children_details_logic(application_id_local, form, child):
+    """
+    Business logic to create or update an ChildInHome record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :param child: child number (integer)
+    :return: an ChildInHome object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    first_name = form.cleaned_data.get('first_name')
+    middle_names = form.cleaned_data.get('middle_names')
+    last_name = form.cleaned_data.get('last_name')
+    birth_day = form.cleaned_data.get('date_of_birth')[0]
+    birth_month = form.cleaned_data.get('date_of_birth')[1]
+    birth_year = form.cleaned_data.get('date_of_birth')[2]
+    relationship = form.cleaned_data.get('relationship')
+    # If the user entered information for this task for the first time
+    if ChildInHome.objects.filter(application_id=this_application, child=child).count() == 0:
+        child_record = ChildInHome(first_name=first_name, middle_names=middle_names, last_name=last_name,
+                                   birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
+                                   relationship=relationship, application_id=this_application, child=child)
+    # If the user previously entered information for this task
+    elif ChildInHome.objects.filter(application_id=this_application, child=child).count() > 0:
+        child_record = ChildInHome.objects.get(application_id=this_application, child=child)
+        child_record.first_name = first_name
+        child_record.middle_names = middle_names
+        child_record.last_name = last_name
+        child_record.birth_day = birth_day
+        child_record.birth_month = birth_month
+        child_record.birth_year = birth_year
+        child_record.relationship = relationship
+    return child_record
 
 
 def get_card_expiry_years():
@@ -475,3 +603,18 @@ def login_contact_security_question(application_id_local, form):
     login_and_contact_details_record = this_application.login_id
     login_and_contact_details_record.security_answer = security_answer
     return login_and_contact_details_record
+
+
+def reset_declaration(application):
+    """
+    Method to reset the declaration status to To Do if a task is updated
+    :param application: current application
+    """
+    if application.declarations_status == 'COMPLETED':
+        application.declarations_status = 'NOT_STARTED'
+        application.background_check_declare = None
+        application.eyfs_questions_declare = None
+        application.inspect_home_declare = None
+        application.interview_declare = None
+        application.information_correct_declare = None
+        application.save()
