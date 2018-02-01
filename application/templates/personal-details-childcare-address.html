@@ -5,6 +5,9 @@
 
 {% block inner_content %}
 
+<!-- Initialise error summary for page -->
+{{form.error_summary}}
+
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
         <a href="{{ URL_PREFIX }}/personal-details/childcare-address?id={{application_id}}&manual=False&lookup=False" class="link-back"
@@ -20,8 +23,7 @@
                 Childcare address
             </h1>
             <p>Where will you be looking after the children?</p>
-            <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
-            {{form.postcode}}
+            {{form.as_div}}
             {% csrf_token %}
             </br>
             </br>

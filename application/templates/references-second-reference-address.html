@@ -5,6 +5,9 @@
 
 {% block inner_content %}
 
+<!-- Initialise error summary for page -->
+{{form.error_summary}}
+
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
         <a href="{{ URL_PREFIX }}/references/second-reference/?id={{application_id}}" class="link-back"
@@ -21,8 +24,7 @@
                 Second reference address
             </h1>
             <p>Please give the address for your second referee.</p>
-            <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
-            {{form.postcode}}
+            {{form.as_div}}
             {% csrf_token %}
             </br>
             </br>

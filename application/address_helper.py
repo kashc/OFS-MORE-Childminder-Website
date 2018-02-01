@@ -22,21 +22,25 @@ class AddressHelper:
         """
         headers = {"content-type": "application/json"}
         response = requests.get(settings.ADDRESSING_URL + postcode + '/', headers=headers, verify=False)
-        address_matches = json.loads(response.text)
-        results = address_matches['results']
-        count = address_matches['count']
-        results_no = str(count) + ' addresses found'
-        addresses = [(None, results_no)]
-        for address in results:
-            one_line = address['combinedAddress']
-            elements = {
-                'line1': address['line1'],
-                'line2': address['line2'],
-                'townOrCity': address['townOrCity'],
-                'postcode': address['postcode']
-            }
-            addresses.append((elements, one_line))
-        return addresses
+        if response.status_code == 200:
+            address_matches = json.loads(response.text)
+            results = address_matches['results']
+            count = address_matches['count']
+            results_no = str(count) + ' addresses found'
+            addresses = [(None, results_no)]
+            for address in results:
+                one_line = address['combinedAddress']
+                elements = {
+                    'line1': address['line1'],
+                    'line2': address['line2'],
+                    'townOrCity': address['townOrCity'],
+                    'postcode': address['postcode']
+                }
+                addresses.append((elements, one_line))
+            return addresses
+        else:
+            addresses = []
+            return addresses
 
     @staticmethod
     def get_posted_address(form, field_name):

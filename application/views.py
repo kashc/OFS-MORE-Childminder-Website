@@ -696,14 +696,24 @@ def personal_details_home_address(request):
             home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
             postcode = home_address_record.postcode
             addresses = AddressHelper.issue_postcode_search(postcode)
-            form = PersonalDetailsHomeAddressLookupForm(id=application_id_local, choices=addresses)
-            variables = {
-                'form': form,
-                'application_id': application_id_local,
-                'postcode': postcode,
-                'personal_details_status': application.personal_details_status
-            }
-            return render(request, 'personal-details-home-address-lookup.html', variables)
+            if len(addresses) != 0:
+                form = PersonalDetailsHomeAddressLookupForm(id=application_id_local, choices=addresses)
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'postcode': postcode,
+                    'personal_details_status': application.personal_details_status
+                }
+                return render(request, 'personal-details-home-address-lookup.html', variables)
+            else:
+                form = PersonalDetailsHomeAddressForm(id=application_id_local)
+                form.errors['postcode'] = {'Please enter a valid postcode.': 'invalid'}
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'personal_details_status': application.personal_details_status
+                }
+                return render(request, 'personal-details-home-address.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         manual = request.POST["manual"]
@@ -738,7 +748,6 @@ def personal_details_home_address(request):
                 if manual == 'True':
                     form = PersonalDetailsHomeAddressManualForm(request.POST, id=application_id_local)
                     selected_address = AddressHelper.get_posted_address(form, 'address')
-
                     line1 = selected_address['line1']
                     line2 = selected_address['line2']
                     town = selected_address['townOrCity']
@@ -935,14 +944,24 @@ def personal_details_childcare_address(request):
                                                                         childcare_address=True)
             postcode = childcare_address_record.postcode
             addresses = AddressHelper.issue_postcode_search(postcode)
-            form = PersonalDetailsChildcareAddressLookupForm(id=application_id_local, choices=addresses)
-            variables = {
-                'form': form,
-                'application_id': application_id_local,
-                'postcode': postcode,
-                'personal_details_status': application.personal_details_status
-            }
-            return render(request, 'personal-details-childcare-address-lookup.html', variables)
+            if len(addresses) != 0:
+                form = PersonalDetailsChildcareAddressLookupForm(id=application_id_local, choices=addresses)
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'postcode': postcode,
+                    'personal_details_status': application.personal_details_status
+                }
+                return render(request, 'personal-details-childcare-address-lookup.html', variables)
+            else:
+                form = PersonalDetailsChildcareAddressForm(id=application_id_local)
+                form.errors['postcode'] = {'Please enter a valid postcode.': 'invalid'}
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'personal_details_status': application.personal_details_status
+                }
+                return render(request, 'personal-details-childcare-address.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         manual = request.POST["manual"]
@@ -1932,14 +1951,24 @@ def references_first_reference_address(request):
             first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
             postcode = first_reference_record.postcode
             addresses = AddressHelper.issue_postcode_search(postcode)
-            form = ReferenceFirstReferenceAddressLookupForm(id=application_id_local, choices=addresses)
-            variables = {
-                'form': form,
-                'application_id': application_id_local,
-                'postcode': postcode,
-                'references_status': application.references_status
-            }
-            return render(request, 'references-first-reference-address-lookup.html', variables)
+            if len(addresses) != 0:
+                form = ReferenceFirstReferenceAddressLookupForm(id=application_id_local, choices=addresses)
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'postcode': postcode,
+                    'references_status': application.references_status
+                }
+                return render(request, 'references-first-reference-address-lookup.html', variables)
+            else:
+                form = ReferenceFirstReferenceAddressForm(id=application_id_local)
+                form.errors['postcode'] = {'Please enter a valid postcode.': 'invalid'}
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'personal_details_status': application.personal_details_status
+                }
+                return render(request, 'references-first-reference-address.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         manual = request.POST["manual"]
@@ -2168,14 +2197,24 @@ def references_second_reference_address(request):
             second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
             postcode = second_reference_record.postcode
             addresses = AddressHelper.issue_postcode_search(postcode)
-            form = ReferenceSecondReferenceAddressLookupForm(id=application_id_local, choices=addresses)
-            variables = {
-                'form': form,
-                'application_id': application_id_local,
-                'postcode': postcode,
-                'references_status': application.references_status
-            }
-            return render(request, 'references-second-reference-address-lookup.html', variables)
+            if len(addresses) != 0:
+                form = ReferenceSecondReferenceAddressLookupForm(id=application_id_local, choices=addresses)
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'postcode': postcode,
+                    'references_status': application.references_status
+                }
+                return render(request, 'references-second-reference-address-lookup.html', variables)
+            else:
+                form = ReferenceSecondReferenceAddressForm(id=application_id_local)
+                form.errors['postcode'] = {'Please enter a valid postcode.': 'invalid'}
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'personal_details_status': application.personal_details_status
+                }
+                return render(request, 'references-second-reference-address.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         manual = request.POST["manual"]
@@ -2561,6 +2600,7 @@ def other_people_adult_details(request):
         for i in range(1, int(number_of_adults) + 1):
             form = OtherPeopleAdultDetailsForm(request.POST, id=application_id_local, adult=i, prefix=i)
             form_list.append(form)
+            form.error_summary_title = 'There is a problem with this form (Person ' + str(i) + ')'
             if form.is_valid():
                 adult_record = other_people_adult_details_logic(application_id_local, form, i)
                 adult_record.save()
@@ -2638,6 +2678,7 @@ def other_people_adult_dbs(request):
                 name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
             form = OtherPeopleAdultDBSForm(request.POST, id=application_id_local, adult=i, prefix=i, name=name)
             form_list.append(form)
+            form.error_summary_title = 'There is a problem with this form (Person ' + str(i) + ')'
             if form.is_valid():
                 adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=i)
                 adult_record.dbs_certificate_number = form.cleaned_data.get('dbs_certificate_number')
@@ -2704,6 +2745,7 @@ def other_people_adult_permission(request):
         for i in range(1, int(number_of_adults) + 1):
             form = OtherPeopleAdultPermissionForm(request.POST, id=application_id_local, adult=i, prefix=i)
             form_list.append(form)
+            form.error_summary_title = 'There is a problem with this form (Person ' + str(i) + ')'
             if form.is_valid():
                 adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=i)
                 adult_record.permission_declare = form.cleaned_data.get('permission_declare')
@@ -2848,6 +2890,7 @@ def other_people_children_details(request):
         for i in range(1, int(number_of_children) + 1):
             form = OtherPeopleChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
             form_list.append(form)
+            form.error_summary_title = 'There is a problem with this form (Child ' + str(i) + ')'
             if form.is_valid():
                 child_record = other_people_children_details_logic(application_id_local, form, i)
                 child_record.save()
