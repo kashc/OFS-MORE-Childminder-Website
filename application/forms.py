@@ -1790,12 +1790,78 @@ class OtherPeopleSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class DeclarationForm(GOVUKForm):
+class DeclarationDeclarationForm(GOVUKForm):
     """
-    GOV.UK form for the Declaration page
+    GOV.UK form for the Declaration: declaration page
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
+    background_check_declare = forms.BooleanField(label='carry out background checks', required=True)
+    inspect_home_declare = forms.BooleanField(label='inspect my home', required=True)
+    interview_declare = forms.BooleanField(label='interview me', required=True)
+    eyfs_questions_declare = forms.BooleanField(label='ask me questions about the EYFS', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Declaration: declaration form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(DeclarationDeclarationForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            background_check_declare = Application.objects.get(
+                application_id=self.application_id_local).background_check_declare
+            if background_check_declare is True:
+                self.fields['background_check_declare'].initial = '1'
+            elif background_check_declare is False:
+                self.fields['background_check_declare'].initial = '0'
+            inspect_home_declare = Application.objects.get(
+                application_id=self.application_id_local).inspect_home_declare
+            if inspect_home_declare is True:
+                self.fields['inspect_home_declare'].initial = '1'
+            elif inspect_home_declare is False:
+                self.fields['inspect_home_declare'].initial = '0'
+            interview_declare = Application.objects.get(
+                application_id=self.application_id_local).interview_declare
+            if interview_declare is True:
+                self.fields['interview_declare'].initial = '1'
+            elif interview_declare is False:
+                self.fields['interview_declare'].initial = '0'
+            eyfs_questions_declare = Application.objects.get(
+                application_id=self.application_id_local).eyfs_questions_declare
+            if eyfs_questions_declare is True:
+                self.fields['eyfs_questions_declare'].initial = '1'
+            elif eyfs_questions_declare is False:
+                self.fields['eyfs_questions_declare'].initial = '0'
+
+
+class DeclarationDeclarationForm2(GOVUKForm):
+    """
+    GOV.UK form for the Declaration: declaration page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    information_correct_declare = forms.BooleanField(label='the information I have given in this form is correct',
+                                                     required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Declaration: declaration form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(DeclarationDeclarationForm2, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            information_correct_declare = Application.objects.get(
+                application_id=self.application_id_local).information_correct_declare
+            if information_correct_declare is True:
+                self.fields['information_correct_declare'].initial = '1'
+            elif information_correct_declare is False:
+                self.fields['information_correct_declare'].initial = '0'
 
 
 class DeclarationSummaryForm(GOVUKForm):
