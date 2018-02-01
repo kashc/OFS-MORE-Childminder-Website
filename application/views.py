@@ -702,7 +702,7 @@ def personal_details_home_address(request):
             applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
             home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
             postcode = home_address_record.postcode
-            addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
+            addresses = address_helper.address_helper.AddressHelper.issue_postcode_search(postcode)
             if len(addresses) != 0:
                 form = PersonalDetailsHomeAddressLookupForm(id=application_id_local, choices=addresses)
                 variables = {
@@ -769,7 +769,7 @@ def personal_details_home_address(request):
                         return render(request, 'personal-details-home-address.html', variables)
                 if manual == 'True':
                     form = PersonalDetailsHomeAddressManualForm(request.POST, id=application_id_local)
-                    selected_address = AddressHelper.get_posted_address(form, 'address')
+                    selected_address = address_helper.AddressHelper.get_posted_address(form, 'address')
                     line1 = selected_address['line1']
                     line2 = selected_address['line2']
                     town = selected_address['townOrCity']
@@ -981,7 +981,7 @@ def personal_details_childcare_address(request):
             childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
                                                                         childcare_address=True)
             postcode = childcare_address_record.postcode
-            addresses = AddressHelper.issue_postcode_search(postcode)
+            addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
             if len(addresses) != 0:
                 form = PersonalDetailsChildcareAddressLookupForm(id=application_id_local, choices=addresses)
                 variables = {
@@ -1049,7 +1049,7 @@ def personal_details_childcare_address(request):
                         return render(request, 'personal-details-childcare-address.html', variables)
                 if manual == 'True':
                     form = PersonalDetailsChildcareAddressManualForm(request.POST, id=application_id_local)
-                    selected_address = AddressHelper.get_posted_address(form, 'address')
+                    selected_address = address_helper.AddressHelper.get_posted_address(form, 'address')
                     line1 = selected_address['line1']
                     line2 = selected_address['line2']
                     town = selected_address['townOrCity']
@@ -2048,7 +2048,7 @@ def references_first_reference_address(request):
         elif lookup == 'True':
             first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
             postcode = first_reference_record.postcode
-            addresses = AddressHelper.issue_postcode_search(postcode)
+            addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
             if len(addresses) != 0:
                 form = ReferenceFirstReferenceAddressLookupForm(id=application_id_local, choices=addresses)
                 variables = {
@@ -2097,7 +2097,7 @@ def references_first_reference_address(request):
                         return render(request, 'references-first-reference-address.html', variables)
                 if manual == 'True':
                     form = ReferenceFirstReferenceAddressManualForm(request.POST, id=application_id_local)
-                    selected_address = AddressHelper.get_posted_address(form, 'address')
+                    selected_address = address_helper.AddressHelper.get_posted_address(form, 'address')
                     line1 = selected_address['line1']
                     line2 = selected_address['line2']
                     town = selected_address['townOrCity']
@@ -2295,7 +2295,7 @@ def references_second_reference_address(request):
         elif lookup == 'True':
             second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
             postcode = second_reference_record.postcode
-            addresses = AddressHelper.issue_postcode_search(postcode)
+            addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
             if len(addresses) != 0:
                 form = ReferenceSecondReferenceAddressLookupForm(id=application_id_local, choices=addresses)
                 variables = {
@@ -2345,7 +2345,7 @@ def references_second_reference_address(request):
                         return render(request, 'references-second-reference-address.html', variables)
                 if manual == 'True':
                     form = ReferenceSecondReferenceAddressManualForm(request.POST, id=application_id_local)
-                    selected_address = AddressHelper.get_posted_address(form, 'address')
+                    selected_address = address_helper.AddressHelper.get_posted_address(form, 'address')
                     line1 = selected_address['line1']
                     line2 = selected_address['line2']
                     town = selected_address['townOrCity']
