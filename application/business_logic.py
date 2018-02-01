@@ -603,3 +603,18 @@ def login_contact_security_question(application_id_local, form):
     login_and_contact_details_record = this_application.login_id
     login_and_contact_details_record.security_answer = security_answer
     return login_and_contact_details_record
+
+
+def reset_declaration(application):
+    """
+    Method to reset the declaration status to To Do if a task is updated
+    :param application: current application
+    """
+    if application.declarations_status == 'COMPLETED':
+        application.declarations_status = 'NOT_STARTED'
+        application.background_check_declare = None
+        application.eyfs_questions_declare = None
+        application.inspect_home_declare = None
+        application.interview_declare = None
+        application.information_correct_declare = None
+        application.save()

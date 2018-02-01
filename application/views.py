@@ -40,7 +40,8 @@ from .business_logic import (childcare_type_logic,
                              references_first_reference_logic,
                              references_second_reference_logic,
                              remove_adult,
-                             remove_child)
+                             remove_child,
+                             reset_declaration)
 from .forms import (AccountForm,
                     ApplicationSavedForm,
                     DeclarationDeclarationForm,
@@ -235,6 +236,7 @@ def contact_email(request):
                 user_details_record.save()
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 response = HttpResponseRedirect(settings.URL_PREFIX + '/account/phone?id=' + application_id_local)
                 # Create session and issue cookie to user
                 CustomAuthenticationHandler.create_session(response, application.login_id.email)
@@ -276,6 +278,7 @@ def contact_phone(request):
             user_details_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/account/question?id=' + application_id_local)
         else:
             variables = {
@@ -317,7 +320,7 @@ def contact_question(request):
             acc.security_question = security_question
             acc.security_answer = security_answer
             acc.save()
-
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/account/summary?id=' + application_id_local)
         else:
             variables = {
@@ -440,6 +443,7 @@ def type_of_childcare_age_groups(request):
             childcare_type_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/childcare/register?id=' + application_id_local)
         else:
@@ -604,6 +608,7 @@ def personal_details_name(request):
             applicant_names_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/dob/?id=' + application_id_local)
         else:
             variables = {
@@ -644,6 +649,7 @@ def personal_details_dob(request):
             application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/personal-details/home-address?id=' + application_id_local + '&manual=False')
         else:
@@ -712,6 +718,7 @@ def personal_details_home_address(request):
                 home_address_record.save()
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/personal-details/location-of-care?id=' + application_id_local)
             else:
@@ -774,6 +781,7 @@ def personal_details_location_of_care(request):
             application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             # Delete childcare address if it is marked the same as the home address
             multiple_childcare_address_logic(personal_detail_id)
             if home_address_record.childcare_address == 'True':
@@ -852,6 +860,7 @@ def personal_details_childcare_address(request):
                 childcare_address_record.save()
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
             else:
@@ -999,6 +1008,7 @@ def first_aid_training_details(request):
             first_aid_training_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             # Calculate certificate age and determine which page to navigate to
             certificate_day = form.cleaned_data['course_date'].day
             certificate_month = form.cleaned_data['course_date'].month
@@ -1220,11 +1230,13 @@ def eyfs_knowledge(request):
             eyfs_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             eyfs_understand = form.cleaned_data['eyfs_understand']
             if eyfs_understand == 'True':
                 eyfs_record = EYFS.objects.get(application_id=application_id_local)
                 eyfs_record.eyfs_training_declare = False
                 eyfs_record.save()
+                reset_declaration(application)
                 return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/questions?id=' + application_id_local)
             elif eyfs_understand == 'False':
                 return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/training?id=' + application_id_local)
@@ -1267,6 +1279,7 @@ def eyfs_training(request):
             eyfs_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/questions?id=' + application_id_local)
         else:
             variables = {
@@ -1307,6 +1320,7 @@ def eyfs_questions(request):
             eyfs_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             if application.eyfs_training_status != 'COMPLETED':
                 status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/summary?id=' + application_id_local)
@@ -1419,6 +1433,7 @@ def dbs_check_dbs_details(request):
             dbs_check_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             cautions_convictions = form.cleaned_data['convictions']
             if cautions_convictions == 'True':
                 return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/upload-dbs?id=' + application_id_local)
@@ -1463,6 +1478,7 @@ def dbs_check_upload_dbs(request):
             dbs_check_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             if application.criminal_record_check_status != 'COMPLETED':
                 status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/summary?id=' + application_id_local)
@@ -1573,6 +1589,7 @@ def health_booklet(request):
             hdb_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             if application.health_status != 'COMPLETED':
                 status.update(application_id_local, 'health_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/health/check-answers?id=' + application_id_local)
@@ -1680,6 +1697,7 @@ def references_first_reference(request):
             references_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-address?id='
                                         + application_id_local + '&manual=False')
         else:
@@ -1759,6 +1777,7 @@ def references_first_reference_address(request):
                 application = Application.objects.get(pk=application_id_local)
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 if application.references_status != 'COMPLETED':
                     status.update(application_id_local, 'references_status', 'IN_PROGRESS')
                 return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-contact-details?id='
@@ -1807,6 +1826,7 @@ def references_first_reference_contact_details(request):
             application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference?id=' + application_id_local)
         else:
             variables = {
@@ -1847,6 +1867,7 @@ def references_second_reference(request):
             references_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-address?id=' +
                                         application_id_local + '&manual=False')
         else:
@@ -1928,6 +1949,7 @@ def references_second_reference_address(request):
                 application = Application.objects.get(pk=application_id_local)
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-contact-details?id='
                                             + application_id_local)
             else:
@@ -1972,6 +1994,7 @@ def references_second_reference_contact_details(request):
             references_first_reference_address_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/summary?id=' + application_id_local)
         else:
             variables = {
@@ -2132,6 +2155,7 @@ def other_people_adult_question(request):
             application.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             # If adults live in your home, navigate to adult details page
             if data == 'True':
                 return HttpResponseRedirect(
@@ -2145,6 +2169,7 @@ def other_people_adult_question(request):
                     adult.delete()
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/other-people/children-question?id=' + application_id_local)
         else:
@@ -2227,6 +2252,7 @@ def other_people_adult_details(request):
                 adult_record.save()
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 valid_list.append(True)
             else:
                 valid_list.append(False)
@@ -2308,6 +2334,7 @@ def other_people_adult_dbs(request):
                 adult_record.save()
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 valid_list.append(True)
             else:
                 valid_list.append(False)
@@ -2377,6 +2404,7 @@ def other_people_adult_permission(request):
                 adult_record.save()
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 valid_list.append(True)
             else:
                 valid_list.append(False)
@@ -2436,6 +2464,7 @@ def other_people_children_question(request):
             application.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
             if children_in_home == 'True':
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/other-people/children-details?id=' + application_id_local + '&children=' + str(
@@ -2445,6 +2474,7 @@ def other_people_children_question(request):
                 children = ChildInHome.objects.filter(application_id=application_id_local)
                 for child in children:
                     child.delete()
+                reset_declaration(application)
                 return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local)
         else:
             variables = {
@@ -2524,6 +2554,7 @@ def other_people_children_details(request):
             if form.is_valid():
                 child_record = other_people_children_details_logic(application_id_local, form, i)
                 child_record.save()
+                reset_declaration(application)
                 valid_list.append(True)
                 # Calculate child's age
                 birth_day = form.cleaned_data.get('date_of_birth')[0]
@@ -2548,17 +2579,17 @@ def other_people_children_details(request):
             # If a child is approaching 16, navigate to approaching 16 page
             if True in age_list:
                 application.children_turning_16 = True
-                application.save()
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/other-people/approaching-16?id=' + application_id_local, variables)
             # If no child is approaching 16, navigate to summary page
             elif True not in age_list:
                 application.children_turning_16 = False
-                application.save()
                 application.date_updated = current_date
                 application.save()
+                reset_declaration(application)
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local, variables)
         # If there is an invalid form
@@ -2798,6 +2829,7 @@ def declaration_summary(request):
             'first_aid_certificate_year': first_aid_record.course_year,
             'dbs_certificate_number': dbs_record.dbs_certificate_number,
             'cautions_convictions': dbs_record.cautions_convictions,
+            'declaration': dbs_record.send_certificate_declare,
             'send_hdb_declare': hdb_record.send_hdb_declare,
             'eyfs_understand': eyfs_record.eyfs_understand,
             'eyfs_training_declare': eyfs_record.eyfs_training_declare,
@@ -2837,7 +2869,7 @@ def declaration_summary(request):
             'turning_16': application.children_turning_16,
         }
         if application.declarations_status != 'COMPLETED':
-            status.update(application_id_local, 'declarations_status', 'IN_PROGRESS')
+            status.update(application_id_local, 'declarations_status', 'NOT_STARTED')
         return render(request, 'declaration-summary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
