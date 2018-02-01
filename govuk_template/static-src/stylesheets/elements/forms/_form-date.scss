@@ -54,7 +54,7 @@ input[type=number] {
     width: 100px;
   }
   .form-group-month-select {
-    width: 150px;
+    width: 60px;
   }
   .form-group-day-select {
     width: 100px;
@@ -70,4 +70,12 @@ input[type=number] {
       clear: left;
     }
   }
+
+
+   @media (max-width: 640px)  {
+        .form-group-year-select, .form-group-month-select {
+              width: inherit !important;
+              clear: none !important;
+        }
+   }
 }
