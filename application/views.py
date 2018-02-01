@@ -804,7 +804,6 @@ def personal_details_home_address(request):
                         home_address_record.county = ''
                         home_address_record.postcode = postcode
                         home_address_record.save()
-
                     application = Application.objects.get(pk=application_id_local)
                     application.date_updated = current_date
                     application.save()
@@ -818,10 +817,26 @@ def personal_details_home_address(request):
                 if form.is_valid():
                     postcode = form.cleaned_data.get('postcode')
                     applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-                    home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
-                                                                           current_address=True)
-                    home_address_record.postcode = postcode
-                    home_address_record.save()
+                    if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,
+                                                           current_address=True).count() == 0:
+                        home_address_record = ApplicantHomeAddress(street_line1='',
+                                                                   street_line2='',
+                                                                   town='',
+                                                                   county='',
+                                                                   country='',
+                                                                   postcode=postcode,
+                                                                   current_address=True,
+                                                                   childcare_address=None,
+                                                                   move_in_month=0,
+                                                                   move_in_year=0,
+                                                                   personal_detail_id=applicant)
+                        home_address_record.save()
+                    elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,
+                                                             current_address=True).count() > 0:
+                        home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                                                               current_address=True)
+                        home_address_record.postcode = postcode
+                        home_address_record.save()
                     application = Application.objects.get(pk=application_id_local)
                     application.date_updated = current_date
                     application.save()
@@ -1000,10 +1015,27 @@ def personal_details_childcare_address(request):
                     if form.is_valid():
                         postcode = form.cleaned_data.get('postcode')
                         applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-                        childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
-                                                                                    childcare_address=True)
-                        childcare_address_record.postcode = postcode
-                        childcare_address_record.save()
+                        if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
+                                                               current_address=False).count() == 0:
+                            childcare_address_record = ApplicantHomeAddress(street_line1='',
+                                                                            street_line2='',
+                                                                            town='',
+                                                                            county='',
+                                                                            country='',
+                                                                            postcode=postcode,
+                                                                            current_address=False,
+                                                                            childcare_address=True,
+                                                                            move_in_month=0,
+                                                                            move_in_year=0,
+                                                                            personal_detail_id=applicant)
+                            childcare_address_record.save()
+                        elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
+                                                                 current_address=False).count() > 0:
+                            childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                                                                        childcare_address=True,
+                                                                                        current_address=False)
+                            childcare_address_record.postcode = postcode
+                            childcare_address_record.save()
                         application = Application.objects.get(pk=application_id_local)
                         application.date_updated = current_date
                         application.save()
@@ -1019,7 +1051,6 @@ def personal_details_childcare_address(request):
                 if manual == 'True':
                     form = PersonalDetailsChildcareAddressManualForm(request.POST, id=application_id_local)
                     selected_address = AddressHelper.get_posted_address(form, 'address')
-
                     line1 = selected_address['line1']
                     line2 = selected_address['line2']
                     town = selected_address['townOrCity']
@@ -1028,7 +1059,8 @@ def personal_details_childcare_address(request):
                         application_id=application_id_local)
                     personal_detail_id = personal_detail_record.personal_detail_id
                     # If the user entered information for this task for the first time
-                    if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
+                    if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
+                                                           childcare_address=True, current_address=False).count() == 0:
                         childcare_address_record = ApplicantHomeAddress(street_line1=line1,
                                                                         street_line2=line2,
                                                                         town=town,
@@ -1043,21 +1075,18 @@ def personal_details_childcare_address(request):
                         childcare_address_record.save()
                     # If the user previously entered information for this task
                     elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
-                                                             childcare_address=True).count() > 0:
+                                                             childcare_address=True, current_address=False).count() > 0:
                         childcare_address_record = ApplicantHomeAddress.objects.get(
-                            personal_detail_id=personal_detail_id,
-                            childcare_address=True)
+                            personal_detail_id=personal_detail_id, childcare_address=True, current_address=False)
                         childcare_address_record.street_line1 = line1
                         childcare_address_record.street_line2 = line2
                         childcare_address_record.town = town
                         childcare_address_record.county = ''
                         childcare_address_record.postcode = postcode
                         childcare_address_record.save()
-
                     application = Application.objects.get(pk=application_id_local)
                     application.date_updated = current_date
                     application.save()
-
                     if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
                         status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
                     return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address?id=' +
@@ -1067,10 +1096,27 @@ def personal_details_childcare_address(request):
                 if form.is_valid():
                     postcode = form.cleaned_data.get('postcode')
                     applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-                    childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
-                                                                                childcare_address=True)
-                    childcare_address_record.postcode = postcode
-                    childcare_address_record.save()
+                    if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
+                                                           current_address=False).count() == 0:
+                        childcare_address_record = ApplicantHomeAddress(street_line1='',
+                                                                        street_line2='',
+                                                                        town='',
+                                                                        county='',
+                                                                        country='',
+                                                                        postcode=postcode,
+                                                                        current_address=False,
+                                                                        childcare_address=True,
+                                                                        move_in_month=0,
+                                                                        move_in_year=0,
+                                                                        personal_detail_id=applicant)
+                        childcare_address_record.save()
+                    elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
+                                                             current_address=False).count() > 0:
+                        childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                                                                    childcare_address=True,
+                                                                                    current_address=False)
+                        childcare_address_record.postcode = postcode
+                        childcare_address_record.save()
                     application = Application.objects.get(pk=application_id_local)
                     application.date_updated = current_date
                     application.save()
@@ -1092,8 +1138,29 @@ def personal_details_childcare_address(request):
         elif finish == 'True':
             form = PersonalDetailsChildcareAddressManualForm(request.POST, id=application_id_local)
             if form.is_valid():
-                childcare_address_record = personal_childcare_address_logic(application_id_local, form)
-                childcare_address_record.save()
+                postcode = form.cleaned_data.get('postcode')
+                applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+                if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
+                                                       current_address=False).count() == 0:
+                    childcare_address_record = ApplicantHomeAddress(street_line1='',
+                                                                    street_line2='',
+                                                                    town='',
+                                                                    county='',
+                                                                    country='',
+                                                                    postcode=postcode,
+                                                                    current_address=False,
+                                                                    childcare_address=True,
+                                                                    move_in_month=0,
+                                                                    move_in_year=0,
+                                                                    personal_detail_id=applicant)
+                    childcare_address_record.save()
+                elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
+                                                         current_address=False).count() > 0:
+                    childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                                                                childcare_address=True,
+                                                                                current_address=False)
+                    childcare_address_record.postcode = postcode
+                    childcare_address_record.save()
                 application = Application.objects.get(pk=application_id_local)
                 application.date_updated = current_date
                 application.save()
