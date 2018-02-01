@@ -321,7 +321,7 @@
     </div>
     {% endif %}
     {% if confirm_details %}
-    <form action="{{ URL_PREFIX }}/declaration/summary" method="get">
+    <form action="{{ URL_PREFIX }}/payment/id={{application_id}}" method="get">
         <div class="column-two-thirds">
             <div class="form-group" style="margin-top: 20px;">
                 <input type=submit class="button button-start" value="Confirm your details"/>
