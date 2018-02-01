@@ -2756,9 +2756,11 @@ def declaration_summary(request):
         eyfs_record = EYFS.objects.get(application_id=application_id_local)
         first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
+        # Retrieve lists of adults and children, ordered by adult/child number for iteration by the HTML
         adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
-        # Generate lists of data for adults and children in your home, to be iteratively displayed on the summary page
-        # The HTML will then parse through each list simultaneously, to display the correct data for each adult/child
+        children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
+        # Generate lists of data for adults in your home, to be iteratively displayed on the summary page
+        # The HTML will then parse through each list simultaneously, to display the correct data for each adult
         adult_name_list = []
         adult_birth_day_list = []
         adult_birth_month_list = []
@@ -2768,6 +2770,8 @@ def declaration_summary(request):
         adult_permission_list = []
         application = Application.objects.get(pk=application_id_local)
         for adult in adults_list:
+            # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
+            # Concatenate the adult's name for display, displaying any middle names if present
             if adult.middle_names != '':
                 name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
             elif adult.middle_names == '':
@@ -2779,15 +2783,19 @@ def declaration_summary(request):
             adult_relationship_list.append(adult.relationship)
             adult_dbs_list.append(adult.dbs_certificate_number)
             adult_permission_list.append(adult.permission_declare)
+        # Zip the appended lists together for the HTML to simultaneously parse
         adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
                           adult_relationship_list, adult_dbs_list, adult_permission_list)
-        children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
+        # Generate lists of data for adults in your home, to be iteratively displayed on the summary page
+        # The HTML will then parse through each list simultaneously, to display the correct data for each adult
         child_name_list = []
         child_birth_day_list = []
         child_birth_month_list = []
         child_birth_year_list = []
         child_relationship_list = []
         for child in children_list:
+            # For each child, append the correct attribute (e.g. name, relationship) to the relevant list
+            # Concatenate the child's name for display, displaying any middle names if present
             if child.middle_names != '':
                 name = child.first_name + ' ' + child.middle_names + ' ' + child.last_name
             elif child.middle_names == '':
@@ -2797,6 +2805,7 @@ def declaration_summary(request):
             child_birth_month_list.append(child.birth_month)
             child_birth_year_list.append(child.birth_year)
             child_relationship_list.append(child.relationship)
+        # Zip the appended lists together for the HTML to simultaneously parse
         child_lists = zip(child_name_list, child_birth_day_list, child_birth_month_list, child_birth_year_list,
                           child_relationship_list)
         variables = {
