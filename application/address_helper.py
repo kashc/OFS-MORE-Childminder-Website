@@ -21,7 +21,8 @@ class AddressHelper:
         :return: list of addresses formatted for a ChoiceField
         """
         headers = {"content-type": "application/json"}
-        response = requests.get(settings.ADDRESSING_URL + postcode + '/', headers=headers, verify=False)
+        response = requests.get(settings.ADDRESSING_URL + '/api/v1/addresses/' + postcode + '/', headers=headers,
+                                verify=False)
         if response.status_code == 200:
             address_matches = json.loads(response.text)
             results = address_matches['results']
