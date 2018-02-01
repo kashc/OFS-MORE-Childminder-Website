@@ -736,10 +736,26 @@ def personal_details_home_address(request):
                     if form.is_valid():
                         postcode = form.cleaned_data.get('postcode')
                         applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-                        home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
-                                                                               current_address=True)
-                        home_address_record.postcode = postcode
-                        home_address_record.save()
+                        if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,
+                                                               current_address=True).count() == 0:
+                            home_address_record = ApplicantHomeAddress(street_line1='',
+                                                                       street_line2='',
+                                                                       town='',
+                                                                       county='',
+                                                                       country='',
+                                                                       postcode=postcode,
+                                                                       current_address=True,
+                                                                       childcare_address=None,
+                                                                       move_in_month=0,
+                                                                       move_in_year=0,
+                                                                       personal_detail_id=applicant)
+                            home_address_record.save()
+                        elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,
+                                                                 current_address=True).count() > 0:
+                            home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                                                                   current_address=True)
+                            home_address_record.postcode = postcode
+                            home_address_record.save()
                         application = Application.objects.get(pk=application_id_local)
                         application.date_updated = current_date
                         application.save()
