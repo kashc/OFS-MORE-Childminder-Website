@@ -1206,6 +1206,26 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
         return country
 
 
+class ReferenceFirstReferenceAddressLookupForm(GOVUKForm):
+    """
+    GOV.UK form for the 2 references: first reference address page for postcode search results
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    address = forms.ChoiceField(label='Address', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the 2 references: first reference address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.choices = kwargs.pop('choices')
+        super(ReferenceFirstReferenceAddressLookupForm, self).__init__(*args, **kwargs)
+        self.fields['address'].choices = self.choices
+
+
 class ReferenceFirstReferenceContactForm(GOVUKForm):
     """
     GOV.UK form for the 2 references: first reference contact details page
@@ -1445,6 +1465,26 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
             if len(country) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
         return country
+
+
+class ReferenceSecondReferenceAddressLookupForm(GOVUKForm):
+    """
+    GOV.UK form for the 2 references: second reference address page for postcode search results
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    address = forms.ChoiceField(label='Address', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the 2 references: second reference address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.choices = kwargs.pop('choices')
+        super(ReferenceSecondReferenceAddressLookupForm, self).__init__(*args, **kwargs)
+        self.fields['address'].choices = self.choices
 
 
 class ReferenceSecondReferenceContactForm(GOVUKForm):
