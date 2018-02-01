@@ -8,10 +8,11 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <header class="page-heading page-heading-with-context">
-            <h1 class="heading-xlarge">Apply to register as a childminder</h1>
-            <p>Fill in these sections in any order to apply.</p>
-
-            <p>You don&#39;t have to do them all in one go.</p>
+            <h1 class="heading-xlarge">Register as a childminder list</h1>
+            <p><span style="font-weight: bold;">Your application:</span> asdfadf</p>
+            <p><span style="font-weight: bold;">Fee:</span> asdfadf</p>
+            <br>
+            <p>Fill in the sections below to apply.</p>
         </header>
     </div>
 </div>
@@ -24,17 +25,17 @@
                     <td class="task" style="padding-right: 10px; word-wrap: break-word;">
                         {% if login_details_status == 'NOT_STARTED' %}
                         <a href="{{ URL_PREFIX }}/account/email?id={{application_id}}">
-                            <span class="task-name">Your login and contact details</span>
+                            <span class="task-name">Your login details</span>
                         </a>
                         {% endif %}
                         {% if login_details_status == 'IN_PROGRESS' %}
                         <a href="{{ URL_PREFIX }}/account/email?id={{application_id}}">
-                            <span class="task-name">Your login and contact details</span>
+                            <span class="task-name">Your login details</span>
                         </a>
                         {% endif %}
                         {% if login_details_status == 'COMPLETED' %}
                         <a href="{{ URL_PREFIX }}/account/summary?id={{application_id}}">
-                            <span class="task-name">Your login and contact details</span>
+                            <span class="task-name">Your login details</span>
                         </a>
                         {% endif %}
                     </td>
