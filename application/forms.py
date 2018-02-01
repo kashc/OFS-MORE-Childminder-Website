@@ -15,8 +15,10 @@ from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, Radio
 
 from govuk_forms.fields import SplitDateField
 
-from .customfields import TimeKnownField, ExpirySplitDateWidget, SelectDateWidget
-from .models import (ApplicantHomeAddress,
+from .customfields import TimeKnownField, ExpirySplitDateWidget, SelectDateWidget, ExpirySplitDateField
+
+from .models import (AdultInHome,
+                     ApplicantHomeAddress,
                      ApplicantName,
                      ApplicantPersonalDetails,
                      Application,
@@ -1417,12 +1419,38 @@ class ReferenceSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class OtherPeopleForm(GOVUKForm):
+class OtherPeopleGuidanceForm(GOVUKForm):
+    """
+    GOV.UK form for the People in your home: guidance page
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+
+
+class OtherPeopleAdultQuestionForm(GOVUKForm):
     """
     GOV.UK form for the People in your home page
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
+    options = (
+        ('True', 'Yes'),
+        ('False', 'No')
+    )
+    adults_in_home = forms.ChoiceField(label='Does anyone aged 16 or over live or work in your home?', choices=options,
+                                       widget=InlineRadioSelect, required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the People in your home: adult question form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(OtherPeopleAdultQuestionForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        self.fields['adults_in_home'].initial = Application.objects.get(
+            application_id=self.application_id_local).adults_in_home
 
 
 class DeclarationForm(GOVUKForm):
@@ -1477,7 +1505,7 @@ class PaymentDetailsForm(GOVUKForm):
     )
     card_type = forms.ChoiceField(label='Card type', choices=card_type_options, required=True)
     card_number = forms.CharField(label='Card number', required=True)
-    expiry_date = SplitDateField(label='Expiry date', required=True, widget=SelectDateWidget)
+    expiry_date = ExpirySplitDateField(label='Expiry date', required=True, widget=SelectDateWidget)
     cardholders_name = forms.CharField(label="Cardholder's name", required=True)
     card_security_code = forms.CharField(label='Card security code', required=True)
 

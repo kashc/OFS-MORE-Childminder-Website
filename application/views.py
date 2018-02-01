@@ -60,7 +60,8 @@ from .forms import (AccountForm,
                     FirstReferenceForm,
                     HealthBookletForm,
                     HealthIntroForm,
-                    OtherPeopleForm,
+                    OtherPeopleAdultQuestionForm,
+                    OtherPeopleGuidanceForm,
                     PaymentDetailsForm,
                     PaymentForm,
                     PersonalDetailsChildcareAddressForm,
@@ -2049,16 +2050,49 @@ def references_summary(request):
             return render(request, 'references-summary.html', variables)
 
 
-def other_people(request):
+def other_people_guidance(request):
     """
-    Method returning the template for the People in your home page (for a given application) and navigating to
-    the task list when successfully completed
+    Method returning the template for the People in your home: guidance page (for a given application)
+    and navigating to the People in your home: adult question page when successfully completed
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered People in your home template
+    :return: an HttpResponse object with the rendered People in your home: guidance template
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = OtherPeopleForm()
+        form = OtherPeopleGuidanceForm()
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'people_in_home_status': application.people_in_home_status
+        }
+        return render(request, 'other-people-guidance.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = OtherPeopleGuidanceForm(request.POST)
+        application = Application.objects.get(pk=application_id_local)
+        if form.is_valid():
+            if application.people_in_home_status != 'COMPLETED':
+                status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/adult-question?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'other-people-guidance.html', variables)
+
+
+def other_people_adult_question(request):
+    """
+    Method returning the template for the People in your home: adult question page (for a given application) and
+    navigating to the People in your home: adult details page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered People in your home: adult question template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = OtherPeopleAdultQuestionForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -2067,11 +2101,14 @@ def other_people(request):
         }
         if application.people_in_home_status != 'COMPLETED':
             status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
-        return render(request, 'other-people.html', variables)
+        return render(request, 'other-people-adult-question.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = OtherPeopleForm(request.POST)
+        form = OtherPeopleAdultQuestionForm(request.POST, id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
+            application.adults_in_home = form.cleaned_data.get('adults_in_home')
+            application.save()
             status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
@@ -2079,7 +2116,7 @@ def other_people(request):
                 'form': form,
                 'application_id': application_id_local
             }
-            return render(request, 'other-people.html', variables)
+            return render(request, 'other-people-adult-question.html', variables)
 
 
 def declaration(request):
