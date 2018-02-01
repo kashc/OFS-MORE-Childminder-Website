@@ -2304,7 +2304,8 @@ def other_people_adult_dbs(request):
                 'application_id': application_id_local,
                 'people_in_home_status': application.people_in_home_status
             }
-            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
+            if application.people_in_home_status != 'COMPLETED':
+                status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/other-people/adult-permission?id=' + application_id_local + '&adults=' +
                 number_of_adults, variables)
@@ -2370,7 +2371,8 @@ def other_people_adult_permission(request):
                 'application_id': application_id_local,
                 'people_in_home_status': application.people_in_home_status
             }
-            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
+            if application.people_in_home_status != 'COMPLETED':
+                status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/other-people/children-question?id=' + application_id_local, variables)
         # If there is an invalid form
