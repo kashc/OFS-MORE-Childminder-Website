@@ -1857,7 +1857,7 @@ class DeclarationDeclarationForm2(GOVUKForm):
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
             information_correct_declare = Application.objects.get(
-                application_id=self.application_id_local).background_check_declare
+                application_id=self.application_id_local).information_correct_declare
             if information_correct_declare is True:
                 self.fields['information_correct_declare'].initial = '1'
             elif information_correct_declare is False:

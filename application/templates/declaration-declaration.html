@@ -11,7 +11,7 @@
 
 <div class="column-two-thirds">
     <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
+        <a href="{{ URL_PREFIX }}/declaration/summary?id={{application_id}}" class="link-back"
            style="margin-right: 10px; line-height: 28px">
             Back
         </a>
@@ -22,31 +22,24 @@
         </h1>
         <p>Ofsted will have to check your details, inspect your home and interview you after you apply.</p>
         <p>The interview will include questions on the Early Years Foundation Stage (EYFS).</p>
-    </div>
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="form-group grid-row">
+        <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
             <h2 class="heading-medium">
                 Ready to apply?
             </h2>
             <p>Please confirm you are happy to apply and go ahead with the next steps.</p>
-        </div>
-        <div class="form-group grid-row">
             <h3 class="heading-small">
                 I am happy for Ofsted to:
             </h3>
             {{form.as_div}}
-        </div>
-        <div class="form-group grid-row">
             <h3 class="heading-small">
                 I declare that:
             </h3>
             {{form2.as_div}}
-        </div>
-        <input type="hidden" value="{{application_id}}" name="id"/>
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="button">Confirm and pay your fee</a>
-        </div>
-    </form>
+            {% csrf_token %}
+            <input type="hidden" value="{{application_id}}" name="id"/>
+            <input type="submit" class="button" value="Confirm and pay your fee"/>
+        </form>
+    </div>
 </div>
 
 {% endblock %}

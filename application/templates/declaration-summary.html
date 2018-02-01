@@ -1233,7 +1233,8 @@
     {% endfor %}
     <br>
     <div class="form-group grid-row">
-        <form action="{{ URL_PREFIX }}/payment" method="get">
+        <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+            {% csrf_token %}
             <input type="submit" class="button" value="Confirm and continue"/>
             <input type="hidden" value="{{application_id}}" name="id"/>
         </form>
