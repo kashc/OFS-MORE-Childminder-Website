@@ -330,7 +330,7 @@ class SelectDateWidget(MultiWidget):
     def __init__(self, attrs=None, years=None, months=None, empty_label=None):
         this_year = datetime.date.today().year
         self.years = [(i, i) for i in years or range(this_year, this_year + 10)]
-        self.months = [(i , i) for i in months or range(1,13)]
+        self.months = [(i , i) for i in months or range(1, 13)]
 
         if isinstance(empty_label, (list, tuple)):
             self.year_none_value = (0, empty_label[0])
@@ -357,5 +357,5 @@ class SelectDateWidget(MultiWidget):
 
     def decompress(self, value):
         if value:
-            return [value.day, value.month, value.year]
-        return [None, None, None]
+            return [value.month, value.year]
+        return [None, None]
