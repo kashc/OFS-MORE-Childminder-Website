@@ -3406,7 +3406,7 @@ def declaration_declaration(request):
                 application.date_updated = current_date
                 application.save()
                 status.update(application_id_local, 'declarations_status', 'COMPLETED')
-                return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/payment?id=' + application_id_local)
             else:
                 variables = {
                     'form': form,
