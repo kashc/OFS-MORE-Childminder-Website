@@ -291,7 +291,7 @@
                 <tr id="review">
                     <td class="task" style="padding-right: 10px; word-wrap: break-word;">
                         <a href="{{ URL_PREFIX }}/declaration/summary?id={{application_id}}">
-                            <span class="task-name">Declaration</span>
+                            <span class="task-name">Declaration and payment</span>
                         </a>
                     </td>
                     {% if declaration_status == 'NOT_STARTED' %}
@@ -311,25 +311,11 @@
             </table>
         </div>
     </div>
-    {% if not all_complete %}
     <div class="column-two-thirds">
         <div class="form-group" style="margin-top:20px;">
-
             <p>You can apply when everything is complete.</p>
-
         </div>
     </div>
-    {% endif %}
-    {% if confirm_details %}
-    <form action="{{ URL_PREFIX }}/payment/id={{application_id}}" method="get">
-        <div class="column-two-thirds">
-            <div class="form-group" style="margin-top: 20px;">
-                <input type=submit class="button button-start" value="Confirm your details"/>
-                <input type="hidden" value="{{application_id}}" name="id"/>
-            </div>
-        </div>
-    </form>
-    {% endif %}
     <div class="column-two-thirds">
         <div class="form-group">
             <input type="hidden" value="{{application_id}}" name="id"/>
