@@ -1,14 +1,14 @@
 """
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- customfields.py --
-
 @author: Informed Solutions
 """
 
-from datetime import date
+import datetime
 from django import forms
 from django.forms import widgets
 from django.utils.timezone import now
+from django.utils.dates import MONTHS
 from django.utils.translation import gettext, gettext_lazy as _
 from govuk_forms.widgets import SplitHiddenDateWidget
 
@@ -127,14 +127,14 @@ class YearField(forms.IntegerField):
             # 2-digit dates are a minimum of 10 years ago by default
             era_boundary = self.current_year - self.century - 10
         self.era_boundary = era_boundary
-        bounds_error = gettext('The year cannot be in the past') % {
+        bounds_error = gettext('TBC') % {
             'current_year': self.current_year
         }
         options = {
             'min_value': self.current_year,
             'error_messages': {
                 'min_value': bounds_error,
-                'invalid': gettext('Enter year as a number.'),
+                'invalid': gettext('TBC'),
             }
         }
         options.update(kwargs)
@@ -164,7 +164,7 @@ class ExpirySplitDateField(forms.MultiValueField):
     widget = ExpirySplitDateWidget
     hidden_widget = SplitHiddenDateWidget
     default_error_messages = {
-        'invalid': _('Enter a valid date.')
+        'invalid': _('TBC.')
     }
 
     def __init__(self, *args, **kwargs):
@@ -181,7 +181,7 @@ class ExpirySplitDateField(forms.MultiValueField):
             forms.IntegerField(min_value=1, max_value=12, error_messages={
                 'min_value': month_bounds_error,
                 'max_value': month_bounds_error,
-                'invalid': gettext('Enter month as a number.')
+                'invalid': gettext('TBC.')
             }),
             # Uses a clean year field defined above
             YearField(),
@@ -316,3 +316,46 @@ class TimeKnownField(forms.MultiValueField):
             if subfield.max_value is not None:
                 subwidget.attrs['max'] = subfield.max_value
         return attrs
+
+
+class SelectDateWidget(MultiWidget):
+    template_name = 'govuk_forms/widgets/split-date.html'
+    select_widget = widgets.Select
+    none_value = (0, _('Not set'))
+    subwidget_group_classes = ('form-group form-group-month-select',
+                               'form-group form-group-year-select')
+    subwidget_label_classes = ('form-label', 'form-label')  # or form-label-bold
+    subwidget_labels = (_('Month'), _('Year'))
+
+    def __init__(self, attrs=None, years=None, months=None, empty_label=None):
+        this_year = datetime.date.today().year
+        self.years = [(i, i) for i in years or range(this_year, this_year + 10)]
+        self.months = [(i , i) for i in months or range(1, 13)]
+
+        if isinstance(empty_label, (list, tuple)):
+            self.year_none_value = (0, empty_label[0])
+            self.month_none_value = (0, empty_label[1])
+        else:
+            none_value = (0, empty_label) if empty_label is not None else self.none_value
+            self.year_none_value = none_value
+            self.month_none_value = none_value
+
+        date_widgets = (self.select_widget(attrs=attrs, choices=self.months),
+                        self.select_widget(attrs=attrs, choices=self.years))
+        super().__init__(date_widgets, attrs=attrs)
+
+    def get_context(self, name, value, attrs):
+        iterators = zip(
+            self.widgets,
+            (self.months, self.years),
+            (self.month_none_value, self.year_none_value)
+        )
+        for widget, choices, none_value in iterators:
+            widget.is_required = self.is_required
+            widget.choices = choices if self.is_required else [none_value] + choices
+        return super().get_context(name, value, attrs)
+
+    def decompress(self, value):
+        if value:
+            return [value.month, value.year]
+        return [None, None]

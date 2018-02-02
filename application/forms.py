@@ -6,14 +6,16 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 
 import re
+
 from datetime import date
 from django import forms
 from django.conf import settings
 from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect
+from govuk_forms.fields import SplitDateField
 
-from .customfields import ExpirySplitDateField, ExpirySplitDateWidget, TimeKnownField
+from .customfields import TimeKnownField, ExpirySplitDateWidget, SelectDateWidget, ExpirySplitDateField
 from .models import (AdultInHome,
                      ApplicantHomeAddress,
                      ApplicantName,
@@ -447,6 +449,16 @@ class PersonalDetailsHomeAddressForm(GOVUKForm):
             self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                                current_address=True).postcode
 
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC.')
+        return postcode
+
 
 class PersonalDetailsHomeAddressManualForm(GOVUKForm):
     """
@@ -537,6 +549,26 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         return postcode
 
 
+class PersonalDetailsHomeAddressLookupForm(GOVUKForm):
+    """
+    GOV.UK form for the Your personal details: home address page for postcode search results
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    address = forms.ChoiceField(label='Address', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: home address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.choices = kwargs.pop('choices')
+        super(PersonalDetailsHomeAddressLookupForm, self).__init__(*args, **kwargs)
+        self.fields['address'].choices = self.choices
+
+
 class PersonalDetailsLocationOfCareForm(GOVUKForm):
     """
     GOV.UK form for the Your personal details: location of care page
@@ -589,6 +621,16 @@ class PersonalDetailsChildcareAddressForm(GOVUKForm):
                                                childcare_address='True').count() > 0:
             self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                                childcare_address='True').postcode
+
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC.')
+        return postcode
 
 
 class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
@@ -678,6 +720,26 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
             raise forms.ValidationError('TBC')
         return postcode
+
+
+class PersonalDetailsChildcareAddressLookupForm(GOVUKForm):
+    """
+    GOV.UK form for the Your personal details: childcare address page for postcode search results
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    address = forms.ChoiceField(label='Address', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: childcare address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.choices = kwargs.pop('choices')
+        super(PersonalDetailsChildcareAddressLookupForm, self).__init__(*args, **kwargs)
+        self.fields['address'].choices = self.choices
 
 
 class PersonalDetailsSummaryForm(GOVUKForm):
@@ -1065,6 +1127,16 @@ class ReferenceFirstReferenceAddressForm(GOVUKForm):
             self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
                                                                     reference=1).postcode
 
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC.')
+        return postcode
+
 
 class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
     """
@@ -1164,6 +1236,26 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
             if len(country) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less.')
         return country
+
+
+class ReferenceFirstReferenceAddressLookupForm(GOVUKForm):
+    """
+    GOV.UK form for the 2 references: first reference address page for postcode search results
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    address = forms.ChoiceField(label='Address', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the 2 references: first reference address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.choices = kwargs.pop('choices')
+        super(ReferenceFirstReferenceAddressLookupForm, self).__init__(*args, **kwargs)
+        self.fields['address'].choices = self.choices
 
 
 class ReferenceFirstReferenceContactForm(GOVUKForm):
@@ -1306,6 +1398,16 @@ class ReferenceSecondReferenceAddressForm(GOVUKForm):
             self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
                                                                     reference=2).postcode
 
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+            raise forms.ValidationError('TBC.')
+        return postcode
+
 
 class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
     """
@@ -1407,6 +1509,26 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         return country
 
 
+class ReferenceSecondReferenceAddressLookupForm(GOVUKForm):
+    """
+    GOV.UK form for the 2 references: second reference address page for postcode search results
+    """
+    field_label_classes = 'form-label-bold'
+    auto_replace_widgets = True
+    address = forms.ChoiceField(label='Address', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the 2 references: second reference address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.choices = kwargs.pop('choices')
+        super(ReferenceSecondReferenceAddressLookupForm, self).__init__(*args, **kwargs)
+        self.fields['address'].choices = self.choices
+
+
 class ReferenceSecondReferenceContactForm(GOVUKForm):
     """
     GOV.UK form for the 2 references: second reference contact details page
@@ -1471,7 +1593,6 @@ class OtherPeopleGuidanceForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-
 
 class OtherPeopleAdultQuestionForm(GOVUKForm):
     """
@@ -1908,7 +2029,7 @@ class PaymentDetailsForm(GOVUKForm):
     )
     card_type = forms.ChoiceField(label='Card type', choices=card_type_options, required=True)
     card_number = forms.CharField(label='Card number', required=True)
-    expiry_date = ExpirySplitDateField(label='Expiry date', widget=ExpirySplitDateWidget, required=True)
+    expiry_date = ExpirySplitDateField(label='Expiry date', required=True, widget=SelectDateWidget)
     cardholders_name = forms.CharField(label="Cardholder's name", required=True)
     card_security_code = forms.CharField(label='Card security code', required=True)
 
@@ -1925,22 +2046,21 @@ class PaymentDetailsForm(GOVUKForm):
         except:
             # At the moment this is a catch all error, in the case of there being multiple error
             # types this must be revisited
-            raise forms.ValidationError('Please enter a valid card number')
+            raise forms.ValidationError('TBC')
         if settings.VISA_VALIDATION:
             if card_type == 'visa':
                 if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:
-                    raise forms.ValidationError('The card number you have entered is not a valid Visa card number')
+                    raise forms.ValidationError('TBC')
         if card_type == 'mastercard':
             if re.match("^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$",
                         card_number) is None:
-                raise forms.ValidationError('The card number you have entered is not a valid MasterCard card number')
+                raise forms.ValidationError('TBC')
         elif card_type == 'american_express':
             if re.match("^3[47][0-9]{13}$", card_number) is None:
-                raise forms.ValidationError(
-                    'The card number you have entered is not a valid American Express card number')
+                raise forms.ValidationError('TBC')
         elif card_type == 'maestro':
             if re.match("^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$", card_number) is None:
-                raise forms.ValidationError('The card number you have entered is not a valid Maestro card number')
+                raise forms.ValidationError('TBC')
         return card_number
 
     def clean_cardholders_name(self):
@@ -1950,7 +2070,7 @@ class PaymentDetailsForm(GOVUKForm):
         """
         cardholders_name = self.cleaned_data['cardholders_name']
         if re.match("^[A-Za-z- ]+$", cardholders_name) is None:
-            raise forms.ValidationError('Please enter a valid name.')
+            raise forms.ValidationError('TBC')
 
     def clean_card_security_code(self):
         """
@@ -1963,9 +2083,9 @@ class PaymentDetailsForm(GOVUKForm):
         except:
             # At the moment this is a catch all error, in the case of there being multiple error
             # types this must be revisited
-            raise forms.ValidationError('The card security code you have entered is invalid')
+            raise forms.ValidationError('TBC')
         if re.match("^[0-9]{3,4}$", card_security_code) is None:
-            raise forms.ValidationError('The card security code you have entered is invalid')
+            raise forms.ValidationError('TBC')
 
 
 class ApplicationSavedForm(GOVUKForm):

@@ -10,7 +10,7 @@
 
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" class="link-back"
+        <a href="{{ URL_PREFIX }}/references/second-reference-address?id={{application_id}}&manual=False&lookup=True" class="link-back"
            style="margin-right: 10px; line-height: 28px"
            alt="Back to application list">
             Back
@@ -28,7 +28,7 @@
             {% csrf_token %}
             </br>
             </br>
-            <a href="{{ URL_PREFIX }}/references/second-reference-address?id={{application_id}}&manual=False"
+            <a href="{{ URL_PREFIX }}/references/second-reference-address?id={{application_id}}&manual=False&lookup=False"
                name="manual" id="manual">Use
                 postcode search</a>
             </br>
@@ -36,6 +36,8 @@
             <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
             <input type="hidden" id="manual" name="manual" value="True"/>
+            <input type="hidden" id="lookup" name="lookup" value="False"/>
+            <input type="hidden" id="finish" name="finish" value="True" />
         </div>
         </br>
         <!-- Return to task list -->
