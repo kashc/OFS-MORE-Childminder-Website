@@ -2033,8 +2033,12 @@ class PaymentDetailsForm(GOVUKForm):
     expiry_date = ExpirySplitDateField(label='Expiry date', required=True, widget=SelectDateWidget)
     cardholders_name = forms.CharField(label="Cardholder's name", required=True)
     card_security_code = forms.IntegerField(label='Card security code',
-                                         help_text='3 or 4 digit number on back of card', required=True)
+                                            help_text='3 or 4 digit number on back of card', required=True)
 
+    def clean_card_type(self):
+        card_type = self.cleaned_data['card_type']
+        if not card_type:
+            raise forms.ValidationError('TBC')
 
     def clean_card_number(self):
         """
@@ -2081,13 +2085,7 @@ class PaymentDetailsForm(GOVUKForm):
         Card security code validation
         :return: string
         """
-        card_security_code = self.cleaned_data['card_security_code']
-        try:
-            int(card_security_code)
-        except:
-            # At the moment this is a catch all error, in the case of there being multiple error
-            # types this must be revisited
-            raise forms.ValidationError('TBC')
+        card_security_code = str(self.cleaned_data['card_security_code'])
         if re.match("^[0-9]{3,4}$", card_security_code) is None:
             raise forms.ValidationError('TBC')
 
