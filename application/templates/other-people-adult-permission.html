@@ -12,7 +12,8 @@
 
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/other-people/adult-dbs?id={{application_id}}&adults={{number_of_adults}}" class="link-back"
+        <a href="{{ URL_PREFIX }}/other-people/adult-dbs?id={{application_id}}&adults={{number_of_adults}}"
+           class="link-back"
            style="margin-right: 10px; line-height: 28px"
            alt="Back to application list">
             Back
@@ -33,11 +34,12 @@
                 <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
                     <p>You can use the leaflet below to tell people about the checks.</p>
                     <p>
-                        <img src="../../../public/images/download-button.png" alt="Download">
+                        <img src="{% static 'download-button.png' %}" alt="Download">
                         <a href="https://drive.google.com/open?id=1An4B3laX6u4uIX7XcoJXrUOU1gWuRfNp" target="_blank">Leaflet
                             on background checks</a> (PDF, 174KB, 1 page)
                     </p>
                 </div>
+            <br>
             </details>
             <h2 class="form-title heading-medium">
                 Permission for checks
@@ -47,6 +49,7 @@
                 I declare that:
             </h2>
             <p>I have told each person about the checks and they have given their permission.</p>
+            <p style="color: #6F777B;">Tick each box to confirm</p>
             {% for form in form_list %}
             {{form.as_div}}
             {% endfor %}

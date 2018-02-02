@@ -2746,26 +2746,51 @@ def other_people_adult_details(request):
                 valid_list.append(True)
             else:
                 valid_list.append(False)
-        # If all forms are valid
-        if False not in valid_list:
-            variables = {
-                'application_id': application_id_local,
-                'people_in_home_status': application.people_in_home_status
-            }
-            return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/adult-dbs?id=' + application_id_local +
-                                        '&adults=' + number_of_adults, variables)
-        # If there is an invalid form
-        elif False in valid_list:
-            variables = {
-                'form_list': form_list,
-                'application_id': application_id_local,
-                'number_of_adults': number_of_adults,
-                'add_adult': int(number_of_adults) + 1,
-                'remove_adult': int(number_of_adults) - 1,
-                'remove_button': remove_button,
-                'people_in_home_status': application.people_in_home_status
-            }
-            return render(request, 'other-people-adult-details.html', variables)
+        if 'submit' in request.POST:
+            # If all forms are valid
+            if False not in valid_list:
+                variables = {
+                    'application_id': application_id_local,
+                    'people_in_home_status': application.people_in_home_status
+                }
+                return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/adult-dbs?id=' + application_id_local +
+                                            '&adults=' + number_of_adults, variables)
+            # If there is an invalid form
+            elif False in valid_list:
+                variables = {
+                    'form_list': form_list,
+                    'application_id': application_id_local,
+                    'number_of_adults': number_of_adults,
+                    'add_adult': int(number_of_adults) + 1,
+                    'remove_adult': int(number_of_adults) - 1,
+                    'remove_button': remove_button,
+                    'people_in_home_status': application.people_in_home_status
+                }
+                return render(request, 'other-people-adult-details.html', variables)
+        if 'add_person' in request.POST:
+            # If all forms are valid
+            if False not in valid_list:
+                variables = {
+                    'application_id': application_id_local,
+                    'people_in_home_status': application.people_in_home_status
+                }
+                add_adult = int(number_of_adults) + 1
+                add_adult_string = str(add_adult)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/other-people/adult-details?id=' + application_id_local + '&adults=' + add_adult_string + '&remove=0',
+                    variables)
+            # If there is an invalid form
+            elif False in valid_list:
+                variables = {
+                    'form_list': form_list,
+                    'application_id': application_id_local,
+                    'number_of_adults': number_of_adults,
+                    'add_adult': int(number_of_adults) + 1,
+                    'remove_adult': int(number_of_adults) - 1,
+                    'remove_button': remove_button,
+                    'people_in_home_status': application.people_in_home_status
+                }
+                return render(request, 'other-people-adult-details.html', variables)
 
 
 def other_people_adult_dbs(request):
@@ -2953,6 +2978,7 @@ def other_people_children_question(request):
         if form.is_valid():
             children_in_home = form.cleaned_data.get('children_in_home')
             application.children_in_home = children_in_home
+            application.children_turning_16 = False
             application.save()
             application.date_updated = current_date
             application.save()
@@ -3062,40 +3088,76 @@ def other_people_children_details(request):
                     age_list.append(False)
             else:
                 valid_list.append(False)
-        # If all forms are valid
-        if False not in valid_list:
-            variables = {
-                'application_id': application_id_local,
-                'people_in_home_status': application.people_in_home_status,
-            }
-            # If a child is approaching 16, navigate to approaching 16 page
-            if True in age_list:
-                application.children_turning_16 = True
-                application.date_updated = current_date
-                application.save()
-                reset_declaration(application)
-                return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/approaching-16?id=' +
-                                            application_id_local, variables)
-            # If no child is approaching 16, navigate to summary page
-            elif True not in age_list:
-                application.children_turning_16 = False
-                application.date_updated = current_date
-                application.save()
-                reset_declaration(application)
-                return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local,
-                                            variables)
-        # If there is an invalid form
-        elif False in valid_list:
-            variables = {
-                'form_list': form_list,
-                'application_id': application_id_local,
-                'number_of_children': number_of_children,
-                'add_child': int(number_of_children) + 1,
-                'remove_child': int(number_of_children) - 1,
-                'remove_button': remove_button,
-                'people_in_home_status': application.people_in_home_status
-            }
-            return render(request, 'other-people-children-details.html', variables)
+        if 'submit' in request.POST:
+            # If all forms are valid
+            if False not in valid_list:
+                variables = {
+                    'application_id': application_id_local,
+                    'people_in_home_status': application.people_in_home_status,
+                }
+                # If a child is approaching 16, navigate to approaching 16 page
+                if True in age_list:
+                    application.children_turning_16 = True
+                    application.date_updated = current_date
+                    application.save()
+                    reset_declaration(application)
+                    return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/approaching-16?id=' +
+                                                application_id_local, variables)
+                # If no child is approaching 16, navigate to summary page
+                elif True not in age_list:
+                    application.children_turning_16 = False
+                    application.date_updated = current_date
+                    application.save()
+                    reset_declaration(application)
+                    return HttpResponseRedirect(
+                        settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local,
+                        variables)
+            # If there is an invalid form
+            elif False in valid_list:
+                variables = {
+                    'form_list': form_list,
+                    'application_id': application_id_local,
+                    'number_of_children': number_of_children,
+                    'add_child': int(number_of_children) + 1,
+                    'remove_child': int(number_of_children) - 1,
+                    'remove_button': remove_button,
+                    'people_in_home_status': application.people_in_home_status
+                }
+                return render(request, 'other-people-children-details.html', variables)
+        if 'add_child' in request.POST:
+            # If all forms are valid
+            if False not in valid_list:
+                variables = {
+                    'application_id': application_id_local,
+                    'people_in_home_status': application.people_in_home_status,
+                }
+                # If a child is approaching 16, navigate to approaching 16 page
+                if True in age_list:
+                    application.children_turning_16 = True
+                    application.date_updated = current_date
+                    application.save()
+                    reset_declaration(application)
+                variables = {
+                    'application_id': application_id_local,
+                    'people_in_home_status': application.people_in_home_status
+                }
+                add_child = int(number_of_children) + 1
+                add_child_string = str(add_child)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/other-people/children-details?id=' + application_id_local + '&children=' + add_child_string + '&remove=0',
+                    variables)
+            # If there is an invalid form
+            elif False in valid_list:
+                variables = {
+                    'form_list': form_list,
+                    'application_id': application_id_local,
+                    'number_of_children': number_of_children,
+                    'add_child': int(number_of_children) + 1,
+                    'remove_child': int(number_of_children) - 1,
+                    'remove_button': remove_button,
+                    'people_in_home_status': application.people_in_home_status
+                }
+                return render(request, 'other-people-children-details.html', variables)
 
 
 def other_people_approaching_16(request):
@@ -3436,7 +3498,7 @@ def declaration_declaration(request):
                 application.date_updated = current_date
                 application.save()
                 status.update(application_id_local, 'declarations_status', 'COMPLETED')
-                return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/payment?id=' + application_id_local)
             else:
                 variables = {
                     'form': form,
