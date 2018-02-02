@@ -2035,23 +2035,11 @@ class PaymentDetailsForm(GOVUKForm):
     card_security_code = forms.IntegerField(label='Card security code',
                                          help_text='3 or 4 digit number on back of card', required=True)
 
-    def clean_card_type(self):
-        card_type = self.cleaned_data['card_type']
-        print(card_type)
-        if card_type == 'please_select':
-            raise forms.ValidationError('TBC')
-        return card_type
-
-
     def clean_card_number(self):
         """
         Card number validation
         :return: string
         """
-        card_type = self.data['card_type']
-        print(card_type)
-        if card_type == 'please_select':
-            raise forms.ValidationError('TBC')
         card_number = self.cleaned_data['card_number']
         card_number = re.sub('[ -]+', '', card_number)
         try:
