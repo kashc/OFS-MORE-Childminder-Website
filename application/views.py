@@ -519,6 +519,31 @@ def task_list(request):
     if request.method == 'GET':
         application_id = request.GET["id"]
         application = Application.objects.get(pk=application_id)
+        childcare_record = ChildcareType.objects.get(application_id=application_id)
+        zero_to_five_status = childcare_record.zero_to_five
+        five_to_eight_status = childcare_record.five_to_eight
+        eight_plus_status = childcare_record.eight_plus
+        if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
+            registers = 'Early Years and Childcare Registers'
+            fee = '£35'
+        elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
+            registers = 'Early Years and Childcare Registers'
+            fee = '£35'
+        elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
+            registers = 'Early Years and Childcare Registers'
+            fee = '£35'
+        elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
+            registers = 'Childcare Register (voluntary and compulsory parts)'
+            fee = '£103'
+        elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
+            registers = 'Early Years Register'
+            fee = '£35'
+        elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
+            registers = 'Childcare Register (compulsory part)'
+            fee = '£103'
+        elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
+            registers = 'Childcare Register (voluntary part)'
+            fee = '£103'
         application_status_context = dict({
             'application_id': application_id,
             'login_details_status': application.login_details_status,
@@ -532,7 +557,9 @@ def task_list(request):
             'people_in_home_status': application.people_in_home_status,
             'declaration_status': application.declarations_status,
             'all_complete': False,
-            'confirm_details': False
+            'confirm_details': False,
+            'registers': registers,
+            'fee': fee
         })
         temp_context = application_status_context
         del temp_context['declaration_status']
@@ -800,13 +827,11 @@ def personal_details_home_address(request):
                         home_address_record.street_line1 = line1
                         home_address_record.street_line2 = line2
                         home_address_record.town = town
-                        home_address_record.county = ''
                         home_address_record.postcode = postcode
                         home_address_record.save()
                     application = Application.objects.get(pk=application_id_local)
                     application.date_updated = current_date
                     application.save()
-
                     if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
                         status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
                     return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address?id=' +
@@ -1080,7 +1105,6 @@ def personal_details_childcare_address(request):
                         childcare_address_record.street_line1 = line1
                         childcare_address_record.street_line2 = line2
                         childcare_address_record.town = town
-                        childcare_address_record.county = ''
                         childcare_address_record.postcode = postcode
                         childcare_address_record.save()
                     application = Application.objects.get(pk=application_id_local)
@@ -2108,6 +2132,7 @@ def references_first_reference_address(request):
                     first_reference_record.town = town
                     first_reference_record.county = ''
                     first_reference_record.postcode = postcode
+                    first_reference_record.country = 'United Kingdom'
                     first_reference_record.save()
                 application = Application.objects.get(pk=application_id_local)
                 application.date_updated = current_date
@@ -2149,12 +2174,14 @@ def references_first_reference_address(request):
                 town = form.cleaned_data.get('town')
                 county = form.cleaned_data.get('county')
                 postcode = form.cleaned_data.get('postcode')
+                country = form.cleaned_data.get('country')
                 first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
                 first_reference_record.street_line1 = street_name_and_number
                 first_reference_record.street_line2 = street_name_and_number2
                 first_reference_record.town = town
                 first_reference_record.county = county
                 first_reference_record.postcode = postcode
+                first_reference_record.country = country
                 first_reference_record.save()
                 application = Application.objects.get(pk=application_id_local)
                 application.date_updated = current_date
@@ -2356,6 +2383,7 @@ def references_second_reference_address(request):
                     second_reference_record.town = town
                     second_reference_record.county = ''
                     second_reference_record.postcode = postcode
+                    second_reference_record.country = 'United Kingdom'
                     second_reference_record.save()
                 application = Application.objects.get(pk=application_id_local)
                 application.date_updated = current_date
@@ -2397,12 +2425,14 @@ def references_second_reference_address(request):
                 town = form.cleaned_data.get('town')
                 county = form.cleaned_data.get('county')
                 postcode = form.cleaned_data.get('postcode')
+                country = form.cleaned_data.get('country')
                 second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
                 second_reference_record.street_line1 = street_name_and_number
                 second_reference_record.street_line2 = street_name_and_number2
                 second_reference_record.town = town
                 second_reference_record.county = county
                 second_reference_record.postcode = postcode
+                second_reference_record.country = country
                 second_reference_record.save()
                 application = Application.objects.get(pk=application_id_local)
                 application.date_updated = current_date
