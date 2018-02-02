@@ -2022,6 +2022,7 @@ class PaymentDetailsForm(GOVUKForm):
         ('Second', (('c', 'Gamma'), ('d', 'Delta'))),
     )
     card_type_options = (
+        (None, '(Please select)'),
         ('visa', 'Visa'),
         ('mastercard', 'Mastercard'),
         ('american_express', 'American Express'),
@@ -2031,14 +2032,26 @@ class PaymentDetailsForm(GOVUKForm):
     card_number = forms.CharField(label='Card number', required=True)
     expiry_date = ExpirySplitDateField(label='Expiry date', required=True, widget=SelectDateWidget)
     cardholders_name = forms.CharField(label="Cardholder's name", required=True)
-    card_security_code = forms.CharField(label='Card security code', required=True)
+    card_security_code = forms.IntegerField(label='Card security code',
+                                         help_text='3 or 4 digit number on back of card', required=True)
+
+    def clean_card_type(self):
+        card_type = self.cleaned_data['card_type']
+        print(card_type)
+        if card_type == 'please_select':
+            raise forms.ValidationError('TBC')
+        return card_type
+
 
     def clean_card_number(self):
         """
         Card number validation
         :return: string
         """
-        card_type = self.cleaned_data['card_type']
+        card_type = self.data['card_type']
+        print(card_type)
+        if card_type == 'please_select':
+            raise forms.ValidationError('TBC')
         card_number = self.cleaned_data['card_number']
         card_number = re.sub('[ -]+', '', card_number)
         try:
@@ -2047,6 +2060,7 @@ class PaymentDetailsForm(GOVUKForm):
             # At the moment this is a catch all error, in the case of there being multiple error
             # types this must be revisited
             raise forms.ValidationError('TBC')
+
         if settings.VISA_VALIDATION:
             if card_type == 'visa':
                 if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:
