@@ -785,8 +785,12 @@ def personal_details_home_address(request):
                         application = Application.objects.get(pk=application_id_local)
                         application.date_updated = current_date
                         application.save()
-                        return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address/?id=' +
-                                                    application_id_local + '&manual=False&lookup=True')
+                        if 'postcode-search' in request.POST:
+                            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address/?id=' +
+                                                        application_id_local + '&manual=False&lookup=True')
+                        if 'submit' in request.POST:
+                            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address/?id=' +
+                                                        application_id_local + '&manual=True&lookup=False')
                     else:
                         variables = {
                             'form': form,

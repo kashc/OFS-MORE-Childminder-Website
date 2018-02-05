@@ -22,19 +22,20 @@
             <h1 class="form-title heading-large">
                 Your home address
             </h1>
-            {{form.as_div}}
+            {{form.as_div}}<input type="submit" class="button button-search" value="Find postcode" name="postcode-search">
             {% csrf_token %}
-            </br>
-            </br>
-            <a href="{{ URL_PREFIX }}/personal-details/home-address?id={{application_id}}&manual=True&lookup=False" name="manual"
-               id="manual">Enter address manually</a>
-            </br>
-            </br>
-            <input type="submit" class="button button-search" value="Find postcode">
+            <br>
+            <br>
+            <a href="{{ URL_PREFIX }}/personal-details/home-address?id={{application_id}}&manual=True&lookup=False"
+               name="manual" id="manual">Enter address manually</a>
+            <br>
+            <br>
+            <br>
+            <input type="submit" class="button button-submit" value="Save and continue" name="submit" alt='Continue to declaration'>
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
             <input type="hidden" id="manual" name="manual" value="False"/>
             <input type="hidden" id="lookup" name="lookup" value="False"/>
-            <input type="hidden" id="finish" name="finish" value="False" />
+            <input type="hidden" id="finish" name="finish" value="False"/>
         </div>
         </br>
         <!-- Return to task list -->
