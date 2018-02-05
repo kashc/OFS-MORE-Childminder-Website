@@ -555,7 +555,7 @@ class PersonalDetailsHomeAddressLookupForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    address = forms.ChoiceField(label='Address', required=True)
+    address = forms.ChoiceField(label='Select address', required=True)
 
     def __init__(self, *args, **kwargs):
         """
@@ -728,7 +728,7 @@ class PersonalDetailsChildcareAddressLookupForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    address = forms.ChoiceField(label='Address', required=True)
+    address = forms.ChoiceField(label='Select address', required=True)
 
     def __init__(self, *args, **kwargs):
         """
@@ -1244,7 +1244,7 @@ class ReferenceFirstReferenceAddressLookupForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    address = forms.ChoiceField(label='Address', required=True)
+    address = forms.ChoiceField(label='Select address', required=True)
 
     def __init__(self, *args, **kwargs):
         """
@@ -1515,7 +1515,7 @@ class ReferenceSecondReferenceAddressLookupForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    address = forms.ChoiceField(label='Address', required=True)
+    address = forms.ChoiceField(label='Select address', required=True)
 
     def __init__(self, *args, **kwargs):
         """
@@ -1593,6 +1593,7 @@ class OtherPeopleGuidanceForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
+
 
 class OtherPeopleAdultQuestionForm(GOVUKForm):
     """
