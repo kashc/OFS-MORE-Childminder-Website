@@ -455,7 +455,7 @@ class PersonalDetailsHomeAddressForm(GOVUKForm):
         :return: string
         """
         postcode = self.cleaned_data['postcode']
-        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+        if re.match("^[A-Za-z0-9 ]{5,8}$", postcode) is None:
             raise forms.ValidationError('TBC.')
         return postcode
 
@@ -544,7 +544,7 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         :return: string
         """
         postcode = self.cleaned_data['postcode']
-        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+        if re.match("^[A-Za-z0-9 ]{5,8}$", postcode) is None:
             raise forms.ValidationError('TBC.')
         return postcode
 
@@ -628,7 +628,7 @@ class PersonalDetailsChildcareAddressForm(GOVUKForm):
         :return: string
         """
         postcode = self.cleaned_data['postcode']
-        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+        if re.match("^[A-Za-z0-9 ]{5,8}$", postcode) is None:
             raise forms.ValidationError('TBC.')
         return postcode
 
@@ -717,7 +717,7 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         :return: string
         """
         postcode = self.cleaned_data['postcode']
-        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+        if re.match("^[A-Za-z0-9 ]{5,8}$", postcode) is None:
             raise forms.ValidationError('TBC')
         return postcode
 
@@ -1133,7 +1133,7 @@ class ReferenceFirstReferenceAddressForm(GOVUKForm):
         :return: string
         """
         postcode = self.cleaned_data['postcode']
-        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+        if re.match("^[A-Za-z0-9 ]{5,8}$", postcode) is None:
             raise forms.ValidationError('TBC.')
         return postcode
 
@@ -1220,7 +1220,7 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
         :return: string
         """
         postcode = self.cleaned_data['postcode']
-        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+        if re.match("^[A-Za-z0-9 ]{5,8}$", postcode) is None:
             raise forms.ValidationError('TBC')
         return postcode
 
@@ -1404,7 +1404,7 @@ class ReferenceSecondReferenceAddressForm(GOVUKForm):
         :return: string
         """
         postcode = self.cleaned_data['postcode']
-        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+        if re.match("^[A-Za-z0-9 ]{5,8}$", postcode) is None:
             raise forms.ValidationError('TBC.')
         return postcode
 
@@ -1491,7 +1491,7 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         :return: string
         """
         postcode = self.cleaned_data['postcode']
-        if re.match("^[A-Za-z0-9 ]{1,8}$", postcode) is None:
+        if re.match("^[A-Za-z0-9 ]{5,8}$", postcode) is None:
             raise forms.ValidationError('TBC')
         return postcode
 

@@ -27,8 +27,10 @@
                 <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
                     {{form.postcode.label}}
                 </label>
-                <span style="margin-right: 10px;">{{form.postcode}}</span><input type="submit" class="button button-search" value="Find postcode"
-                                        name="postcode-search">
+                <span style="margin-right: 10px;">{{form.postcode}}</span><input type="submit"
+                                                                                 class="button button-search"
+                                                                                 value="Find postcode"
+                                                                                 name="postcode-search">
             </div>
             {% elif form.errors %}
             <div id="id_postcode-group" class="form-group-error form-group-required form-group">
@@ -40,15 +42,17 @@
                         {{error}}
                     {% endfor %}
                 </span>
+                {% if form.postcode.initial is not None %}
                 <input type="text" name="postcode" class="form-control-error form-control"
-                       value="{{form.postcode.initial}}" required="" id="id_postcode"><input type="submit"
-                                                                                             class="button button-search"
-                                                                                             value="Find postcode"
-                                                                                             name="postcode-search"
-                                                                                             style="margin-left: 10px;">
+                       value="{{form.postcode.initial}}" required="" id="id_postcode">
+                {% elif form.postcode.initial is None %}
+                <input type="text" name="postcode" class="form-control-error form-control"
+                       value="" required="" id="id_postcode">
+                {% endif %}
+                <input type="submit" class="button button-search" value="Find postcode" name="postcode-search"
+                       style="margin-left: 10px;">
             </div>
             {% endif %}
-            <!--{{form.as_div}}-->
             {% csrf_token %}
             <br>
             <br>

@@ -24,20 +24,52 @@
                 First reference address
             </h1>
             <p>Please give details of the address for this referee.</p>
-            {{form.as_div}}
+            {% if not form.errors %}
+            <div id="id_postcode-group" class="form-group-required form-group">
+                <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
+                    {{form.postcode.label}}
+                </label>
+                <span style="margin-right: 10px;">{{form.postcode}}</span><input type="submit"
+                                                                                 class="button button-search"
+                                                                                 value="Find postcode"
+                                                                                 name="postcode-search">
+            </div>
+            {% elif form.errors %}
+            <div id="id_postcode-group" class="form-group-error form-group-required form-group">
+                <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
+                    {{form.postcode.label}}
+                </label>
+                <span class="error-message">
+                    {% for error in form.postcode.errors %}
+                        {{error}}
+                    {% endfor %}
+                </span>
+                {% if form.postcode.initial is not None %}
+                <input type="text" name="postcode" class="form-control-error form-control"
+                       value="{{form.postcode.initial}}" required="" id="id_postcode">
+                {% elif form.postcode.initial is None %}
+                <input type="text" name="postcode" class="form-control-error form-control"
+                       value="" required="" id="id_postcode">
+                {% endif %}
+                <input type="submit" class="button button-search" value="Find postcode" name="postcode-search"
+                       style="margin-left: 10px;">
+            </div>
+            {% endif %}
             {% csrf_token %}
-            </br>
-            </br>
+            <br>
+            <br>
             <a href="{{ URL_PREFIX }}/references/first-reference-address?id={{application_id}}&manual=True&lookup=False"
                name="manual" id="manual">Enter
                 address manually</a>
-            </br>
-            </br>
-            <input type="submit" class="button button-search" value="Find postcode" alt='Continue to declaration'>
+            <br>
+            <br>
+            <br>
+            <input type="submit" class="button button-submit" value="Save and continue" name="submit"
+                   alt='Continue to declaration'>
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
             <input type="hidden" id="manual" name="manual" value="False"/>
             <input type="hidden" id="lookup" name="lookup" value="False"/>
-            <input type="hidden" id="finish" name="finish" value="False" />
+            <input type="hidden" id="finish" name="finish" value="False"/>
         </div>
         </br>
         <!-- Return to task list -->
