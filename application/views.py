@@ -451,8 +451,6 @@ def type_of_childcare_age_groups(request):
             status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/childcare/register?id=' + application_id_local)
         else:
-            form.errors['type_of_childcare'] = {
-                'You must select at least one age group to continue with your application.': 'required'}
             variables = {
                 'form': form,
                 'application_id': application_id_local,
