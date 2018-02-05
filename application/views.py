@@ -3594,7 +3594,7 @@ def card_payment_details(request):
         if form.is_valid():
             card_number = re.sub('[ -]+', '', request.POST["card_number"])
             cardholders_name = request.POST["cardholders_name"]
-            card_security_code = request.POST["card_security_code"]
+            card_security_code = str(request.POST["card_security_code"])
             expiry_month = request.POST["expiry_date_0"]
             expiry_year = request.POST["expiry_date_1"]
             # Make payment
