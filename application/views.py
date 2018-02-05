@@ -1169,15 +1169,18 @@ def personal_details_childcare_address(request):
         elif finish == 'True':
             form = PersonalDetailsChildcareAddressManualForm(request.POST, id=application_id_local)
             if form.is_valid():
+                street_line1 = form.cleaned_data.get('street_name_and_number')
+                street_line2 = form.cleaned_data.get('street_name_and_number2')
+                town = form.cleaned_data.get('town')
+                county = form.cleaned_data.get('county')
                 postcode = form.cleaned_data.get('postcode')
                 applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
                 if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
                                                        current_address=False).count() == 0:
-                    childcare_address_record = ApplicantHomeAddress(street_line1='',
-                                                                    street_line2='',
-                                                                    town='',
-                                                                    county='',
-                                                                    country='',
+                    childcare_address_record = ApplicantHomeAddress(street_line1=street_line1,
+                                                                    street_line2=street_line2,
+                                                                    town=town,
+                                                                    county=county,
                                                                     postcode=postcode,
                                                                     current_address=False,
                                                                     childcare_address=True,
@@ -1190,6 +1193,10 @@ def personal_details_childcare_address(request):
                     childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
                                                                                 childcare_address=True,
                                                                                 current_address=False)
+                    childcare_address_record.street_line1 = street_line1
+                    childcare_address_record.street_line2 = street_line2
+                    childcare_address_record.town = town
+                    childcare_address_record.county = county
                     childcare_address_record.postcode = postcode
                     childcare_address_record.save()
                 application = Application.objects.get(pk=application_id_local)
@@ -1261,7 +1268,8 @@ def personal_details_summary(request):
             'location_of_childcare': location_of_childcare,
             'childcare_street_line1': childcare_street_line1,
             'childcare_street_line2': childcare_street_line2,
-            'childcare_town': childcare_town, 'childcare_county': childcare_county,
+            'childcare_town': childcare_town,
+            'childcare_county': childcare_county,
             'childcare_postcode': childcare_postcode,
             'personal_details_status': application.personal_details_status
         }
