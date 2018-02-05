@@ -33,7 +33,7 @@ NOTIFY_URL = 'http://130.130.52.132:8095/notify-gateway'
 PAYMENT_URL = 'http://127.0.0.1:8080/payment-gateway'
 
 # Base URL of addressing-service gateway
-ADDRESSING_URL = 'http://130.130.52.132:8000/addressing-service'
+ADDRESSING_URL = 'http://130.130.52.132:8004/addressing-service'
 
 # Visa Validation
 VISA_VALIDATION = False

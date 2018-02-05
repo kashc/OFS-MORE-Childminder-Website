@@ -22,7 +22,33 @@
             <h1 class="form-title heading-large">
                 Your home address
             </h1>
-            {{form.as_div}}<input type="submit" class="button button-search" value="Find postcode" name="postcode-search">
+            {% if not form.errors %}
+            <div id="id_postcode-group" class="form-group-required form-group">
+                <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
+                    {{form.postcode.label}}
+                </label>
+                <span style="margin-right: 10px;">{{form.postcode}}</span><input type="submit" class="button button-search" value="Find postcode"
+                                        name="postcode-search">
+            </div>
+            {% elif form.errors %}
+            <div id="id_postcode-group" class="form-group-error form-group-required form-group">
+                <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
+                    {{form.postcode.label}}
+                </label>
+                <span class="error-message">
+                    {% for error in form.postcode.errors %}
+                        {{error}}
+                    {% endfor %}
+                </span>
+                <input type="text" name="postcode" class="form-control-error form-control"
+                       value="{{form.postcode.initial}}" required="" id="id_postcode"><input type="submit"
+                                                                                             class="button button-search"
+                                                                                             value="Find postcode"
+                                                                                             name="postcode-search"
+                                                                                             style="margin-left: 10px;">
+            </div>
+            {% endif %}
+            <!--{{form.as_div}}-->
             {% csrf_token %}
             <br>
             <br>
@@ -31,7 +57,8 @@
             <br>
             <br>
             <br>
-            <input type="submit" class="button button-submit" value="Save and continue" name="submit" alt='Continue to declaration'>
+            <input type="submit" class="button button-submit" value="Save and continue" name="submit"
+                   alt='Continue to declaration'>
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
             <input type="hidden" id="manual" name="manual" value="False"/>
             <input type="hidden" id="lookup" name="lookup" value="False"/>
