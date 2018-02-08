@@ -49,8 +49,6 @@ INSTALLED_APPS = [
     'govuk_forms',
     'govuk_template',
     'govuk_template_base',
-    'django.contrib.admin',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
