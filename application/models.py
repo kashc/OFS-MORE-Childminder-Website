@@ -165,6 +165,8 @@ class FirstAidTraining(models.Model):
     course_day = models.IntegerField()
     course_month = models.IntegerField()
     course_year = models.IntegerField()
+    show_certificate = models.NullBooleanField(blank=True, null=True)
+    renew_certificate = models.NullBooleanField(blank=True, null=True)
 
     class Meta:
         db_table = 'FIRST_AID_TRAINING'

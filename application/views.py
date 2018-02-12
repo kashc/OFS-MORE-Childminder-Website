@@ -1385,7 +1385,7 @@ def first_aid_training_declaration(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = FirstAidTrainingDeclarationForm()
+        form = FirstAidTrainingDeclarationForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -1395,8 +1395,13 @@ def first_aid_training_declaration(request):
         return render(request, 'first-aid-declaration.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = FirstAidTrainingDeclarationForm(request.POST)
+        form = FirstAidTrainingDeclarationForm(request.POST, id=application_id_local)
         if form.is_valid():
+            declaration = form.cleaned_data.get('declaration')
+            first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+            first_aid_record.show_certificate = declaration
+            first_aid_record.renew_certificate = False
+            first_aid_record.save()
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
         else:
@@ -1416,7 +1421,7 @@ def first_aid_training_renew(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = FirstAidTrainingRenewForm()
+        form = FirstAidTrainingRenewForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -1426,8 +1431,13 @@ def first_aid_training_renew(request):
         return render(request, 'first-aid-renew.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = FirstAidTrainingRenewForm(request.POST)
+        form = FirstAidTrainingRenewForm(request.POST, id=application_id_local)
         if form.is_valid():
+            renew = form.cleaned_data.get('renew')
+            first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+            first_aid_record.renew_certificate = renew
+            first_aid_record.show_certificate = False
+            first_aid_record.save()
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
         else:
@@ -1478,21 +1488,19 @@ def first_aid_training_summary(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        training_organisation = FirstAidTraining.objects.get(application_id=application_id_local).training_organisation
-        training_course = FirstAidTraining.objects.get(application_id=application_id_local).course_title
-        certificate_day = FirstAidTraining.objects.get(application_id=application_id_local).course_day
-        certificate_month = FirstAidTraining.objects.get(application_id=application_id_local).course_month
-        certificate_year = FirstAidTraining.objects.get(application_id=application_id_local).course_year
+        first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
         form = FirstAidTrainingSummaryForm()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'training_organisation': training_organisation,
-            'training_course': training_course,
-            'certificate_day': certificate_day,
-            'certificate_month': certificate_month,
-            'certificate_year': certificate_year,
+            'training_organisation': first_aid_record.training_organisation,
+            'training_course': first_aid_record.course_title,
+            'certificate_day': first_aid_record.course_day,
+            'certificate_month': first_aid_record.course_month,
+            'certificate_year': first_aid_record.course_year,
+            'renew_certificate': first_aid_record.renew_certificate,
+            'show_certificate': first_aid_record.show_certificate,
             'first_aid_training_status': application.first_aid_training_status
         }
         return render(request, 'first-aid-summary.html', variables)

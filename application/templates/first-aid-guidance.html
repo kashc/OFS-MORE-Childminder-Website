@@ -9,7 +9,7 @@
     <div class="form-group grid-row" style="padding-top: 30px;">
         <!-- Back button -->
         <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt="Back to application list">
+           style="margin-right: 10px; line-height: 28px">
             Back
         </a>
     </div>
@@ -17,19 +17,17 @@
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->
         <div class="form-group grid-row">
-            <div class="guidance">
-                <h1 class="form-title heading-large">
-                    First aid training
-                </h1>
-                </br>
-                <p>You will have to go on a 12-hour paediatric first aid course.</p>
-                <p>Courses cost between &#163;80 and &#163;200.</p>
-                <p>You have to renew your certificate every 3 years to keep it up to date.</p>
-                {{form.as_div}}
-                {% csrf_token %}
-                <input type="submit" class="button guidance-button" value="Continue" alt='Continue to personal details'>
-                <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-            </div>
+            <h1 class="form-title heading-large">
+                First aid training
+            </h1>
+            <p>You will have to go on a full paediatric first aid course.</p>
+            <p>This should last at least 12 hours. It is usually a 2-day course.</p>
+            <p>Courses cost between &#163;100 and &#163;200.</p>
+            <p>You have to renew your certificate every 3 years to keep it up to date.</p>
+            {{form.as_div}}
+            {% csrf_token %}
+            <input type="submit" class="button button-submit" value="Continue">
+            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         </div>
     </form>
 </div>

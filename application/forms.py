@@ -766,7 +766,7 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
     auto_replace_widgets = True
     first_aid_training_organisation = forms.CharField(label='First aid training organisation')
     title_of_training_course = forms.CharField(label='Title of training course')
-    course_date = SplitDateField(label='Course date', help_text='For example, 31 03 2016')
+    course_date = SplitDateField(label='Date you completed course', help_text='For example, 31 03 2016')
 
     def __init__(self, *args, **kwargs):
         """
@@ -794,6 +794,19 @@ class FirstAidTrainingDeclarationForm(GOVUKForm):
     auto_replace_widgets = True
     declaration = forms.BooleanField(label='I will show my first aid certificate to the inspector', required=True)
 
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the First aid training: declaration form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(FirstAidTrainingDeclarationForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if FirstAidTraining.objects.filter(application_id=self.application_id_local).count() > 0:
+            first_aid_record = FirstAidTraining.objects.get(application_id=self.application_id_local)
+            self.fields['declaration'].initial = first_aid_record.show_certificate
+
 
 class FirstAidTrainingRenewForm(GOVUKForm):
     """
@@ -801,8 +814,20 @@ class FirstAidTrainingRenewForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    renew_a = forms.BooleanField(label='I will renew my first aid training in the next few months', required=True)
-    renew_b = forms.BooleanField(label='I will show my first aid certificate to the inspector', required=True)
+    renew = forms.BooleanField(label='I will renew my first aid certificate in the next few months', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the First aid training: renew form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(FirstAidTrainingRenewForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if FirstAidTraining.objects.filter(application_id=self.application_id_local).count() > 0:
+            first_aid_record = FirstAidTraining.objects.get(application_id=self.application_id_local)
+            self.fields['renew'].initial = first_aid_record.renew_certificate
 
 
 class FirstAidTrainingTrainingForm(GOVUKForm):

@@ -9,8 +9,7 @@
     <div class="form-group grid-row" style="padding-top: 30px;">
         <!-- Back button -->
         <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
+           style="margin-right: 10px; line-height: 28px">
             Back
         </a>
     </div>
@@ -21,22 +20,13 @@
             <h1 class="form-title heading-large">
                 Update your first aid training
             </h1>
-            <p>You will have to go on another course to update your certificate.</p>
-            <p>Ask your council for details of courses in your area.</p>
-            <p>You can come finish this section when you have booked your course.</p>
-            <ul class="list-bullet list-item-wrapper">
-                <li><a href="https://www.gov.uk/find-local-council" class="external-link" target="_blank">Find your
-                    local council</a></li>
-                <li>
-                    <a href="https://www.redcrossfirstaidtraining.co.uk/Courses/First-aid-at-work-courses-uk-mainland/Scheduled-courses/Paediatric-first-aid.aspx"
-                       class="external-link" target="_blank">Red Cross course</a></li>
-                <li><a href="http://www.sja.org.uk/sja/training-courses/first-aid-courses/paediatric-first-aid.aspx"
-                       class="external-link" target="_blank">St John Ambulance course</a></li>
-            </ul>
+            <p>Your first aid certificate is over 3 years old and no longer valid.</p>
+            <p>You will have to go on a 12-hour paediatric first aid course to update your training.</p>
+            <p>You can finish this section when you have completed your course.</p>
             {{form.as_div}}
             {% csrf_token %}
             </br>
-            <input type="submit" class="button" value="Save and continue" alt='Continue to personal details'>
+            <input type="submit" class="button" value="Save and continue">
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         </div>
     </form>
