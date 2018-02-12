@@ -413,7 +413,7 @@ class PersonalDetailsDOBForm(GOVUKForm):
     def clean_date_of_birth(self):
         """
         Date of birth validation (calculate if age is less than 18)
-        :return: string
+        :return: birth day, birth month, birth year
         """
         birth_day = self.cleaned_data['date_of_birth'].day
         birth_month = self.cleaned_data['date_of_birth'].month
@@ -784,6 +784,21 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
             self.fields['course_date'].initial = [first_aid_record.course_day,
                                                   first_aid_record.course_month,
                                                   first_aid_record.course_year]
+
+    def clean_course_date(self):
+        """
+        Course date validation (calculate date is in the future)
+        :return: course day, course month, course year
+        """
+        course_day = self.cleaned_data['course_date'].day
+        course_month = self.cleaned_data['course_date'].month
+        course_year = self.cleaned_data['course_date'].year
+        course_date = date(course_year, course_month, course_day)
+        today = date.today()
+        date_today_diff = today.year - course_date.year - ((today.month, today.day) < (course_date.month, course_date.day))
+        if date_today_diff < 0:
+            raise forms.ValidationError('Please enter a past date.')
+        return course_day, course_month, course_year
 
 
 class FirstAidTrainingDeclarationForm(GOVUKForm):

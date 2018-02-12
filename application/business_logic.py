@@ -251,9 +251,9 @@ def first_aid_logic(application_id_local, form):
     this_application = Application.objects.get(application_id=application_id_local)
     training_organisation = form.cleaned_data.get('first_aid_training_organisation')
     course_title = form.cleaned_data.get('title_of_training_course')
-    course_day = form.cleaned_data.get('course_date').day
-    course_month = form.cleaned_data.get('course_date').month
-    course_year = form.cleaned_data.get('course_date').year
+    course_day = form.cleaned_data.get('course_date')[0]
+    course_month = form.cleaned_data.get('course_date')[1]
+    course_year = form.cleaned_data.get('course_date')[2]
     # If the user entered information for this task for the first time
     if FirstAidTraining.objects.filter(application_id=application_id_local).count() == 0:
         first_aid_training_record = FirstAidTraining(training_organisation=training_organisation,

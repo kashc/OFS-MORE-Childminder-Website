@@ -1355,9 +1355,9 @@ def first_aid_training_details(request):
             application.save()
             reset_declaration(application)
             # Calculate certificate age and determine which page to navigate to
-            certificate_day = form.cleaned_data['course_date'].day
-            certificate_month = form.cleaned_data['course_date'].month
-            certificate_year = form.cleaned_data['course_date'].year
+            certificate_day = form.cleaned_data.get('course_date')[0]
+            certificate_month = form.cleaned_data.get('course_date')[1]
+            certificate_year = form.cleaned_data.get('course_date')[2]
             certificate_date = date(certificate_year, certificate_month, certificate_day)
             today = date.today()
             certificate_age = today.year - certificate_date.year - (
@@ -1469,6 +1469,10 @@ def first_aid_training_training(request):
         application_id_local = request.POST["id"]
         form = FirstAidTrainingTrainingForm(request.POST)
         if form.is_valid():
+            first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+            first_aid_record.show_certificate = False
+            first_aid_record.renew_certificate = False
+            first_aid_record.save()
             status.update(application_id_local, 'first_aid_training_status', 'NOT_STARTED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
         else:
