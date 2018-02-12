@@ -37,6 +37,9 @@
                 M1 2WD
             </p>
             <p>We will check your certificate and send it back to you.</p>
+            <h2 class="form-title heading-medium">
+                I declare that:
+            </h2>
             {{form.as_div}}
             {% csrf_token %}
             <input type="hidden" value="{{application_id}}" name="id"/>

@@ -1008,6 +1008,24 @@ class DBSCheckUploadDBSForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
+    declaration = forms.BooleanField(label='I will send my original DBS certificate to Ofsted', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your criminal record (DBS) check: upload DBS form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(DBSCheckUploadDBSForm, self).__init__(*args, **kwargs)
+        # If information was previously entered, display it on the form
+        if CriminalRecordCheck.objects.filter(application_id=self.application_id_local).count() > 0:
+            dbs_record_declare = CriminalRecordCheck.objects.get(
+                application_id=self.application_id_local).send_certificate_declare
+            if dbs_record_declare is True:
+                self.fields['declaration'].initial = '1'
+            elif dbs_record_declare is False:
+                self.fields['declaration'].initial = '0'
 
 
 class DBSCheckSummaryForm(GOVUKForm):
