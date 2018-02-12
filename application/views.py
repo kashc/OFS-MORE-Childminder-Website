@@ -480,19 +480,19 @@ def type_of_childcare_register(request):
         five_to_eight_status = childcare_record.five_to_eight
         eight_plus_status = childcare_record.eight_plus
         if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
-            return render(request, 'childcare-register-both.html', variables)
+            return render(request, 'childcare-register-EYR-CR-both.html', variables)
         elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
-            return render(request, 'childcare-register-both.html', variables)
+            return render(request, 'childcare-register-EYR-CR-compulsory.html', variables)
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
-            return render(request, 'childcare-register-both.html', variables)
+            return render(request, 'childcare-register-EYR-CR-voluntary.html', variables)
         elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
-            return render(request, 'childcare-register-CR-voluntary-compulsory.html', variables)
+            return render(request, 'childcare-register-CR-both.html', variables)
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
             return render(request, 'childcare-register-EYR.html', variables)
         elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
-            return render(request, 'childcare-register-CR.html', variables)
+            return render(request, 'childcare-register-CR-compulsory.html', variables)
         elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
-            return render(request, 'childcare-register-VCR.html', variables)
+            return render(request, 'childcare-register-CR-voluntary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = TypeOfChildcareRegisterForm(request.POST)
