@@ -524,16 +524,16 @@ def task_list(request):
         five_to_eight_status = childcare_record.five_to_eight
         eight_plus_status = childcare_record.eight_plus
         if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
-            registers = 'Early Years and Childcare Registers'
+            registers = 'Early Years and Childcare Register (both parts)'
             fee = '£35'
         elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
-            registers = 'Early Years and Childcare Registers'
+            registers = 'Early Years and Childcare Register (compulsory part)'
             fee = '£35'
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
-            registers = 'Early Years and Childcare Registers'
+            registers = 'Early Years and Childcare Register (voluntary part)'
             fee = '£35'
         elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
-            registers = 'Childcare Register (voluntary and compulsory parts)'
+            registers = 'Childcare Register (both parts)'
             fee = '£103'
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
             registers = 'Early Years Register'
