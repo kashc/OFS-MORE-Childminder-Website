@@ -1816,7 +1816,7 @@ def dbs_check_upload_dbs(request):
     current_date = datetime.datetime.today()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = DBSCheckUploadDBSForm(id=application_id_local)
+        form = DBSCheckUploadDBSForm()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -1826,15 +1826,9 @@ def dbs_check_upload_dbs(request):
         return render(request, 'dbs-check-upload-dbs.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = DBSCheckUploadDBSForm(request.POST, id=application_id_local)
+        form = DBSCheckUploadDBSForm(request.POST)
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
-            declare = form.cleaned_data['declaration']
-            dbs_check_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
-            dbs_check_record.send_certificate_declare = declare
-            dbs_check_record.save()
-            application.date_updated = current_date
-            application.save()
             reset_declaration(application)
             if application.criminal_record_check_status != 'COMPLETED':
                 status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
