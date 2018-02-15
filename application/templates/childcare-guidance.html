@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Type of Childcare{% endblock %}
+{% block page_title %}Type of childcare{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -30,16 +30,40 @@
             <h1 class="form-title heading-large">
                 Type of childcare
             </h1>
-            <p>You will need to say what age groups you will be looking after.</p>
-            <p>This is so you can join the right childminder register.</p>
-            <p>There are different registers for preschool and school-aged children.</p>
+            <p>You need to say what age groups you will be looking after.</p>
+            <p>This is so you can join the right register.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td style="font-weight: bold;">Age of children</td>
+                    <td style="font-weight: bold;">Register</td>
+                </tr>
+                <tr>
+                    <td>0 to 5</td>
+                    <td>Early Years</td>
+                </tr>
+                <tr>
+                    <td>5 to 7</td>
+                    <td>Childcare (compulsory part)</td>
+                </tr>
+                <tr>
+                    <td>8 or older</td>
+                    <td>Childcare (voluntary part)</td>
+                </tr>
+                </tbody>
+            </table>
+            <br>
+            <p>You can join more than one register if you don't know what ages you will be caring for.</p>
+            <br>
             {% csrf_token %}
             {{form.as_div}}
             <input type="hidden" value="{{application_id}}" name="id"/>
             <input type="submit" class="button" value="Continue">
-            <br>
-            <br>
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
         </div>
     </form>
 </div>

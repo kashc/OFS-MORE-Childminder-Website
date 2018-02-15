@@ -175,7 +175,7 @@ def account_selection(request):
             personal_details_status='NOT_STARTED',
             childcare_type_status='NOT_STARTED',
             first_aid_training_status='NOT_STARTED',
-            eyfs_training_status='NOT_STARTED',
+            eyfs_training_status='COMPLETED',
             criminal_record_check_status='NOT_STARTED',
             health_status='NOT_STARTED',
             references_status='NOT_STARTED',
@@ -480,19 +480,19 @@ def type_of_childcare_register(request):
         five_to_eight_status = childcare_record.five_to_eight
         eight_plus_status = childcare_record.eight_plus
         if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
-            return render(request, 'childcare-register-both.html', variables)
+            return render(request, 'childcare-register-EYR-CR-both.html', variables)
         elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
-            return render(request, 'childcare-register-both.html', variables)
+            return render(request, 'childcare-register-EYR-CR-compulsory.html', variables)
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
-            return render(request, 'childcare-register-both.html', variables)
+            return render(request, 'childcare-register-EYR-CR-voluntary.html', variables)
         elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
-            return render(request, 'childcare-register-CR-voluntary-compulsory.html', variables)
+            return render(request, 'childcare-register-CR-both.html', variables)
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
             return render(request, 'childcare-register-EYR.html', variables)
         elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
-            return render(request, 'childcare-register-CR.html', variables)
+            return render(request, 'childcare-register-CR-compulsory.html', variables)
         elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
-            return render(request, 'childcare-register-VCR.html', variables)
+            return render(request, 'childcare-register-CR-voluntary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = TypeOfChildcareRegisterForm(request.POST)
@@ -524,16 +524,16 @@ def task_list(request):
         five_to_eight_status = childcare_record.five_to_eight
         eight_plus_status = childcare_record.eight_plus
         if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
-            registers = 'Early Years and Childcare Registers'
+            registers = 'Early Years and Childcare Register (both parts)'
             fee = '£35'
         elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
-            registers = 'Early Years and Childcare Registers'
+            registers = 'Early Years and Childcare Register (compulsory part)'
             fee = '£35'
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
-            registers = 'Early Years and Childcare Registers'
+            registers = 'Early Years and Childcare Register (voluntary part)'
             fee = '£35'
         elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
-            registers = 'Childcare Register (voluntary and compulsory parts)'
+            registers = 'Childcare Register (both parts)'
             fee = '£103'
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
             registers = 'Early Years Register'
@@ -3345,7 +3345,7 @@ def declaration_summary(request):
         first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
         dbs_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
         hdb_record = HealthDeclarationBooklet.objects.get(application_id=application_id_local)
-        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        #eyfs_record = EYFS.objects.get(application_id=application_id_local)
         first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
         # Retrieve lists of adults and children, ordered by adult/child number for iteration by the HTML
@@ -3435,9 +3435,9 @@ def declaration_summary(request):
             'cautions_convictions': dbs_record.cautions_convictions,
             'declaration': dbs_record.send_certificate_declare,
             'send_hdb_declare': hdb_record.send_hdb_declare,
-            'eyfs_understand': eyfs_record.eyfs_understand,
-            'eyfs_training_declare': eyfs_record.eyfs_training_declare,
-            'eyfs_questions_declare': eyfs_record.eyfs_questions_declare,
+            #'eyfs_understand': eyfs_record.eyfs_understand,
+            #'eyfs_training_declare': eyfs_record.eyfs_training_declare,
+            #'eyfs_questions_declare': eyfs_record.eyfs_questions_declare,
             'first_reference_first_name': first_reference_record.first_name,
             'first_reference_last_name': first_reference_record.last_name,
             'first_reference_relationship': first_reference_record.relationship,

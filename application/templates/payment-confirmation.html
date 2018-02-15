@@ -9,8 +9,11 @@
     <div class="column-two-thirds">
         <div class="govuk-box-highlight">
             <h1 class="bold-large">Thank you for applying</h1>
+            <br>
             <p>
-                Your reference number is<br>
+                Your reference number is
+                <br>
+                <br>
                 <strong class="heading-medium">{{order_code}}</strong>
             </p>
         </div>
@@ -39,34 +42,49 @@
                 </tfoot>
             </table>
         </div>
-        <p>We have sent you an email with details of your payment and application.</p>
-        <ul class="list-bullet">
-            <li><a href="">Print this page</a></li>
-            <li><a href="">Print your application</a></li>
-            <li><a href="">Download your application</a></li>
-        </ul>
+        <h2 class="heading-medium">
+            Your application details
+        </h2>
+        <p>We have sent you a copy of your application by email.</p>
+        <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
+                                           style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
+            <a href="">Print page</a></p>
+        <p style="margin-left: 20px;"><img src="{% static 'download-button.png' %}" alt="Download"
+                                           style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
+            <a href="">Download application</a></p>
+        <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
+                                           style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
+            <a href="">Print application</a></p>
         <h2 class="heading-medium">
             What happens next
         </h2>
-        <p>We will start processing your application, and will:</p>
-        <ul class="list-bullet" style="margin-bottom: 20px;">
-            <li>check the information on the form</li>
+        <p>Ofsted staff will:</p>
+        <ul class="list-bullet" style="margin-bottom: 20px; margin-left: 20px;">
+            <li>review your application</li>
             <li>ask for references</li>
-            <li>run background checks with council social services departments</li>
+            <li>carry out checks with social services</li>
+            <li>check the health booklet</li>
+            <li>arrange for an inspector to visit</li>
         </ul>
-        <p>This can take several months. It sometimes takes longer.</p>
-        <p>We will give you a few days&#39; notice of when an inspector can visit your home.</p>
-        <p>The visit usually happens at the very end of the process.</p>
+        <p>All this normally takes 3 months in total.</p>
+        <p>We will email you after the initial review.</p>
+        <p>There can be delays if information is missing or we have to wait for references or social services
+            checks.</p>
+        <p>We will organise a visit once all the checks have been done.</p>
+        <p>You should get a decision within a week of the visit.</p>
         <h2 class="heading-medium">
             More about next steps
         </h2>
-        <ul class="list-bullet">
-            <li><a href="#">Get ready for your registration visit</a></li>
+        <ul class="list-bullet" style="margin-left: 20px;">
+            <li><a href="">Documents you need for the visit</a></li>
+            <li><a href="">Get the home ready</a></li>
+            <li><a href="">Equipment and resources</a></li>
+            <li><a href="">Prepare for your interview</a></li>
         </ul>
         <h2 class="heading-medium">
             Contact us
         </h2>
-        <p>Contact us if you are still waiting after a few months.</p>
+        <p>Contact us if you have any questions about your application.</p>
         <div class="panel panel-border-narrow">
             <div>
                 Ofsted
@@ -74,12 +92,14 @@
             <div>
                 <a href="mailto:enquiries@ofsted.gov.uk">enquiries@ofsted.gov.uk</a>
             </div>
-            <p>Phone: 0300 123 1231</p>
+            <div>
+                Phone: 0300 123 1231
+            </div>
             <div>
                 Monday to Friday, 8am to 6pm
             </div>
             <div>
-                <a href="https://www.gov.uk/call-charges" class="external-link">Find out about call charges</a>
+                <a href="https://www.gov.uk/call-charges">Find out about call charges</a>
             </div>
         </div>
     </div>
