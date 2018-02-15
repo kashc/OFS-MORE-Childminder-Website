@@ -3345,7 +3345,7 @@ def declaration_summary(request):
         first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
         dbs_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
         hdb_record = HealthDeclarationBooklet.objects.get(application_id=application_id_local)
-        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        #eyfs_record = EYFS.objects.get(application_id=application_id_local)
         first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
         # Retrieve lists of adults and children, ordered by adult/child number for iteration by the HTML
@@ -3435,9 +3435,9 @@ def declaration_summary(request):
             'cautions_convictions': dbs_record.cautions_convictions,
             'declaration': dbs_record.send_certificate_declare,
             'send_hdb_declare': hdb_record.send_hdb_declare,
-            'eyfs_understand': eyfs_record.eyfs_understand,
-            'eyfs_training_declare': eyfs_record.eyfs_training_declare,
-            'eyfs_questions_declare': eyfs_record.eyfs_questions_declare,
+            #'eyfs_understand': eyfs_record.eyfs_understand,
+            #'eyfs_training_declare': eyfs_record.eyfs_training_declare,
+            #'eyfs_questions_declare': eyfs_record.eyfs_questions_declare,
             'first_reference_first_name': first_reference_record.first_name,
             'first_reference_last_name': first_reference_record.last_name,
             'first_reference_relationship': first_reference_record.relationship,
