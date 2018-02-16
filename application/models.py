@@ -83,6 +83,7 @@ class Application(models.Model):
     date_updated = models.DateTimeField(blank=True, null=True)
     date_accepted = models.DateTimeField(blank=True, null=True)
     order_code = models.UUIDField(blank=True, null=True)
+    date_submitted = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         db_table = 'APPLICATION'

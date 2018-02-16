@@ -3645,6 +3645,7 @@ def card_payment_details(request):
             # If the payment is successful
             if payment_response.status_code == 201:
                 application = Application.objects.get(pk=application_id_local)
+                application.date_submitted = datetime.datetime.today()
                 login_id = application.login_id.login_id
                 login_record = UserDetails.objects.get(pk=login_id)
                 personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=
