@@ -3691,6 +3691,7 @@ def paypal_payment_completion(request):
             }
 
             application = Application.objects.get(pk=application_id_local)
+            application.date_submitted = datetime.datetime.today()
             application.order_code = UUID(order_code)
             application.save()
 
