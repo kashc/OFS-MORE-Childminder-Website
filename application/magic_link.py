@@ -173,7 +173,6 @@ def sms_verification(request):
         return HttpResponseRedirect(settings.URL_PREFIX + '/verify-phone/?id=' + id)
     form = VerifyPhoneForm(id=id)
     login_id = acc.login_id
-    print(login_id)
     application = Application.objects.get(login_id=login_id)
     if request.method == 'POST':
         form = VerifyPhoneForm(request.POST, id=id)
