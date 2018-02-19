@@ -6,11 +6,10 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 import re
 
-from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic import TemplateView
-
-from django.conf import settings
 
 from application import views, magic_link, security_question
 
@@ -93,6 +92,7 @@ urlpatterns = [
     url(r'^link-resolution-error/', TemplateView.as_view(template_name='link-resolution-error.html')),
     url(r'^security-question/(?P<id>[\w-]+)/$', security_question.load),
     url(r'^security-question/$', security_question.load),
+    url(r'^djga/', include('google_analytics.urls')),
 ]
 
 if settings.URL_PREFIX:
