@@ -175,7 +175,7 @@ def account_selection(request):
             personal_details_status='NOT_STARTED',
             childcare_type_status='NOT_STARTED',
             first_aid_training_status='NOT_STARTED',
-            eyfs_training_status='NOT_STARTED',
+            eyfs_training_status='COMPLETED',
             criminal_record_check_status='NOT_STARTED',
             health_status='NOT_STARTED',
             references_status='NOT_STARTED',
@@ -480,19 +480,19 @@ def type_of_childcare_register(request):
         five_to_eight_status = childcare_record.five_to_eight
         eight_plus_status = childcare_record.eight_plus
         if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
-            return render(request, 'childcare-register-both.html', variables)
+            return render(request, 'childcare-register-EYR-CR-both.html', variables)
         elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
-            return render(request, 'childcare-register-both.html', variables)
+            return render(request, 'childcare-register-EYR-CR-compulsory.html', variables)
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
-            return render(request, 'childcare-register-both.html', variables)
+            return render(request, 'childcare-register-EYR-CR-voluntary.html', variables)
         elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
-            return render(request, 'childcare-register-CR-voluntary-compulsory.html', variables)
+            return render(request, 'childcare-register-CR-both.html', variables)
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
             return render(request, 'childcare-register-EYR.html', variables)
         elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
-            return render(request, 'childcare-register-CR.html', variables)
+            return render(request, 'childcare-register-CR-compulsory.html', variables)
         elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
-            return render(request, 'childcare-register-VCR.html', variables)
+            return render(request, 'childcare-register-CR-voluntary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = TypeOfChildcareRegisterForm(request.POST)
@@ -524,16 +524,16 @@ def task_list(request):
         five_to_eight_status = childcare_record.five_to_eight
         eight_plus_status = childcare_record.eight_plus
         if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
-            registers = 'Early Years and Childcare Registers'
+            registers = 'Early Years and Childcare Register (both parts)'
             fee = '£35'
         elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
-            registers = 'Early Years and Childcare Registers'
+            registers = 'Early Years and Childcare Register (compulsory part)'
             fee = '£35'
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
-            registers = 'Early Years and Childcare Registers'
+            registers = 'Early Years and Childcare Register (voluntary part)'
             fee = '£35'
         elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
-            registers = 'Childcare Register (voluntary and compulsory parts)'
+            registers = 'Childcare Register (both parts)'
             fee = '£103'
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
             registers = 'Early Years Register'
@@ -1355,9 +1355,9 @@ def first_aid_training_details(request):
             application.save()
             reset_declaration(application)
             # Calculate certificate age and determine which page to navigate to
-            certificate_day = form.cleaned_data['course_date'].day
-            certificate_month = form.cleaned_data['course_date'].month
-            certificate_year = form.cleaned_data['course_date'].year
+            certificate_day = form.cleaned_data.get('course_date')[0]
+            certificate_month = form.cleaned_data.get('course_date')[1]
+            certificate_year = form.cleaned_data.get('course_date')[2]
             certificate_date = date(certificate_year, certificate_month, certificate_day)
             today = date.today()
             certificate_age = today.year - certificate_date.year - (
@@ -1385,7 +1385,7 @@ def first_aid_training_declaration(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = FirstAidTrainingDeclarationForm()
+        form = FirstAidTrainingDeclarationForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -1395,8 +1395,13 @@ def first_aid_training_declaration(request):
         return render(request, 'first-aid-declaration.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = FirstAidTrainingDeclarationForm(request.POST)
+        form = FirstAidTrainingDeclarationForm(request.POST, id=application_id_local)
         if form.is_valid():
+            declaration = form.cleaned_data.get('declaration')
+            first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+            first_aid_record.show_certificate = declaration
+            first_aid_record.renew_certificate = False
+            first_aid_record.save()
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
         else:
@@ -1416,7 +1421,7 @@ def first_aid_training_renew(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = FirstAidTrainingRenewForm()
+        form = FirstAidTrainingRenewForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -1426,8 +1431,13 @@ def first_aid_training_renew(request):
         return render(request, 'first-aid-renew.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = FirstAidTrainingRenewForm(request.POST)
+        form = FirstAidTrainingRenewForm(request.POST, id=application_id_local)
         if form.is_valid():
+            renew = form.cleaned_data.get('renew')
+            first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+            first_aid_record.renew_certificate = renew
+            first_aid_record.show_certificate = False
+            first_aid_record.save()
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
         else:
@@ -1459,6 +1469,10 @@ def first_aid_training_training(request):
         application_id_local = request.POST["id"]
         form = FirstAidTrainingTrainingForm(request.POST)
         if form.is_valid():
+            first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+            first_aid_record.show_certificate = False
+            first_aid_record.renew_certificate = False
+            first_aid_record.save()
             status.update(application_id_local, 'first_aid_training_status', 'NOT_STARTED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
         else:
@@ -1478,21 +1492,19 @@ def first_aid_training_summary(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        training_organisation = FirstAidTraining.objects.get(application_id=application_id_local).training_organisation
-        training_course = FirstAidTraining.objects.get(application_id=application_id_local).course_title
-        certificate_day = FirstAidTraining.objects.get(application_id=application_id_local).course_day
-        certificate_month = FirstAidTraining.objects.get(application_id=application_id_local).course_month
-        certificate_year = FirstAidTraining.objects.get(application_id=application_id_local).course_year
+        first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
         form = FirstAidTrainingSummaryForm()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'training_organisation': training_organisation,
-            'training_course': training_course,
-            'certificate_day': certificate_day,
-            'certificate_month': certificate_month,
-            'certificate_year': certificate_year,
+            'training_organisation': first_aid_record.training_organisation,
+            'training_course': first_aid_record.course_title,
+            'certificate_day': first_aid_record.course_day,
+            'certificate_month': first_aid_record.course_month,
+            'certificate_year': first_aid_record.course_year,
+            'renew_certificate': first_aid_record.renew_certificate,
+            'show_certificate': first_aid_record.show_certificate,
             'first_aid_training_status': application.first_aid_training_status
         }
         return render(request, 'first-aid-summary.html', variables)
@@ -3333,7 +3345,7 @@ def declaration_summary(request):
         first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
         dbs_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
         hdb_record = HealthDeclarationBooklet.objects.get(application_id=application_id_local)
-        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        #eyfs_record = EYFS.objects.get(application_id=application_id_local)
         first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
         # Retrieve lists of adults and children, ordered by adult/child number for iteration by the HTML
@@ -3423,9 +3435,9 @@ def declaration_summary(request):
             'cautions_convictions': dbs_record.cautions_convictions,
             'declaration': dbs_record.send_certificate_declare,
             'send_hdb_declare': hdb_record.send_hdb_declare,
-            'eyfs_understand': eyfs_record.eyfs_understand,
-            'eyfs_training_declare': eyfs_record.eyfs_training_declare,
-            'eyfs_questions_declare': eyfs_record.eyfs_questions_declare,
+            #'eyfs_understand': eyfs_record.eyfs_understand,
+            #'eyfs_training_declare': eyfs_record.eyfs_training_declare,
+            #'eyfs_questions_declare': eyfs_record.eyfs_questions_declare,
             'first_reference_first_name': first_reference_record.first_name,
             'first_reference_last_name': first_reference_record.last_name,
             'first_reference_relationship': first_reference_record.relationship,
@@ -3633,6 +3645,7 @@ def card_payment_details(request):
             # If the payment is successful
             if payment_response.status_code == 201:
                 application = Application.objects.get(pk=application_id_local)
+                application.date_submitted = datetime.datetime.today()
                 login_id = application.login_id.login_id
                 login_record = UserDetails.objects.get(pk=login_id)
                 personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=
@@ -3678,6 +3691,7 @@ def paypal_payment_completion(request):
             }
 
             application = Application.objects.get(pk=application_id_local)
+            application.date_submitted = datetime.datetime.today()
             application.order_code = UUID(order_code)
             application.save()
 

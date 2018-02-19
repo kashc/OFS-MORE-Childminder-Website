@@ -30,7 +30,7 @@ EMAIL_EXPIRY = 1
 NOTIFY_URL = 'http://130.130.52.132:8095/notify-gateway'
 
 # Base URL of payment gateway
-PAYMENT_URL = 'http://127.0.0.1:8080/payment-gateway'
+PAYMENT_URL = 'http://130.130.52.132:8089/payment-gateway'
 
 # Base URL of arc-service gateway
 ADDRESSING_URL = 'http://130.130.52.132:8000/arc-service'

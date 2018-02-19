@@ -16,11 +16,12 @@
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <div class="form-group grid-row">
             <h1 class="form-title heading-large">
-                Voluntary Childcare Register
+                Early Years and Childcare Register (both parts)
             </h1>
-            <p>You are applying to join the voluntary part of the Childcare Register.</p>
-            <p>It costs &#163;103 to apply.</p>
-            <p>This will let you look after children aged 8 and older.</p>
+            <p>You are applying to join the Early Years Register and the compulsory and voluntary parts of the Childcare Register.</p>
+            <p>It costs &#163;35 to apply.</p>
+            <p>This will let you look after children of all ages.</p>
+            <br>
             {% csrf_token %}
             {{form.as_div}}
             <input type="hidden" value="{{application_id}}" name="id"/>

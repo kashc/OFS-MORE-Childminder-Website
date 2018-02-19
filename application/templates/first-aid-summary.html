@@ -6,13 +6,6 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}&manual=False" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
-            Back
-        </a>
-    </div>
     <div class="grid-row">
         <h1 class="form-title heading-large">Check your answers: first aid training</h1>
     </div>
@@ -43,7 +36,7 @@
         </tr>
         <tr>
             <td>
-                Title of first aid course
+                Title of training course
             </td>
             <td style="word-wrap: break-word">
                 {{training_course}}
@@ -57,55 +50,23 @@
         </tr>
         <tr>
             <td>
-                Date of certificate
+                Date you completed course
             </td>
-            {% if certificate_month == 1 %}
+            {% if certificate_month < 10 and certificate_day < 10 %}
             <td style="word-wrap: break-word">
-                {{certificate_day}} January {{certificate_year}}
+                0{{certificate_day}}/0{{certificate_month}}/{{certificate_year}}
             </td>
-            {% elif certificate_month == 2 %}
+            {% elif certificate_month < 10 and certificate_day >= 10 %}
             <td style="word-wrap: break-word">
-                {{certificate_day}} February {{certificate_year}}
+                {{certificate_day}}/0{{certificate_month}}/{{certificate_year}}
             </td>
-            {% elif certificate_month == 3 %}
+            {% elif certificate_month >= 10 and certificate_day < 10 %}
             <td style="word-wrap: break-word">
-                {{certificate_day}} March {{certificate_year}}
+                0{{certificate_day}}/{{certificate_month}}/{{certificate_year}}
             </td>
-            {% elif certificate_month == 4 %}
+            {% elif certificate_month >= 10 and certificate_day >= 10 %}
             <td style="word-wrap: break-word">
-                {{certificate_day}} April {{certificate_year}}
-            </td>
-            {% elif certificate_month == 5 %}
-            <td style="word-wrap: break-word">
-                {{certificate_day}} May {{certificate_year}}
-            </td>
-            {% elif certificate_month == 6 %}
-            <td style="word-wrap: break-word">
-                {{certificate_day}} June {{certificate_year}}
-            </td>
-            {% elif certificate_month == 7 %}
-            <td style="word-wrap: break-word">
-                {{certificate_day}} July {{certificate_year}}
-            </td>
-            {% elif certificate_month == 8 %}
-            <td style="word-wrap: break-word">
-                {{certificate_day}} August {{certificate_year}}
-            </td>
-            {% elif certificate_month == 9 %}
-            <td style="word-wrap: break-word">
-                {{certificate_day}} September {{certificate_year}}
-            </td>
-            {% elif certificate_month == 10 %}
-            <td style="word-wrap: break-word">
-                {{certificate_day}} October {{certificate_year}}
-            </td>
-            {% elif certificate_month == 11 %}
-            <td style="word-wrap: break-word">
-                {{certificate_day}} November {{certificate_year}}
-            </td>
-            {% elif certificate_month == 12 %}
-            <td style="word-wrap: break-word">
-                {{certificate_day}} December {{certificate_year}}
+                {{certificate_day}}/{{certificate_month}}/{{certificate_year}}
             </td>
             {% endif %}
             <td class="change-answer">
@@ -115,6 +76,36 @@
                 </a>
             </td>
         </tr>
+        {% if show_certificate is True %}
+        <tr>
+            <td>
+                Will you show a copy of your certificate to an inspector?
+            </td>
+            <td style="word-wrap: break-word">
+                Yes
+            </td>
+            <td class="change-answer">
+                <a href="{{ URL_PREFIX }}/first-aid/declaration?id={{application_id}}">
+                    Change <span class="visuallyhidden">declaration to show certificate to inspector</span>
+                </a>
+            </td>
+        </tr>
+        {% endif %}
+        {% if renew_certificate is True %}
+        <tr>
+            <td>
+                Will you renew your certificate in the next few months?
+            </td>
+            <td style="word-wrap: break-word">
+                Yes
+            </td>
+            <td class="change-answer">
+                <a href="{{ URL_PREFIX }}/first-aid/renew?id={{application_id}}">
+                    Change <span class="visuallyhidden">declaration to show certificate to inspector</span>
+                </a>
+            </td>
+        </tr>
+        {% endif %}
         </tbody>
     </table>
     <br>

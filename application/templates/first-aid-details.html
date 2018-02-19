@@ -12,7 +12,7 @@
     <div class="form-group grid-row" style="padding-top: 30px;">
         <!-- Back button -->
         <a href="{{ URL_PREFIX }}/first-aid/guidance?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt="Back to application list">
+           style="margin-right: 10px; line-height: 28px">
             Back
         </a>
     </div>
@@ -30,7 +30,7 @@
                 </summary>
                 <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
                     <p>Lots of organisations provide training, such as the Red Cross and St John Ambulance.</p>
-                    <p>Courses cost between &#163;75 and &#163;200.</p>
+                    <p>Make sure you go on a full paediatric first aid course. This should last at least 12 hours. It is usually a 2-day course.</p>
                     <p>Ask your council for details of courses in your area.</p>
                     <ul class="list-bullet list-item-wrapper">
                         <li><a href="https://www.gov.uk/find-local-council" class="external-link" target="_blank">Find
@@ -48,7 +48,7 @@
             <br>
             {{form.as_div}}
             {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+            <input type="submit" class="button" value="Save and continue">
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         </div>
         </br>

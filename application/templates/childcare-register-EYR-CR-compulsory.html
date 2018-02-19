@@ -16,11 +16,12 @@
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <div class="form-group grid-row">
             <h1 class="form-title heading-large">
-                Early Years Register and Childcare Register
+                Early Years and Childcare Register (compulsory part)
             </h1>
-            <p>You are applying to join the Early Years Register and Childcare Register.</p>
+            <p>You are applying to join the Early Years Register and the compulsory part of the Childcare Register.</p>
             <p>It costs &#163;35 to apply.</p>
-            <p>This will let you look after children of all ages.</p>
+            <p>This will let you look after children aged 0 to 7.</p>
+            <br>
             {% csrf_token %}
             {{form.as_div}}
             <input type="hidden" value="{{application_id}}" name="id"/>
