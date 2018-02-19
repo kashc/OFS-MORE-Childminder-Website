@@ -2498,10 +2498,12 @@ div.error-summary ul.error-summary-list {
 
 .task-do-last {
   background-color: #FFFFFF;
-  border: medium;
-  border-color: #BFC1C3;
-  border-style: solid;
+  outline: 3px;
+  outline-color: #BFC1C3;
+  outline-style: solid;
   color: #BFC1C3;
+  width: calc(20% - 6px);
+  margin: 0px 0px 0px 3px;
 }
 
 a.remove-file {
