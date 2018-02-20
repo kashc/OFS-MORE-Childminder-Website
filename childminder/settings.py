@@ -43,9 +43,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-# Application definition
-
-INSTALLED_APPS = [
+# INSTALLED DJANGO APPLICATIONS
+BASE_INSTALLED_APPS = [
     'govuk_forms',
     'govuk_template',
     'govuk_template_base',
@@ -56,7 +55,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'application.apps.ApplicationConfig',
+    'google_analytics'
 ]
+
+PROD_INSTALLED_APPS = [
+]
+
+DEV_INSTALLED_APPS = [
+
+]
+
+if DEBUG is False:
+    INSTALLED_APPS = BASE_INSTALLED_APPS + PROD_INSTALLED_APPS
+else:
+    INSTALLED_APPS = BASE_INSTALLED_APPS + DEV_INSTALLED_APPS
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 
@@ -85,6 +97,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_settings_export.settings_export',
                 'govuk_template_base.context_processors.govuk_template_base',
                 "application.middleware.globalise_url_prefix",
                 "application.middleware.globalise_server_name"
@@ -167,3 +180,12 @@ TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.XMLTestRunner'
 TEST_OUTPUT_VERBOSE = True
 TEST_OUTPUT_DESCRIPTIONS = True
 TEST_OUTPUT_DIR = 'xmlrunner'
+
+GOOGLE_ANALYTICS = {
+    'google_analytics_id': "xxx"
+}
+
+SETTINGS_EXPORT = [
+    'DEBUG'
+]
+

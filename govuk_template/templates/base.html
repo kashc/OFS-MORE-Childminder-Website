@@ -100,5 +100,12 @@
     <script src="{% static 'javascripts/govuk-template.js' %}"></script>
     {% block body_end %}{% endblock %}
     <script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>
+
+    {% load google_analytics_tags %}
+    {% if not settings.DEBUG %}
+    <div style="display:none">
+      <img src="{% google_analytics %}" width="0" height="0" />
+    </div>
+    {% endif %}
   </body>
 </html>

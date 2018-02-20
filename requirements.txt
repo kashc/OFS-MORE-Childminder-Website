@@ -5,3 +5,7 @@ django-govuk-forms==0.4
 unittest-xml-reporting
 requests
 whitenoise
+django-google-analytics-app==4.2.0
+django-settings-export==1.2.1
+
+
