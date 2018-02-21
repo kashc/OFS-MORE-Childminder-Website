@@ -38,37 +38,27 @@ ADDRESSING_URL = 'http://130.130.52.132:8000/addressing-service'
 # Visa Validation
 VISA_VALIDATION = False
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
-
 # INSTALLED DJANGO APPLICATIONS
-BASE_INSTALLED_APPS = [
-    'govuk_forms',
-    'govuk_template',
-    'govuk_template_base',
+
+BUILTIN_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'application.apps.ApplicationConfig',
+]
+
+THIRD_PARTY_APPS = [
+    'govuk_forms',
+    'govuk_template',
+    'govuk_template_base',
     'google_analytics'
 ]
 
-PROD_INSTALLED_APPS = [
+PROJECT_APPS = [
+    'application.apps.ApplicationConfig',
 ]
-
-DEV_INSTALLED_APPS = [
-
-]
-
-if DEBUG is False:
-    INSTALLED_APPS = BASE_INSTALLED_APPS + PROD_INSTALLED_APPS
-else:
-    INSTALLED_APPS = BASE_INSTALLED_APPS + DEV_INSTALLED_APPS
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 
@@ -108,39 +98,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'childminder.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': 'db.sqlite3',
-#     }
-# }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'ofsted',
-        'PASSWORD': 'OfstedB3ta',
-        'HOST': '130.130.52.132',
-        'PORT': '5462',
-    }
-}
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
 LANGUAGE_CODE = 'en-GB'
-
 TIME_ZONE = 'Europe/London'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
@@ -150,8 +114,6 @@ URL_PREFIX = '/childminder'
 STATIC_URL = URL_PREFIX + '/static/'
 
 AUTHENTICATION_URL = URL_PREFIX + '/existing-application/'
-
-PUBLIC_APPLICATION_URL = 'http://localhost:8000/childminder'
 
 AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/$',
@@ -186,6 +148,7 @@ GOOGLE_ANALYTICS = {
     'google_analytics_id': "xxx"
 }
 
+# Export Settings variables DEBUG to templates context
 SETTINGS_EXPORT = [
     'DEBUG'
 ]
