@@ -39,7 +39,6 @@ ADDRESSING_URL = 'http://130.130.52.132:8000/arc-service'
 VISA_VALIDATION = False
 
 # INSTALLED DJANGO APPLICATIONS
-<<<<<<< HEAD:source/childminder/childminder/settings/base.py
 
 BUILTIN_APPS = [
     'django.contrib.admin',
