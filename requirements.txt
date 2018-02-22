@@ -1,4 +1,4 @@
-django==1.11.6
+django==1.11.10
 psycopg2-binary
 django-govuk-template==0.4
 django-govuk-forms==0.4
