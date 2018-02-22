@@ -94,6 +94,12 @@ urlpatterns = [
     url(r'^djga/', include('google_analytics.urls')),
 ]
 
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
+
 if settings.URL_PREFIX:
     prefixed_url_pattern = []
     for pat in urlpatterns:

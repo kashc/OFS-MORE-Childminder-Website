@@ -3,10 +3,15 @@ from .base import *
 DEBUG = True
 
 PUBLIC_APPLICATION_URL = 'http://localhost:8000/childminder'
+INTERNAL_IPS = "127.0.0.1"
+
 DEV_APPS = [
+    'debug_toolbar'
 ]
 
-INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + DEV_APPS + PROJECT_APPS
+MIDDLEWARE_DEV = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
+]
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
@@ -21,3 +26,6 @@ DATABASES = {
         'PORT': os.environ.get('DATABASE_PORT', '5462')
     }
 }
+
+MIDDLEWARE = MIDDLEWARE + MIDDLEWARE_DEV
+INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + DEV_APPS + PROJECT_APPS
