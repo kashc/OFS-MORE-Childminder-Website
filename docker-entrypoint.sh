@@ -12,7 +12,6 @@ python manage.py migrate application
 
 #Collect static resources
 echo "Collecting static assets"
-mkdir static
 python manage.py collectstatic --noinput
 
 # Start server
