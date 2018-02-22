@@ -12,3 +12,11 @@ db.sqlite3
 .settings/
 
 staticfiles/
+
+### Vim file ###
+*~
+*.swp
+*.swo
+
+### Dev files ###
+.makerc
