@@ -83,7 +83,7 @@
                             <span class="task-name">First aid training</span><strong class="task-finished task-in-progress">Started</strong>
                         </a>
                         {% elif first_aid_training_status == 'COMPLETED' %}
-                        <a href="{{ URL_PREFIX }}/first-aid/summary?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/first-aid/check-answers?id={{application_id}}">
                             <span class="task-name">First aid training</span><strong class="task-finished">Done</strong>
                         </a>
                         {% endif %}

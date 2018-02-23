@@ -1490,7 +1490,7 @@ def first_aid_training_details(request):
             elif 2.5 <= certificate_age <= 3:
                 return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/renew?id=' + application_id_local)
             elif certificate_age > 3:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/training?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/update?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem with your course details'
             variables = {
@@ -1527,7 +1527,7 @@ def first_aid_training_declaration(request):
             first_aid_record.renew_certificate = False
             first_aid_record.save()
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem on this page'
             variables = {
@@ -1564,7 +1564,7 @@ def first_aid_training_renew(request):
             first_aid_record.show_certificate = False
             first_aid_record.save()
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem on this page'
             variables = {
@@ -1600,7 +1600,7 @@ def first_aid_training_training(request):
             first_aid_record.renew_certificate = False
             first_aid_record.save()
             status.update(application_id_local, 'first_aid_training_status', 'NOT_STARTED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
