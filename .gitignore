@@ -8,8 +8,6 @@ __pycache__/
 
 db.sqlite3
 
-.idea/
-.settings/
 
 staticfiles/
 
@@ -19,4 +17,7 @@ staticfiles/
 *.swo
 
 ### Dev files ###
+.settings/
+.idea/
 .makerc
+.venv
