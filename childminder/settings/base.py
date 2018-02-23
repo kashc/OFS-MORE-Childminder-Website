@@ -26,15 +26,6 @@ SECRET_KEY = '-r&u(maq#j68ngj=_ch#l6#mhak%8rbh$px8e&9c6b9@c7df=m'
 SMS_EXPIRY = 1
 EMAIL_EXPIRY = 1
 
-# Base URL of notify gateway
-NOTIFY_URL = 'http://130.130.52.132:8095/notify-gateway'
-
-# Base URL of payment gateway
-PAYMENT_URL = 'http://130.130.52.132:8089/payment-gateway'
-
-# Base URL of arc-service gateway
-ADDRESSING_URL = 'http://130.130.52.132:8000/arc-service'
-
 # Visa Validation
 VISA_VALIDATION = False
 
