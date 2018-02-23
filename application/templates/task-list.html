@@ -75,11 +75,11 @@
                 <tr id="first_aid">
                     <td class="task" style="padding-right: 10px; word-wrap: break-word;">
                         {% if first_aid_training_status == 'NOT_STARTED' %}
-                        <a href="{{ URL_PREFIX }}/first-aid/guidance?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/first-aid?id={{application_id}}">
                             <span class="task-name">First aid training</span><strong class="task-finished task-to-do">To do</strong>
                         </a>
                         {% elif first_aid_training_status == 'IN_PROGRESS' %}
-                        <a href="{{ URL_PREFIX }}/first-aid/guidance?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/first-aid?id={{application_id}}">
                             <span class="task-name">First aid training</span><strong class="task-finished task-in-progress">Started</strong>
                         </a>
                         {% elif first_aid_training_status == 'COMPLETED' %}

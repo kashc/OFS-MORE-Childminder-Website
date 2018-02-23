@@ -14,7 +14,8 @@ from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 from govuk_forms.fields import SplitDateField
 
-from .customfields import TimeKnownField, SelectDateWidget, ExpirySplitDateField, CustomSplitDateFieldDOB
+from .customfields import TimeKnownField, SelectDateWidget, ExpirySplitDateField, CustomSplitDateFieldDOB, \
+    CustomSplitDateField
 from .models import (AdultInHome,
                      ApplicantHomeAddress,
                      ApplicantName,
@@ -769,9 +770,13 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    first_aid_training_organisation = forms.CharField(label='First aid training organisation')
-    title_of_training_course = forms.CharField(label='Title of training course')
-    course_date = SplitDateField(label='Date you completed course', help_text='For example, 31 03 2016')
+    first_aid_training_organisation = forms.CharField(label='First aid training organisation', error_messages={
+        'required': 'Please enter the title of your course.'})
+    title_of_training_course = forms.CharField(label='Title of training course', error_messages={
+        'required': 'Please enter the title of the course.'})
+    course_date = CustomSplitDateField(label='Date you completed course', help_text='For example, 31 03 2016',
+                                       error_messages={
+                                           'required': 'Please enter the full date, including the day, month and year.'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -789,6 +794,26 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
             self.fields['course_date'].initial = [first_aid_record.course_day,
                                                   first_aid_record.course_month,
                                                   first_aid_record.course_year]
+
+    def clean_first_aid_training_organisation(self):
+        """
+        First aid training organisation validation
+        :return: first aid training organisation
+        """
+        first_aid_training_organisation = self.cleaned_data['first_aid_training_organisation']
+        if len(first_aid_training_organisation) > 50:
+            raise forms.ValidationError('The title of the course must be under 50 characters.')
+        return first_aid_training_organisation
+
+    def clean_title_of_training_course(self):
+        """
+        Title of training course validation
+        :return: title of training course
+        """
+        title_of_training_course = self.cleaned_data['title_of_training_course']
+        if len(title_of_training_course) > 50:
+            raise forms.ValidationError('The title of the course must be under 50 characters long.')
+        return title_of_training_course
 
     def clean_course_date(self):
         """
@@ -813,7 +838,9 @@ class FirstAidTrainingDeclarationForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    declaration = forms.BooleanField(label='I will show my first aid certificate to the inspector', required=True)
+    declaration = forms.BooleanField(label='I will show my first aid certificate to the inspector', required=True,
+                                     error_messages={
+                                         'required': 'You must agree to show your certificate to the inspector.'})
 
     def __init__(self, *args, **kwargs):
         """

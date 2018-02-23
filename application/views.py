@@ -1492,6 +1492,7 @@ def first_aid_training_details(request):
             elif certificate_age > 3:
                 return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/training?id=' + application_id_local)
         else:
+            form.error_summary_title = 'There was a problem with your course details'
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -1529,7 +1530,6 @@ def first_aid_training_declaration(request):
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem on this page'
-            form.errors['declaration'] = {'You must agree to show your certificate to the inspector.': 'required'}
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -1566,6 +1566,7 @@ def first_aid_training_renew(request):
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
         else:
+            form.error_summary_title = 'There was a problem on this page'
             variables = {
                 'form': form,
                 'application_id': application_id_local
