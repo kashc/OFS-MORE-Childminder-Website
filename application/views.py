@@ -1486,7 +1486,7 @@ def first_aid_training_details(request):
             certificate_age = today.year - certificate_date.year - (
                     (today.month, today.day) < (certificate_date.month, certificate_date.day))
             if certificate_age < 2.5:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/declaration?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/certificate?id=' + application_id_local)
             elif 2.5 <= certificate_age <= 3:
                 return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/renew?id=' + application_id_local)
             elif certificate_age > 3:
@@ -1528,6 +1528,8 @@ def first_aid_training_declaration(request):
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/summary?id=' + application_id_local)
         else:
+            form.error_summary_title = 'There was a problem on this page'
+            form.errors['declaration'] = {'You must agree to show your certificate to the inspector.': 'required'}
             variables = {
                 'form': form,
                 'application_id': application_id_local

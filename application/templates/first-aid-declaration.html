@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}First aid training{% endblock %}
+{% block page_title %}First aid training certificate{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -12,7 +12,7 @@
     <div class="form-group grid-row" style="padding-top: 30px;">
         <!-- Back button -->
         <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt="Back to application list">
+           style="margin-right: 10px; line-height: 28px">
             Back
         </a>
     </div>
@@ -20,7 +20,7 @@
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->
         <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
+            <h1 class="form-title heading-large" style="margin-top: 0px;">
                 First aid training certificate
             </h1>
             <p>An inspector will ask to see your certificate when they visit your home.</p>
