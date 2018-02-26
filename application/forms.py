@@ -10,12 +10,11 @@ import re
 from datetime import date
 from django import forms
 from django.conf import settings
-from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 from govuk_forms.fields import SplitDateField
 
-from .customfields import TimeKnownField, ExpirySplitDateWidget, SelectDateWidget, ExpirySplitDateField
+from .customfields import TimeKnownField, SelectDateWidget, ExpirySplitDateField, CustomSplitDateFieldDOB
 from .models import (AdultInHome,
                      ApplicantHomeAddress,
                      ApplicantName,
@@ -387,7 +386,8 @@ class PersonalDetailsDOBForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    date_of_birth = SplitDateField(label='Date of birth', help_text='For example, 31 03 1980')
+    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={
+        'required': 'Please enter the full date, including the day, month and year'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -416,7 +416,11 @@ class PersonalDetailsDOBForm(GOVUKForm):
         today = date.today()
         age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
         if age < 18:
-            raise forms.ValidationError('You have to be 18 to childmind.')
+            raise forms.ValidationError('You must be 18 or older to be a childminder.')
+        date_today_diff = today.year - applicant_dob.year - (
+                (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
+        if date_today_diff < 0:
+            raise forms.ValidationError('Please check the year.')
         return birth_day, birth_month, birth_year
 
 
@@ -789,7 +793,8 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
         course_year = self.cleaned_data['course_date'].year
         course_date = date(course_year, course_month, course_day)
         today = date.today()
-        date_today_diff = today.year - course_date.year - ((today.month, today.day) < (course_date.month, course_date.day))
+        date_today_diff = today.year - course_date.year - (
+                (today.month, today.day) < (course_date.month, course_date.day))
         if date_today_diff < 0:
             raise forms.ValidationError('Please enter a past date.')
         return course_day, course_month, course_year

@@ -640,7 +640,7 @@ def personal_details_name(request):
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
-            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/dob/?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/your-date-of-birth/?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem with your name details'
             variables = {
@@ -686,6 +686,7 @@ def personal_details_dob(request):
                 settings.URL_PREFIX + '/personal-details/home-address?id=' + application_id_local +
                 '&manual=False&lookup=False')
         else:
+            form.error_summary_title = 'There was a problem with your date of birth'
             variables = {
                 'form': form,
                 'application_id': application_id_local
