@@ -599,7 +599,7 @@ def personal_details_guidance(request):
         if form.is_valid():
             if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
                 status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/name?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/your-name?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -642,6 +642,7 @@ def personal_details_name(request):
             reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/dob/?id=' + application_id_local)
         else:
+            form.error_summary_title = 'There was a problem with your name details'
             variables = {
                 'form': form,
                 'application_id': application_id_local

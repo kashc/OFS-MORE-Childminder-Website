@@ -328,9 +328,9 @@ class PersonalDetailsNameForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    first_name = forms.CharField(label='First name')
+    first_name = forms.CharField(label='First name', error_messages={'required': 'Please enter your first name.'})
     middle_names = forms.CharField(label='Middle names (if you have any)', required=False)
-    last_name = forms.CharField(label='Last name')
+    last_name = forms.CharField(label='Last name', error_messages={'required': 'Please enter your last name.'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -355,10 +355,8 @@ class PersonalDetailsNameForm(GOVUKForm):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
-        if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
-            raise forms.ValidationError('TBC')
         if len(first_name) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('First name must be under 100 characters long.')
         return first_name
 
     def clean_middle_names(self):
@@ -368,10 +366,8 @@ class PersonalDetailsNameForm(GOVUKForm):
         """
         middle_names = self.cleaned_data['middle_names']
         if middle_names != '':
-            if re.match("^[A-zÀ-ÿ- ]+$", middle_names) is None:
-                raise forms.ValidationError('TBC')
             if len(middle_names) > 100:
-                raise forms.ValidationError('Please enter 100 characters or less.')
+                raise forms.ValidationError('Middle names must be under 100 characters long.')
         return middle_names
 
     def clean_last_name(self):
@@ -380,10 +376,8 @@ class PersonalDetailsNameForm(GOVUKForm):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
-        if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
-            raise forms.ValidationError('TBC')
         if len(last_name) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('Last name must be under 100 characters long.')
         return last_name
 
 

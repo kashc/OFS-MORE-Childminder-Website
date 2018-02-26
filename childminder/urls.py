@@ -25,7 +25,7 @@ urlpatterns = [
     url(r'^account/question/', views.contact_question, name='Question-View'),
     url(r'^account/account/', views.account_selection, name='Account-View'),
     url(r'^personal-details/$', views.personal_details_guidance, name='Personal-Details-Guidance-View'),
-    url(r'^personal-details/name/', views.personal_details_name, name='Personal-Details-Name-View'),
+    url(r'^personal-details/your-name/', views.personal_details_name, name='Personal-Details-Name-View'),
     url(r'^personal-details/dob/', views.personal_details_dob, name='Personal-Details-DOB-View'),
     url(r'^personal-details/home-address/', views.personal_details_home_address,
         name='Personal-Details-Home-Address-View'),
