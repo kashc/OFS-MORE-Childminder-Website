@@ -8,13 +8,13 @@ ALLOWED_HOSTS = ['*']
 PUBLIC_APPLICATION_URL = 'http://localhost:8000/childminder'
 
 # Base URL of notify gateway
-NOTIFY_URL = 'http://130.130.52.132:8095/notify-gateway'
+NOTIFY_URL = 'http://notify-gateway:8000/notify-gateway'
 
 # Base URL of payment gateway
-PAYMENT_URL = 'http://130.130.52.132:8089/payment-gateway'
+PAYMENT_URL = 'http://payment-gateway:8000/payment-gateway'
 
 # Base URL of arc-service gateway
-ADDRESSING_URL = 'http://130.130.52.132:8000/arc-service'
+ADDRESSING_URL = 'http://addressing-service:8000/addressing-service'
 
 PROD_APPS = [
 ]

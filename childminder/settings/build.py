@@ -13,7 +13,7 @@ NOTIFY_URL = 'http://notify-gateway:8000/notify-gateway'
 PAYMENT_URL = 'http://payment-gateway:8000/payment-gateway'
 
 # Base URL of arc-service gateway
-ADDRESSING_URL = 'http://arc-service:8000/arc-service'
+ADDRESSING_URL = 'http://addressing-service:8000/addressing-service'
 
 # Visa Validation
 VISA_VALIDATION = False
