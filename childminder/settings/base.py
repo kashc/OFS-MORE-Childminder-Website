@@ -17,14 +17,14 @@ SERVER_LABEL = 'Test_1'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-PROJECT_ROOT = os.path.dirname(BASE_DIR)
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '-r&u(maq#j68ngj=_ch#l6#mhak%8rbh$px8e&9c6b9@c7df=m'
+#PROJECT_ROOT = BASE_DIR
 
 # Expiry period of Magic Link Emails and Texts in hours
 SMS_EXPIRY = 1
 EMAIL_EXPIRY = 1
+
+# Visa Validation
+VISA_VALIDATION = False
 
 # INSTALLED DJANGO APPLICATIONS
 
