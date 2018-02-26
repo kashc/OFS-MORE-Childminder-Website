@@ -39,3 +39,5 @@ migrate:
 static:
 	$(PYTHON_BIN) manage.py collectstatic --settings=$(PROJECT_SETTINGS)
 
+shell:
+	$(PYTHON_BIN) manage.py shell_plus --settings=$(PROJECT_SETTINGS)
