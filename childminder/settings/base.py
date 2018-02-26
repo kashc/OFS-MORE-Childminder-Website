@@ -23,9 +23,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 SMS_EXPIRY = 1
 EMAIL_EXPIRY = 1
 
-# Visa Validation
-VISA_VALIDATION = False
-
 # INSTALLED DJANGO APPLICATIONS
 
 BUILTIN_APPS = [
