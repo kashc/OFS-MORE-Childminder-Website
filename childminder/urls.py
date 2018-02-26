@@ -29,6 +29,8 @@ urlpatterns = [
     url(r'^personal-details/your-date-of-birth/', views.personal_details_dob, name='Personal-Details-DOB-View'),
     url(r'^personal-details/your-home-address/', views.personal_details_home_address,
         name='Personal-Details-Home-Address-View'),
+    url(r'^personal-details/enter-home-address/', views.personal_details_home_address_manual,
+        name='Personal-Details-Home-Address-Manual-View'),
     url(r'^personal-details/home-address-details/', views.personal_details_location_of_care,
         name='Personal-Details-Location-Of-Care-View'),
     url(r'^personal-details/childcare-address/', views.personal_details_childcare_address,
@@ -40,12 +42,12 @@ urlpatterns = [
     url(r'^first-aid/renew/', views.first_aid_training_renew, name='First-Aid-Training-Renew-View'),
     url(r'^first-aid/training/', views.first_aid_training_training, name='First-Aid-Training-Training-View'),
     url(r'^first-aid/summary/', views.first_aid_training_summary, name='First-Aid-Training-Summary-View'),
-	# EYFS task temporarily disabled, pending final decisions on CCN3-357 in Sprint 7
-    #url(r'^eyfs/guidance/', views.eyfs_guidance, name='EYFS-Guidance-View'),
-    #url(r'^eyfs/knowledge/', views.eyfs_knowledge, name='EYFS-Knowledge-View'),
-    #url(r'^eyfs/questions/', views.eyfs_questions, name='EYFS-Questions-View'),
-    #url(r'^eyfs/training/', views.eyfs_training, name='EYFS-Training-View'),
-    #url(r'^eyfs/summary/', views.eyfs_summary, name='EYFS-Summary-View'),
+    # EYFS task temporarily disabled, pending final decisions on CCN3-357 in Sprint 7
+    # url(r'^eyfs/guidance/', views.eyfs_guidance, name='EYFS-Guidance-View'),
+    # url(r'^eyfs/knowledge/', views.eyfs_knowledge, name='EYFS-Knowledge-View'),
+    # url(r'^eyfs/questions/', views.eyfs_questions, name='EYFS-Questions-View'),
+    # url(r'^eyfs/training/', views.eyfs_training, name='EYFS-Training-View'),
+    # url(r'^eyfs/summary/', views.eyfs_summary, name='EYFS-Summary-View'),
     url(r'^criminal-record/$', views.dbs_check_guidance, name='DBS-Check-Guidance-View'),
     url(r'^dbs-check/dbs-details/', views.dbs_check_dbs_details, name='DBS-Check-DBS-Details-View'),
     url(r'^dbs-check/upload-dbs/', views.dbs_check_upload_dbs, name='DBS-Check-Upload-DBS-View'),
@@ -69,9 +71,12 @@ urlpatterns = [
     url(r'^other-people/adult-question/', views.other_people_adult_question, name='Other-People-Adult-Question-View'),
     url(r'^other-people/adult-details/', views.other_people_adult_details, name='Other-People-Adult-Details-View'),
     url(r'^other-people/adult-dbs/', views.other_people_adult_dbs, name='Other-People-Adult-DBS-View'),
-    url(r'^other-people/adult-permission/', views.other_people_adult_permission, name='Other-People-Adult-Permission-View'),
-    url(r'^other-people/children-question/', views.other_people_children_question, name='Other-People-Children-Question-View'),
-    url(r'^other-people/children-details/', views.other_people_children_details, name='Other-People-Children-Details-View'),
+    url(r'^other-people/adult-permission/', views.other_people_adult_permission,
+        name='Other-People-Adult-Permission-View'),
+    url(r'^other-people/children-question/', views.other_people_children_question,
+        name='Other-People-Children-Question-View'),
+    url(r'^other-people/children-details/', views.other_people_children_details,
+        name='Other-People-Children-Details-View'),
     url(r'^other-people/approaching-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
     url(r'^other-people/summary/', views.other_people_summary, name='Other-People-Summary-View'),
     url(r'^declaration/declaration/', views.declaration_declaration, name='Declaration-Declaration-View'),
@@ -96,9 +101,10 @@ urlpatterns = [
 
 if settings.DEBUG:
     import debug_toolbar
+
     urlpatterns = [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns
+                      url(r'^__debug__/', include(debug_toolbar.urls)),
+                  ] + urlpatterns
 
 if settings.URL_PREFIX:
     prefixed_url_pattern = []
