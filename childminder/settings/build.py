@@ -2,6 +2,7 @@ from .base import *
 
 DEBUG = True
 
+ALLOWED_HOSTS = ['*']
 PUBLIC_APPLICATION_URL = 'http://mcriscd01/childminder'
 INTERNAL_IPS = "127.0.0.1"
 
