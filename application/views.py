@@ -1258,7 +1258,7 @@ def personal_details_childcare_address(request):
                     status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
                 reset_declaration(application)
                 return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
+                    settings.URL_PREFIX + '/personal-details/check-answers?id=' + application_id_local)
             else:
                 variables = {
                     'form': form,
@@ -1266,6 +1266,77 @@ def personal_details_childcare_address(request):
                     'personal_details_status': application.personal_details_status
                 }
                 return render(request, 'personal-details-childcare-address-manual.html', variables)
+
+
+def personal_details_childcare_address_manual(request):
+    """
+    Method returning the template for the Your personal details: childcare address manual page (for a given application)
+    and navigating to the Your personal details: summary page when successfully completed;
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your personal details: childcare template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        application = Application.objects.get(pk=application_id_local)
+        form = PersonalDetailsChildcareAddressManualForm(id=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'personal_details_status': application.personal_details_status
+        }
+        return render(request, 'personal-details-childcare-address-manual.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        application = Application.objects.get(pk=application_id_local)
+        form = PersonalDetailsChildcareAddressManualForm(request.POST, id=application_id_local)
+        if form.is_valid():
+            street_line1 = form.cleaned_data.get('street_name_and_number')
+            street_line2 = form.cleaned_data.get('street_name_and_number2')
+            town = form.cleaned_data.get('town')
+            county = form.cleaned_data.get('county')
+            postcode = form.cleaned_data.get('postcode')
+            applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+            if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
+                                                   current_address=False).count() == 0:
+                childcare_address_record = ApplicantHomeAddress(street_line1=street_line1,
+                                                                street_line2=street_line2,
+                                                                town=town,
+                                                                county=county,
+                                                                postcode=postcode,
+                                                                current_address=False,
+                                                                childcare_address=True,
+                                                                move_in_month=0,
+                                                                move_in_year=0,
+                                                                personal_detail_id=applicant)
+                childcare_address_record.save()
+            elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
+                                                     current_address=False).count() > 0:
+                childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                                                            childcare_address=True,
+                                                                            current_address=False)
+                childcare_address_record.street_line1 = street_line1
+                childcare_address_record.street_line2 = street_line2
+                childcare_address_record.town = town
+                childcare_address_record.county = county
+                childcare_address_record.postcode = postcode
+                childcare_address_record.save()
+            application = Application.objects.get(pk=application_id_local)
+            application.date_updated = current_date
+            application.save()
+            if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
+                status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+            reset_declaration(application)
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/personal-details/check-answers?id=' + application_id_local)
+        else:
+            form.error_summary_title = 'There was a problem with your address'
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'personal_details_status': application.personal_details_status
+            }
+            return render(request, 'personal-details-childcare-address-manual.html', variables)
 
 
 def personal_details_summary(request):
