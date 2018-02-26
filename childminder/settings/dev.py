@@ -27,7 +27,8 @@ PAYMENT_URL = 'http://127.0.0.1:8002/payment-gateway'
 ADDRESSING_URL = 'http://127.0.0.1:8001/arc-service'
 
 DEV_APPS = [
-    'debug_toolbar'
+    'debug_toolbar',
+    'django_extensions'
 ]
 
 MIDDLEWARE_DEV = [
