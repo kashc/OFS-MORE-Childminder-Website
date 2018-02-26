@@ -41,3 +41,6 @@ static:
 
 shell:
 	$(PYTHON_BIN) manage.py shell_plus --settings=$(PROJECT_SETTINGS)
+
+graph:
+	$(PYTHON_BIN)  manage.py graph_models -a -o childminder_models.png --settings=$(PROJECT_SETTINGS)
