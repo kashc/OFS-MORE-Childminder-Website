@@ -16,4 +16,4 @@ python manage.py collectstatic --noinput
 
 # Start server
 echo "Starting server"
-python manage.py runserver 0.0.0.0:8000
+python manage.py runserver --settings=$PROJECT_SETTINGS 0.0.0.0:8000
