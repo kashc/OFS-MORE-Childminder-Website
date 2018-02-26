@@ -430,7 +430,7 @@ class PersonalDetailsHomeAddressForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    postcode = forms.CharField(label='Postcode')
+    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode.'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -453,8 +453,10 @@ class PersonalDetailsHomeAddressForm(GOVUKForm):
         :return: string
         """
         postcode = self.cleaned_data['postcode']
-        if re.match("^[A-Za-z0-9 ]{5,8}$", postcode) is None:
-            raise forms.ValidationError('TBC.')
+        postcode_no_space = postcode.replace(" ", "")
+        postcode_uppercase = postcode_no_space.upper()
+        if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
+            raise forms.ValidationError('Please enter a valid postcode.')
         return postcode
 
 
@@ -578,7 +580,8 @@ class PersonalDetailsLocationOfCareForm(GOVUKForm):
         ('False', 'No')
     )
     location_of_care = forms.ChoiceField(label='Is this where you will be looking after the children?', choices=options,
-                                         widget=InlineRadioSelect, required=True)
+                                         widget=InlineRadioSelect, required=True,
+                                         error_messages={'required': 'Please answer yes or no.'})
 
     def __init__(self, *args, **kwargs):
         """

@@ -640,7 +640,8 @@ def personal_details_name(request):
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
-            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/your-date-of-birth/?id=' + application_id_local)
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/personal-details/your-date-of-birth/?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem with your name details'
             variables = {
@@ -683,7 +684,7 @@ def personal_details_dob(request):
             application.save()
             reset_declaration(application)
             return HttpResponseRedirect(
-                settings.URL_PREFIX + '/personal-details/home-address?id=' + application_id_local +
+                settings.URL_PREFIX + '/personal-details/your-home-address?id=' + application_id_local +
                 '&manual=False&lookup=False')
         else:
             form.error_summary_title = 'There was a problem with your date of birth'
@@ -788,12 +789,15 @@ def personal_details_home_address(request):
                         application.date_updated = current_date
                         application.save()
                         if 'postcode-search' in request.POST:
-                            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address/?id=' +
-                                                        application_id_local + '&manual=False&lookup=True')
+                            return HttpResponseRedirect(
+                                settings.URL_PREFIX + '/personal-details/your-home-address/?id=' +
+                                application_id_local + '&manual=False&lookup=True')
                         if 'submit' in request.POST:
-                            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address/?id=' +
-                                                        application_id_local + '&manual=True&lookup=False')
+                            return HttpResponseRedirect(
+                                settings.URL_PREFIX + '/personal-details/your-home-address/?id=' +
+                                application_id_local + '&manual=True&lookup=False')
                     else:
+                        form.error_summary_title = 'There was a problem with your postcode'
                         variables = {
                             'form': form,
                             'application_id': application_id_local,
@@ -840,7 +844,7 @@ def personal_details_home_address(request):
                     application.save()
                     if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
                         status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-                    return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address?id=' +
+                    return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/your-home-address?id=' +
                                                 application_id_local + '&manual=True&lookup=False')
             elif lookup == 'True':
                 form = PersonalDetailsHomeAddressLookupForm(request.POST, id=application_id_local, choices=[])
@@ -876,7 +880,7 @@ def personal_details_home_address(request):
                         'postcode': postcode,
                         'personal_details_status': application.personal_details_status
                     }
-                    return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address/?id=' +
+                    return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/your-home-address/?id=' +
                                                 application_id_local + '&manual=False&lookup=True', variables)
                 else:
                     variables = {
@@ -897,7 +901,7 @@ def personal_details_home_address(request):
                     status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
                 reset_declaration(application)
                 return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/personal-details/location-of-care?id=' + application_id_local)
+                    settings.URL_PREFIX + '/personal-details/home-address-details?id=' + application_id_local)
             else:
                 variables = {
                     'form': form,
@@ -968,6 +972,7 @@ def personal_details_location_of_care(request):
                 return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address?id=' +
                                             application_id_local + '&manual=False&lookup=False')
         else:
+            form.error_summary_title = 'There was a problem with your address details'
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -3347,7 +3352,7 @@ def declaration_summary(request):
         first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
         dbs_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
         hdb_record = HealthDeclarationBooklet.objects.get(application_id=application_id_local)
-        #eyfs_record = EYFS.objects.get(application_id=application_id_local)
+        # eyfs_record = EYFS.objects.get(application_id=application_id_local)
         first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
         # Retrieve lists of adults and children, ordered by adult/child number for iteration by the HTML
@@ -3437,9 +3442,9 @@ def declaration_summary(request):
             'cautions_convictions': dbs_record.cautions_convictions,
             'declaration': dbs_record.send_certificate_declare,
             'send_hdb_declare': hdb_record.send_hdb_declare,
-            #'eyfs_understand': eyfs_record.eyfs_understand,
-            #'eyfs_training_declare': eyfs_record.eyfs_training_declare,
-            #'eyfs_questions_declare': eyfs_record.eyfs_questions_declare,
+            # 'eyfs_understand': eyfs_record.eyfs_understand,
+            # 'eyfs_training_declare': eyfs_record.eyfs_training_declare,
+            # 'eyfs_questions_declare': eyfs_record.eyfs_questions_declare,
             'first_reference_first_name': first_reference_record.first_name,
             'first_reference_last_name': first_reference_record.last_name,
             'first_reference_relationship': first_reference_record.relationship,
