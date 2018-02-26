@@ -2,20 +2,20 @@ from .base import *
 
 DEBUG = True
 
+PUBLIC_APPLICATION_URL = 'http://mcriscd01/childminder'
+INTERNAL_IPS = "127.0.0.1"
+
 # Base URL of notify gateway
-NOTIFY_URL = 'http://130.130.52.132:8095/notify-gateway'
+NOTIFY_URL = 'http://notify-gateway:8000/notify-gateway'
 
 # Base URL of payment gateway
-PAYMENT_URL = 'http://130.130.52.132:8089/payment-gateway'
+PAYMENT_URL = 'http://payment-gateway:8000/payment-gateway'
 
 # Base URL of arc-service gateway
-ADDRESSING_URL = 'http://130.130.52.132:8000/arc-service'
+ADDRESSING_URL = 'http://arc-service:8000/arc-service'
 
 # Visa Validation
 VISA_VALIDATION = False
-
-PUBLIC_APPLICATION_URL = 'http://localhost:8000/childminder'
-INTERNAL_IPS = "127.0.0.1"
 
 DEV_APPS = [
     'debug_toolbar'
@@ -34,8 +34,8 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': os.environ.get('DATABASE_USER', 'ofsted'),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'OfstedB3ta'),
-        'HOST': os.environ.get('DATABASE_HOST', '130.130.52.132'),
-        'PORT': os.environ.get('DATABASE_PORT', '5462')
+        'HOST': os.environ.get('DATABASE_HOST', 'ofsted-postgres'),
+        'PORT': os.environ.get('DATABASE_PORT', '5432')
     }
 }
 
