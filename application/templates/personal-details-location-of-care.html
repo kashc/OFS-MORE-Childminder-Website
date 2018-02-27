@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Personal details{% endblock %}
+{% block page_title %}Your home address details{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -10,8 +10,8 @@
 
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/personal-details/home-address?id={{application_id}}&manual=True&lookup=False" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt="Back to application list">
+        <a href="{{ URL_PREFIX }}/personal-details/your-home-address?id={{application_id}}&manual=True&lookup=False" class="link-back"
+           style="margin-right: 10px; line-height: 28px">
             Back
         </a>
     </div>
@@ -19,7 +19,7 @@
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->
         <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
+            <h1 class="form-title heading-large" style="margin-top: 0px;">
                 Your home address details
             </h1>
             {% if street_line2 and county %}
@@ -34,7 +34,7 @@
             </br>
             {{form.as_div}}
             {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+            <input type="submit" class="button" value="Save and continue">
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         </div>
         </br>

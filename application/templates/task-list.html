@@ -58,11 +58,11 @@
                 <tr id="personal_details">
                     <td class="task" style="padding-right: 10px; word-wrap: break-word;">
                         {% if personal_details_status == 'NOT_STARTED' %}
-                        <a href="{{ URL_PREFIX }}/personal-details/guidance?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/personal-details?id={{application_id}}">
                             <span class="task-name">Your personal details</span><strong class="task-finished task-to-do">To do</strong>
                         </a>
                         {% elif personal_details_status == 'IN_PROGRESS' %}
-                        <a href="{{ URL_PREFIX }}/personal-details/guidance?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/personal-details?id={{application_id}}">
                             <span class="task-name">Your personal details</span><strong class="task-finished task-in-progress">Started</strong>
                         </a>
                         {% elif personal_details_status == 'COMPLETED' %}

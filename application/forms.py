@@ -10,12 +10,11 @@ import re
 from datetime import date
 from django import forms
 from django.conf import settings
-from govuk_forms.fields import SplitDateField
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 from govuk_forms.fields import SplitDateField
 
-from .customfields import TimeKnownField, ExpirySplitDateWidget, SelectDateWidget, ExpirySplitDateField
+from .customfields import TimeKnownField, SelectDateWidget, ExpirySplitDateField, CustomSplitDateFieldDOB
 from .models import (AdultInHome,
                      ApplicantHomeAddress,
                      ApplicantName,
@@ -328,9 +327,9 @@ class PersonalDetailsNameForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    first_name = forms.CharField(label='First name')
+    first_name = forms.CharField(label='First name', error_messages={'required': 'Please enter your first name.'})
     middle_names = forms.CharField(label='Middle names (if you have any)', required=False)
-    last_name = forms.CharField(label='Last name')
+    last_name = forms.CharField(label='Last name', error_messages={'required': 'Please enter your last name.'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -355,10 +354,8 @@ class PersonalDetailsNameForm(GOVUKForm):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
-        if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
-            raise forms.ValidationError('TBC')
         if len(first_name) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('First name must be under 100 characters long.')
         return first_name
 
     def clean_middle_names(self):
@@ -368,10 +365,8 @@ class PersonalDetailsNameForm(GOVUKForm):
         """
         middle_names = self.cleaned_data['middle_names']
         if middle_names != '':
-            if re.match("^[A-zÀ-ÿ- ]+$", middle_names) is None:
-                raise forms.ValidationError('TBC')
             if len(middle_names) > 100:
-                raise forms.ValidationError('Please enter 100 characters or less.')
+                raise forms.ValidationError('Middle names must be under 100 characters long.')
         return middle_names
 
     def clean_last_name(self):
@@ -380,10 +375,8 @@ class PersonalDetailsNameForm(GOVUKForm):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
-        if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
-            raise forms.ValidationError('TBC')
         if len(last_name) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('Last name must be under 100 characters long.')
         return last_name
 
 
@@ -393,7 +386,8 @@ class PersonalDetailsDOBForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    date_of_birth = SplitDateField(label='Date of birth', help_text='For example, 31 03 1980')
+    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={
+        'required': 'Please enter the full date, including the day, month and year'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -422,7 +416,11 @@ class PersonalDetailsDOBForm(GOVUKForm):
         today = date.today()
         age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
         if age < 18:
-            raise forms.ValidationError('You have to be 18 to childmind.')
+            raise forms.ValidationError('You must be 18 or older to be a childminder.')
+        date_today_diff = today.year - applicant_dob.year - (
+                (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
+        if date_today_diff < 0:
+            raise forms.ValidationError('Please check the year.')
         return birth_day, birth_month, birth_year
 
 
@@ -432,7 +430,7 @@ class PersonalDetailsHomeAddressForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    postcode = forms.CharField(label='Postcode')
+    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode.'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -455,8 +453,10 @@ class PersonalDetailsHomeAddressForm(GOVUKForm):
         :return: string
         """
         postcode = self.cleaned_data['postcode']
-        if re.match("^[A-Za-z0-9 ]{5,8}$", postcode) is None:
-            raise forms.ValidationError('TBC.')
+        postcode_no_space = postcode.replace(" ", "")
+        postcode_uppercase = postcode_no_space.upper()
+        if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
+            raise forms.ValidationError('Please enter a valid postcode.')
         return postcode
 
 
@@ -466,11 +466,13 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    street_name_and_number = forms.CharField(label='Address line 1')
+    street_name_and_number = forms.CharField(label='Address line 1', error_messages={
+        'required': 'Please enter the first line of your address.'})
     street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
-    town = forms.CharField(label='Town or city')
+    town = forms.CharField(label='Town or city',
+                           error_messages={'required': 'Please enter the name of the town or city.'})
     county = forms.CharField(label='County (optional)', required=False)
-    postcode = forms.CharField(label='Postcode')
+    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode.'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -499,8 +501,8 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         :return: string
         """
         street_name_and_number = self.cleaned_data['street_name_and_number']
-        if len(street_name_and_number) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+        if len(street_name_and_number) > 50:
+            raise forms.ValidationError('The first line of your address must be under 50 characters long.')
         return street_name_and_number
 
     def clean_street_name_and_number2(self):
@@ -509,8 +511,8 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         :return: string
         """
         street_name_and_number2 = self.cleaned_data['street_name_and_number2']
-        if len(street_name_and_number2) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+        if len(street_name_and_number2) > 50:
+            raise forms.ValidationError('The second line of your address must be under 50 characters long.')
         return street_name_and_number2
 
     def clean_town(self):
@@ -520,9 +522,9 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         """
         town = self.cleaned_data['town']
         if re.match("^[A-Za-z- ]+$", town) is None:
-            raise forms.ValidationError('TBC.')
-        if len(town) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('Please spell out the name of the town or city using letters.')
+        if len(town) > 50:
+            raise forms.ValidationError('The name of the town or city must be under 50 characters long.')
         return town
 
     def clean_county(self):
@@ -533,9 +535,9 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         county = self.cleaned_data['county']
         if county != '':
             if re.match("^[A-Za-z- ]+$", county) is None:
-                raise forms.ValidationError('TBC.')
-            if len(county) > 100:
-                raise forms.ValidationError('Please enter 100 characters or less.')
+                raise forms.ValidationError('Please spell out the name of the county using letters.')
+            if len(county) > 50:
+                raise forms.ValidationError('The name of the county must be under 50 characters long.')
         return county
 
     def clean_postcode(self):
@@ -544,8 +546,10 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         :return: string
         """
         postcode = self.cleaned_data['postcode']
-        if re.match("^[A-Za-z0-9 ]{5,8}$", postcode) is None:
-            raise forms.ValidationError('TBC.')
+        postcode_no_space = postcode.replace(" ", "")
+        postcode_uppercase = postcode_no_space.upper()
+        if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
+            raise forms.ValidationError('Please enter a valid postcode.')
         return postcode
 
 
@@ -580,7 +584,8 @@ class PersonalDetailsLocationOfCareForm(GOVUKForm):
         ('False', 'No')
     )
     location_of_care = forms.ChoiceField(label='Is this where you will be looking after the children?', choices=options,
-                                         widget=InlineRadioSelect, required=True)
+                                         widget=InlineRadioSelect, required=True,
+                                         error_messages={'required': 'Please answer yes or no.'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -795,7 +800,8 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
         course_year = self.cleaned_data['course_date'].year
         course_date = date(course_year, course_month, course_day)
         today = date.today()
-        date_today_diff = today.year - course_date.year - ((today.month, today.day) < (course_date.month, course_date.day))
+        date_today_diff = today.year - course_date.year - (
+                (today.month, today.day) < (course_date.month, course_date.day))
         if date_today_diff < 0:
             raise forms.ValidationError('Please enter a past date.')
         return course_day, course_month, course_year
