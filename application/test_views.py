@@ -53,9 +53,11 @@ from application.views import (application_saved,
                                payment_confirmation,
                                paypal_payment_completion,
                                personal_details_childcare_address,
+                               personal_details_childcare_address_manual,
                                personal_details_dob,
                                personal_details_guidance,
                                personal_details_home_address,
+                               personal_details_home_address_manual,
                                personal_details_location_of_care,
                                personal_details_name,
                                personal_details_summary,
@@ -271,70 +273,82 @@ class LoginAndContactDetailsTest(TestCase):
 class PersonalDetailsTest(TestCase):
 
     def test_guidance_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/personal-details/guidance/')
+        found = resolve(settings.URL_PREFIX + '/personal-details/')
         self.assertEqual(found.func, personal_details_guidance)
 
     def test_guidance_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/personal-details/guidance/?id=')
+            c.get(settings.URL_PREFIX + '/personal-details?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
     def test_name_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/personal-details/name/')
+        found = resolve(settings.URL_PREFIX + '/personal-details/your-name/')
         self.assertEqual(found.func, personal_details_name)
 
     def test_name_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/personal-details/name/?id=')
+            c.get(settings.URL_PREFIX + '/personal-details/your-name/?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
     def test_dob_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/personal-details/dob/')
+        found = resolve(settings.URL_PREFIX + '/personal-details/your-date-of-birth/')
         self.assertEqual(found.func, personal_details_dob)
 
     def test_dob_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/personal-details/dob/?id=')
+            c.get(settings.URL_PREFIX + '/personal-details/your-date-of-birth/?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
     def test_home_address_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/personal-details/home-address/')
+        found = resolve(settings.URL_PREFIX + '/personal-details/your-home-address/')
         self.assertEqual(found.func, personal_details_home_address)
 
     def test_home_address_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/personal-details/home-address/?id=')
+            c.get(settings.URL_PREFIX + '/personal-details/your-home-address/?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_home_address_manual_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/personal-details/enter-home-address/')
+        self.assertEqual(found.func, personal_details_home_address_manual)
+
+    def test_home_address_manual_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/personal-details/enter-home-address/?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
     def test_location_of_care_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/personal-details/location-of-care/')
+        found = resolve(settings.URL_PREFIX + '/personal-details/home-address-details/')
         self.assertEqual(found.func, personal_details_location_of_care)
 
     def test_location_of_care_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/personal-details/location-of-care/?id=')
+            c.get(settings.URL_PREFIX + '/personal-details/home-address-details/?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
-    def test_location_of_care_url_resolves_to_page(self):
+    def test_childcare_address_url_resolves_to_page(self):
         found = resolve(settings.URL_PREFIX + '/personal-details/childcare-address/')
         self.assertEqual(found.func, personal_details_childcare_address)
 
-    def test_location_of_care_page_not_displayed_without_id(self):
+    def test_childcare_address_page_not_displayed_without_id(self):
         c = Client()
         try:
             c.get(settings.URL_PREFIX + '/personal-details/childcare-address/?id=')
@@ -342,14 +356,26 @@ class PersonalDetailsTest(TestCase):
         except:
             self.assertEqual(0, 0)
 
-    def test_location_of_care_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/personal-details/summary/')
-        self.assertEqual(found.func, personal_details_summary)
+    def test_childcare_address_manual_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/personal-details/enter-childcare-address/')
+        self.assertEqual(found.func, personal_details_childcare_address_manual)
 
-    def test_location_of_care_page_not_displayed_without_id(self):
+    def test_childcare_address_manual_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/personal-details/summary/?id=')
+            c.get(settings.URL_PREFIX + '/personal-details/enter-childcare-address/?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_summary_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/personal-details/check-answers/')
+        self.assertEqual(found.func, personal_details_summary)
+
+    def test_summary_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/personal-details/check-answers/?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -423,13 +449,13 @@ class FirstAidTrainingTest(TestCase):
             self.assertEqual(0, 0)
 
     def test_declaration_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/first-aid/declaration/')
+        found = resolve(settings.URL_PREFIX + '/first-aid/certificate/')
         self.assertEqual(found.func, first_aid_training_declaration)
 
     def test_declaration_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/first-aid/declaration?id=')
+            c.get(settings.URL_PREFIX + '/first-aid/certificate?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -447,13 +473,13 @@ class FirstAidTrainingTest(TestCase):
             self.assertEqual(0, 0)
 
     def test_training_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/first-aid/training/')
+        found = resolve(settings.URL_PREFIX + '/first-aid/update/')
         self.assertEqual(found.func, first_aid_training_training)
 
     def test_training_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/first-aid/training?id=')
+            c.get(settings.URL_PREFIX + '/first-aid/update?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
