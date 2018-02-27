@@ -12,7 +12,7 @@ python manage.py migrate application --settings=$PROJECT_SETTINGS
 
 #Collect static resources
 echo "Collecting static assets"
-python manage.py collectstatic --noinput
+python manage.py collectstatic --settings=$PROJECT_SETTINGS --noinput
 
 # Start server
 echo "Starting server"
