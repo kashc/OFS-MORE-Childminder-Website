@@ -13,6 +13,7 @@ from datetime import date
 from uuid import UUID
 
 from django.conf import settings
+from django.forms.utils import ErrorList
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.cache import never_cache
@@ -706,210 +707,151 @@ def personal_details_home_address(request):
     current_date = datetime.datetime.today()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        manual = request.GET["manual"]
-        lookup = request.GET["lookup"]
         application = Application.objects.get(pk=application_id_local)
-        # Switch between manual address entry and postcode search
-        if lookup == 'False':
-            if manual == 'False':
-                form = PersonalDetailsHomeAddressForm(id=application_id_local)
-                variables = {
-                    'form': form,
-                    'application_id': application_id_local,
-                    'personal_details_status': application.personal_details_status
-                }
-                return render(request, 'personal-details-home-address.html', variables)
-            elif manual == 'True':
-                form = PersonalDetailsHomeAddressManualForm(id=application_id_local)
-                variables = {
-                    'form': form,
-                    'application_id': application_id_local,
-                    'personal_details_status': application.personal_details_status
-                }
-                return render(request, 'personal-details-home-address-manual.html', variables)
-        # Postcode search page
-        elif lookup == 'True':
-            applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-            home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
-            postcode = home_address_record.postcode
-            addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
-            if len(addresses) != 0:
-                form = PersonalDetailsHomeAddressLookupForm(id=application_id_local, choices=addresses)
-                variables = {
-                    'form': form,
-                    'application_id': application_id_local,
-                    'postcode': postcode,
-                    'personal_details_status': application.personal_details_status
-                }
-                return render(request, 'personal-details-home-address-lookup.html', variables)
-            else:
-                form = PersonalDetailsHomeAddressForm(id=application_id_local)
-                form.errors['postcode'] = {'Please enter a valid postcode.': 'invalid'}
-                variables = {
-                    'form': form,
-                    'application_id': application_id_local,
-                    'personal_details_status': application.personal_details_status
-                }
-                return render(request, 'personal-details-home-address.html', variables)
+        form = PersonalDetailsHomeAddressForm(id=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'personal_details_status': application.personal_details_status
+        }
+        return render(request, 'personal-details-home-address.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        manual = request.POST["manual"]
-        lookup = request.POST["lookup"]
-        finish = request.POST["finish"]
         application = Application.objects.get(pk=application_id_local)
-        if finish == 'False':
-            # Switch between manual address entry and postcode search
-            if lookup == 'False':
-                if manual == 'False':
-                    form = PersonalDetailsHomeAddressForm(request.POST, id=application_id_local)
-                    if form.is_valid():
-                        postcode = form.cleaned_data.get('postcode')
-                        applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-                        if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,
-                                                               current_address=True).count() == 0:
-                            home_address_record = ApplicantHomeAddress(street_line1='',
-                                                                       street_line2='',
-                                                                       town='',
-                                                                       county='',
-                                                                       country='',
-                                                                       postcode=postcode,
-                                                                       current_address=True,
-                                                                       childcare_address=None,
-                                                                       move_in_month=0,
-                                                                       move_in_year=0,
-                                                                       personal_detail_id=applicant)
-                            home_address_record.save()
-                        elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,
-                                                                 current_address=True).count() > 0:
-                            home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
-                                                                                   current_address=True)
-                            home_address_record.postcode = postcode
-                            home_address_record.save()
-                        application = Application.objects.get(pk=application_id_local)
-                        application.date_updated = current_date
-                        application.save()
-                        if 'postcode-search' in request.POST:
-                            return HttpResponseRedirect(
-                                settings.URL_PREFIX + '/personal-details/your-home-address/?id=' +
-                                application_id_local + '&manual=False&lookup=True')
-                        if 'submit' in request.POST:
-                            return HttpResponseRedirect(
-                                settings.URL_PREFIX + '/personal-details/your-home-address/?id=' +
-                                application_id_local + '&manual=True&lookup=False')
-                    else:
-                        form.error_summary_title = 'There was a problem with your postcode'
-                        variables = {
-                            'form': form,
-                            'application_id': application_id_local,
-                            'personal_details_status': application.personal_details_status
-                        }
-                        return render(request, 'personal-details-home-address.html', variables)
-                if manual == 'True':
-                    form = PersonalDetailsHomeAddressManualForm(request.POST, id=application_id_local)
-                    selected_address = address_helper.AddressHelper.get_posted_address(form, 'address')
-                    line1 = selected_address['line1']
-                    line2 = selected_address['line2']
-                    town = selected_address['townOrCity']
-                    postcode = selected_address['postcode']
-                    personal_detail_record = ApplicantPersonalDetails.objects.get(
-                        application_id=application_id_local)
-                    personal_detail_id = personal_detail_record.personal_detail_id
-                    # If the user entered information for this task for the first time
-                    if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
-                        home_address_record = ApplicantHomeAddress(street_line1=line1,
-                                                                   street_line2=line2,
-                                                                   town=town,
-                                                                   county='',
-                                                                   country='United Kingdom',
-                                                                   postcode=postcode,
-                                                                   childcare_address=None,
-                                                                   current_address=True,
-                                                                   move_in_month=0,
-                                                                   move_in_year=0,
-                                                                   personal_detail_id=personal_detail_record)
-                        home_address_record.save()
-                    # If the user previously entered information for this task
-                    elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
-                                                             current_address=True).count() > 0:
-                        home_address_record = ApplicantHomeAddress.objects.get(
-                            personal_detail_id=personal_detail_id,
-                            current_address=True)
-                        home_address_record.street_line1 = line1
-                        home_address_record.street_line2 = line2
-                        home_address_record.town = town
-                        home_address_record.postcode = postcode
-                        home_address_record.save()
-                    application = Application.objects.get(pk=application_id_local)
-                    application.date_updated = current_date
-                    application.save()
-                    if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
-                        status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-                    return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/your-home-address?id=' +
-                                                application_id_local + '&manual=True&lookup=False')
-            elif lookup == 'True':
-                form = PersonalDetailsHomeAddressLookupForm(request.POST, id=application_id_local, choices=[])
-                if form.is_valid():
-                    postcode = form.cleaned_data.get('postcode')
-                    applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-                    if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,
-                                                           current_address=True).count() == 0:
-                        home_address_record = ApplicantHomeAddress(street_line1='',
-                                                                   street_line2='',
-                                                                   town='',
-                                                                   county='',
-                                                                   country='',
-                                                                   postcode=postcode,
-                                                                   current_address=True,
-                                                                   childcare_address=None,
-                                                                   move_in_month=0,
-                                                                   move_in_year=0,
-                                                                   personal_detail_id=applicant)
-                        home_address_record.save()
-                    elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,
-                                                             current_address=True).count() > 0:
-                        home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
-                                                                               current_address=True)
-                        home_address_record.postcode = postcode
-                        home_address_record.save()
-                    application = Application.objects.get(pk=application_id_local)
-                    application.date_updated = current_date
-                    application.save()
-                    variables = {
-                        'form': form,
-                        'application_id': application_id_local,
-                        'postcode': postcode,
-                        'personal_details_status': application.personal_details_status
-                    }
-                    return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/your-home-address/?id=' +
-                                                application_id_local + '&manual=False&lookup=True', variables)
-                else:
-                    variables = {
-                        'form': form,
-                        'application_id': application_id_local,
-                        'personal_details_status': application.personal_details_status
-                    }
-                    return render(request, 'personal-details-home-address-lookup.html', variables)
-        elif finish == 'True':
-            form = PersonalDetailsHomeAddressManualForm(request.POST, id=application_id_local)
-            if form.is_valid():
-                home_address_record = personal_home_address_logic(application_id_local, form)
+        form = PersonalDetailsHomeAddressForm(request.POST, id=application_id_local)
+        if form.is_valid():
+            postcode = form.cleaned_data.get('postcode')
+            applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+            if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,
+                                                   current_address=True).count() == 0:
+                home_address_record = ApplicantHomeAddress(street_line1='',
+                                                           street_line2='',
+                                                           town='',
+                                                           county='',
+                                                           country='',
+                                                           postcode=postcode,
+                                                           current_address=True,
+                                                           childcare_address=None,
+                                                           move_in_month=0,
+                                                           move_in_year=0,
+                                                           personal_detail_id=applicant)
                 home_address_record.save()
-                application = Application.objects.get(pk=application_id_local)
-                application.date_updated = current_date
-                application.save()
-                if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
-                    status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-                reset_declaration(application)
+            elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,
+                                                     current_address=True).count() > 0:
+                home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                                                       current_address=True)
+                home_address_record.postcode = postcode
+                home_address_record.save()
+            application = Application.objects.get(pk=application_id_local)
+            application.date_updated = current_date
+            application.save()
+            if 'postcode-search' in request.POST:
                 return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/personal-details/home-address-details?id=' + application_id_local)
-            else:
-                form.error_summary_title = 'There was a problem with your address'
-                variables = {
-                    'form': form,
-                    'application_id': application_id_local,
-                    'personal_details_status': application.personal_details_status
-                }
-                return render(request, 'personal-details-home-address-manual.html', variables)
+                    settings.URL_PREFIX + '/personal-details/select-home-address/?id=' + application_id_local)
+            if 'submit' in request.POST:
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/personal-details/enter-home-address/?id=' + application_id_local)
+        else:
+            form.error_summary_title = 'There was a problem with your postcode'
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'personal_details_status': application.personal_details_status
+            }
+            return render(request, 'personal-details-home-address.html', variables)
+
+
+def personal_details_home_address_select(request):
+    """
+    Method returning the template for the Your personal details: select home address page (for a given application)
+    and navigating to the Your personal details: location of care page when successfully completed;
+    business logic is applied to either create or update the associated Applicant_Name record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your personal details: home address template
+    """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        application = Application.objects.get(pk=application_id_local)
+        applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+        home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
+        postcode = home_address_record.postcode
+        addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
+        if len(addresses) != 0:
+            form = PersonalDetailsHomeAddressLookupForm(id=application_id_local, choices=addresses)
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'postcode': postcode,
+                'personal_details_status': application.personal_details_status
+            }
+            return render(request, 'personal-details-home-address-lookup.html', variables)
+        else:
+            form = PersonalDetailsHomeAddressForm(id=application_id_local)
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'personal_details_status': application.personal_details_status
+            }
+            return render(request, 'personal-details-home-address.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        application = Application.objects.get(pk=application_id_local)
+        applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+        home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
+        postcode = home_address_record.postcode
+        addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
+        form = PersonalDetailsHomeAddressLookupForm(request.POST, id=application_id_local, choices=addresses)
+        if form.is_valid():
+            form = PersonalDetailsHomeAddressManualForm(request.POST, id=application_id_local)
+            selected_address = address_helper.AddressHelper.get_posted_address(form, 'address')
+            line1 = selected_address['line1']
+            line2 = selected_address['line2']
+            town = selected_address['townOrCity']
+            postcode = selected_address['postcode']
+            personal_detail_record = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+            personal_detail_id = personal_detail_record.personal_detail_id
+            # If the user entered information for this task for the first time
+            if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
+                home_address_record = ApplicantHomeAddress(street_line1=line1,
+                                                           street_line2=line2,
+                                                           town=town,
+                                                           county='',
+                                                           country='United Kingdom',
+                                                           postcode=postcode,
+                                                           childcare_address=None,
+                                                           current_address=True,
+                                                           move_in_month=0,
+                                                           move_in_year=0,
+                                                           personal_detail_id=personal_detail_record)
+                home_address_record.save()
+            # If the user previously entered information for this task
+            elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
+                                                     current_address=True).count() > 0:
+                home_address_record = ApplicantHomeAddress.objects.get(
+                    personal_detail_id=personal_detail_id,
+                    current_address=True)
+                home_address_record.street_line1 = line1
+                home_address_record.street_line2 = line2
+                home_address_record.town = town
+                home_address_record.postcode = postcode
+                home_address_record.save()
+            application = Application.objects.get(pk=application_id_local)
+            application.date_updated = current_date
+            application.save()
+            if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
+                status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/enter-home-address?id=' +
+                                        application_id_local)
+        else:
+            form.error_summary_title = 'There was a problem finding your address'
+            variables = {
+                'postcode': postcode,
+                'form': form,
+                'application_id': application_id_local,
+                'personal_details_status': application.personal_details_status
+            }
+            return render(request, 'personal-details-home-address-lookup.html', variables)
 
 
 def personal_details_home_address_manual(request):
@@ -1035,237 +977,154 @@ def personal_details_childcare_address(request):
     current_date = datetime.datetime.today()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        manual = request.GET["manual"]
-        lookup = request.GET["lookup"]
         application = Application.objects.get(pk=application_id_local)
-        # Switch between manual address entry and postcode search
-        if lookup == 'False':
-            if manual == 'False':
-                form = PersonalDetailsChildcareAddressForm(id=application_id_local)
-                variables = {
-                    'form': form,
-                    'application_id': application_id_local,
-                    'personal_details_status': application.personal_details_status
-                }
-                return render(request, 'personal-details-childcare-address.html', variables)
-            elif manual == 'True':
-                form = PersonalDetailsChildcareAddressManualForm(id=application_id_local)
-                variables = {
-                    'form': form,
-                    'application_id': application_id_local,
-                    'personal_details_status': application.personal_details_status
-                }
-                return render(request, 'personal-details-childcare-address-manual.html', variables)
-        # Postcode search page
-        elif lookup == 'True':
-            applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-            childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
-                                                                        childcare_address=True)
-            postcode = childcare_address_record.postcode
-            addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
-            if len(addresses) != 0:
-                form = PersonalDetailsChildcareAddressLookupForm(id=application_id_local, choices=addresses)
-                variables = {
-                    'form': form,
-                    'application_id': application_id_local,
-                    'postcode': postcode,
-                    'personal_details_status': application.personal_details_status
-                }
-                return render(request, 'personal-details-childcare-address-lookup.html', variables)
-            else:
-                form = PersonalDetailsChildcareAddressForm(id=application_id_local)
-                form.errors['postcode'] = {'Please enter a valid postcode.': 'invalid'}
-                variables = {
-                    'form': form,
-                    'application_id': application_id_local,
-                    'personal_details_status': application.personal_details_status
-                }
-                return render(request, 'personal-details-childcare-address.html', variables)
+        form = PersonalDetailsChildcareAddressForm(id=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'personal_details_status': application.personal_details_status
+        }
+        return render(request, 'personal-details-childcare-address.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        manual = request.POST["manual"]
-        lookup = request.POST["lookup"]
-        finish = request.POST["finish"]
         application = Application.objects.get(pk=application_id_local)
-        if finish == 'False':
-            # Switch between manual address entry and postcode search
-            if lookup == 'False':
-                if manual == 'False':
-                    form = PersonalDetailsChildcareAddressForm(request.POST, id=application_id_local)
-                    if form.is_valid():
-                        postcode = form.cleaned_data.get('postcode')
-                        applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-                        if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
-                                                               current_address=False).count() == 0:
-                            childcare_address_record = ApplicantHomeAddress(street_line1='',
-                                                                            street_line2='',
-                                                                            town='',
-                                                                            county='',
-                                                                            country='',
-                                                                            postcode=postcode,
-                                                                            current_address=False,
+        form = PersonalDetailsChildcareAddressForm(request.POST, id=application_id_local)
+        if form.is_valid():
+            postcode = form.cleaned_data.get('postcode')
+            applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+            if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
+                                                   current_address=False).count() == 0:
+                childcare_address_record = ApplicantHomeAddress(street_line1='',
+                                                                street_line2='',
+                                                                town='',
+                                                                county='',
+                                                                country='',
+                                                                postcode=postcode,
+                                                                current_address=False,
+                                                                childcare_address=True,
+                                                                move_in_month=0,
+                                                                move_in_year=0,
+                                                                personal_detail_id=applicant)
+                childcare_address_record.save()
+            elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
+                                                     current_address=False).count() > 0:
+                childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
                                                                             childcare_address=True,
-                                                                            move_in_month=0,
-                                                                            move_in_year=0,
-                                                                            personal_detail_id=applicant)
-                            childcare_address_record.save()
-                        elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
-                                                                 current_address=False).count() > 0:
-                            childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
-                                                                                        childcare_address=True,
-                                                                                        current_address=False)
-                            childcare_address_record.postcode = postcode
-                            childcare_address_record.save()
-                        application = Application.objects.get(pk=application_id_local)
-                        application.date_updated = current_date
-                        application.save()
-                        if 'postcode-search' in request.POST:
-                            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address/?id='
-                                                        + application_id_local + '&manual=False&lookup=True')
-                        if 'submit' in request.POST:
-                            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address/?id='
-                                                        + application_id_local + '&manual=True&lookup=False')
-                    else:
-                        variables = {
-                            'form': form,
-                            'application_id': application_id_local,
-                            'personal_details_status': application.personal_details_status
-                        }
-                        return render(request, 'personal-details-childcare-address.html', variables)
-                if manual == 'True':
-                    form = PersonalDetailsChildcareAddressManualForm(request.POST, id=application_id_local)
-                    selected_address = address_helper.AddressHelper.get_posted_address(form, 'address')
-                    line1 = selected_address['line1']
-                    line2 = selected_address['line2']
-                    town = selected_address['townOrCity']
-                    postcode = selected_address['postcode']
-                    personal_detail_record = ApplicantPersonalDetails.objects.get(
-                        application_id=application_id_local)
-                    personal_detail_id = personal_detail_record.personal_detail_id
-                    # If the user entered information for this task for the first time
-                    if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
-                                                           childcare_address=True, current_address=False).count() == 0:
-                        childcare_address_record = ApplicantHomeAddress(street_line1=line1,
-                                                                        street_line2=line2,
-                                                                        town=town,
-                                                                        county='',
-                                                                        country='United Kingdom',
-                                                                        postcode=postcode,
-                                                                        childcare_address=True,
-                                                                        current_address=False,
-                                                                        move_in_month=0,
-                                                                        move_in_year=0,
-                                                                        personal_detail_id=personal_detail_record)
-                        childcare_address_record.save()
-                    # If the user previously entered information for this task
-                    elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
-                                                             childcare_address=True, current_address=False).count() > 0:
-                        childcare_address_record = ApplicantHomeAddress.objects.get(
-                            personal_detail_id=personal_detail_id, childcare_address=True, current_address=False)
-                        childcare_address_record.street_line1 = line1
-                        childcare_address_record.street_line2 = line2
-                        childcare_address_record.town = town
-                        childcare_address_record.postcode = postcode
-                        childcare_address_record.save()
-                    application = Application.objects.get(pk=application_id_local)
-                    application.date_updated = current_date
-                    application.save()
-                    if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
-                        status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-                    return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address?id=' +
-                                                application_id_local + '&manual=True&lookup=False')
-            elif lookup == 'True':
-                form = PersonalDetailsChildcareAddressLookupForm(request.POST, id=application_id_local, choices=[])
-                if form.is_valid():
-                    postcode = form.cleaned_data.get('postcode')
-                    applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-                    if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
-                                                           current_address=False).count() == 0:
-                        childcare_address_record = ApplicantHomeAddress(street_line1='',
-                                                                        street_line2='',
-                                                                        town='',
-                                                                        county='',
-                                                                        country='',
-                                                                        postcode=postcode,
-                                                                        current_address=False,
-                                                                        childcare_address=True,
-                                                                        move_in_month=0,
-                                                                        move_in_year=0,
-                                                                        personal_detail_id=applicant)
-                        childcare_address_record.save()
-                    elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
-                                                             current_address=False).count() > 0:
-                        childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
-                                                                                    childcare_address=True,
-                                                                                    current_address=False)
-                        childcare_address_record.postcode = postcode
-                        childcare_address_record.save()
-                    application = Application.objects.get(pk=application_id_local)
-                    application.date_updated = current_date
-                    application.save()
-                    variables = {
-                        'form': form,
-                        'application_id': application_id_local,
-                        'postcode': postcode,
-                        'personal_details_status': application.personal_details_status
-                    }
-                    return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address/?id=' +
-                                                application_id_local + '&manual=False&lookup=True', variables)
-                else:
-                    variables = {
-                        'form': form,
-                        'application_id': application_id_local,
-                        'personal_details_status': application.personal_details_status
-                    }
-                    return render(request, 'personal-details-childcare-address-lookup.html', variables)
-        elif finish == 'True':
+                                                                            current_address=False)
+                childcare_address_record.postcode = postcode
+                childcare_address_record.save()
+            application = Application.objects.get(pk=application_id_local)
+            application.date_updated = current_date
+            application.save()
+            if 'postcode-search' in request.POST:
+                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/select-childcare-address/?id='
+                                            + application_id_local)
+            if 'submit' in request.POST:
+                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/enter-childcare-address/?id='
+                                            + application_id_local)
+        else:
+            form.error_summary_title = 'There was a problem with your postcode'
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'personal_details_status': application.personal_details_status
+            }
+            return render(request, 'personal-details-childcare-address.html', variables)
+
+
+def personal_details_childcare_address_select(request):
+    """
+        Method returning the template for the Your personal details: select childcare address page (for a given
+        application) and navigating to the Your personal details: location of care page when successfully completed;
+        business logic is applied to either create or update the associated Applicant_Name record
+        :param request: a request object used to generate the HttpResponse
+        :return: an HttpResponse object with the rendered Your personal details: childcare address template
+        """
+    current_date = datetime.datetime.today()
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        application = Application.objects.get(pk=application_id_local)
+        applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+        childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                                                    childcare_address=True)
+        postcode = childcare_address_record.postcode
+        addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
+        if len(addresses) != 0:
+            form = PersonalDetailsChildcareAddressLookupForm(id=application_id_local, choices=addresses)
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'postcode': postcode,
+                'personal_details_status': application.personal_details_status
+            }
+            return render(request, 'personal-details-childcare-address-lookup.html', variables)
+        else:
+            form = PersonalDetailsChildcareAddressForm(id=application_id_local)
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'personal_details_status': application.personal_details_status
+            }
+            return render(request, 'personal-details-childcare-address.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        application = Application.objects.get(pk=application_id_local)
+        applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+        childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                                                    childcare_address=True)
+        postcode = childcare_address_record.postcode
+        addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
+        form = PersonalDetailsChildcareAddressLookupForm(request.POST, id=application_id_local, choices=addresses)
+        if form.is_valid():
             form = PersonalDetailsChildcareAddressManualForm(request.POST, id=application_id_local)
-            if form.is_valid():
-                street_line1 = form.cleaned_data.get('street_name_and_number')
-                street_line2 = form.cleaned_data.get('street_name_and_number2')
-                town = form.cleaned_data.get('town')
-                county = form.cleaned_data.get('county')
-                postcode = form.cleaned_data.get('postcode')
-                applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-                if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
-                                                       current_address=False).count() == 0:
-                    childcare_address_record = ApplicantHomeAddress(street_line1=street_line1,
-                                                                    street_line2=street_line2,
-                                                                    town=town,
-                                                                    county=county,
-                                                                    postcode=postcode,
-                                                                    current_address=False,
-                                                                    childcare_address=True,
-                                                                    move_in_month=0,
-                                                                    move_in_year=0,
-                                                                    personal_detail_id=applicant)
-                    childcare_address_record.save()
-                elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
-                                                         current_address=False).count() > 0:
-                    childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
-                                                                                childcare_address=True,
-                                                                                current_address=False)
-                    childcare_address_record.street_line1 = street_line1
-                    childcare_address_record.street_line2 = street_line2
-                    childcare_address_record.town = town
-                    childcare_address_record.county = county
-                    childcare_address_record.postcode = postcode
-                    childcare_address_record.save()
-                application = Application.objects.get(pk=application_id_local)
-                application.date_updated = current_date
-                application.save()
-                if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
-                    status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-                reset_declaration(application)
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/personal-details/check-answers?id=' + application_id_local)
-            else:
-                variables = {
-                    'form': form,
-                    'application_id': application_id_local,
-                    'personal_details_status': application.personal_details_status
-                }
-                return render(request, 'personal-details-childcare-address-manual.html', variables)
+            selected_address = address_helper.AddressHelper.get_posted_address(form, 'address')
+            line1 = selected_address['line1']
+            line2 = selected_address['line2']
+            town = selected_address['townOrCity']
+            postcode = selected_address['postcode']
+            personal_detail_record = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+            personal_detail_id = personal_detail_record.personal_detail_id
+            # If the user entered information for this task for the first time
+            if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
+                childcare_address_record = ApplicantHomeAddress(street_line1=line1,
+                                                                street_line2=line2,
+                                                                town=town,
+                                                                county='',
+                                                                country='United Kingdom',
+                                                                postcode=postcode,
+                                                                childcare_address=True,
+                                                                current_address=False,
+                                                                move_in_month=0,
+                                                                move_in_year=0,
+                                                                personal_detail_id=personal_detail_record)
+                childcare_address_record.save()
+            # If the user previously entered information for this task
+            elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
+                                                     childcare_address=True).count() > 0:
+                childcare_address_record = ApplicantHomeAddress.objects.get(
+                    personal_detail_id=personal_detail_id,
+                    childcare_address=True)
+                childcare_address_record.street_line1 = line1
+                childcare_address_record.street_line2 = line2
+                childcare_address_record.town = town
+                childcare_address_record.postcode = postcode
+                childcare_address_record.save()
+            application = Application.objects.get(pk=application_id_local)
+            application.date_updated = current_date
+            application.save()
+            if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
+                status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/enter-childcare-address?id=' +
+                                        application_id_local)
+        else:
+            form.error_summary_title = 'There was a problem finding your address'
+            variables = {
+                'postcode': postcode,
+                'form': form,
+                'application_id': application_id_local,
+                'personal_details_status': application.personal_details_status
+            }
+            return render(request, 'personal-details-childcare-address-lookup.html', variables)
 
 
 def personal_details_childcare_address_manual(request):
@@ -1876,7 +1735,8 @@ def dbs_check_guidance(request):
         if form.is_valid():
             if application.criminal_record_check_status != 'COMPLETED':
                 status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/dbs-details?id=' + application_id_local)
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/criminal-record/your-details?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -1919,12 +1779,14 @@ def dbs_check_dbs_details(request):
             reset_declaration(application)
             cautions_convictions = form.cleaned_data['convictions']
             if cautions_convictions == 'True':
-                return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/upload-dbs?id=' + application_id_local)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/criminal-record/post-certificate?id=' + application_id_local)
             elif cautions_convictions == 'False':
                 if application.criminal_record_check_status != 'COMPLETED':
                     status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
-                return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/summary?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
         else:
+            form.error_summary_title = 'There was a problem with your DBS details'
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -1964,8 +1826,9 @@ def dbs_check_upload_dbs(request):
             reset_declaration(application)
             if application.criminal_record_check_status != 'COMPLETED':
                 status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/summary?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
         else:
+            form.error_summary_title = 'There was a problem on this page'
             variables = {
                 'form': form,
                 'application_id': application_id_local

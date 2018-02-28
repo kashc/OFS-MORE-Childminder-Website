@@ -53,4 +53,3 @@ class TestLoginRedirectHelper(TestCase):
         target_path = settings.URL_PREFIX + "/accepted"
         assert (isinstance(redirect, HttpResponseRedirect))
         assert(target_path in redirect.url)
-

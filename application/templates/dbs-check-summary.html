@@ -1,25 +1,11 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}DBS check{% endblock %}
+{% block page_title %}Check your answers: criminal record (DBS) check{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <!-- Back button -->
-        {% if cautions_convictions is True %}
-        <a href="{{ URL_PREFIX }}/dbs-check/upload-dbs?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
-            Back
-        </a>
-        {% elif cautions_convictions is False %}
-        <a href="{{ URL_PREFIX }}/dbs-check/dbs-details?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
-            Back
-        </a>
-        {% endif %}
-    </div>
     <div class="grid-row">
         <h1 class="form-title heading-large">Check your answers: your criminal record check</h1>
     </div>
@@ -42,7 +28,7 @@
                 {{dbs_certificate_number}}
             </td>
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/dbs-check/dbs-details?id={{application_id}}#id_dbs_certificate_number-group"
+                <a href="{{ URL_PREFIX }}/criminal-record/your-details?id={{application_id}}#id_dbs_certificate_number-group"
                    alt='Change DBS certificate number'>
                     Change <span class="visuallyhidden">DBS certificate number</span>
                 </a>
@@ -62,9 +48,9 @@
             </td>
             {% endif %}
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/dbs-check/dbs-details?id={{application_id}}#id_convictions-group"
-                   alt='Change do you have any cautions or convictions?'>
-                    Change <span class="visuallyhidden">do you have any cautions or convictions?</span>
+                <a href="{{ URL_PREFIX }}/criminal-record/your-details?id={{application_id}}#id_convictions-group"
+                   alt='Change answer on cautions or convictions?'>
+                    Change <span class="visuallyhidden">answer on cautions or convictions?</span>
                 </a>
             </td>
         </tr>
@@ -83,9 +69,9 @@
             </td>
             {% endif %}
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/dbs-check/upload-dbs?id={{application_id}}#id_declaration-group"
-                   alt='Change will you send your DBS certificate to Ofsted?'>
-                    Change <span class="visuallyhidden">will you send your DBS certificate to Ofsted?</span>
+                <a href="{{ URL_PREFIX }}/criminal-record/post-certificate?id={{application_id}}#id_declaration-group"
+                   alt='Change will you send your DBS certificate to Ofsted'>
+                    Change <span class="visuallyhidden">answer on sending DBS certificate to Ofsted</span>
                 </a>
             </td>
         </tr>

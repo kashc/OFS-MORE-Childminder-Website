@@ -3,13 +3,13 @@ from .base import *
 DEBUG = True
 
 # Base URL of notify gateway
-NOTIFY_URL = 'http://130.130.52.132:8095/notify-gateway'
+NOTIFY_URL = "http://" + os.environ.get('APP_NOTIFY_URL', '130.130.52.132:8095') + "/notify-gateway"
 
 # Base URL of payment gateway
-PAYMENT_URL = 'http://130.130.52.132:8089/payment-gateway'
+PAYMENT_URL = "http://" + os.environ.get('APP_PAYMENT_URL', '130.130.52.132:8089') + "/payment-gateway"
 
 # Base URL of arc-service gateway
-ADDRESSING_URL = 'http://130.130.52.132:8000/addressing-service'
+ADDRESSING_URL = "http://" + os.environ.get('APP_ADDRESSING_URL', '130.130.52.132:8000') + "/addressing-service"
 
 # Visa Validation
 VISA_VALIDATION = False
@@ -32,11 +32,11 @@ MIDDLEWARE_DEV = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': os.environ.get('DATABASE_USER', 'ofsted'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'OfstedB3ta'),
-        'HOST': os.environ.get('DATABASE_HOST', '130.130.52.132'),
-        'PORT': os.environ.get('DATABASE_PORT', '5462')
+        'NAME': os.environ.get('POSTGRES_DB', 'postgres'),
+        'USER': os.environ.get('POSTGRES_USER', 'ofsted'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'OfstedB3ta'),
+        'HOST': os.environ.get('POSTGRES_HOST', '130.130.52.132'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5462')
     }
 }
 

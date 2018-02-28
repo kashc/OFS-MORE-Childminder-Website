@@ -40,4 +40,3 @@ def redirect_by_status(application):
             settings.URL_PREFIX + '/accepted/?id=' + str(application.application_id))
 
     return response
-
