@@ -132,7 +132,7 @@ TEST_OUTPUT_DESCRIPTIONS = True
 TEST_OUTPUT_DIR = 'xmlrunner'
 
 GOOGLE_ANALYTICS = {
-    'google_analytics_id': "xxx"
+    'google_analytics_id': "UA-114456515-1"
 }
 
 # Export Settings variables DEBUG to templates context

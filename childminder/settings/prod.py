@@ -5,7 +5,7 @@ from .base import *
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-PUBLIC_APPLICATION_URL = 'http://localhost:8000/childminder'
+PUBLIC_APPLICATION_URL = 'https://ofsted.informed.com'
 
 # Base URL of notify gateway
 NOTIFY_URL = 'http://notify-gateway:8000/notify-gateway'
@@ -17,6 +17,7 @@ PAYMENT_URL = 'http://payment-gateway:8000/payment-gateway'
 ADDRESSING_URL = 'http://addressing-service:8000/addressing-service'
 
 PROD_APPS = [
+    'whitenoise',
 ]
 
 INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + PROD_APPS + PROJECT_APPS
@@ -30,8 +31,8 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': os.environ.get('DATABASE_USER', 'ofsted'),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'OfstedB3ta'),
-        'HOST': os.environ.get('DATABASE_HOST', '130.130.52.132'),
-        'PORT': os.environ.get('DATABASE_PORT', '5462')
+        'HOST': os.environ.get('DATABASE_HOST', 'ofsted-postgres'),
+        'PORT': os.environ.get('DATABASE_PORT', '5432')
     }
 }
 

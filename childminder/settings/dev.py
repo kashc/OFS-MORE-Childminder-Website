@@ -9,22 +9,13 @@ NOTIFY_URL = 'http://130.130.52.132:8095/notify-gateway'
 PAYMENT_URL = 'http://130.130.52.132:8089/payment-gateway'
 
 # Base URL of arc-service gateway
-ADDRESSING_URL = 'http://130.130.52.132:8000/arc-service'
+ADDRESSING_URL = 'http://130.130.52.132:8000/addressing-service'
 
 # Visa Validation
 VISA_VALIDATION = False
 
 PUBLIC_APPLICATION_URL = 'http://localhost:8000/childminder'
 INTERNAL_IPS = "127.0.0.1"
-
-# Base URL of notify gateway
-NOTIFY_URL = 'http://127.0.0.1:8003/notify-gateway'
-
-# Base URL of payment gateway
-PAYMENT_URL = 'http://127.0.0.1:8002/payment-gateway'
-
-# Base URL of arc-service gateway
-ADDRESSING_URL = 'http://127.0.0.1:8001/arc-service'
 
 DEV_APPS = [
     'debug_toolbar',

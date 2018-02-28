@@ -1012,7 +1012,7 @@ def personal_details_location_of_care(request):
             multiple_childcare_address_logic(personal_detail_id)
             if home_address_record.childcare_address == 'True':
                 return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/personal-details/summary?id=' + application_id_local)
+                    settings.URL_PREFIX + '/personal-details/check-answers?id=' + application_id_local)
             elif home_address_record.childcare_address == 'False':
                 return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address?id=' +
                                             application_id_local + '&manual=False&lookup=False')

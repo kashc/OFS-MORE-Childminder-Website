@@ -38,7 +38,7 @@ urlpatterns = [
     url(r'^personal-details/enter-childcare-address/', views.personal_details_childcare_address_manual,
         name='Personal-Details-Childcare-Address-Manual-View'),
     url(r'^personal-details/check-answers/', views.personal_details_summary, name='Personal-Details-Summary-View'),
-    url(r'^first-aid/guidance/', views.first_aid_training_guidance, name='First-Aid-Training-Guidance-View'),
+    url(r'^first-aid/$', views.first_aid_training_guidance, name='First-Aid-Training-Guidance-View'),
     url(r'^first-aid/details/', views.first_aid_training_details, name='First-Aid-Training-Details-View'),
     url(r'^first-aid/certificate/', views.first_aid_training_declaration, name='First-Aid-Training-Declaration-View'),
     url(r'^first-aid/renew/', views.first_aid_training_renew, name='First-Aid-Training-Renew-View'),
