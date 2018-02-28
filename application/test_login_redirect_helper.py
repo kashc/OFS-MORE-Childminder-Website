@@ -22,6 +22,22 @@ class TestLoginRedirectHelper(TestCase):
         assert (isinstance(redirect, HttpResponseRedirect))
         assert(target_path in redirect.url)
 
+    def test_submitted_status_redirects_to_awaiting_review(self):
+        application = Application.objects.create()
+        application.application_status = 'SUBMITTED'
+        redirect = login_redirect_helper.redirect_by_status(application)
+        target_path = settings.URL_PREFIX + "/awaiting-review"
+        assert (isinstance(redirect, HttpResponseRedirect))
+        assert(target_path in redirect.url)
+
+    def test_arc_review_status_redirects_to_awaiting_review(self):
+        application = Application.objects.create()
+        application.application_status = 'ARC_REVIEW'
+        redirect = login_redirect_helper.redirect_by_status(application)
+        target_path = settings.URL_PREFIX + "/awaiting-review"
+        assert (isinstance(redirect, HttpResponseRedirect))
+        assert(target_path in redirect.url)
+
     def test_further_information_status_redirects_to_task_list(self):
         application = Application.objects.create()
         application.application_status = 'FURTHER_INFORMATION'
@@ -30,17 +46,9 @@ class TestLoginRedirectHelper(TestCase):
         assert (isinstance(redirect, HttpResponseRedirect))
         assert(target_path in redirect.url)
 
-    def test_arc_review_status_redirects_to_task_list(self):
+    def test_accepted_status_redirects_to_task_list(self):
         application = Application.objects.create()
-        application.application_status = 'ARC_REVIEW'
-        redirect = login_redirect_helper.redirect_by_status(application)
-        target_path = settings.URL_PREFIX + "/awaiting-review"
-        assert (isinstance(redirect, HttpResponseRedirect))
-        assert(target_path in redirect.url)
-
-    def test_submitted_status_redirects_to_task_list(self):
-        application = Application.objects.create()
-        application.application_status = 'SUBMITTED'
+        application.application_status = 'ACCEPTED'
         redirect = login_redirect_helper.redirect_by_status(application)
         target_path = settings.URL_PREFIX + "/accepted"
         assert (isinstance(redirect, HttpResponseRedirect))
