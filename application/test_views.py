@@ -54,10 +54,12 @@ from application.views import (application_saved,
                                paypal_payment_completion,
                                personal_details_childcare_address,
                                personal_details_childcare_address_manual,
+                               personal_details_childcare_address_select,
                                personal_details_dob,
                                personal_details_guidance,
                                personal_details_home_address,
                                personal_details_home_address_manual,
+                               personal_details_home_address_select,
                                personal_details_location_of_care,
                                personal_details_name,
                                personal_details_summary,
@@ -332,6 +334,18 @@ class PersonalDetailsTest(TestCase):
         except:
             self.assertEqual(0, 0)
 
+    def test_home_address_select_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/personal-details/select-home-address/')
+        self.assertEqual(found.func, personal_details_home_address_select)
+
+    def test_home_address_select_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/personal-details/select-home-address/?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
     def test_location_of_care_url_resolves_to_page(self):
         found = resolve(settings.URL_PREFIX + '/personal-details/home-address-details/')
         self.assertEqual(found.func, personal_details_location_of_care)
@@ -364,6 +378,18 @@ class PersonalDetailsTest(TestCase):
         c = Client()
         try:
             c.get(settings.URL_PREFIX + '/personal-details/enter-childcare-address/?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_childcare_address_select_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/personal-details/select-childcare-address/')
+        self.assertEqual(found.func, personal_details_childcare_address_select)
+
+    def test_childcare_address_select_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/personal-details/select-childcare-address/?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
