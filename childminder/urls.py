@@ -29,12 +29,16 @@ urlpatterns = [
     url(r'^personal-details/your-date-of-birth/', views.personal_details_dob, name='Personal-Details-DOB-View'),
     url(r'^personal-details/your-home-address/', views.personal_details_home_address,
         name='Personal-Details-Home-Address-View'),
+    url(r'^personal-details/select-home-address/', views.personal_details_home_address_select,
+        name='Personal-Details-Home-Address-Select-View'),
     url(r'^personal-details/enter-home-address/', views.personal_details_home_address_manual,
         name='Personal-Details-Home-Address-Manual-View'),
     url(r'^personal-details/home-address-details/', views.personal_details_location_of_care,
         name='Personal-Details-Location-Of-Care-View'),
     url(r'^personal-details/childcare-address/', views.personal_details_childcare_address,
         name='Personal-Details-Childcare-Address-View'),
+    url(r'^personal-details/select-childcare-address/', views.personal_details_childcare_address_select,
+        name='Personal-Details-Childcare-Address-Select-View'),
     url(r'^personal-details/enter-childcare-address/', views.personal_details_childcare_address_manual,
         name='Personal-Details-Childcare-Address-Manual-View'),
     url(r'^personal-details/check-answers/', views.personal_details_summary, name='Personal-Details-Summary-View'),
@@ -53,12 +57,12 @@ urlpatterns = [
     url(r'^criminal-record/$', views.dbs_check_guidance, name='DBS-Check-Guidance-View'),
     url(r'^first-aid/update/', views.first_aid_training_training, name='First-Aid-Training-Training-View'),
     url(r'^first-aid/check-answers/', views.first_aid_training_summary, name='First-Aid-Training-Summary-View'),
-	# EYFS task temporarily disabled, pending final decisions on CCN3-357 in Sprint 7
-    #url(r'^eyfs/guidance/', views.eyfs_guidance, name='EYFS-Guidance-View'),
-    #url(r'^eyfs/knowledge/', views.eyfs_knowledge, name='EYFS-Knowledge-View'),
-    #url(r'^eyfs/questions/', views.eyfs_questions, name='EYFS-Questions-View'),
-    #url(r'^eyfs/training/', views.eyfs_training, name='EYFS-Training-View'),
-    #url(r'^eyfs/summary/', views.eyfs_summary, name='EYFS-Summary-View'),
+    # EYFS task temporarily disabled, pending final decisions on CCN3-357 in Sprint 7
+    # url(r'^eyfs/guidance/', views.eyfs_guidance, name='EYFS-Guidance-View'),
+    # url(r'^eyfs/knowledge/', views.eyfs_knowledge, name='EYFS-Knowledge-View'),
+    # url(r'^eyfs/questions/', views.eyfs_questions, name='EYFS-Questions-View'),
+    # url(r'^eyfs/training/', views.eyfs_training, name='EYFS-Training-View'),
+    # url(r'^eyfs/summary/', views.eyfs_summary, name='EYFS-Summary-View'),
     url(r'^dbs-check/guidance/', views.dbs_check_guidance, name='DBS-Check-Guidance-View'),
     url(r'^dbs-check/dbs-details/', views.dbs_check_dbs_details, name='DBS-Check-DBS-Details-View'),
     url(r'^dbs-check/upload-dbs/', views.dbs_check_upload_dbs, name='DBS-Check-Upload-DBS-View'),
@@ -112,9 +116,10 @@ urlpatterns = [
 
 if settings.DEBUG:
     import debug_toolbar
+
     urlpatterns = [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns
+                      url(r'^__debug__/', include(debug_toolbar.urls)),
+                  ] + urlpatterns
 
 if settings.URL_PREFIX:
     prefixed_url_pattern = []
