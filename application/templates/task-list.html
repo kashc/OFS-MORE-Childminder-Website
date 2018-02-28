@@ -109,15 +109,15 @@
                 <tr id="dbs">
                     <td class="task" style="padding-right: 10px; word-wrap: break-word;">
                         {% if criminal_record_check_status == 'NOT_STARTED' %}
-                        <a href="{{ URL_PREFIX }}/dbs-check/guidance?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/criminal-record?id={{application_id}}">
                             <span class="task-name">Criminal record (DBS) check</span><strong class="task-finished task-to-do">To do</strong>
                         </a>
                         {% elif criminal_record_check_status == 'IN_PROGRESS' %}
-                        <a href="{{ URL_PREFIX }}/dbs-check/guidance?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/criminal-record?id={{application_id}}">
                             <span class="task-name">Criminal record (DBS) check</span><strong class="task-finished task-in-progress">Started</strong>
                         </a>
                         {% elif criminal_record_check_status == 'COMPLETED' %}
-                        <a href="{{ URL_PREFIX }}/dbs-check/summary?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/criminal-record/check-answers?id={{application_id}}">
                             <span class="task-name">Criminal record (DBS) check</span><strong class="task-finished">Done</strong>
                         </a>
                         {% endif %}

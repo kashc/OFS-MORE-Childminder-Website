@@ -671,50 +671,50 @@ class EYFSTest(TestCase):
 class DBSCheckTest(TestCase):
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/dbs-check/guidance/')
+        found = resolve(settings.URL_PREFIX + '/criminal-record/')
         self.assertEqual(found.func, dbs_check_guidance)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/dbs-check/guidance/?id=')
+            c.get(settings.URL_PREFIX + '/criminal-record/?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/dbs-check/dbs-details/')
+        found = resolve(settings.URL_PREFIX + '/criminal-record/your-details/')
         self.assertEqual(found.func, dbs_check_dbs_details)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/dbs-check/dbs-details?id=')
+            c.get(settings.URL_PREFIX + '/criminal-record/your-details?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
 
-        found = resolve(settings.URL_PREFIX + '/dbs-check/upload-dbs/')
+        found = resolve(settings.URL_PREFIX + '/criminal-record/post-certificate/')
         self.assertEqual(found.func, dbs_check_upload_dbs)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/dbs-check/upload-dbs?id=')
+            c.get(settings.URL_PREFIX + '/criminal-record/post-certificate?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/dbs-check/summary/')
+        found = resolve(settings.URL_PREFIX + '/criminal-record/check-answers/')
         self.assertEqual(found.func, dbs_check_summary)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/dbs-check/summary?id=')
+            c.get(settings.URL_PREFIX + '/criminal-record/check-answers?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)

@@ -1010,11 +1010,13 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
     )
     dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
                                                 help_text='12-digit number on your certificate',
-                                                required=True)
+                                                required=True, error_messages={
+            'required': 'Please enter your DBS certificate number.'})
     convictions = forms.ChoiceField(label='Do you have any cautions or convictions?',
                                     help_text='Include any information recorded on your certificate',
                                     choices=options, widget=InlineRadioSelect,
-                                    required=True)
+                                    required=True,
+                                    error_messages={'required': 'Please say if you have any cautions or convictions.'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1037,9 +1039,9 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
         """
         dbs_certificate_number = self.cleaned_data['dbs_certificate_number']
         if len(str(dbs_certificate_number)) > 12:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('Check your certificate: the number should be 12 digits long.')
         if len(str(dbs_certificate_number)) < 12:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('Check your certificate: the number should be 12 digits long.')
         return dbs_certificate_number
 
 
@@ -1049,7 +1051,8 @@ class DBSCheckUploadDBSForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    declaration = forms.BooleanField(label='I will send my original DBS certificate to Ofsted', required=True)
+    declaration = forms.BooleanField(label='I will send my original DBS certificate to Ofsted', required=True,
+                                     error_messages={'required': 'You must agree to send us your DBS certificate.'})
 
     def __init__(self, *args, **kwargs):
         """

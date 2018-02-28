@@ -1735,7 +1735,8 @@ def dbs_check_guidance(request):
         if form.is_valid():
             if application.criminal_record_check_status != 'COMPLETED':
                 status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/dbs-details?id=' + application_id_local)
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/criminal-record/your-details?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -1778,12 +1779,14 @@ def dbs_check_dbs_details(request):
             reset_declaration(application)
             cautions_convictions = form.cleaned_data['convictions']
             if cautions_convictions == 'True':
-                return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/upload-dbs?id=' + application_id_local)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/criminal-record/post-certificate?id=' + application_id_local)
             elif cautions_convictions == 'False':
                 if application.criminal_record_check_status != 'COMPLETED':
                     status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
-                return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/summary?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
         else:
+            form.error_summary_title = 'There was a problem with your DBS details'
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -1823,8 +1826,9 @@ def dbs_check_upload_dbs(request):
             reset_declaration(application)
             if application.criminal_record_check_status != 'COMPLETED':
                 status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/dbs-check/summary?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
         else:
+            form.error_summary_title = 'There was a problem on this page'
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -3763,4 +3767,3 @@ def application_accepted(request):
         'application_id': application_id_local
     }
     return render(request, 'application-accepted.html', variables)
-

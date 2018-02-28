@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}DBS check{% endblock %}
+{% block page_title %}Your criminal record (DBS) check details{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -10,17 +10,15 @@
 
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/dbs-check/guidance?id={{application_id}}" class="link-back" style="margin-right: 10px; line-height: 28px">
+        <a href="{{ URL_PREFIX }}/criminal-record?id={{application_id}}" class="link-back" style="margin-right: 10px; line-height: 28px">
             Back
         </a>
     </div>
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
         <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
+            <h1 class="form-title heading-large" style="margin-top: 0px;">
                 Your criminal record (DBS) check details
             </h1>
-        </div>
-        <div class="form-group grid-row">
             <p>Please give us details of your Disclosure and Barring Service (DBS) certificate.</p>
             <p>Ofsted is separate from DBS and won't have this information.</p>
             <details style="margin-bottom: 15px;" role="group">
@@ -29,7 +27,7 @@
                 </summary>
                 <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
                     <p>You can apply for a DBS certificate on the Ofsted DBS website:</p>
-                    <a href="http://ofsteddbsapplication.co.uk/step-one.aspx" class="external-link" target="_blank">Get an Ofsted DBS check</a>
+                    <a href="http://ofsteddbsapplication.co.uk/step-one.aspx" class="link" target="_blank">Get an Ofsted DBS check</a>
                 </div>
                 <br>
             </details>
