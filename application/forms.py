@@ -560,7 +560,8 @@ class PersonalDetailsHomeAddressLookupForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    address = forms.ChoiceField(label='Select address', required=True)
+    address = forms.ChoiceField(label='Select address', required=True,
+                                error_messages={'required': 'Please select your address.'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -610,7 +611,7 @@ class PersonalDetailsChildcareAddressForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    postcode = forms.CharField(label='Postcode')
+    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode.'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -634,8 +635,10 @@ class PersonalDetailsChildcareAddressForm(GOVUKForm):
         :return: string
         """
         postcode = self.cleaned_data['postcode']
-        if re.match("^[A-Za-z0-9 ]{5,8}$", postcode) is None:
-            raise forms.ValidationError('TBC.')
+        postcode_no_space = postcode.replace(" ", "")
+        postcode_uppercase = postcode_no_space.upper()
+        if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
+            raise forms.ValidationError('Please enter a valid postcode.')
         return postcode
 
 
@@ -645,11 +648,13 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    street_name_and_number = forms.CharField(label='Address line 1')
+    street_name_and_number = forms.CharField(label='Address line 1',
+                                             error_messages={'required': 'Please enter the first line of the address.'})
     street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
-    town = forms.CharField(label='Town or city')
+    town = forms.CharField(label='Town or city',
+                           error_messages={'required': 'Please enter the name of the town or city.'})
     county = forms.CharField(label='County (optional)', required=False)
-    postcode = forms.CharField(label='Postcode')
+    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter the postcode.'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -678,8 +683,8 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         :return: string
         """
         street_name_and_number = self.cleaned_data['street_name_and_number']
-        if len(street_name_and_number) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+        if len(street_name_and_number) > 50:
+            raise forms.ValidationError('The first line of the address must be under 50 characters long.')
         return street_name_and_number
 
     def clean_street_name_and_number2(self):
@@ -688,8 +693,8 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         :return: string
         """
         street_name_and_number2 = self.cleaned_data['street_name_and_number2']
-        if len(street_name_and_number2) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+        if len(street_name_and_number2) > 50:
+            raise forms.ValidationError('The second line of the address must be under 50 characters long.')
         return street_name_and_number2
 
     def clean_town(self):
@@ -699,9 +704,9 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         """
         town = self.cleaned_data['town']
         if re.match("^[A-Za-z- ]+$", town) is None:
-            raise forms.ValidationError('TBC')
-        if len(town) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('Please spell out the the name of the town or city using letters.')
+        if len(town) > 50:
+            raise forms.ValidationError('The name of the town or city must be under 50 characters long.')
         return town
 
     def clean_county(self):
@@ -712,9 +717,9 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         county = self.cleaned_data['county']
         if county != '':
             if re.match("^[A-Za-z- ]+$", county) is None:
-                raise forms.ValidationError('TBC')
+                raise forms.ValidationError('Please spell out the name of the county using letters.')
             if len(county) > 100:
-                raise forms.ValidationError('Please enter 100 characters or less.')
+                raise forms.ValidationError('The name of the county must be under 50 characters long.')
         return county
 
     def clean_postcode(self):
@@ -723,8 +728,10 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         :return: string
         """
         postcode = self.cleaned_data['postcode']
-        if re.match("^[A-Za-z0-9 ]{5,8}$", postcode) is None:
-            raise forms.ValidationError('TBC')
+        postcode_no_space = postcode.replace(" ", "")
+        postcode_uppercase = postcode_no_space.upper()
+        if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
+            raise forms.ValidationError('Please enter a valid postcode.')
         return postcode
 
 
@@ -734,7 +741,8 @@ class PersonalDetailsChildcareAddressLookupForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    address = forms.ChoiceField(label='Select address', required=True)
+    address = forms.ChoiceField(label='Select address', required=True,
+                                error_messages={'required': 'Please select the address from the list.'})
 
     def __init__(self, *args, **kwargs):
         """

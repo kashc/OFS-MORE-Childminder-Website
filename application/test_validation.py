@@ -177,23 +177,33 @@ class TestPersonalDetailsValidation(TestCase):
 
     def test_valid_postcode(self):
         test_postcode = 'WA14 4PA'
-        assert (re.match("^[A-Za-z0-9 ]{1,8}$", test_postcode) is not None)
+        test_postcode_no_space = test_postcode.replace(" ", "")
+        postcode_uppercase = test_postcode_no_space.upper()
+        assert (re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is not None)
 
     def test_valid_postcode_without_space(self):
         test_postcode = 'WA144PA'
-        assert (re.match("^[A-Za-z0-9 ]{1,8}$", test_postcode) is not None)
+        test_postcode_no_space = test_postcode.replace(" ", "")
+        postcode_uppercase = test_postcode_no_space.upper()
+        assert (re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is not None)
 
     def test_invalid_postcode(self):
         test_postcode = '!%WA14'
-        assert (re.match("^[A-Za-z0-9 ]{1,8}$", test_postcode) is None)
+        test_postcode_no_space = test_postcode.replace(" ", "")
+        postcode_uppercase = test_postcode_no_space.upper()
+        assert (re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None)
 
     def test_invalid_postcode_too_long(self):
         test_postcode = 'WA14 4PAAAAAA'
-        assert (re.match("^[A-Za-z0-9 ]{1,8}$", test_postcode) is None)
+        test_postcode_no_space = test_postcode.replace(" ", "")
+        postcode_uppercase = test_postcode_no_space.upper()
+        assert (re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None)
 
     def test_invalid_postcode_too_long2(self):
         test_postcode = 'WA144PAAAAAA'
-        assert (re.match("^[A-Za-z0-9 ]{1,8}$", test_postcode) is None)
+        test_postcode_no_space = test_postcode.replace(" ", "")
+        postcode_uppercase = test_postcode_no_space.upper()
+        assert (re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None)
 
 
 class TestDBSCheckValidation(TestCase):
