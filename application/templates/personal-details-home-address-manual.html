@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Enter your home address{% endblock %}
+{% block page_title %}Your home address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -20,7 +20,7 @@
         <!-- Content -->
         <div class="form-group grid-row">
             <h1 class="form-title heading-large" style="margin-top: 0px;">
-                Enter your home address
+                Your home address
             </h1>
             {{form.as_div}}
             {% csrf_token %}
