@@ -15,6 +15,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+from . import login_redirect_helper
 from .middleware import CustomAuthenticationHandler
 from .forms import EmailLoginForm, VerifyPhoneForm
 from .models import Application, UserDetails
@@ -181,10 +182,11 @@ def sms_verification(request):
             exp = acc.sms_expiry_date
             if form.is_valid() and not has_expired(exp):
                 if code == acc.magic_link_sms:
-                    response = HttpResponseRedirect(
-                        settings.URL_PREFIX + '/task-list/?id=' + str(application.application_id))
+                    response = login_redirect_helper.redirect_by_status(application)
+
                     # Create session issue custom cookie to user
                     CustomAuthenticationHandler.create_session(response, application.login_id.email)
+
                     # Forward back onto application
                     return response
                 else:

@@ -5,10 +5,9 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 """
 
-from django.conf import settings
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+from . import login_redirect_helper
 from .forms import VerifySecurityQuestionForm
 from .middleware import CustomAuthenticationHandler
 from .models import Application, UserDetails
@@ -40,10 +39,12 @@ def load(request):
         if form.is_valid():
             if acc.security_answer == form.clean_security_answer():
                 print("SUCCESS")
-                response = HttpResponseRedirect(
-                    settings.URL_PREFIX + '/task-list/?id=' + str(application.application_id))
+                response = login_redirect_helper.redirect_by_status(application)
+
                 # Create session issue custom cookie to user
                 CustomAuthenticationHandler.create_session(response, application.login_id.email)
+
+                # Forward back onto application
                 return response
         else:
             variables = {
