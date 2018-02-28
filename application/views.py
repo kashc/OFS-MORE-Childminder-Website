@@ -3878,3 +3878,30 @@ def application_saved(request):
                 'application_id': application_id_local
             }
             return render(request, 'application-saved.html', variables)
+
+
+def awaiting_review(request):
+    """
+    Method for returning a confirmation view that an application is awaiting ARC review
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered awaiting review saved template
+    """
+    application_id_local = request.GET["id"]
+    variables = {
+        'application_id': application_id_local
+    }
+    return render(request, 'awaiting-review.html', variables)
+
+
+def application_accepted(request):
+    """
+    Method for returning a confirmation view that an application has been fully submitted
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered application submitted saved template
+    """
+    application_id_local = request.GET["id"]
+    variables = {
+        'application_id': application_id_local
+    }
+    return render(request, 'application-accepted.html', variables)
+
