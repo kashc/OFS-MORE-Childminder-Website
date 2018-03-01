@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Health declaration booklet{% endblock %}
+{% block page_title %}Fill in the health declaration booklet{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -11,14 +11,13 @@
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
         <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/health/intro?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
+        <a href="{{ URL_PREFIX }}/health?id={{application_id}}" class="link-back"
+           style="margin-right: 10px; line-height: 28px">
             Back
         </a>
     </div>
     <div class="form-group grid-row">
-        <h1 class="form-title heading-large">
+        <h1 class="form-title heading-large" style="margin-top: 0px;">
             Fill in the health declaration booklet
         </h1>
         <p>Please follow the steps below:</p>
@@ -31,7 +30,7 @@
         <p>
             <img src="{% static 'download-button.png' %}" alt="Download"/>
             <a href="https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/381218/Health_20declaration_20booklet.pdf"
-               target="_blank">Health declaration booklet</a>
+               target="_blank" alt="Download 'Health Declaration Booklet'">Health declaration booklet</a>
             (PDF, 174KB, 16 pages)
         </p>
         <p>Send the booklet in a stamped addressed envelope to:</p>

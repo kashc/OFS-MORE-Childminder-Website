@@ -92,11 +92,11 @@
                 <tr id="health">
                     <td class="task" style="padding-right: 10px; word-wrap: break-word;">
                         {% if health_status == 'NOT_STARTED' %}
-                        <a href="{{ URL_PREFIX }}/health/intro?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/health?id={{application_id}}">
                             <span class="task-name">Health declaration booklet</span><strong class="task-finished task-to-do">To do</strong>
                         </a>
                         {% elif health_status == 'IN_PROGRESS' %}
-                        <a href="{{ URL_PREFIX }}/health/intro?id={{application_id}}">
+                        <a href="{{ URL_PREFIX }}/health?id={{application_id}}">
                             <span class="task-name">Health declaration booklet</span><strong class="task-finished task-in-progress">Started</strong>
                         </a>
                         {% elif health_status == 'COMPLETED' %}

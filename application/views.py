@@ -1940,6 +1940,7 @@ def health_booklet(request):
                 status.update(application_id_local, 'health_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/health/check-answers?id=' + application_id_local)
         else:
+            form.error_summary_title = 'There was a problem with this page.'
             variables = {
                 'form': form,
                 'application_id': application_id_local

@@ -6,14 +6,6 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/health/booklet?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt='Back to application list'>
-            Back
-        </a>
-    </div>
     <div class="grid-row">
         <h1 class="form-title heading-large">Check your answers: your health</h1>
     </div>
@@ -43,8 +35,8 @@
             {% endif %}
             <td class="change-answer">
                 <a href="{{ URL_PREFIX }}/health/booklet?id={{application_id}}#id_send_hdb_declare-group"
-                   alt='Change will you submit a health declaration booklet to Ofsted?'>
-                    Change <span class="visuallyhidden">will you submit a health declaration booklet to Ofsted?</span>
+                   alt='Change answer on sending health declaration booklet to Ofsted?'>
+                    Change <span class="visuallyhidden">answer on sending health declaration booklet to Ofsted?</span>
                 </a>
             </td>
         </tr>

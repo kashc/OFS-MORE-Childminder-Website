@@ -1094,7 +1094,8 @@ class HealthBookletForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    send_hdb_declare = forms.BooleanField(label='I will send the completed booklet to Ofsted', required=True)
+    send_hdb_declare = forms.BooleanField(label='I will send the completed booklet to Ofsted', required=True,
+                                          error_messages={'required': 'You must agree to send your booklet to Ofsted.'})
 
     def __init__(self, *args, **kwargs):
         """
