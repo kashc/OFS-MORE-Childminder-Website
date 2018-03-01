@@ -514,13 +514,13 @@ class FirstAidTrainingTest(TestCase):
             self.assertEqual(0, 0)
 
     def test_summary_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/first-aid/summary/')
+        found = resolve(settings.URL_PREFIX + '/first-aid/check-answers/')
         self.assertEqual(found.func, first_aid_training_summary)
 
     def test_summary_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/first-aid/summary?id=')
+            c.get(settings.URL_PREFIX + '/first-aid/check-answers?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
