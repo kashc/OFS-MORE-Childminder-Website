@@ -24,7 +24,7 @@
             </h1>
             <p>Where will you be looking after the children?</p>
             <h2 class="form-title heading-small">Postcode</h2>
-            <p>{{postcode}} <a href="{{ URL_PREFIX }}/personal-details?childcare-address?id={{application_id}}">Change</a></p>
+            <p>{{postcode}} <a href="{{ URL_PREFIX }}/personal-details/childcare-address?id={{application_id}}">Change</a></p>
             <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
             {{form.as_div}}
             {% csrf_token %}
