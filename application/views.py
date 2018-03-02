@@ -776,7 +776,7 @@ def personal_details_home_address_select(request):
         applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
         home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
         postcode = home_address_record.postcode
-        addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
+        addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
         if len(addresses) != 0:
             form = PersonalDetailsHomeAddressLookupForm(id=application_id_local, choices=addresses)
             variables = {
@@ -800,11 +800,11 @@ def personal_details_home_address_select(request):
         applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
         home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
         postcode = home_address_record.postcode
-        addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
+        addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
         form = PersonalDetailsHomeAddressLookupForm(request.POST, id=application_id_local, choices=addresses)
         if form.is_valid():
-            form = PersonalDetailsHomeAddressManualForm(request.POST, id=application_id_local)
-            selected_address = address_helper.AddressHelper.get_posted_address(form, 'address')
+            selected_address_index = int(request.POST["address"])
+            selected_address = address_helper.AddressHelper.get_posted_address(selected_address_index, postcode)
             line1 = selected_address['line1']
             line2 = selected_address['line2']
             town = selected_address['townOrCity']
@@ -1048,7 +1048,7 @@ def personal_details_childcare_address_select(request):
         childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
                                                                     childcare_address=True)
         postcode = childcare_address_record.postcode
-        addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
+        addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
         if len(addresses) != 0:
             form = PersonalDetailsChildcareAddressLookupForm(id=application_id_local, choices=addresses)
             variables = {
@@ -1073,11 +1073,11 @@ def personal_details_childcare_address_select(request):
         childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
                                                                     childcare_address=True)
         postcode = childcare_address_record.postcode
-        addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
+        addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
         form = PersonalDetailsChildcareAddressLookupForm(request.POST, id=application_id_local, choices=addresses)
         if form.is_valid():
-            form = PersonalDetailsChildcareAddressManualForm(request.POST, id=application_id_local)
-            selected_address = address_helper.AddressHelper.get_posted_address(form, 'address')
+            selected_address_index = int(request.POST["address"])
+            selected_address = address_helper.AddressHelper.get_posted_address(selected_address_index, postcode)
             line1 = selected_address['line1']
             line2 = selected_address['line2']
             town = selected_address['townOrCity']
@@ -2090,7 +2090,7 @@ def references_first_reference_address(request):
         elif lookup == 'True':
             first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
             postcode = first_reference_record.postcode
-            addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
+            addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
             if len(addresses) != 0:
                 form = ReferenceFirstReferenceAddressLookupForm(id=application_id_local, choices=addresses)
                 variables = {
@@ -2344,7 +2344,7 @@ def references_second_reference_address(request):
         elif lookup == 'True':
             second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
             postcode = second_reference_record.postcode
-            addresses = address_helper.AddressHelper.issue_postcode_search(postcode)
+            addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
             if len(addresses) != 0:
                 form = ReferenceSecondReferenceAddressLookupForm(id=application_id_local, choices=addresses)
                 variables = {
