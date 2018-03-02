@@ -3703,6 +3703,9 @@ def payment_confirmation(request):
         order_code = request.GET['orderCode']
         # If the payment has been successfully processed
         if payment.check_payment(order_code) == 200:
+            # TRIGGER
+            # This is when an application has been submitted (2 cases)
+            # If the application status  = 'MORE_INFORMATION'
             variables = {
                 'application_id': application_id_local,
                 'order_code': request.GET["orderCode"],
