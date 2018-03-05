@@ -940,9 +940,9 @@ def personal_details_location_of_care(request):
             application_id=application_id_local).personal_detail_id
         form = PersonalDetailsLocationOfCareForm(request.POST, id=application_id_local)
         if form.is_valid():
-            application = Application.objects.get(pk=application_id_local)
-            if application.personal_details_status != 'COMPLETED':
-                status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+            # Reset status to in progress as question can change status of overall task
+            status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+
             # Update home address record
             home_address_record = personal_location_of_care_logic(application_id_local, form)
             home_address_record.save()
@@ -1325,11 +1325,13 @@ def first_aid_training_details(request):
         return render(request, 'first-aid-details.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
+
+        # Reset status to in progress as question can change status of overall task
+        status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+
         form = FirstAidTrainingDetailsForm(request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
-            if application.first_aid_training_status != 'COMPLETED':
-                status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
             # Create or update First_Aid_Training record
             first_aid_training_record = first_aid_logic(application_id_local, form)
             first_aid_training_record.save()
@@ -1766,11 +1768,13 @@ def dbs_check_dbs_details(request):
         return render(request, 'dbs-check-dbs-details.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
+
+        # Reset status to in progress as question can change status of overall task
+        status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
+
         form = DBSCheckDBSDetailsForm(request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
-            if application.criminal_record_check_status != 'COMPLETED':
-                status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
             # Create or update Criminal_Record_Check record
             dbs_check_record = dbs_check_logic(application_id_local, form)
             dbs_check_record.save()
@@ -2001,6 +2005,10 @@ def references_intro(request):
         application_id_local = request.POST["id"]
         form = ReferenceIntroForm(request.POST)
         application = Application.objects.get(pk=application_id_local)
+
+        # Default status to in progress irrespective of choices made
+        status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+
         if form.is_valid():
             if application.references_status != 'COMPLETED':
                 status.update(application_id_local, 'references_status', 'IN_PROGRESS')
@@ -2664,22 +2672,26 @@ def other_people_adult_question(request):
         return render(request, 'other-people-adult-question.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
+
+        # Reset status to in progress as question can change status of overall task
+        status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+
         form = OtherPeopleAdultQuestionForm(request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         number_of_adults = AdultInHome.objects.filter(application_id=application_id_local).count()
         if form.is_valid():
-            data = form.cleaned_data.get('adults_in_home')
-            application.adults_in_home = data
+            adults_in_home = form.cleaned_data.get('adults_in_home')
+            application.adults_in_home = adults_in_home
             application.save()
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
             # If adults live in your home, navigate to adult details page
-            if data == 'True':
+            if adults_in_home == 'True':
                 return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/adult-details?id=' +
                                             application_id_local + '&adults=' + str(number_of_adults) + '&remove=0')
             # If adults do not live in your home, navigate to children question page
-            elif data == 'False':
+            elif adults_in_home == 'False':
                 # Delete any existing adults
                 adults = AdultInHome.objects.filter(application_id=application_id_local)
                 for adult in adults:
@@ -3000,6 +3012,10 @@ def other_people_children_question(request):
         return render(request, 'other-people-children-question.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
+
+        # Reset status to in progress as question can change status of overall task
+        status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+
         form = OtherPeopleChildrenQuestionForm(request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         number_of_children = ChildInHome.objects.filter(application_id=application_id_local).count()
