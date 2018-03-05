@@ -267,19 +267,19 @@ class TimeKnownField(forms.MultiValueField):
         :param args: Standard arguments parameter
         :param kwargs: Standard key word arguments parameter
         """
-        month_bounds_error = gettext('The number of months should be maximum 11.')
-        year_bounds_error = gettext('The number of years should be maximum 100')
+        month_bounds_error = gettext('Month must be between 1 and 12.')
+        year_bounds_error = gettext('You must have known the referee for at least 1 year.')
 
         self.fields = [
-            forms.IntegerField(max_value=100, error_messages={
+            forms.IntegerField(min_value=0, error_messages={
                 'min_value': year_bounds_error,
                 'max_value': year_bounds_error,
-                'invalid': gettext('Enter number of years as a number.')
+                'invalid': gettext('You must have known the referee for at least 1 year.')
             }),
-            forms.IntegerField(max_value=11, error_messages={
+            forms.IntegerField(max_value=12, error_messages={
                 'min_value': month_bounds_error,
                 'max_value': month_bounds_error,
-                'invalid': gettext('Enter number of months as a number.')
+                'invalid': gettext('Month must be between 1 and 12.')
             })
         ]
 
