@@ -38,11 +38,7 @@ class Application(models.Model):
         ('CYGNUM_REVIEW', 'CYGNUM_REVIEW'),
         ('DRAFTING', 'DRAFTING'),
         ('FURTHER_INFORMATION', 'FURTHER_INFORMATION'),
-        ('NOT_REGISTERED', 'NOT_REGISTERED'),
-        ('REGISTERED', 'REGISTERED'),
-        ('REJECTED', 'REJECTED'),
         ('SUBMITTED', 'SUBMITTED'),
-        ('WITHDRAWN', 'WITHDRAWN')
     )
     APP_TYPE = (
         ('CHILDMINDER', 'CHILDMINDER'),
@@ -171,20 +167,6 @@ class FirstAidTraining(models.Model):
 
     class Meta:
         db_table = 'FIRST_AID_TRAINING'
-
-
-class EYFS(models.Model):
-    """
-    Model for EYFS table
-    """
-    eyfs_id = models.UUIDField(primary_key=True, default=uuid4)
-    application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
-    eyfs_understand = models.NullBooleanField(blank=True, null=True)
-    eyfs_training_declare = models.NullBooleanField(blank=True, null=True)
-    eyfs_questions_declare = models.NullBooleanField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'EYFS'
 
 
 class CriminalRecordCheck(models.Model):
