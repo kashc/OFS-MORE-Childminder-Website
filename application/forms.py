@@ -870,7 +870,8 @@ class FirstAidTrainingRenewForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    renew = forms.BooleanField(label='I will renew my first aid certificate in the next few months', required=True)
+    renew = forms.BooleanField(label='I will renew my first aid certificate in the next few months', required=True,
+                               error_messages={'required': 'You must agree to renew your first aid certificaate'})
 
     def __init__(self, *args, **kwargs):
         """
