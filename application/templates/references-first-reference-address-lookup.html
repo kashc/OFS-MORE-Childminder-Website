@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}References{% endblock %}
+{% block page_title %}Select first reference address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -10,36 +10,33 @@
 
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/references/first-reference-address?id={{application_id}}&manual=False&lookup=False" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt="Back to application list">
+        <a href="{{ URL_PREFIX }}/references/first-reference-address?id={{application_id}}" class="link-back"
+           style="margin-right: 10px; line-height: 28px">
             Back
         </a>
     </div>
     <!-- Form -->
-    <form method="post" {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->
         <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
+            <h1 class="form-title heading-large" style="margin-top: 0px;">
                 Select first reference address
             </h1>
-            <p>Please give details of the address for this referee.</p>
+            <p>Please give the address for your first referee.</p>
             <h2 class="form-title heading-small">Postcode</h2>
-            <p>{{postcode}} <a href="{{ URL_PREFIX }}/references/first-reference-address?id={{application_id}}&manual=False&lookup=False">Change</a></p>
+            <p>{{postcode}} <a href="{{ URL_PREFIX }}/references/first-reference-address?id={{application_id}}">Change</a></p>
             <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
             {{form.as_div}}
             {% csrf_token %}
-            </br>
-            <a href="{{ URL_PREFIX }}/references/first-reference-address?id={{application_id}}&manual=True&lookup=False" name="manual"
+            <br>
+            <a href="{{ URL_PREFIX }}/references/enter-first-reference-address?id={{application_id}}" name="manual"
                id="manual">I can't find my address in the list</a>
-            </br>
-            </br>
-            <input type="submit" class="button button-submit" value="Save and continue" alt='Continue to declaration'>
+            <br>
+            <br>
+            <input type="submit" class="button button-submit" value="Save and continue">
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-            <input type="hidden" id="manual" name="manual" value="True"/>
-            <input type="hidden" id="lookup" name="lookup" value="False"/>
-            <input type="hidden" id="finish" name="finish" value="False" />
         </div>
-        </br>
+        <br>
         <!-- Return to task list -->
         <div class="form-group grid-row">
             <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>

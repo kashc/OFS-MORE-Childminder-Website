@@ -69,9 +69,13 @@ from application.views import (application_saved,
                                references_intro,
                                references_first_reference,
                                references_first_reference_address,
+                               references_first_reference_address_select,
+                               references_first_reference_address_manual,
                                references_first_reference_contact_details,
                                references_second_reference,
                                references_second_reference_address,
+                               references_second_reference_address_select,
+                               references_second_reference_address_manual,
                                references_second_reference_contact_details,
                                references_summary,
                                start_page,
@@ -649,11 +653,11 @@ class HealthTest(TestCase):
 
 class EYFSTest(TestCase):
 
-    #def test_url_resolves_to_page(self):
+    # def test_url_resolves_to_page(self):
     #    found = resolve(settings.URL_PREFIX + '/eyfs/guidance/')
     #    self.assertEqual(found.func, eyfs_guidance)
 
-    #def test_page_not_displayed_without_id(self):
+    # def test_page_not_displayed_without_id(self):
     #    c = Client()
     #    try:
     #        c.get(settings.URL_PREFIX + '/eyfs/guidance?id=')
@@ -661,11 +665,11 @@ class EYFSTest(TestCase):
     #    except:
     #        self.assertEqual(0, 0)
 
-    #def test_url_resolves_to_page(self):
+    # def test_url_resolves_to_page(self):
     #    found = resolve(settings.URL_PREFIX + '/eyfs/knowledge/')
     #    self.assertEqual(found.func, eyfs_knowledge)
 
-    #def test_page_not_displayed_without_id(self):
+    # def test_page_not_displayed_without_id(self):
     #    c = Client()
     #    try:
     #        c.get(settings.URL_PREFIX + '/eyfs/knowledge?id=')
@@ -673,11 +677,11 @@ class EYFSTest(TestCase):
     #    except:
     #        self.assertEqual(0, 0)
 
-    #def test_url_resolves_to_page(self):
+    # def test_url_resolves_to_page(self):
     #    found = resolve(settings.URL_PREFIX + '/eyfs/training/')
     #    self.assertEqual(found.func, eyfs_training)
 
-    #def test_page_not_displayed_without_id(self):
+    # def test_page_not_displayed_without_id(self):
     #    c = Client()
     #    try:
     #        c.get(settings.URL_PREFIX + '/eyfs/training?id=')
@@ -685,11 +689,11 @@ class EYFSTest(TestCase):
     #    except:
     #        self.assertEqual(0, 0)
 
-    #def test_url_resolves_to_page(self):
+    # def test_url_resolves_to_page(self):
     #    found = resolve(settings.URL_PREFIX + '/eyfs/questions/')
     #    self.assertEqual(found.func, eyfs_questions)
 
-    #def test_page_not_displayed_without_id(self):
+    # def test_page_not_displayed_without_id(self):
     #    c = Client()
     #    try:
     #        c.get(settings.URL_PREFIX + '/eyfs/questions?id=')
@@ -697,11 +701,11 @@ class EYFSTest(TestCase):
     #    except:
     #        self.assertEqual(0, 0)
 
-    #def test_url_resolves_to_page(self):
+    # def test_url_resolves_to_page(self):
     #    found = resolve(settings.URL_PREFIX + '/eyfs/summary/')
     #    self.assertEqual(found.func, eyfs_summary)
 
-    #def test_page_not_displayed_without_id(self):
+    # def test_page_not_displayed_without_id(self):
     #    c = Client()
     #    try:
     #        c.get(settings.URL_PREFIX + '/eyfs/summary?id=')
@@ -746,7 +750,6 @@ class EYFSTest(TestCase):
         assert (models.Application.objects.get(pk=test_application_id).eyfs_training_status != 'COMPLETED')
 
     def delete(self):
-
         models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
@@ -847,13 +850,13 @@ class DBSCheckTest(TestCase):
 class ReferencesTest(TestCase):
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/references/intro/')
+        found = resolve(settings.URL_PREFIX + '/references/')
         self.assertEqual(found.func, references_intro)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/references/intro?id=')
+            c.get(settings.URL_PREFIX + '/references?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -878,6 +881,30 @@ class ReferencesTest(TestCase):
         c = Client()
         try:
             c.get(settings.URL_PREFIX + '/references/first-reference-address?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/references/select-first-reference-address/')
+        self.assertEqual(found.func, references_first_reference_address_select)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/references/select-first-reference-address?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/references/enter-first-reference-address/')
+        self.assertEqual(found.func, references_first_reference_address_manual)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/references/enter-first-reference-address?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -919,6 +946,30 @@ class ReferencesTest(TestCase):
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/references/select-second-reference-address/')
+        self.assertEqual(found.func, references_second_reference_address_select)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/references/select-second-reference-address?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/references/enter-second-reference-address/')
+        self.assertEqual(found.func, references_second_reference_address_manual)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/references/enter-second-reference-address?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
         found = resolve(settings.URL_PREFIX + '/references/second-reference-contact-details/')
         self.assertEqual(found.func, references_second_reference_contact_details)
 
@@ -931,13 +982,13 @@ class ReferencesTest(TestCase):
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/references/summary/')
+        found = resolve(settings.URL_PREFIX + '/references/check-answers/')
         self.assertEqual(found.func, references_summary)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/references/summary?id=')
+            c.get(settings.URL_PREFIX + '/references/check-answers?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)

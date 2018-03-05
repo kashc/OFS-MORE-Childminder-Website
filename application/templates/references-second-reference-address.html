@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}References{% endblock %}
+{% block page_title %}Second reference address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -11,8 +11,7 @@
 <div class="column-full">
     <div class="form-group grid-row" style="padding-top: 30px;">
         <a href="{{ URL_PREFIX }}/references/second-reference/?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
+           style="margin-right: 10px; line-height: 28px">
             Back
         </a>
     </div>
@@ -20,10 +19,10 @@
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->
         <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
+            <h1 class="form-title heading-large" style="margin-top: 0px;">
                 Second reference address
             </h1>
-            <p>Please give details of the address for this referee.</p>
+            <p>Please give the address for your second referee.</p>
             {% if not form.errors %}
             <div id="id_postcode-group" class="form-group-required form-group">
                 <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
@@ -58,20 +57,15 @@
             {% csrf_token %}
             <br>
             <br>
-            <a href="{{ URL_PREFIX }}/references/second-reference-address?id={{application_id}}&manual=True&lookup=False"
-               name="manual" id="manual">Enter
-                address manually</a>
+            <a href="{{ URL_PREFIX }}/references/enter-second-reference-address?id={{application_id}}"
+               name="manual" id="manual">Enter address manually</a>
             <br>
             <br>
             <br>
-            <input type="submit" class="button button-submit" value="Save and continue" name="submit"
-                   alt='Continue to declaration'>
+            <input type="submit" class="button button-submit" value="Save and continue" name="submit">
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-            <input type="hidden" id="manual" name="manual" value="False"/>
-            <input type="hidden" id="lookup" name="lookup" value="False"/>
-            <input type="hidden" id="finish" name="finish" value="False"/>
         </div>
-        </br>
+        <br>
         <!-- Return to task list -->
         <div class="form-group grid-row">
             <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
