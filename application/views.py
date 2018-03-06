@@ -1344,13 +1344,13 @@ def first_aid_training_details(request):
             certificate_year = form.cleaned_data.get('course_date')[2]
             certificate_date = date(certificate_year, certificate_month, certificate_day)
             today = date.today()
-            certificate_age = today.year - certificate_date.year - (
-                    (today.month, today.day) < (certificate_date.month, certificate_date.day))
+            certificate_date_difference = today - certificate_date
+            certificate_age = certificate_date_difference.days / 365
             if certificate_age < 2.5:
                 return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/certificate?id=' + application_id_local)
-            elif 2.5 <= certificate_age <= 3:
+            elif 2.5 <= certificate_age < 3:
                 return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/renew?id=' + application_id_local)
-            elif certificate_age > 3:
+            elif certificate_age >= 3:
                 return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/update?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem with your course details'
