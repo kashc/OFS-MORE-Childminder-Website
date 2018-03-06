@@ -3737,7 +3737,7 @@ def payment_confirmation(request):
                 'order_code': request.GET["orderCode"],
             }
             local_app = Application.objects.get(application_id=application_id_local)
-            local_app.application_status = 'COMPLETE'
+            local_app.application_status = 'SUBMITTED'
             local_app.save()
             return render(request, 'payment-confirmation.html', variables)
         else:

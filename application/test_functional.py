@@ -351,7 +351,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         """
         self.TestNewApplicationSubmit()
         self.assertTrue(Application.objects.filter(application_id=self.application_id).exists())
-        self.assertTrue(Application.objects.get(application_id=self.application_id).application_status == "COMPLETE")
+        self.assertTrue(Application.objects.get(application_id=self.application_id).application_status == "SUBMITTED")
 
     def test_new_application_submit_log(self):
         """
