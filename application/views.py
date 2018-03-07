@@ -62,9 +62,9 @@ from .forms import (AccountForm, ApplicationSavedForm, ContactEmailForm, Contact
                     ReferenceSecondReferenceContactForm, ReferenceSummaryForm, SecondReferenceForm,
                     TypeOfChildcareAgeGroupsForm, TypeOfChildcareGuidanceForm, TypeOfChildcareRegisterForm)
 from .middleware import CustomAuthenticationHandler
-from .models import (AdultInHome, ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application,
+from .models import (AdultInHome, ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, AuditLog,
                      ChildInHome, ChildcareType, CriminalRecordCheck, EYFS, FirstAidTraining, HealthDeclarationBooklet,
-                     Reference, UserDetails, AuditLog)
+                     Reference, UserDetails)
 
 
 def error_404(request):
@@ -3609,10 +3609,9 @@ def card_payment_details(request):
             if payment_response.status_code == 201:
 
                 application = Application.objects.get(pk=application_id_local)
-                if application.application_status == 'FURTHER_INFORMATION':
-                    trigger_audit_log(application_id_local,'RESUBMIT',request.user)
-                else:
-                    trigger_audit_log(application_id_local, 'SUBMITTED', request.user)
+                # when functionality to resubmit an application is added this trigger must be added
+                # trigger_audit_log(application_id_local, 'RESUBMITTED')
+                trigger_audit_log(application_id_local, 'SUBMITTED')
                 application.date_submitted = datetime.datetime.today()
                 login_id = application.login_id.login_id
                 login_record = UserDetails.objects.get(pk=login_id)
@@ -3751,17 +3750,18 @@ def application_accepted(request):
     return render(request, 'application-accepted.html', variables)
 
 
-def trigger_audit_log(application_id, status, user):
+def trigger_audit_log(application_id, status):
     message = ''
-    if status == 'SUBMITTED':
-        message = 'The arc reviewer has flagged some fields that have been returned to the applicant'
-    elif status == 'RESUBMITTED':
-        message = 'The reviewer has accepted your applicant'
-
     mydata = {}
+    mydata['user'] = ''
+    if status == 'SUBMITTED':
+        message = 'Submitted by applicant'
+        mydata['user'] = 'Applicant'
+    elif status == 'RESUBMITTED':
+        message = 'Resubmitted - multiple tasks'
+        mydata['user'] = 'Applicant'
     mydata['message'] = message
-    mydata['user'] = str(user)
-    mydata['date'] = str(datetime.today().strftime("%H:%M | %d %B %Y"))
+    mydata['date'] = str(datetime.datetime.today().strftime("%d/%m/%Y"))
     if AuditLog.objects.filter(application_id=application_id).count() == 1:
         log = AuditLog.objects.get(application_id=application_id)
         log.audit_message = log.audit_message[:-1] + ',' + json.dumps(mydata) + ']'
