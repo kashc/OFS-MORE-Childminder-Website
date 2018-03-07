@@ -7,6 +7,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 from uuid import uuid4
 
+
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 
