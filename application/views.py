@@ -13,7 +13,6 @@ from datetime import date
 from uuid import UUID
 
 from django.conf import settings
-from django.forms.utils import ErrorList
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.cache import never_cache
@@ -31,7 +30,6 @@ from .business_logic import (childcare_type_logic,
                              multiple_childcare_address_logic,
                              other_people_adult_details_logic,
                              other_people_children_details_logic,
-                             personal_childcare_address_logic,
                              personal_dob_logic,
                              personal_home_address_logic,
                              personal_location_of_care_logic,
@@ -43,84 +41,30 @@ from .business_logic import (childcare_type_logic,
                              remove_adult,
                              remove_child,
                              reset_declaration)
-from .forms import (AccountForm,
-                    ApplicationSavedForm,
-                    DeclarationDeclarationForm,
-                    DeclarationDeclarationForm2,
-                    DeclarationSummaryForm,
-                    ContactEmailForm,
-                    ContactPhoneForm,
-                    ContactSummaryForm,
-                    DBSCheckDBSDetailsForm,
-                    DBSCheckGuidanceForm,
-                    DBSCheckSummaryForm,
-                    DBSCheckUploadDBSForm,
-                    DeclarationDeclarationForm,
-                    EYFSGuidanceForm,
-                    EYFSKnowledgeForm,
-                    EYFSQuestionsForm,
-                    EYFSSummaryForm,
-                    EYFSTrainingForm,
-                    FirstAidTrainingDeclarationForm,
-                    FirstAidTrainingDetailsForm,
-                    FirstAidTrainingGuidanceForm,
-                    FirstAidTrainingRenewForm,
-                    FirstAidTrainingSummaryForm,
-                    FirstAidTrainingTrainingForm,
-                    FirstReferenceForm,
-                    HealthBookletForm,
-                    HealthIntroForm,
-                    OtherPeopleAdultDBSForm,
-                    OtherPeopleAdultDetailsForm,
-                    OtherPeopleAdultPermissionForm,
-                    OtherPeopleAdultQuestionForm,
-                    OtherPeopleApproaching16Form,
-                    OtherPeopleChildrenQuestionForm,
-                    OtherPeopleChildrenDetailsForm,
-                    OtherPeopleGuidanceForm,
-                    OtherPeopleSummaryForm,
-                    PaymentDetailsForm,
-                    PaymentForm,
-                    PersonalDetailsChildcareAddressForm,
-                    PersonalDetailsChildcareAddressLookupForm,
-                    PersonalDetailsChildcareAddressManualForm,
-                    PersonalDetailsDOBForm,
-                    PersonalDetailsGuidanceForm,
-                    PersonalDetailsHomeAddressForm,
-                    PersonalDetailsHomeAddressLookupForm,
-                    PersonalDetailsHomeAddressManualForm,
-                    PersonalDetailsLocationOfCareForm,
-                    PersonalDetailsNameForm,
-                    PersonalDetailsSummaryForm,
-                    QuestionForm,
-                    ReferenceFirstReferenceAddressForm,
-                    ReferenceFirstReferenceAddressLookupForm,
-                    ReferenceFirstReferenceAddressManualForm,
-                    ReferenceFirstReferenceContactForm,
-                    ReferenceIntroForm,
-                    ReferenceSecondReferenceAddressForm,
-                    ReferenceSecondReferenceAddressLookupForm,
-                    ReferenceSecondReferenceAddressManualForm,
-                    ReferenceSecondReferenceContactForm,
-                    ReferenceSummaryForm,
-                    SecondReferenceForm,
-                    TypeOfChildcareAgeGroupsForm,
-                    TypeOfChildcareGuidanceForm,
-                    TypeOfChildcareRegisterForm)
+from .forms import (AccountForm, ApplicationSavedForm, ContactEmailForm, ContactPhoneForm, ContactSummaryForm,
+                    DBSCheckDBSDetailsForm, DBSCheckGuidanceForm, DBSCheckSummaryForm, DBSCheckUploadDBSForm,
+                    DeclarationDeclarationForm, DeclarationDeclarationForm2, DeclarationSummaryForm, EYFSGuidanceForm,
+                    EYFSKnowledgeForm, EYFSQuestionsForm, EYFSSummaryForm, EYFSTrainingForm,
+                    FirstAidTrainingDeclarationForm, FirstAidTrainingDetailsForm, FirstAidTrainingGuidanceForm,
+                    FirstAidTrainingRenewForm, FirstAidTrainingSummaryForm, FirstAidTrainingTrainingForm,
+                    FirstReferenceForm, HealthBookletForm, HealthIntroForm, OtherPeopleAdultDBSForm,
+                    OtherPeopleAdultDetailsForm, OtherPeopleAdultPermissionForm, OtherPeopleAdultQuestionForm,
+                    OtherPeopleApproaching16Form, OtherPeopleChildrenDetailsForm, OtherPeopleChildrenQuestionForm,
+                    OtherPeopleGuidanceForm, OtherPeopleSummaryForm, PaymentDetailsForm, PaymentForm,
+                    PersonalDetailsChildcareAddressForm, PersonalDetailsChildcareAddressLookupForm,
+                    PersonalDetailsChildcareAddressManualForm, PersonalDetailsDOBForm, PersonalDetailsGuidanceForm,
+                    PersonalDetailsHomeAddressForm, PersonalDetailsHomeAddressLookupForm,
+                    PersonalDetailsHomeAddressManualForm, PersonalDetailsLocationOfCareForm, PersonalDetailsNameForm,
+                    PersonalDetailsSummaryForm, QuestionForm, ReferenceFirstReferenceAddressForm,
+                    ReferenceFirstReferenceAddressLookupForm, ReferenceFirstReferenceAddressManualForm,
+                    ReferenceFirstReferenceContactForm, ReferenceIntroForm, ReferenceSecondReferenceAddressForm,
+                    ReferenceSecondReferenceAddressLookupForm, ReferenceSecondReferenceAddressManualForm,
+                    ReferenceSecondReferenceContactForm, ReferenceSummaryForm, SecondReferenceForm,
+                    TypeOfChildcareAgeGroupsForm, TypeOfChildcareGuidanceForm, TypeOfChildcareRegisterForm)
 from .middleware import CustomAuthenticationHandler
-from .models import (AdultInHome,
-                     ApplicantHomeAddress,
-                     ApplicantName,
-                     ApplicantPersonalDetails,
-                     Application,
-                     ChildcareType,
-                     ChildInHome,
-                     CriminalRecordCheck,
-                     EYFS,
-                     FirstAidTraining,
-                     HealthDeclarationBooklet,
-                     Reference,
-                     UserDetails)
+from .models import (AdultInHome, ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, AuditLog,
+                     ChildInHome, ChildcareType, CriminalRecordCheck, EYFS, FirstAidTraining, HealthDeclarationBooklet,
+                     Reference, UserDetails)
 
 
 def error_404(request):
@@ -3663,7 +3607,11 @@ def card_payment_details(request):
             parsed_payment_response = json.loads(payment_response.text)
             # If the payment is successful
             if payment_response.status_code == 201:
+
                 application = Application.objects.get(pk=application_id_local)
+                # when functionality to resubmit an application is added this trigger must be added
+                # trigger_audit_log(application_id_local, 'RESUBMITTED')
+                trigger_audit_log(application_id_local, 'SUBMITTED')
                 application.date_submitted = datetime.datetime.today()
                 login_id = application.login_id.login_id
                 login_record = UserDetails.objects.get(pk=login_id)
@@ -3800,3 +3748,23 @@ def application_accepted(request):
         'application_id': application_id_local
     }
     return render(request, 'application-accepted.html', variables)
+
+
+def trigger_audit_log(application_id, status):
+    message = ''
+    mydata = {}
+    mydata['user'] = ''
+    if status == 'SUBMITTED':
+        message = 'Submitted by applicant'
+        mydata['user'] = 'Applicant'
+    elif status == 'RESUBMITTED':
+        message = 'Resubmitted - multiple tasks'
+        mydata['user'] = 'Applicant'
+    mydata['message'] = message
+    mydata['date'] = str(datetime.datetime.today().strftime("%d/%m/%Y"))
+    if AuditLog.objects.filter(application_id=application_id).count() == 1:
+        log = AuditLog.objects.get(application_id=application_id)
+        log.audit_message = log.audit_message[:-1] + ',' + json.dumps(mydata) + ']'
+        log.save()
+    else:
+        log = AuditLog.objects.create(application_id=application_id, audit_message='[' + json.dumps(mydata) + ']')
