@@ -3652,7 +3652,6 @@ def paypal_payment_completion(request):
         order_code = request.GET['orderCode']
         # If the payment has been successfully processed
         if payment.check_payment(order_code) == 200:
-            trigger_audit_log(application_id_local, 'SUBMITTED')
             variables = {
                 'application_id': application_id_local,
                 'order_code': request.GET["orderCode"],
