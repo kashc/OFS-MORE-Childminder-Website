@@ -15,7 +15,7 @@ class AuditLog(models.Model):
     application_id = models.UUIDField(primary_key=True, default=uuid4)
     audit_message = JSONField(blank=True)
     class Meta:
-        managed = False
+
         db_table = 'AUDIT_LOG'
 
 class UserDetails(models.Model):
