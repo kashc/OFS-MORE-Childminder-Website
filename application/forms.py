@@ -72,7 +72,7 @@ class ContactEmailForm(GOVUKForm):
         if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
             raise forms.ValidationError('TBC')
         if len(email_address) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('Please enter 100 characters or less')
         return email_address
 
 
@@ -155,13 +155,13 @@ class QuestionForm(GOVUKForm):
     def clean_security_question(self):
         security_question = self.cleaned_data['security_question']
         if len(security_question) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('Please enter 100 characters or less')
         return security_question
 
     def clean_security_answer(self):
         security_answer = self.cleaned_data['security_answer']
         if len(security_answer) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('Please enter 100 characters or less')
         return security_answer
 
 
@@ -257,7 +257,7 @@ class EmailLoginForm(GOVUKForm):
         """
         email_address = self.cleaned_data['email_address']
         if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
-            raise forms.ValidationError('Please enter a valid e-mail address.')
+            raise forms.ValidationError('Please enter a valid e-mail address')
         return email_address
 
 
@@ -328,9 +328,9 @@ class PersonalDetailsNameForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    first_name = forms.CharField(label='First name', error_messages={'required': 'Please enter your first name.'})
+    first_name = forms.CharField(label='First name', error_messages={'required': 'Please enter your first name'})
     middle_names = forms.CharField(label='Middle names (if you have any)', required=False)
-    last_name = forms.CharField(label='Last name', error_messages={'required': 'Please enter your last name.'})
+    last_name = forms.CharField(label='Last name', error_messages={'required': 'Please enter your last name'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -356,7 +356,7 @@ class PersonalDetailsNameForm(GOVUKForm):
         """
         first_name = self.cleaned_data['first_name']
         if len(first_name) > 100:
-            raise forms.ValidationError('First name must be under 100 characters long.')
+            raise forms.ValidationError('First name must be under 100 characters long')
         return first_name
 
     def clean_middle_names(self):
@@ -367,7 +367,7 @@ class PersonalDetailsNameForm(GOVUKForm):
         middle_names = self.cleaned_data['middle_names']
         if middle_names != '':
             if len(middle_names) > 100:
-                raise forms.ValidationError('Middle names must be under 100 characters long.')
+                raise forms.ValidationError('Middle names must be under 100 characters long')
         return middle_names
 
     def clean_last_name(self):
@@ -377,7 +377,7 @@ class PersonalDetailsNameForm(GOVUKForm):
         """
         last_name = self.cleaned_data['last_name']
         if len(last_name) > 100:
-            raise forms.ValidationError('Last name must be under 100 characters long.')
+            raise forms.ValidationError('Last name must be under 100 characters long')
         return last_name
 
 
@@ -417,11 +417,11 @@ class PersonalDetailsDOBForm(GOVUKForm):
         today = date.today()
         age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
         if age < 18:
-            raise forms.ValidationError('You must be 18 or older to be a childminder.')
+            raise forms.ValidationError('You must be 18 or older to be a childminder')
         date_today_diff = today.year - applicant_dob.year - (
                 (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
         if date_today_diff < 0:
-            raise forms.ValidationError('Please check the year.')
+            raise forms.ValidationError('Please check the year')
         return birth_day, birth_month, birth_year
 
 
@@ -431,7 +431,7 @@ class PersonalDetailsHomeAddressForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode.'})
+    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -457,7 +457,7 @@ class PersonalDetailsHomeAddressForm(GOVUKForm):
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
         if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
-            raise forms.ValidationError('Please enter a valid postcode.')
+            raise forms.ValidationError('Please enter a valid postcode')
         return postcode
 
 
@@ -468,12 +468,12 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     street_name_and_number = forms.CharField(label='Address line 1', error_messages={
-        'required': 'Please enter the first line of your address.'})
+        'required': 'Please enter the first line of your address'})
     street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city',
-                           error_messages={'required': 'Please enter the name of the town or city.'})
+                           error_messages={'required': 'Please enter the name of the town or city'})
     county = forms.CharField(label='County (optional)', required=False)
-    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode.'})
+    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -503,7 +503,7 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         """
         street_name_and_number = self.cleaned_data['street_name_and_number']
         if len(street_name_and_number) > 50:
-            raise forms.ValidationError('The first line of your address must be under 50 characters long.')
+            raise forms.ValidationError('The first line of your address must be under 50 characters long')
         return street_name_and_number
 
     def clean_street_name_and_number2(self):
@@ -513,7 +513,7 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         """
         street_name_and_number2 = self.cleaned_data['street_name_and_number2']
         if len(street_name_and_number2) > 50:
-            raise forms.ValidationError('The second line of your address must be under 50 characters long.')
+            raise forms.ValidationError('The second line of your address must be under 50 characters long')
         return street_name_and_number2
 
     def clean_town(self):
@@ -523,9 +523,9 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         """
         town = self.cleaned_data['town']
         if re.match("^[A-Za-z- ]+$", town) is None:
-            raise forms.ValidationError('Please spell out the name of the town or city using letters.')
+            raise forms.ValidationError('Please spell out the name of the town or city using letters')
         if len(town) > 50:
-            raise forms.ValidationError('The name of the town or city must be under 50 characters long.')
+            raise forms.ValidationError('The name of the town or city must be under 50 characters long')
         return town
 
     def clean_county(self):
@@ -536,9 +536,9 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         county = self.cleaned_data['county']
         if county != '':
             if re.match("^[A-Za-z- ]+$", county) is None:
-                raise forms.ValidationError('Please spell out the name of the county using letters.')
+                raise forms.ValidationError('Please spell out the name of the county using letters')
             if len(county) > 50:
-                raise forms.ValidationError('The name of the county must be under 50 characters long.')
+                raise forms.ValidationError('The name of the county must be under 50 characters long')
         return county
 
     def clean_postcode(self):
@@ -550,7 +550,7 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
         if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
-            raise forms.ValidationError('Please enter a valid postcode.')
+            raise forms.ValidationError('Please enter a valid postcode')
         return postcode
 
 
@@ -561,7 +561,7 @@ class PersonalDetailsHomeAddressLookupForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     address = forms.ChoiceField(label='Select address', required=True,
-                                error_messages={'required': 'Please select your address.'})
+                                error_messages={'required': 'Please select your address'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -587,7 +587,7 @@ class PersonalDetailsLocationOfCareForm(GOVUKForm):
     )
     location_of_care = forms.ChoiceField(label='Is this where you will be looking after the children?', choices=options,
                                          widget=InlineRadioSelect, required=True,
-                                         error_messages={'required': 'Please answer yes or no.'})
+                                         error_messages={'required': 'Please answer yes or no'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -611,7 +611,7 @@ class PersonalDetailsChildcareAddressForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode.'})
+    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -638,7 +638,7 @@ class PersonalDetailsChildcareAddressForm(GOVUKForm):
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
         if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
-            raise forms.ValidationError('Please enter a valid postcode.')
+            raise forms.ValidationError('Please enter a valid postcode')
         return postcode
 
 
@@ -649,12 +649,12 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     street_name_and_number = forms.CharField(label='Address line 1',
-                                             error_messages={'required': 'Please enter the first line of the address.'})
+                                             error_messages={'required': 'Please enter the first line of the address'})
     street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city',
-                           error_messages={'required': 'Please enter the name of the town or city.'})
+                           error_messages={'required': 'Please enter the name of the town or city'})
     county = forms.CharField(label='County (optional)', required=False)
-    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter the postcode.'})
+    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter the postcode'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -684,7 +684,7 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         """
         street_name_and_number = self.cleaned_data['street_name_and_number']
         if len(street_name_and_number) > 50:
-            raise forms.ValidationError('The first line of the address must be under 50 characters long.')
+            raise forms.ValidationError('The first line of the address must be under 50 characters long')
         return street_name_and_number
 
     def clean_street_name_and_number2(self):
@@ -694,7 +694,7 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         """
         street_name_and_number2 = self.cleaned_data['street_name_and_number2']
         if len(street_name_and_number2) > 50:
-            raise forms.ValidationError('The second line of the address must be under 50 characters long.')
+            raise forms.ValidationError('The second line of the address must be under 50 characters long')
         return street_name_and_number2
 
     def clean_town(self):
@@ -704,9 +704,9 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         """
         town = self.cleaned_data['town']
         if re.match("^[A-Za-z- ]+$", town) is None:
-            raise forms.ValidationError('Please spell out the the name of the town or city using letters.')
+            raise forms.ValidationError('Please spell out the the name of the town or city using letters')
         if len(town) > 50:
-            raise forms.ValidationError('The name of the town or city must be under 50 characters long.')
+            raise forms.ValidationError('The name of the town or city must be under 50 characters long')
         return town
 
     def clean_county(self):
@@ -717,9 +717,9 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         county = self.cleaned_data['county']
         if county != '':
             if re.match("^[A-Za-z- ]+$", county) is None:
-                raise forms.ValidationError('Please spell out the name of the county using letters.')
+                raise forms.ValidationError('Please spell out the name of the county using letters')
             if len(county) > 100:
-                raise forms.ValidationError('The name of the county must be under 50 characters long.')
+                raise forms.ValidationError('The name of the county must be under 50 characters long')
         return county
 
     def clean_postcode(self):
@@ -731,7 +731,7 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
         if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
-            raise forms.ValidationError('Please enter a valid postcode.')
+            raise forms.ValidationError('Please enter a valid postcode')
         return postcode
 
 
@@ -742,7 +742,7 @@ class PersonalDetailsChildcareAddressLookupForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     address = forms.ChoiceField(label='Select address', required=True,
-                                error_messages={'required': 'Please select the address from the list.'})
+                                error_messages={'required': 'Please select the address from the list'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -779,12 +779,12 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     first_aid_training_organisation = forms.CharField(label='First aid training organisation', error_messages={
-        'required': 'Please enter the title of your course.'})
+        'required': 'Please enter the title of your course'})
     title_of_training_course = forms.CharField(label='Title of training course', error_messages={
-        'required': 'Please enter the title of the course.'})
+        'required': 'Please enter the title of the course'})
     course_date = CustomSplitDateField(label='Date you completed course', help_text='For example, 31 03 2016',
                                        error_messages={
-                                           'required': 'Please enter the full date, including the day, month and year.'})
+                                           'required': 'Please enter the full date, including the day, month and year'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -810,7 +810,7 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
         """
         first_aid_training_organisation = self.cleaned_data['first_aid_training_organisation']
         if len(first_aid_training_organisation) > 50:
-            raise forms.ValidationError('The title of the course must be under 50 characters.')
+            raise forms.ValidationError('The title of the course must be under 50 characters')
         return first_aid_training_organisation
 
     def clean_title_of_training_course(self):
@@ -820,7 +820,7 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
         """
         title_of_training_course = self.cleaned_data['title_of_training_course']
         if len(title_of_training_course) > 50:
-            raise forms.ValidationError('The title of the course must be under 50 characters long.')
+            raise forms.ValidationError('The title of the course must be under 50 characters long')
         return title_of_training_course
 
     def clean_course_date(self):
@@ -836,7 +836,7 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
         date_today_diff = today.year - course_date.year - (
                 (today.month, today.day) < (course_date.month, course_date.day))
         if date_today_diff < 0:
-            raise forms.ValidationError('Please enter a past date.')
+            raise forms.ValidationError('Please enter a past date')
         return course_day, course_month, course_year
 
 
@@ -848,7 +848,7 @@ class FirstAidTrainingDeclarationForm(GOVUKForm):
     auto_replace_widgets = True
     declaration = forms.BooleanField(label='I will show my first aid certificate to the inspector', required=True,
                                      error_messages={
-                                         'required': 'You must agree to show your certificate to the inspector.'})
+                                         'required': 'You must agree to show your certificate to the inspector'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -871,7 +871,7 @@ class FirstAidTrainingRenewForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     renew = forms.BooleanField(label='I will renew my first aid certificate in the next few months', required=True,
-                               error_messages={'required': 'You must agree to renew your first aid certificaate'})
+                               error_messages={'required': 'You must agree to renew your first aid certificate'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1012,12 +1012,12 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
     dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
                                                 help_text='12-digit number on your certificate',
                                                 required=True, error_messages={
-            'required': 'Please enter your DBS certificate number.'})
+            'required': 'Please enter your DBS certificate number'})
     convictions = forms.ChoiceField(label='Do you have any cautions or convictions?',
                                     help_text='Include any information recorded on your certificate',
                                     choices=options, widget=InlineRadioSelect,
                                     required=True,
-                                    error_messages={'required': 'Please say if you have any cautions or convictions.'})
+                                    error_messages={'required': 'Please say if you have any cautions or convictions'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1040,9 +1040,9 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
         """
         dbs_certificate_number = self.cleaned_data['dbs_certificate_number']
         if len(str(dbs_certificate_number)) > 12:
-            raise forms.ValidationError('Check your certificate: the number should be 12 digits long.')
+            raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
         if len(str(dbs_certificate_number)) < 12:
-            raise forms.ValidationError('Check your certificate: the number should be 12 digits long.')
+            raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
         return dbs_certificate_number
 
 
@@ -1053,7 +1053,7 @@ class DBSCheckUploadDBSForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     declaration = forms.BooleanField(label='I will send my original DBS certificate to Ofsted', required=True,
-                                     error_messages={'required': 'You must agree to send us your DBS certificate.'})
+                                     error_messages={'required': 'You must agree to send us your DBS certificate'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1096,7 +1096,7 @@ class HealthBookletForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     send_hdb_declare = forms.BooleanField(label='I will send the completed booklet to Ofsted', required=True,
-                                          error_messages={'required': 'You must agree to send your booklet to Ofsted.'})
+                                          error_messages={'required': 'You must agree to send your booklet to Ofsted'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1131,14 +1131,14 @@ class FirstReferenceForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     first_name = forms.CharField(label='First name', required=True,
-                                 error_messages={'required': 'Please enter the first name of the referee.'})
+                                 error_messages={'required': 'Please enter the first name of the referee'})
     last_name = forms.CharField(label='Last name', required=True,
-                                error_messages={'required': 'Please enter the last name of the referee.'})
+                                error_messages={'required': 'Please enter the last name of the referee'})
     relationship = forms.CharField(label='How do they know you?', help_text='For instance, friend or neighbour',
                                    required=True,
-                                   error_messages={'required': 'Please tell us how the referee knows you.'})
+                                   error_messages={'required': 'Please tell us how the referee knows you'})
     time_known = TimeKnownField(label='How long have they known you?', required=True,
-                                error_messages={'required': 'Please tell us how long you have known the referee.'})
+                                error_messages={'required': 'Please tell us how long you have known the referee'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1163,7 +1163,7 @@ class FirstReferenceForm(GOVUKForm):
         """
         first_name = self.cleaned_data['first_name']
         if len(first_name) > 100:
-            raise forms.ValidationError("Referee's first name must be under 100 characters long.")
+            raise forms.ValidationError("Referee's first name must be under 100 characters long")
         return first_name
 
     def clean_last_name(self):
@@ -1173,7 +1173,7 @@ class FirstReferenceForm(GOVUKForm):
         """
         last_name = self.cleaned_data['last_name']
         if len(last_name) > 100:
-            raise forms.ValidationError("Referee's last name must be under 100 characters long.")
+            raise forms.ValidationError("Referee's last name must be under 100 characters long")
         return last_name
 
     def clean_relationship(self):
@@ -1198,7 +1198,7 @@ class FirstReferenceForm(GOVUKForm):
         elif months_known == 0:
             reference_known_time = years_known
         if reference_known_time < 1:
-            raise forms.ValidationError('You must have known the referee for at least 1 year.')
+            raise forms.ValidationError('You must have known the referee for at least 1 year')
         return years_known, months_known
 
 
@@ -1208,7 +1208,7 @@ class ReferenceFirstReferenceAddressForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the referee's postcode."})
+    postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the referee's postcode"})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1232,7 +1232,7 @@ class ReferenceFirstReferenceAddressForm(GOVUKForm):
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
         if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
-            raise forms.ValidationError('Enter a valid UK postcode or enter the address manually.')
+            raise forms.ValidationError('Enter a valid UK postcode or enter the address manually')
         return postcode
 
 
@@ -1243,12 +1243,12 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     street_name_and_number = forms.CharField(label='Address line 1', error_messages={
-        'required': "Please enter the first line of the referee's address."})
+        'required': "Please enter the first line of the referee's address"})
     street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city',
-                           error_messages={'required': "Please enter the name of the town or city."})
+                           error_messages={'required': "Please enter the name of the town or city"})
     county = forms.CharField(label='County (optional)', required=False)
-    postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the referee's postcode."})
+    postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the referee's postcode"})
     country = forms.CharField(label='Country (optional)', required=True)
 
     def __init__(self, *args, **kwargs):
@@ -1276,7 +1276,7 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
         """
         street_name_and_number = self.cleaned_data['street_name_and_number']
         if len(street_name_and_number) > 50:
-            raise forms.ValidationError('The first line of the address must be under 50 characters long.')
+            raise forms.ValidationError('The first line of the address must be under 50 characters long')
         return street_name_and_number
 
     def clean_street_name_and_number2(self):
@@ -1286,7 +1286,7 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
         """
         street_name_and_number2 = self.cleaned_data['street_name_and_number2']
         if len(street_name_and_number2) > 50:
-            raise forms.ValidationError('The second line of the address must be under 50 characters long.')
+            raise forms.ValidationError('The second line of the address must be under 50 characters long')
         return street_name_and_number2
 
     def clean_town(self):
@@ -1296,9 +1296,9 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
         """
         town = self.cleaned_data['town']
         if re.match("^[A-Za-z- ]+$", town) is None:
-            raise forms.ValidationError('Please spell out the name of the town or city using letters.')
+            raise forms.ValidationError('Please spell out the name of the town or city using letters')
         if len(town) > 50:
-            raise forms.ValidationError('The name of the town or city must be under 50 characters long.')
+            raise forms.ValidationError('The name of the town or city must be under 50 characters long')
         return town
 
     def clean_county(self):
@@ -1309,9 +1309,9 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
         county = self.cleaned_data['county']
         if county != '':
             if re.match("^[A-Za-z- ]+$", county) is None:
-                raise forms.ValidationError('Please spell out the name of the county using letters.')
+                raise forms.ValidationError('Please spell out the name of the county using letters')
             if len(county) > 50:
-                raise forms.ValidationError('The name of the county must be under 50 characters long.')
+                raise forms.ValidationError('The name of the county must be under 50 characters long')
         return county
 
     def clean_postcode(self):
@@ -1323,7 +1323,7 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
         if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
-            raise forms.ValidationError('Please enter a valid postcode.')
+            raise forms.ValidationError('Please enter a valid postcode')
         return postcode
 
     def clean_country(self):
@@ -1334,9 +1334,9 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
         country = self.cleaned_data['country']
         if country != '':
             if re.match("^[A-Za-z- ]+$", country) is None:
-                raise forms.ValidationError('Please spell out the name of the country using letters.')
+                raise forms.ValidationError('Please spell out the name of the country using letters')
             if len(country) > 50:
-                raise forms.ValidationError('The name of the country must be under 50 characters long.')
+                raise forms.ValidationError('The name of the country must be under 50 characters long')
         return country
 
 
@@ -1347,7 +1347,7 @@ class ReferenceFirstReferenceAddressLookupForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     address = forms.ChoiceField(label='Select address', required=True,
-                                error_messages={'required': "Please select the referee's address."})
+                                error_messages={'required': "Please select the referee's address"})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1368,9 +1368,9 @@ class ReferenceFirstReferenceContactForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     phone_number = forms.CharField(label='Phone number',
-                                   error_messages={'required': 'Please give a phone number for your first referee.'})
+                                   error_messages={'required': 'Please give a phone number for your first referee'})
     email_address = forms.CharField(label='Email address',
-                                    error_messages={'required': 'Please give an email address for your first referee.'})
+                                    error_messages={'required': 'Please give an email address for your first referee'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1396,7 +1396,7 @@ class ReferenceFirstReferenceContactForm(GOVUKForm):
         no_space_phone_number = phone_number.replace(' ', '')
         if phone_number != '':
             if len(no_space_phone_number) > 14:
-                raise forms.ValidationError('Please enter a valid phone number.')
+                raise forms.ValidationError('Please enter a valid phone number')
         return phone_number
 
     def clean_email_address(self):
@@ -1406,9 +1406,9 @@ class ReferenceFirstReferenceContactForm(GOVUKForm):
         """
         email_address = self.cleaned_data['email_address']
         if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
-            raise forms.ValidationError('Please enter a valid email address.')
+            raise forms.ValidationError('Please enter a valid email address')
         if len(email_address) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('Please enter 100 characters or less')
         return email_address
 
 
@@ -1419,14 +1419,14 @@ class SecondReferenceForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     first_name = forms.CharField(label='First name', required=True,
-                                 error_messages={'required': 'Please enter the first name of the referee.'})
+                                 error_messages={'required': 'Please enter the first name of the referee'})
     last_name = forms.CharField(label='Last name', required=True,
-                                error_messages={'required': 'Please enter the name of the referee.'})
+                                error_messages={'required': 'Please enter the name of the referee'})
     relationship = forms.CharField(label='How do they know you?', help_text='For instance, friend or neighbour',
                                    required=True,
-                                   error_messages={'required': 'Please tell us how the referee knows you.'})
+                                   error_messages={'required': 'Please tell us how the referee knows you'})
     time_known = TimeKnownField(label='How long have they known you?', required=True,
-                                error_messages={'required': 'Please tell us how long you have known the referee.'})
+                                error_messages={'required': 'Please tell us how long you have known the referee'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1451,7 +1451,7 @@ class SecondReferenceForm(GOVUKForm):
         """
         first_name = self.cleaned_data['first_name']
         if len(first_name) > 100:
-            raise forms.ValidationError("Referee's first name must be under 100 characters long.")
+            raise forms.ValidationError("Referee's first name must be under 100 characters long")
         return first_name
 
     def clean_last_name(self):
@@ -1461,7 +1461,7 @@ class SecondReferenceForm(GOVUKForm):
         """
         last_name = self.cleaned_data['last_name']
         if len(last_name) > 100:
-            raise forms.ValidationError("Referee's last name must be under 100 characters long.")
+            raise forms.ValidationError("Referee's last name must be under 100 characters long")
         return last_name
 
     def clean_time_known(self):
@@ -1476,7 +1476,7 @@ class SecondReferenceForm(GOVUKForm):
         elif months_known == 0:
             reference_known_time = years_known
         if reference_known_time < 1:
-            raise forms.ValidationError('You must have known the referee for at least 1 year.')
+            raise forms.ValidationError('You must have known the referee for at least 1 year')
         return years_known, months_known
 
 
@@ -1486,7 +1486,7 @@ class ReferenceSecondReferenceAddressForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the referee's postcode."})
+    postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the referee's postcode"})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1510,7 +1510,7 @@ class ReferenceSecondReferenceAddressForm(GOVUKForm):
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
         if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
-            raise forms.ValidationError('Enter a valid UK postcode or enter the address manually.')
+            raise forms.ValidationError('Enter a valid UK postcode or enter the address manually')
         return postcode
 
 
@@ -1521,12 +1521,12 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     street_name_and_number = forms.CharField(label='Address line 1', error_messages={
-        'required': "Please enter the first line of the referee's address."})
+        'required': "Please enter the first line of the referee's address"})
     street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city',
-                           error_messages={'required': "Please enter the name of the town or city."})
+                           error_messages={'required': "Please enter the name of the town or city"})
     county = forms.CharField(label='County (optional)', required=False)
-    postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the referee's postcode."})
+    postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the referee's postcode"})
     country = forms.CharField(label='Country (optional)', required=True)
 
     def __init__(self, *args, **kwargs):
@@ -1554,7 +1554,7 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         """
         street_name_and_number = self.cleaned_data['street_name_and_number']
         if len(street_name_and_number) > 50:
-            raise forms.ValidationError('The first line of the address must be under 50 characters long.')
+            raise forms.ValidationError('The first line of the address must be under 50 characters long')
         return street_name_and_number
 
     def clean_street_name_and_number2(self):
@@ -1564,7 +1564,7 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         """
         street_name_and_number2 = self.cleaned_data['street_name_and_number2']
         if len(street_name_and_number2) > 50:
-            raise forms.ValidationError('The second line of the address must be under 50 characters long.')
+            raise forms.ValidationError('The second line of the address must be under 50 characters long')
         return street_name_and_number2
 
     def clean_town(self):
@@ -1574,9 +1574,9 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         """
         town = self.cleaned_data['town']
         if re.match("^[A-Za-z- ]+$", town) is None:
-            raise forms.ValidationError('Please spell out the name of the town or city using letters.')
+            raise forms.ValidationError('Please spell out the name of the town or city using letters')
         if len(town) > 50:
-            raise forms.ValidationError('The name of the town or city must be under 50 characters long.')
+            raise forms.ValidationError('The name of the town or city must be under 50 characters long')
         return town
 
     def clean_county(self):
@@ -1587,9 +1587,9 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         county = self.cleaned_data['county']
         if county != '':
             if re.match("^[A-Za-z- ]+$", county) is None:
-                raise forms.ValidationError('Please spell out the name of the county using letters.')
+                raise forms.ValidationError('Please spell out the name of the county using letters')
             if len(county) > 50:
-                raise forms.ValidationError('The name of the county must be under 50 characters long.')
+                raise forms.ValidationError('The name of the county must be under 50 characters long')
         return county
 
     def clean_postcode(self):
@@ -1601,7 +1601,7 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
         if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
-            raise forms.ValidationError('Please enter a valid postcode.')
+            raise forms.ValidationError('Please enter a valid postcode')
         return postcode
 
     def clean_country(self):
@@ -1612,9 +1612,9 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         country = self.cleaned_data['country']
         if country != '':
             if re.match("^[A-Za-z- ]+$", country) is None:
-                raise forms.ValidationError('Please spell out the name of the country using letters.')
+                raise forms.ValidationError('Please spell out the name of the country using letters')
             if len(country) > 50:
-                raise forms.ValidationError('The name of the country must be under 50 characters long.')
+                raise forms.ValidationError('The name of the country must be under 50 characters long')
         return country
 
 
@@ -1625,7 +1625,7 @@ class ReferenceSecondReferenceAddressLookupForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     address = forms.ChoiceField(label='Select address', required=True,
-                                error_messages={'required': "Please select the referee's address."})
+                                error_messages={'required': "Please select the referee's address"})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1646,9 +1646,9 @@ class ReferenceSecondReferenceContactForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
     phone_number = forms.CharField(label='Phone number',
-                                   error_messages={'required': 'Please give a phone number for your second referee.'})
+                                   error_messages={'required': 'Please give a phone number for your second referee'})
     email_address = forms.CharField(label='Email address', error_messages={
-        'required': 'Please give an email address for your second referee.'})
+        'required': 'Please give an email address for your second referee'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1673,7 +1673,7 @@ class ReferenceSecondReferenceContactForm(GOVUKForm):
         no_space_phone_number = phone_number.replace(' ', '')
         if phone_number != '':
             if len(no_space_phone_number) > 14:
-                raise forms.ValidationError('Please enter a valid phone number.')
+                raise forms.ValidationError('Please enter a valid phone number')
         return phone_number
 
     def clean_email_address(self):
@@ -1683,9 +1683,9 @@ class ReferenceSecondReferenceContactForm(GOVUKForm):
         """
         email_address = self.cleaned_data['email_address']
         if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
-            raise forms.ValidationError('Please enter a valid email address.')
+            raise forms.ValidationError('Please enter a valid email address')
         if len(email_address) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('Please enter 100 characters or less')
         return email_address
 
 
@@ -1773,7 +1773,7 @@ class OtherPeopleAdultDetailsForm(GOVUKForm):
         if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
             raise forms.ValidationError('TBC')
         if len(first_name) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('Please enter 100 characters or less')
         return first_name
 
     def clean_middle_names(self):
@@ -1786,7 +1786,7 @@ class OtherPeopleAdultDetailsForm(GOVUKForm):
             if re.match("^[A-zÀ-ÿ- ]+$", middle_names) is None:
                 raise forms.ValidationError('TBC')
             if len(middle_names) > 100:
-                raise forms.ValidationError('Please enter 100 characters or less.')
+                raise forms.ValidationError('Please enter 100 characters or less')
         return middle_names
 
     def clean_last_name(self):
@@ -1798,7 +1798,7 @@ class OtherPeopleAdultDetailsForm(GOVUKForm):
         if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
             raise forms.ValidationError('TBC')
         if len(last_name) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('Please enter 100 characters or less')
         return last_name
 
     def clean_date_of_birth(self):
@@ -1954,7 +1954,7 @@ class OtherPeopleChildrenDetailsForm(GOVUKForm):
         if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
             raise forms.ValidationError('TBC')
         if len(first_name) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('Please enter 100 characters or less')
         return first_name
 
     def clean_middle_names(self):
@@ -1967,7 +1967,7 @@ class OtherPeopleChildrenDetailsForm(GOVUKForm):
             if re.match("^[A-zÀ-ÿ- ]+$", middle_names) is None:
                 raise forms.ValidationError('TBC')
             if len(middle_names) > 100:
-                raise forms.ValidationError('Please enter 100 characters or less.')
+                raise forms.ValidationError('Please enter 100 characters or less')
         return middle_names
 
     def clean_last_name(self):
@@ -1979,7 +1979,7 @@ class OtherPeopleChildrenDetailsForm(GOVUKForm):
         if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
             raise forms.ValidationError('TBC')
         if len(last_name) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less.')
+            raise forms.ValidationError('Please enter 100 characters or less')
         return last_name
 
     def clean_date_of_birth(self):
