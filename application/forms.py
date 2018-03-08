@@ -1126,6 +1126,8 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
                                     required=True,
                                     error_messages={'required': 'Please say if you have any cautions or convictions'})
 
+    dbs_certificate_number.widget.attrs.update({'style': 'width: 8.4em;'})
+
     def __init__(self, *args, **kwargs):
         """
         Method to configure the initialisation of the Your criminal record (DBS) check: details form
