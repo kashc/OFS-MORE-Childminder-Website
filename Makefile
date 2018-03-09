@@ -19,7 +19,7 @@ install:
 ifndef WIN
 	-virtualenv -p python3 .venv
 endif
-	python install -r requirements.txt
+	pip install -r requirements.txt
 
 # handle django migrations
 migrate:
