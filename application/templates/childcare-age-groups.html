@@ -9,7 +9,7 @@
 {{form.error_summary}}
 
 <div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
+    <div class="form-group grid-row">
         <a href="{{ URL_PREFIX }}/childcare/guidance?id={{application_id}}" class="link-back"
            style="margin-right: 10px; line-height: 28px">
             Back
@@ -22,6 +22,7 @@
             <h1 class="form-title heading-large">
                 Ages of the children
             </h1>
+
             {{form.as_div}}
             {% csrf_token %}
             <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>

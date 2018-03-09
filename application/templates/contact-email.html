@@ -9,7 +9,7 @@
 {{form.error_summary}}
 
 <div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
+    <div class="form-group grid-row">
         <!-- If applicant has previously completed this task, return to task list with Back button -->
         {% if login_details_status == 'COMPLETED' %}
         <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"

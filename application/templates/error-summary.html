@@ -8,14 +8,16 @@
         <li class="non-field-error">{{ error }}</li>
       {% endfor %}
 
+      <p>You need to do the following: </p>
+
       {% for field, field_errors in field_errors.items %}
         <li class="field-error {% if field.is_hidden %}hidden-field-error{% endif %}">
           <ul>
             {% for field_error in field_errors %}
-              <li>{{ field_error }}</li>
+              <a {% if not field.is_hidden %}href="#{{ field.auto_id }}-label"{% endif %}>{{ field.label }}: {{ field_error }}</a>
             {% endfor %}
           </ul>
-            <a {% if not field.is_hidden %}href="#{{ field.auto_id }}-label"{% endif %}>{{ field.label }}</a>
+
         </li>
       {% endfor %}
     </ul>

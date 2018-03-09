@@ -721,8 +721,8 @@ p {
   text-transform: none;
   font-size: 14px;
   line-height: 1.14286;
-  margin-top: 15px;
-  margin-bottom: 15px;
+  margin-top: 0px;
+  margin-bottom: 0px;
   padding-left: 14px;
   color: #0b0c0c;
   text-decoration: none;
@@ -1994,6 +1994,7 @@ input[type=number] {
 
 .phase-banner {
   padding: 10px 0 8px;
+  margin-bottom: 7px !important;
   border-bottom: 1px solid #bfc1c3;
 }
 
@@ -2053,6 +2054,7 @@ input[type=number] {
 .phase-banner-alpha,
 .phase-banner-beta {
   padding: 10px 0 8px;
+  margin-bottom: 7px;
   border-bottom: 1px solid #bfc1c3;
 }
 
