@@ -2618,3 +2618,14 @@ a.section-link:active {
   margin-top: 20px;
   font-weight: bold;
 }
+
+.find-address-button {
+   margin-left: 10px;
+}
+
+@media (max-width: 639px) {
+    .find-address-button {
+       margin-top: 10px;
+       margin-left: 0;
+    }
+}
