@@ -9,7 +9,7 @@
 {{form.error_summary}}
 
 <div class="column-full">
-    <div class="form-group grid-row">
+    <div class="grid-row">
         <a href="{{ URL_PREFIX }}/references?id={{application_id}}" class="link-back"
            style="margin-right: 10px; line-height: 28px">
             Back
@@ -19,7 +19,7 @@
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->
         <div class="form-group grid-row">
-            <h1 class="form-title heading-large" style="margin-top: 0px;">
+            <h1 class="form-title heading-large">
                 First reference
             </h1>
             <p>This should be someone who has known you for at least 1 year.</p>
