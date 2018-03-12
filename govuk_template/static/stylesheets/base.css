@@ -2629,3 +2629,13 @@ a.section-link:active {
        margin-left: 0;
     }
 }
+.find-address-button {
+   margin-left: 10px;
+}
+
+@media (max-width: 639px) {
+    .find-address-button {
+       margin-top: 10px;
+       margin-left: 0;
+    }
+}
