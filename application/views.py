@@ -132,6 +132,7 @@ def account_selection(request):
             order_code=None
         )
         application_id_local = str(application.application_id)
+        trigger_audit_log(application_id_local,'CREATED')
         return HttpResponseRedirect(settings.URL_PREFIX + '/account/email?id=' + application_id_local)
     else:
         form = AccountForm()
@@ -3759,6 +3760,9 @@ def trigger_audit_log(application_id, status):
         mydata['user'] = 'Applicant'
     elif status == 'RESUBMITTED':
         message = 'Resubmitted - multiple tasks'
+        mydata['user'] = 'Applicant'
+    elif status == 'CREATED':
+        message = 'Application has been created'
         mydata['user'] = 'Applicant'
     mydata['message'] = message
     mydata['date'] = str(datetime.datetime.today().strftime("%d/%m/%Y"))
