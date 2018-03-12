@@ -283,7 +283,7 @@ class VerifyPhoneForm(GOVUKForm):
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
-    magic_link_sms = forms.CharField(label='Security code', required=True)
+    magic_link_sms = forms.IntegerField(label='Security code', required=True)
 
     def __init__(self, *args, **kwargs):
         """

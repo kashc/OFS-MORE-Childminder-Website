@@ -163,7 +163,7 @@ class ExpirySplitDateField(forms.MultiValueField):
     widget = ExpirySplitDateWidget
     hidden_widget = SplitHiddenDateWidget
     default_error_messages = {
-        'invalid': _('TBC.')
+        'invalid': _('TBC')
     }
 
     def __init__(self, *args, **kwargs):
@@ -173,14 +173,14 @@ class ExpirySplitDateField(forms.MultiValueField):
         :param args: Standard arguments parameter
         :param kwargs: Standard key word arguments parameter
         """
-        month_bounds_error = gettext('Month should be between 1 and 12.')
+        month_bounds_error = gettext('Month should be between 1 and 12')
 
         # Field definition
         self.fields = [
             forms.IntegerField(min_value=1, max_value=12, error_messages={
                 'min_value': month_bounds_error,
                 'max_value': month_bounds_error,
-                'invalid': gettext('TBC.')
+                'invalid': gettext('TBC')
             }),
             # Uses a clean year field defined above
             YearField(),
@@ -257,7 +257,7 @@ class TimeKnownField(forms.MultiValueField):
     widget = TimeKnownSplitDateWidget
     hidden_widget = SplitHiddenDateWidget
     default_error_messages = {
-        'invalid': _('Enter a valid date.')
+        'invalid': _('Enter a valid date')
     }
 
     def __init__(self, *args, **kwargs):
@@ -267,19 +267,19 @@ class TimeKnownField(forms.MultiValueField):
         :param args: Standard arguments parameter
         :param kwargs: Standard key word arguments parameter
         """
-        month_bounds_error = gettext('Month must be between 1 and 12.')
-        year_bounds_error = gettext('You must have known the referee for at least 1 year.')
+        month_bounds_error = gettext('Month must be between 1 and 12')
+        year_bounds_error = gettext('You must have known the referee for at least 1 year')
 
         self.fields = [
             forms.IntegerField(min_value=0, error_messages={
                 'min_value': year_bounds_error,
                 'max_value': year_bounds_error,
-                'invalid': gettext('You must have known the referee for at least 1 year.')
+                'invalid': gettext('You must have known the referee for at least 1 year')
             }),
             forms.IntegerField(max_value=12, error_messages={
                 'min_value': month_bounds_error,
                 'max_value': month_bounds_error,
-                'invalid': gettext('Month must be between 1 and 12.')
+                'invalid': gettext('Month must be between 1 and 12')
             })
         ]
 
@@ -364,23 +364,23 @@ class CustomSplitDateFieldDOB(forms.MultiValueField):
     widget = SplitDateWidget
     hidden_widget = SplitHiddenDateWidget
     default_error_messages = {
-        'invalid': _('Please enter a valid date.')
+        'invalid': _('Please enter a valid date')
     }
 
     def __init__(self, *args, **kwargs):
-        day_bounds_error = gettext('Day must be between 1 and 31.')
-        month_bounds_error = gettext('Month must be between 1 and 12.')
+        day_bounds_error = gettext('Day must be between 1 and 31')
+        month_bounds_error = gettext('Month must be between 1 and 12')
 
         self.fields = [
             forms.IntegerField(min_value=1, max_value=31, error_messages={
                 'min_value': day_bounds_error,
                 'max_value': day_bounds_error,
-                'invalid': gettext('Enter day as a number.')
+                'invalid': gettext('Enter day as a number')
             }),
             forms.IntegerField(min_value=1, max_value=12, error_messages={
                 'min_value': month_bounds_error,
                 'max_value': month_bounds_error,
-                'invalid': gettext('Enter month as a number.')
+                'invalid': gettext('Enter month as a number')
             }),
             CustomYearFieldDOB(),
         ]
@@ -422,7 +422,7 @@ class CustomYearFieldDOB(forms.IntegerField):
             # 2-digit dates are a minimum of 10 years ago by default
             era_boundary = self.current_year - self.century - 10
         self.era_boundary = era_boundary
-        bounds_error = gettext('Please check the year.') % {
+        bounds_error = gettext('Please check the year') % {
             'current_year': self.current_year
         }
         options = {
@@ -431,7 +431,7 @@ class CustomYearFieldDOB(forms.IntegerField):
             'error_messages': {
                 'min_value': bounds_error,
                 'max_value': bounds_error,
-                'invalid': gettext('Enter year as a number.'),
+                'invalid': gettext('Enter year as a number'),
             }
         }
         options.update(kwargs)
@@ -451,23 +451,23 @@ class CustomSplitDateField(forms.MultiValueField):
     widget = SplitDateWidget
     hidden_widget = SplitHiddenDateWidget
     default_error_messages = {
-        'invalid': _('Enter a valid date.')
+        'invalid': _('Enter a valid date')
     }
 
     def __init__(self, *args, **kwargs):
-        day_bounds_error = gettext('Day must be between 1 and 31.')
-        month_bounds_error = gettext('Month must be between 1 and 12.')
+        day_bounds_error = gettext('Day must be between 1 and 31')
+        month_bounds_error = gettext('Month must be between 1 and 12')
 
         self.fields = [
             forms.IntegerField(min_value=1, max_value=31, error_messages={
                 'min_value': day_bounds_error,
                 'max_value': day_bounds_error,
-                'invalid': gettext('Enter day as a number.')
+                'invalid': gettext('Enter day as a number')
             }),
             forms.IntegerField(min_value=1, max_value=12, error_messages={
                 'min_value': month_bounds_error,
                 'max_value': month_bounds_error,
-                'invalid': gettext('Enter month as a number.')
+                'invalid': gettext('Enter month as a number')
             }),
             CustomYearField(),
         ]
@@ -509,7 +509,7 @@ class CustomYearField(forms.IntegerField):
             # 2-digit dates are a minimum of 10 years ago by default
             era_boundary = self.current_year - self.century - 10
         self.era_boundary = era_boundary
-        bounds_error = gettext('Please check the date of the course.') % {
+        bounds_error = gettext('Please check the date of the course') % {
             'current_year': self.current_year
         }
         options = {
@@ -518,7 +518,7 @@ class CustomYearField(forms.IntegerField):
             'error_messages': {
                 'min_value': bounds_error,
                 'max_value': bounds_error,
-                'invalid': gettext('Enter year as a number.'),
+                'invalid': gettext('Enter year as a number'),
             }
         }
         options.update(kwargs)
