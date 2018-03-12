@@ -1923,6 +1923,8 @@ class OtherPeopleAdultDBSForm(GOVUKForm):
                                                 help_text='12-digit number on their certificate',
                                                 required=True)
 
+    dbs_certificate_number.widget.attrs.update({'style': 'width: 8.4em;'})
+
     def __init__(self, *args, **kwargs):
         """
         Method to configure the initialisation of the People in your home: adult DBS form
