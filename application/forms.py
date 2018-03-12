@@ -36,6 +36,7 @@ class AccountForm(GOVUKForm):
     GOV.UK form for the Account selection page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -44,7 +45,9 @@ class ContactEmailForm(GOVUKForm):
     GOV.UK form for the Your login and contact details: email page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     email_address = forms.EmailField()
 
     def __init__(self, *args, **kwargs):
@@ -81,7 +84,9 @@ class ContactPhoneForm(GOVUKForm):
     GOV.UK form for the Your login and contact details: phone page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     mobile_number = forms.CharField(label='Mobile phone number')
     add_phone_number = forms.CharField(label='Additional phone number (optional)', required=False)
 
@@ -133,7 +138,9 @@ class QuestionForm(GOVUKForm):
     GOV.UK form for the Your login and contact details: knowledge based question page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     security_question = forms.CharField(label='Knowledge based question', required=True)
     security_answer = forms.CharField(label='Knowledge based answer', required=True)
 
@@ -170,6 +177,7 @@ class ContactSummaryForm(GOVUKForm):
     GOV.UK form for the Your login and contact details: summary page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -178,6 +186,7 @@ class TypeOfChildcareGuidanceForm(GOVUKForm):
     GOV.UK form for the Type of childcare: guidance page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -186,7 +195,9 @@ class TypeOfChildcareAgeGroupsForm(GOVUKForm):
     GOV.UK form for the Type of childcare task
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     CHILDCARE_AGE_CHOICES = (
         ('0-5', '0 to 5 year olds'),
         ('5-8', '5 to 7 year olds'),
@@ -239,6 +250,7 @@ class TypeOfChildcareRegisterForm(GOVUKForm):
     GOV.UK form for the Type of childcare: register page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -247,7 +259,9 @@ class EmailLoginForm(GOVUKForm):
     GOV.UK form for the page to log back into an application
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     email_address = forms.EmailField()
 
     def clean_email_address(self):
@@ -266,7 +280,9 @@ class VerifyPhoneForm(GOVUKForm):
     GOV.UK form for the page to verify an SMS code
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     magic_link_sms = forms.CharField(label='Security code', required=True)
 
     def __init__(self, *args, **kwargs):
@@ -295,7 +311,9 @@ class VerifySecurityQuestionForm(GOVUKForm):
     GOV.UK form for the page to verify an SMS code
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     security_answer = forms.CharField(label='Security question', required=True)
 
     def __init__(self, *args, **kwargs):
@@ -319,6 +337,7 @@ class PersonalDetailsGuidanceForm(GOVUKForm):
     GOV.UK form for the Your personal details: guidance page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -327,7 +346,9 @@ class PersonalDetailsNameForm(GOVUKForm):
     GOV.UK form for the Your personal details: name page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     first_name = forms.CharField(label='First name', error_messages={'required': 'Please enter your first name'})
     middle_names = forms.CharField(label='Middle names (if you have any)', required=False)
     last_name = forms.CharField(label='Last name', error_messages={'required': 'Please enter your last name'})
@@ -386,7 +407,9 @@ class PersonalDetailsDOBForm(GOVUKForm):
     GOV.UK form for the Your personal details: date of birth page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={
         'required': 'Please enter the full date, including the day, month and year'})
 
@@ -430,7 +453,9 @@ class PersonalDetailsHomeAddressForm(GOVUKForm):
     GOV.UK form for the Your personal details: home address page for postcode search
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode'})
 
     def __init__(self, *args, **kwargs):
@@ -466,7 +491,9 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
     GOV.UK form for the Your personal details: home address page for manual entry
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     street_name_and_number = forms.CharField(label='Address line 1', error_messages={
         'required': 'Please enter the first line of your address'})
     street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
@@ -559,7 +586,9 @@ class PersonalDetailsHomeAddressLookupForm(GOVUKForm):
     GOV.UK form for the Your personal details: home address page for postcode search results
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     address = forms.ChoiceField(label='Select address', required=True,
                                 error_messages={'required': 'Please select your address'})
 
@@ -580,7 +609,9 @@ class PersonalDetailsLocationOfCareForm(GOVUKForm):
     GOV.UK form for the Your personal details: location of care page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     options = (
         ('True', 'Yes'),
         ('False', 'No')
@@ -610,7 +641,9 @@ class PersonalDetailsChildcareAddressForm(GOVUKForm):
     GOV.UK form for the Your personal details: childcare address page for postcode search
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode'})
 
     def __init__(self, *args, **kwargs):
@@ -647,7 +680,9 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
     GOV.UK form for the Your personal details: childcare address page for manual entry
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     street_name_and_number = forms.CharField(label='Address line 1',
                                              error_messages={'required': 'Please enter the first line of the address'})
     street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
@@ -740,7 +775,9 @@ class PersonalDetailsChildcareAddressLookupForm(GOVUKForm):
     GOV.UK form for the Your personal details: childcare address page for postcode search results
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     address = forms.ChoiceField(label='Select address', required=True,
                                 error_messages={'required': 'Please select the address from the list'})
 
@@ -761,6 +798,7 @@ class PersonalDetailsSummaryForm(GOVUKForm):
     GOV.UK form for the Your personal details: summary page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -769,6 +807,7 @@ class FirstAidTrainingGuidanceForm(GOVUKForm):
     GOV.UK form for the First aid training: guidance page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -777,7 +816,9 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
     GOV.UK form for the First aid training: details page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     first_aid_training_organisation = forms.CharField(label='First aid training organisation', error_messages={
         'required': 'Please enter the title of your course'})
     title_of_training_course = forms.CharField(label='Title of training course', error_messages={
@@ -845,7 +886,9 @@ class FirstAidTrainingDeclarationForm(GOVUKForm):
     GOV.UK form for the First aid training: declaration page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     declaration = forms.BooleanField(label='I will show my first aid certificate to the inspector', required=True,
                                      error_messages={
                                          'required': 'You must agree to show your certificate to the inspector'})
@@ -869,7 +912,9 @@ class FirstAidTrainingRenewForm(GOVUKForm):
     GOV.UK form for the First aid training: renew page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     renew = forms.BooleanField(label='I will renew my first aid certificate in the next few months', required=True,
                                error_messages={'required': 'You must agree to renew your first aid certificate'})
 
@@ -892,6 +937,7 @@ class FirstAidTrainingTrainingForm(GOVUKForm):
     GOV.UK form for the First aid training: training page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -900,6 +946,7 @@ class FirstAidTrainingSummaryForm(GOVUKForm):
     GOV.UK form for the First aid training: summary page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -908,6 +955,7 @@ class EYFSGuidanceForm(GOVUKForm):
     GOV.UK form for the Early Years knowledge: guidance page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -916,7 +964,9 @@ class EYFSKnowledgeForm(GOVUKForm):
     GOV.UK form for the Early Years knowledge: knowledge page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     options = (
         ('True', 'Yes'),
         ('False', 'No')
@@ -943,7 +993,9 @@ class EYFSTrainingForm(GOVUKForm):
     GOV.UK form for the EYFS: training page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     eyfs_training_declare = forms.BooleanField(label='I will go on an early years training course', required=True)
 
     def __init__(self, *args, **kwargs):
@@ -965,7 +1017,9 @@ class EYFSQuestionsForm(GOVUKForm):
     GOV.UK form for the EYFS: training page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     eyfs_questions_declare = forms.BooleanField(label='I am happy to answer questions about my early years knowledge',
                                                 required=True)
 
@@ -988,6 +1042,7 @@ class EYFSSummaryForm(GOVUKForm):
     GOV.UK form for the Early Years knowledge: summary page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -996,6 +1051,7 @@ class DBSCheckGuidanceForm(GOVUKForm):
     GOV.UK form for the Your criminal record (DBS) check: guidance page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -1004,20 +1060,25 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
     GOV.UK form for the Your criminal record (DBS) check: details page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     options = (
         ('True', 'Yes'),
         ('False', 'No')
     )
     dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
                                                 help_text='12-digit number on your certificate',
-                                                required=True, error_messages={
-            'required': 'Please enter your DBS certificate number'})
+                                                required=True,
+                                                error_messages={'required': 'Please enter your DBS certificate number'})
+
     convictions = forms.ChoiceField(label='Do you have any cautions or convictions?',
                                     help_text='Include any information recorded on your certificate',
                                     choices=options, widget=InlineRadioSelect,
                                     required=True,
                                     error_messages={'required': 'Please say if you have any cautions or convictions'})
+
+    dbs_certificate_number.widget.attrs.update({'style': 'width: 8.4em;'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1051,7 +1112,9 @@ class DBSCheckUploadDBSForm(GOVUKForm):
     GOV.UK form for the Your criminal record (DBS) check: upload DBS page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     declaration = forms.BooleanField(label='I will send my original DBS certificate to Ofsted', required=True,
                                      error_messages={'required': 'You must agree to send us your DBS certificate'})
 
@@ -1078,6 +1141,7 @@ class DBSCheckSummaryForm(GOVUKForm):
     GOV.UK form for the Your criminal record (DBS) check: summary page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -1086,6 +1150,7 @@ class HealthIntroForm(GOVUKForm):
     GOV.UK form for the Your health: intro page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -1094,7 +1159,9 @@ class HealthBookletForm(GOVUKForm):
     GOV.UK form for the Your health: intro page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     send_hdb_declare = forms.BooleanField(label='I will send the completed booklet to Ofsted', required=True,
                                           error_messages={'required': 'You must agree to send your booklet to Ofsted'})
 
@@ -1121,6 +1188,7 @@ class ReferenceIntroForm(GOVUKForm):
     GOV.UK form for the 2 references: intro page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -1129,7 +1197,9 @@ class FirstReferenceForm(GOVUKForm):
     GOV.UK form for the 2 references: first reference page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     first_name = forms.CharField(label='First name', required=True,
                                  error_messages={'required': 'Please enter the first name of the referee'})
     last_name = forms.CharField(label='Last name', required=True,
@@ -1207,7 +1277,9 @@ class ReferenceFirstReferenceAddressForm(GOVUKForm):
     GOV.UK form for the 2 references: first reference address page for postcode search
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the referee's postcode"})
 
     def __init__(self, *args, **kwargs):
@@ -1241,7 +1313,9 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
     GOV.UK form for the 2 references: first reference address page for manual entry
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     street_name_and_number = forms.CharField(label='Address line 1', error_messages={
         'required': "Please enter the first line of the referee's address"})
     street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
@@ -1345,7 +1419,9 @@ class ReferenceFirstReferenceAddressLookupForm(GOVUKForm):
     GOV.UK form for the 2 references: first reference address page for postcode search results
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     address = forms.ChoiceField(label='Select address', required=True,
                                 error_messages={'required': "Please select the referee's address"})
 
@@ -1366,7 +1442,9 @@ class ReferenceFirstReferenceContactForm(GOVUKForm):
     GOV.UK form for the 2 references: first reference contact details page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     phone_number = forms.CharField(label='Phone number',
                                    error_messages={'required': 'Please give a phone number for your first referee'})
     email_address = forms.CharField(label='Email address',
@@ -1417,7 +1495,9 @@ class SecondReferenceForm(GOVUKForm):
     GOV.UK form for the 2 references: second reference page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     first_name = forms.CharField(label='First name', required=True,
                                  error_messages={'required': 'Please enter the first name of the referee'})
     last_name = forms.CharField(label='Last name', required=True,
@@ -1485,7 +1565,9 @@ class ReferenceSecondReferenceAddressForm(GOVUKForm):
     GOV.UK form for the 2 references: second reference address page for postcode search
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the referee's postcode"})
 
     def __init__(self, *args, **kwargs):
@@ -1519,7 +1601,9 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
     GOV.UK form for the 2 references: second reference address page for manual entry
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     street_name_and_number = forms.CharField(label='Address line 1', error_messages={
         'required': "Please enter the first line of the referee's address"})
     street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
@@ -1623,7 +1707,9 @@ class ReferenceSecondReferenceAddressLookupForm(GOVUKForm):
     GOV.UK form for the 2 references: second reference address page for postcode search results
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     address = forms.ChoiceField(label='Select address', required=True,
                                 error_messages={'required': "Please select the referee's address"})
 
@@ -1644,7 +1730,9 @@ class ReferenceSecondReferenceContactForm(GOVUKForm):
     GOV.UK form for the 2 references: second reference contact details page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     phone_number = forms.CharField(label='Phone number',
                                    error_messages={'required': 'Please give a phone number for your second referee'})
     email_address = forms.CharField(label='Email address', error_messages={
@@ -1694,6 +1782,7 @@ class ReferenceSummaryForm(GOVUKForm):
     GOV.UK form for the 2 references: summary page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -1702,6 +1791,7 @@ class OtherPeopleGuidanceForm(GOVUKForm):
     GOV.UK form for the People in your home: guidance page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -1710,7 +1800,9 @@ class OtherPeopleAdultQuestionForm(GOVUKForm):
     GOV.UK form for the People in your home: adult question page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     options = (
         ('True', 'Yes'),
         ('False', 'No')
@@ -1736,7 +1828,9 @@ class OtherPeopleAdultDetailsForm(GOVUKForm):
     GOV.UK form for the People in your home: adult details page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     first_name = forms.CharField(label='First name', required=True)
     middle_names = forms.CharField(label='Middle names (if they have any)', required=False)
     last_name = forms.CharField(label='Last name', required=True)
@@ -1822,10 +1916,14 @@ class OtherPeopleAdultDBSForm(GOVUKForm):
     GOV.UK form for the People in your home: adult DBS page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
                                                 help_text='12-digit number on their certificate',
                                                 required=True)
+
+    dbs_certificate_number.widget.attrs.update({'style': 'width: 8.4em;'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1860,7 +1958,9 @@ class OtherPeopleAdultPermissionForm(GOVUKForm):
     GOV.UK form for the People in your home: adult permission page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     permission_declare = forms.BooleanField(required=True)
 
     def __init__(self, *args, **kwargs):
@@ -1891,7 +1991,9 @@ class OtherPeopleChildrenQuestionForm(GOVUKForm):
     GOV.UK form for the People in your home: children question page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     options = (
         ('True', 'Yes'),
         ('False', 'No')
@@ -1917,7 +2019,9 @@ class OtherPeopleChildrenDetailsForm(GOVUKForm):
     GOV.UK form for the People in your home: children details page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     first_name = forms.CharField(label='First name', required=True)
     middle_names = forms.CharField(label='Middle names (if they have any)', required=False)
     last_name = forms.CharField(label='Last name', required=True)
@@ -2003,6 +2107,7 @@ class OtherPeopleApproaching16Form(GOVUKForm):
     GOV.UK form for the People in your home: approaching 16 page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -2011,6 +2116,7 @@ class OtherPeopleNumberOfChildrenForm(GOVUKForm):
     GOV.UK form for the People in your home: number of children page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -2019,6 +2125,7 @@ class OtherPeopleSummaryForm(GOVUKForm):
     GOV.UK form for the People in your home: summary page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -2027,7 +2134,9 @@ class DeclarationDeclarationForm(GOVUKForm):
     GOV.UK form for the Declaration: declaration page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     background_check_declare = forms.BooleanField(label='carry out background checks', required=True)
     inspect_home_declare = forms.BooleanField(label='inspect my home', required=True)
     interview_declare = forms.BooleanField(label='interview me', required=True)
@@ -2074,7 +2183,9 @@ class DeclarationDeclarationForm2(GOVUKForm):
     GOV.UK form for the Declaration: declaration page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     information_correct_declare = forms.BooleanField(label='the information I have given in this form is correct',
                                                      required=True)
 
@@ -2101,6 +2212,7 @@ class DeclarationSummaryForm(GOVUKForm):
     GOV.UK form for the Confirm your details page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
 
@@ -2109,7 +2221,9 @@ class PaymentForm(GOVUKForm):
     GOV.UK form for the Payment selection page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     options = (
         ('Credit', 'Credit or debit card'),
         ('PayPal', 'PayPal')
@@ -2123,7 +2237,9 @@ class PaymentDetailsForm(GOVUKForm):
     GOV.UK form for the Payment details page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
+
     options = (
         ('a', 'Alpha'),
         ('b', 'Beta')
@@ -2159,6 +2275,7 @@ class PaymentDetailsForm(GOVUKForm):
         card_type = self.data['card_type']
         card_number = self.cleaned_data['card_number']
         card_number = re.sub('[ -]+', '', card_number)
+        # noinspection PyPep8
         try:
             int(card_number)
         except:
@@ -2206,4 +2323,5 @@ class ApplicationSavedForm(GOVUKForm):
     GOV.UK form for the Application saved page
     """
     field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
