@@ -1064,7 +1064,8 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
     auto_replace_widgets = True
 
     #Overrides standard NumberInput widget too give wider field
-    NumberInput.input_classes = 'form-control form-control-1-4'
+    widget_instance = NumberInput()
+    widget_instance.input_classes = 'form-control form-control-1-4'
 
     options = (
         ('True', 'Yes'),
@@ -1074,7 +1075,7 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
                                                 help_text='12-digit number on your certificate',
                                                 required=True,
                                                 error_messages={'required': 'Please enter your DBS certificate number'},
-                                                widget=NumberInput)
+                                                widget=widget_instance)
 
     convictions = forms.ChoiceField(label='Do you have any cautions or convictions?',
                                     help_text='Include any information recorded on your certificate',
@@ -1922,12 +1923,13 @@ class OtherPeopleAdultDBSForm(GOVUKForm):
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
-    NumberInput.input_classes = 'form-control form-control-1-4'
+    widget_instance = NumberInput()
+    widget_instance.input_classes = 'form-control form-control-1-4'
 
     dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
                                                 help_text='12-digit number on their certificate',
                                                 required=True,
-                                                widget=NumberInput)
+                                                widget=widget_instance)
 
 
     def __init__(self, *args, **kwargs):
