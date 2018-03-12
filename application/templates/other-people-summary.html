@@ -6,7 +6,7 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="form-group grid-row">
+    <div class="grid-row">
         {% if turning_16 is True and children_in_home is True %}
         <a href="{{ URL_PREFIX }}/other-people/approaching-16?id={{application_id}}"
            class="link-back" style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
@@ -28,6 +28,11 @@
         <h1 class="form-title heading-large">Check your answers: people in your home</h1>
     </div>
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
+        <colgroup>
+            <col style="width:40%">
+            <col style="width:40%">
+            <col style="width:20%">
+        </colgroup>
         <thead>
         <tr>
             <th colspan="3">
@@ -60,6 +65,11 @@
         </tbody>
     </table>
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
+        <colgroup>
+            <col style="width:40%">
+            <col style="width:40%">
+            <col style="width:20%">
+        </colgroup>
         <thead>
         <tr>
             <th colspan="3">
@@ -93,6 +103,11 @@
     </table>
     {% for name, day, month, year, relationship, dbs_certificate_number, permission in adult_lists %}
     <table class="check-your-answers form-group grid-row">
+        <colgroup>
+            <col style="width:40%">
+            <col style="width:40%">
+            <col style="width:20%">
+        </colgroup>
         <thead>
         <tr>
             <th colspan="3">
@@ -225,6 +240,11 @@
     {% endfor %}
     {% for name, day, month, year, relationship in child_lists %}
     <table class="check-your-answers form-group grid-row">
+        <colgroup>
+            <col style="width:40%">
+            <col style="width:40%">
+            <col style="width:20%">
+        </colgroup>
         <thead>
         <tr>
             <th colspan="3">
