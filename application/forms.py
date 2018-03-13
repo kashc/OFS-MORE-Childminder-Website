@@ -29,6 +29,7 @@ from .models import (AdultInHome,
                      HealthDeclarationBooklet,
                      Reference,
                      UserDetails)
+from .forms_helper import full_stop_stripper
 
 
 class AccountForm(GOVUKForm):
@@ -58,6 +59,7 @@ class ContactEmailForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(ContactEmailForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
             this_user = Application.objects.get(pk=self.application_id_local)
@@ -152,6 +154,7 @@ class QuestionForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(QuestionForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
             this_user = Application.objects.get(pk=self.application_id_local)
@@ -219,6 +222,7 @@ class TypeOfChildcareAgeGroupsForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(TypeOfChildcareAgeGroupsForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if ChildcareType.objects.filter(application_id=self.application_id_local).count() > 0:
             childcare_record = ChildcareType.objects.get(application_id=self.application_id_local)
@@ -293,6 +297,7 @@ class VerifyPhoneForm(GOVUKForm):
         """
         self.magic_link_email = kwargs.pop('id')
         super(VerifyPhoneForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
 
     def clean_magic_link_sms(self):
         """
@@ -324,6 +329,7 @@ class VerifySecurityQuestionForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(VerifySecurityQuestionForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
 
     def clean_security_answer(self):
         security_answer = self.cleaned_data['security_answer']
@@ -361,6 +367,7 @@ class PersonalDetailsNameForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsNameForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             personal_detail_id = ApplicantPersonalDetails.objects.get(
@@ -421,6 +428,7 @@ class PersonalDetailsDOBForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsDOBForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form        
         if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             personal_details_record = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local)
@@ -466,6 +474,7 @@ class PersonalDetailsHomeAddressForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsHomeAddressForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
@@ -510,6 +519,7 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsHomeAddressManualForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
@@ -601,6 +611,7 @@ class PersonalDetailsHomeAddressLookupForm(GOVUKForm):
         self.application_id_local = kwargs.pop('id')
         self.choices = kwargs.pop('choices')
         super(PersonalDetailsHomeAddressLookupForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         self.fields['address'].choices = self.choices
 
 
@@ -628,6 +639,7 @@ class PersonalDetailsLocationOfCareForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsLocationOfCareForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
@@ -654,6 +666,7 @@ class PersonalDetailsChildcareAddressForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsChildcareAddressForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
@@ -699,6 +712,7 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(PersonalDetailsChildcareAddressManualForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
@@ -790,6 +804,7 @@ class PersonalDetailsChildcareAddressLookupForm(GOVUKForm):
         self.application_id_local = kwargs.pop('id')
         self.choices = kwargs.pop('choices')
         super(PersonalDetailsChildcareAddressLookupForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         self.fields['address'].choices = self.choices
 
 
@@ -835,6 +850,7 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(FirstAidTrainingDetailsForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form        
         if FirstAidTraining.objects.filter(application_id=self.application_id_local).count() > 0:
             first_aid_record = FirstAidTraining.objects.get(application_id=self.application_id_local)
@@ -901,6 +917,7 @@ class FirstAidTrainingDeclarationForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(FirstAidTrainingDeclarationForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if FirstAidTraining.objects.filter(application_id=self.application_id_local).count() > 0:
             first_aid_record = FirstAidTraining.objects.get(application_id=self.application_id_local)
@@ -926,6 +943,7 @@ class FirstAidTrainingRenewForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(FirstAidTrainingRenewForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if FirstAidTraining.objects.filter(application_id=self.application_id_local).count() > 0:
             first_aid_record = FirstAidTraining.objects.get(application_id=self.application_id_local)
@@ -982,6 +1000,7 @@ class EYFSKnowledgeForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(EYFSKnowledgeForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if EYFS.objects.filter(application_id=self.application_id_local).count() > 0:
             eyfs_record = EYFS.objects.get(application_id=self.application_id_local)
@@ -1006,6 +1025,7 @@ class EYFSTrainingForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(EYFSTrainingForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if EYFS.objects.filter(application_id=self.application_id_local).count() > 0:
             eyfs_record = EYFS.objects.get(application_id=self.application_id_local)
@@ -1031,6 +1051,7 @@ class EYFSQuestionsForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(EYFSQuestionsForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if EYFS.objects.filter(application_id=self.application_id_local).count() > 0:
             eyfs_record = EYFS.objects.get(application_id=self.application_id_local)
@@ -1092,6 +1113,7 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(DBSCheckDBSDetailsForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form 
         if CriminalRecordCheck.objects.filter(application_id=self.application_id_local).count() > 0:
             dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id_local)
@@ -1130,6 +1152,7 @@ class DBSCheckUploadDBSForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(DBSCheckUploadDBSForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if CriminalRecordCheck.objects.filter(application_id=self.application_id_local).count() > 0:
             dbs_record_declare = CriminalRecordCheck.objects.get(
@@ -1177,6 +1200,7 @@ class HealthBookletForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(HealthBookletForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if HealthDeclarationBooklet.objects.filter(application_id=self.application_id_local).count() > 0:
             hdb_declare = HealthDeclarationBooklet.objects.get(
@@ -1222,6 +1246,7 @@ class FirstReferenceForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(FirstReferenceForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form        
         if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
             reference_record = Reference.objects.get(application_id=self.application_id_local, reference=1)
@@ -1294,6 +1319,7 @@ class ReferenceFirstReferenceAddressForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(ReferenceFirstReferenceAddressForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
             self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
@@ -1337,6 +1363,7 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(ReferenceFirstReferenceAddressManualForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
             reference_record = Reference.objects.get(application_id=self.application_id_local, reference=1)
@@ -1462,6 +1489,7 @@ class ReferenceFirstReferenceContactForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(ReferenceFirstReferenceContactForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
             reference_record = Reference.objects.get(application_id=self.application_id_local,
@@ -1520,6 +1548,7 @@ class SecondReferenceForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(SecondReferenceForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
             reference_record = Reference.objects.get(application_id=self.application_id_local, reference=2)
@@ -1582,6 +1611,7 @@ class ReferenceSecondReferenceAddressForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(ReferenceSecondReferenceAddressForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
             self.fields['postcode'].initial = Reference.objects.get(application_id=self.application_id_local,
@@ -1625,6 +1655,7 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(ReferenceSecondReferenceAddressManualForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
             reference_record = Reference.objects.get(application_id=self.application_id_local, reference=2)
@@ -1726,6 +1757,7 @@ class ReferenceSecondReferenceAddressLookupForm(GOVUKForm):
         self.application_id_local = kwargs.pop('id')
         self.choices = kwargs.pop('choices')
         super(ReferenceSecondReferenceAddressLookupForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         self.fields['address'].choices = self.choices
 
 
@@ -1750,6 +1782,7 @@ class ReferenceSecondReferenceContactForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(ReferenceSecondReferenceContactForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
             reference_record = Reference.objects.get(application_id=self.application_id_local, reference=2)
@@ -1822,6 +1855,7 @@ class OtherPeopleAdultQuestionForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(OtherPeopleAdultQuestionForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         self.fields['adults_in_home'].initial = Application.objects.get(
             application_id=self.application_id_local).adults_in_home
@@ -1851,6 +1885,7 @@ class OtherPeopleAdultDetailsForm(GOVUKForm):
         self.application_id_local = kwargs.pop('id')
         self.adult = kwargs.pop('adult')
         super(OtherPeopleAdultDetailsForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).count() > 0:
             adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
@@ -1942,6 +1977,7 @@ class OtherPeopleAdultDBSForm(GOVUKForm):
         self.adult = kwargs.pop('adult')
         self.name = kwargs.pop('name')
         super(OtherPeopleAdultDBSForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).count() > 0:
             adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
@@ -1979,6 +2015,7 @@ class OtherPeopleAdultPermissionForm(GOVUKForm):
         self.application_id_local = kwargs.pop('id')
         self.adult = kwargs.pop('adult')
         super(OtherPeopleAdultPermissionForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         adult = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
         first_name = adult.first_name
         middle_names = adult.middle_names
@@ -2016,6 +2053,7 @@ class OtherPeopleChildrenQuestionForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(OtherPeopleChildrenQuestionForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         self.fields['children_in_home'].initial = Application.objects.get(
             application_id=self.application_id_local).children_in_home
@@ -2045,6 +2083,7 @@ class OtherPeopleChildrenDetailsForm(GOVUKForm):
         self.application_id_local = kwargs.pop('id')
         self.child = kwargs.pop('child')
         super(OtherPeopleChildrenDetailsForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if ChildInHome.objects.filter(application_id=self.application_id_local, child=self.child).count() > 0:
             child_record = ChildInHome.objects.get(application_id=self.application_id_local, child=self.child)
@@ -2157,6 +2196,7 @@ class DeclarationDeclarationForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(DeclarationDeclarationForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
             background_check_declare = Application.objects.get(
@@ -2204,6 +2244,7 @@ class DeclarationDeclarationForm2(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(DeclarationDeclarationForm2, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
             information_correct_declare = Application.objects.get(
@@ -2268,6 +2309,10 @@ class PaymentDetailsForm(GOVUKForm):
     cardholders_name = forms.CharField(label="Cardholder's name", required=True)
     card_security_code = forms.IntegerField(label='Card security code',
                                             help_text='3 or 4 digit number on back of card', required=True)
+
+    def __init__(self, *args, **kwargs):
+        super(PaymentDetailsForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
 
     def clean_card_type(self):
         card_type = self.cleaned_data['card_type']
