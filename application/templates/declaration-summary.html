@@ -6,7 +6,7 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="form-group grid-row">
+    <div class="grid-row">
         <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
            style="margin-right: 10px; line-height: 28px">
             Back
@@ -19,9 +19,9 @@
     </div>
     <table class="check-your-answers form-group grid-row">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -34,10 +34,10 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Email
             </td>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 {{login_details_email}}
             </td>
             <td class="change-answer">
@@ -47,10 +47,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Mobile phone number
             </td>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 {{login_details_mobile_number}}
             </td>
             <td class="change-answer">
@@ -60,10 +60,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Alternative phone number
             </td>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 {{login_details_alternative_phone_number}}
             </td>
             <td class="change-answer">
@@ -76,10 +76,10 @@
     </table>
     <table class="check-your-answers form-group grid-row">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
-        </colgroup> 
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
+        </colgroup>
         <thead>
         <tr>
             <th colspan="3">
@@ -91,15 +91,15 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Looking after 0 to 5 year olds?
             </td>
             {% if childcare_type_zero_to_five is True %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Yes
             </td>
             {% elif childcare_type_zero_to_five is False %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 No
             </td>
             {% endif %}
@@ -110,15 +110,15 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Looking after 5 to 7 year olds?
             </td>
             {% if childcare_type_five_to_eight is True %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Yes
             </td>
             {% elif childcare_type_five_to_eight is False %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 No
             </td>
             {% endif %}
@@ -129,15 +129,15 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Looking after 8 year olds and older?
             </td>
             {% if childcare_type_eight_plus is True %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Yes
             </td>
             {% elif childcare_type_eight_plus is False %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 No
             </td>
             {% endif %}
@@ -148,41 +148,41 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Registers
             </td>
             {% if childcare_type_zero_to_five is True and childcare_type_five_to_eight is True and childcare_type_eight_plus is True %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Early Years Register
                 <br>
                 Childcare Register
             </td>
             {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is True and childcare_type_eight_plus is False %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Early Years Register
                 <br>
                 Childcare Register
             </td>
             {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is False and childcare_type_eight_plus is True %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Early Years Register
                 <br>
                 Childcare Register
             </td>
             {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is True and childcare_type_eight_plus is True %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Childcare Register (compulsory & voluntary parts)
             </td>
             {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is False and childcare_type_eight_plus is False %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Early Years Register
             </td>
             {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is True and childcare_type_eight_plus is False %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Childcare Register (compulsory part)
             </td>
             {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is False and childcare_type_eight_plus is True %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Childcare Register (voluntary part)
             </td>
             {% endif %}
@@ -196,9 +196,9 @@
     </table>
     <table class="check-your-answers form-group grid-row">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -211,15 +211,15 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Full name
             </td>
             {% if personal_details_middle_names %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_first_name}} {{personal_details_middle_names}} {{personal_details_last_name}}
             </td>
             {% elif not personal_details_middle_names %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_first_name}} {{personal_details_last_name}}
             </td>
             {% endif %}
@@ -230,55 +230,55 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Date of Birth
             </td>
             {% if personal_details_birth_month == 1 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_birth_day}} January {{personal_details_birth_year}}
             </td>
             {% elif personal_details_birth_month == 2 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_birth_day}} February {{personal_details_birth_year}}
             </td>
             {% elif personal_details_birth_month == 3 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_birth_day}} March {{personal_details_birth_year}}
             </td>
             {% elif personal_details_birth_month == 4 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_birth_day}} April {{personal_details_birth_year}}
             </td>
             {% elif personal_details_birth_month == 5 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_birth_day}} May {{personal_details_birth_year}}
             </td>
             {% elif personal_details_birth_month == 6 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_birth_day}} June {{personal_details_birth_year}}
             </td>
             {% elif personal_details_birth_month == 7 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_birth_day}} July {{personal_details_birth_year}}
             </td>
             {% elif personal_details_birth_month == 8 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_birth_day}} August {{personal_details_birth_year}}
             </td>
             {% elif personal_details_birth_month == 9 %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_birth_day}} September {{personal_details_birth_year}}
             </td>
             {% elif personal_details_birth_month == 10 %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_birth_day}} October {{personal_details_birth_year}}
             </td style="word-wrap: break-word">
             {% elif personal_details_birth_month == 11 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_birth_day}} November {{personal_details_birth_year}}
             </td>
             {% elif personal_details_birth_month == 12 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{personal_details_birth_day}} December {{personal_details_birth_year}}
             </td>
             {% endif %}
@@ -288,11 +288,11 @@
                 </a>
             </td>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Home address
             </td>
             {% if home_address_street_line2 and home_address_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{home_address_street_line1}}
                 </br>
                 {{home_address_street_line2}}
@@ -304,7 +304,7 @@
                 {{home_address_postcode}}
             </td>
             {% elif home_address_street_line2 and not home_address_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{home_address_street_line1}}
                 </br>
                 {{home_address_street_line2}}
@@ -314,7 +314,7 @@
                 {{home_address_postcode}}
             </td>
             {% elif not home_address_street_line2 and home_address_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{home_address_street_line1}}
                 </br>
                 {{home_address_town}}
@@ -324,7 +324,7 @@
                 {{home_address_postcode}}
             </td>
             {% elif not home_address_street_line2 and not home_address_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{home_address_street_line1}}
                 </br>
                 {{home_address_town}}
@@ -340,11 +340,11 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Childcare address
             </td>
             {% if location_of_childcare == True %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Same as home address
             </td>
             <td class="change-answer">
@@ -355,7 +355,7 @@
             </td>
             {% elif location_of_childcare == False %}
             {% if childcare_street_line2 and childcare_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{childcare_street_line1}}
                 </br>
                 {{childcare_street_line2}}
@@ -367,7 +367,7 @@
                 {{childcare_postcode}}
             </td>
             {% elif childcare_street_line2 and not childcare_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{childcare_street_line1}}
                 </br>
                 {{childcare_street_line2}}
@@ -377,7 +377,7 @@
                 {{childcare_postcode}}
             </td>
             {% elif not childcare_street_line2 and childcare_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{childcare_street_line1}}
                 </br>
                 {{childcare_town}}
@@ -387,7 +387,7 @@
                 {{childcare_postcode}}
             </td>
             {% elif not childcare_street_line2 and not childcare_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{childcare_street_line1}}
                 </br>
                 {{childcare_town}}
@@ -407,9 +407,9 @@
     </table>
     <table class="check-your-answers form-group grid-row">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -422,10 +422,10 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 First aid training provider
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_training_organisation}}
             </td>
             <td class="change-answer">
@@ -436,10 +436,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Title of first aid course
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_training_course}}
             </td>
             <td class="change-answer">
@@ -450,55 +450,55 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Date of first aid certificate
             </td>
             {% if first_aid_certificate_month == 1 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_certificate_day}} January {{first_aid_certificate_year}}
             </td>
             {% elif first_aid_certificate_month == 2 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_certificate_day}} February {{first_aid_certificate_year}}
             </td>
             {% elif first_aid_certificate_month == 3 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_certificate_day}} March {{first_aid_certificate_year}}
             </td>
             {% elif first_aid_certificate_month == 4 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_certificate_day}} April {{first_aid_certificate_year}}
             </td>
             {% elif first_aid_certificate_month == 5 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_certificate_day}} May {{first_aid_certificate_year}}
             </td>
             {% elif first_aid_certificate_month == 6 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_certificate_day}} June {{first_aid_certificate_year}}
             </td>
             {% elif first_aid_certificate_month == 7 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_certificate_day}} July {{first_aid_certificate_year}}
             </td>
             {% elif first_aid_certificate_month == 8 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_certificate_day}} August {{first_aid_certificate_year}}
             </td>
             {% elif first_aid_certificate_month == 9 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_certificate_day}} September {{first_aid_certificate_year}}
             </td>
             {% elif first_aid_certificate_month == 10 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_certificate_day}} October {{first_aid_certificate_year}}
             </td>
             {% elif first_aid_certificate_month == 11 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_certificate_day}} November {{first_aid_certificate_year}}
             </td>
             {% elif first_aid_certificate_month == 12 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_aid_certificate_day}} December {{first_aid_certificate_year}}
             </td>
             {% endif %}
@@ -513,9 +513,9 @@
     </table>
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -528,10 +528,10 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 DBS certificate number
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{dbs_certificate_number}}
             </td>
             <td class="change-answer">
@@ -542,15 +542,15 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Do you have any cautions or convictions?
             </td>
             {% if cautions_convictions is True %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Yes
             </td>
             {% elif cautions_convictions is False %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 No
             </td>
             {% endif %}
@@ -563,15 +563,15 @@
         </tr>
         {% if cautions_convictions is True %}
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Will you send your DBS certificate to Ofsted?
             </td>
             {% if declaration is True %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Yes
             </td>
             {% elif declaration is False %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 No
             </td>
             {% endif %}
@@ -587,9 +587,9 @@
     </table>
     <table class="check-your-answers form-group grid-row">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -602,15 +602,15 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Provide a Health Declaration Booklet?
             </td>
             {% if send_hdb_declare is True %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Yes
             </td>
             {% elif send_hdb_declare is False %}
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 No
             </td>
             {% endif %}
@@ -624,9 +624,9 @@
     </table>
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -639,10 +639,10 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Full name
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_first_name}} {{first_reference_last_name}}
             </td>
             <td class="change-answer">
@@ -652,10 +652,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 How they know you
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_relationship}}
             </td>
             <td class="change-answer">
@@ -665,10 +665,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Known for
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_years_known}} years, {{first_reference_months_known}} months
             </td>
             <td class="change-answer">
@@ -678,11 +678,11 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Address
             </td>
             {% if first_reference_street_line2 and first_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_street_line1}}
                 </br>
                 {{first_reference_street_line2}}
@@ -696,7 +696,7 @@
                 {{first_reference_country}}
             </td>
             {% elif first_reference_street_line2 and not first_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_street_line1}}
                 </br>
                 {{first_reference_street_line2}}
@@ -708,7 +708,7 @@
                 {{first_reference_country}}
             </td>
             {% elif not first_reference_street_line2 and first_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_street_line1}}
                 </br>
                 {{first_reference_town}}
@@ -720,7 +720,7 @@
                 {{first_reference_country}}
             </td>
             {% elif not first_reference_street_line2 and not first_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_street_line1}}
                 </br>
                 {{first_reference_town}}
@@ -737,10 +737,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Phone number
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_phone_number}}
             </td>
             <td class="change-answer">
@@ -750,10 +750,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Email address
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_email}}
             </td>
             <td class="change-answer">
@@ -766,9 +766,9 @@
     </table>
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -781,10 +781,10 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Full name
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_first_name}} {{second_reference_last_name}}
             </td>
             <td class="change-answer">
@@ -794,10 +794,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 How they know you
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_relationship}}
             </td>
             <td class="change-answer">
@@ -807,10 +807,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Known for
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_years_known}} years, {{second_reference_months_known}} months
             </td>
             <td class="change-answer">
@@ -820,11 +820,11 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Address
             </td>
             {% if second_reference_street_line2 and second_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_street_line1}}
                 </br>
                 {{second_reference_street_line2}}
@@ -838,7 +838,7 @@
                 {{second_reference_country}}
             </td>
             {% elif second_reference_street_line2 and not second_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_street_line1}}
                 </br>
                 {{second_reference_street_line2}}
@@ -850,7 +850,7 @@
                 {{second_reference_country}}
             </td>
             {% elif not second_reference_street_line2 and second_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_street_line1}}
                 </br>
                 {{second_reference_town}}
@@ -862,7 +862,7 @@
                 {{second_reference_country}}
             </td>
             {% elif not second_reference_street_line2 and not second_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_street_line1}}
                 </br>
                 {{second_reference_town}}
@@ -879,10 +879,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Phone number
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_phone_number}}
             </td>
             <td class="change-answer">
@@ -892,10 +892,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Email address
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_email}}
             </td>
             <td class="change-answer">
@@ -908,9 +908,9 @@
     </table>
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -923,15 +923,15 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Do you live with anyone who is 16 or over?
             </td>
             {% if adults_in_home is True %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Yes
             </td>
             {% elif adults_in_home is False %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 No
             </td>
             {% endif %}
@@ -946,9 +946,9 @@
     </table>
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -961,15 +961,15 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Do you live with any children?
             </td>
             {% if children_in_home is True %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Yes
             </td>
             {% elif children_in_home is False %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 No
             </td>
             {% endif %}
@@ -985,9 +985,9 @@
     {% for name, day, month, year, relationship, dbs_certificate_number, permission in adult_lists %}
     <table class="check-your-answers form-group grid-row">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -1000,10 +1000,10 @@
         </thead>
         <tbody>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Name
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{name}}
             </td>
             <td class="change-answer">
@@ -1014,55 +1014,55 @@
             </td>
         </tr>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Date of birth
             </td>
             {% if month == 1 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} January {{year}}
             </td>
             {% elif month == 2 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} February {{year}}
             </td>
             {% elif month == 3 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} March {{year}}
             </td>
             {% elif month == 4 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} April {{year}}
             </td>
             {% elif month == 5 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} May {{year}}
             </td>
             {% elif month == 6 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} June {{year}}
             </td>
             {% elif month == 7 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} July {{year}}
             </td>
             {% elif month == 8 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} August {{year}}
             </td>
             {% elif month == 9 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} September {{year}}
             </td>
             {% elif month == 10 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} October {{year}}
             </td>
             {% elif month == 11 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} November {{year}}
             </td>
             {% elif month == 12 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} December {{year}}
             </td>
             {% endif %}
@@ -1074,10 +1074,10 @@
             </td>
         </tr>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Relationship
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{relationship}}
             </td>
             <td class="change-answer">
@@ -1088,10 +1088,10 @@
             </td>
         </tr>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 DBS certificate number
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{dbs_certificate_number}}
             </td>
             <td class="change-answer">
@@ -1102,15 +1102,15 @@
             </td>
         </tr>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Permission for checks
             </td>
             {% if permission is True %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Yes
             </td>
             {% elif permission is False %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 No
             </td>
             {% endif %}
@@ -1127,9 +1127,9 @@
     {% for name, day, month, year, relationship in child_lists %}
     <table class="check-your-answers form-group grid-row">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -1142,10 +1142,10 @@
         </thead>
         <tbody>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Name
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{name}}
             </td>
             <td class="change-answer">
@@ -1156,55 +1156,55 @@
             </td>
         </tr>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Date of birth
             </td>
             {% if month == 1 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} January {{year}}
             </td>
             {% elif month == 2 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} February {{year}}
             </td>
             {% elif month == 3 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} March {{year}}
             </td>
             {% elif month == 4 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} April {{year}}
             </td>
             {% elif month == 5 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} May {{year}}
             </td>
             {% elif month == 6 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} June {{year}}
             </td>
             {% elif month == 7 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} July {{year}}
             </td>
             {% elif month == 8 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} August {{year}}
             </td>
             {% elif month == 9 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} September {{year}}
             </td>
             {% elif month == 10 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} October {{year}}
             </td>
             {% elif month == 11 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} November {{year}}
             </td>
             {% elif month == 12 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} December {{year}}
             </td>
             {% endif %}
@@ -1216,10 +1216,10 @@
             </td>
         </tr>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Relationship
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{relationship}}
             </td>
             <td class="change-answer">

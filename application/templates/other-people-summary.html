@@ -6,7 +6,7 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="form-group grid-row">
+    <div class="grid-row">
         {% if turning_16 is True and children_in_home is True %}
         <a href="{{ URL_PREFIX }}/other-people/approaching-16?id={{application_id}}"
            class="link-back" style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
@@ -28,6 +28,11 @@
         <h1 class="form-title heading-large">Check your answers: people in your home</h1>
     </div>
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
+        <colgroup>
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
+        </colgroup>
         <thead>
         <tr>
             <th colspan="3">
@@ -43,11 +48,11 @@
                 Do you live with anyone who is 16 or over?
             </td>
             {% if adults_in_home is True %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Yes
             </td>
             {% elif adults_in_home is False %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 No
             </td>
             {% endif %}
@@ -60,6 +65,11 @@
         </tbody>
     </table>
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
+        <colgroup>
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
+        </colgroup>
         <thead>
         <tr>
             <th colspan="3">
@@ -75,11 +85,11 @@
                 Do you live with any children?
             </td>
             {% if children_in_home is True %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Yes
             </td>
             {% elif children_in_home is False %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 No
             </td>
             {% endif %}
@@ -93,6 +103,11 @@
     </table>
     {% for name, day, month, year, relationship, dbs_certificate_number, permission in adult_lists %}
     <table class="check-your-answers form-group grid-row">
+        <colgroup>
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
+        </colgroup>
         <thead>
         <tr>
             <th colspan="3">
@@ -104,10 +119,10 @@
         </thead>
         <tbody>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Name
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{name}}
             </td>
             <td class="change-answer">
@@ -117,55 +132,55 @@
             </td>
         </tr>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Date of birth
             </td>
             {% if month == 1 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} January {{year}}
             </td>
             {% elif month == 2 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} February {{year}}
             </td>
             {% elif month == 3 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} March {{year}}
             </td>
             {% elif month == 4 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} April {{year}}
             </td>
             {% elif month == 5 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} May {{year}}
             </td>
             {% elif month == 6 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} June {{year}}
             </td>
             {% elif month == 7 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} July {{year}}
             </td>
             {% elif month == 8 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} August {{year}}
             </td>
             {% elif month == 9 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} September {{year}}
             </td>
             {% elif month == 10 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} October {{year}}
             </td>
             {% elif month == 11 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} November {{year}}
             </td>
             {% elif month == 12 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} December {{year}}
             </td>
             {% endif %}
@@ -176,10 +191,10 @@
             </td>
         </tr>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Relationship
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{relationship}}
             </td>
             <td class="change-answer">
@@ -189,10 +204,10 @@
             </td>
         </tr>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 DBS certificate number
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{dbs_certificate_number}}
             </td>
             <td class="change-answer">
@@ -202,15 +217,15 @@
             </td>
         </tr>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Permission for checks
             </td>
             {% if permission is True %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Yes
             </td>
             {% elif permission is False %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 No
             </td>
             {% endif %}
@@ -225,6 +240,11 @@
     {% endfor %}
     {% for name, day, month, year, relationship in child_lists %}
     <table class="check-your-answers form-group grid-row">
+        <colgroup>
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
+        </colgroup>
         <thead>
         <tr>
             <th colspan="3">
@@ -236,10 +256,10 @@
         </thead>
         <tbody>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Name
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{name}}
             </td>
             <td class="change-answer">
@@ -249,55 +269,55 @@
             </td>
         </tr>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Date of birth
             </td>
             {% if month == 1 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} January {{year}}
             </td>
             {% elif month == 2 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} February {{year}}
             </td>
             {% elif month == 3 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} March {{year}}
             </td>
             {% elif month == 4 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} April {{year}}
             </td>
             {% elif month == 5 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} May {{year}}
             </td>
             {% elif month == 6 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} June {{year}}
             </td>
             {% elif month == 7 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} July {{year}}
             </td>
             {% elif month == 8 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} August {{year}}
             </td>
             {% elif month == 9 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} September {{year}}
             </td>
             {% elif month == 10 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} October {{year}}
             </td>
             {% elif month == 11 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} November {{year}}
             </td>
             {% elif month == 12 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{day}} December {{year}}
             </td>
             {% endif %}
@@ -308,10 +328,10 @@
             </td>
         </tr>
         <tr>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 Relationship
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{relationship}}
             </td>
             <td class="change-answer">

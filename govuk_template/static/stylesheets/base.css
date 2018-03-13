@@ -2176,6 +2176,7 @@ input[type=number] {
   text-align: right;
   font-weight: bold;
   padding-right: 0;
+  width: 20%;
 }
 
 @media (min-width: 641px) {
@@ -2620,6 +2621,19 @@ a.section-link:active {
 }
 
 .find-address-button {
+   margin-left: 10px;
+}
+
+@media (max-width: 639px) {
+    .find-address-button {
+       margin-top: 10px;
+       margin-left: 0;
+    }
+}
+
+.summary-column {
+    width: 40%;
+}.find-address-button {
    margin-left: 10px;
 }
 

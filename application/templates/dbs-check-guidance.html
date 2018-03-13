@@ -6,7 +6,7 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="form-group grid-row">
+    <div class="grid-row">
         <!-- Back button -->
         <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
            style="margin-right: 10px; line-height: 28px">
@@ -17,7 +17,7 @@
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->
         <div class="form-group grid-row">
-            <h1 class="form-title heading-large" style="margin-top: 0px;">
+            <h1 class="form-title heading-large">
                 Criminal record (DBS) check
             </h1>
             <p>You have to apply for a criminal record (DBS) check.</p>

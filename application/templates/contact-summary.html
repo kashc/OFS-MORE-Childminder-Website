@@ -6,7 +6,7 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="form-group grid-row">
+    <div class="grid-row">
         <!-- Back button -->
         <a href="{{ URL_PREFIX }}/account/question?id={{application_id}}" class="link-back"
            style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
@@ -18,6 +18,11 @@
     </div>
     <!-- Login details -->
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
+        <colgroup>
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
+        </colgroup>
         <thead>
         <tr>
             <th colspan="3">
@@ -29,10 +34,10 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Your email
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{email}}
             </td>
             <td class="change-answer">
@@ -43,10 +48,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Mobile phone number
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{mobile_number}}
             </td>
             <td class="change-answer">
@@ -57,10 +62,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Alternative phone number
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{add_phone_number}}
             </td>
             <td class="change-answer">
@@ -71,10 +76,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Knowledge based question
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{security_question}}
             </td>
             <td class="change-answer">
@@ -85,10 +90,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Knowledge based answer
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{security_answer}}
             </td>
             <td class="change-answer">

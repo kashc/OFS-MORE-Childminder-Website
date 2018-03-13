@@ -3,7 +3,7 @@ from .base import *
 DEBUG = True
 
 # Base URL of notify gateway
-NOTIFY_URL = "http://" + os.environ.get('APP_NOTIFY_URL', '130.130.52.132:8095') + "/notify-gateway"
+NOTIFY_URL = "http://" + os.environ.get('APP_NOTIFY_URL', '130.130.52.132:8002') + "/notify-gateway"
 
 # Base URL of payment gateway
 PAYMENT_URL = "http://" + os.environ.get('APP_PAYMENT_URL', '130.130.52.132:8089') + "/payment-gateway"
