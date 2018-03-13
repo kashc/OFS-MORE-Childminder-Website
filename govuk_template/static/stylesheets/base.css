@@ -2179,7 +2179,6 @@ input[type=number] {
   width: 20%;
 }
 
-
 @media (min-width: 641px) {
   .column-minimum {
     min-width: 600px;
