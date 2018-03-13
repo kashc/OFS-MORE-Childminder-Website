@@ -11,9 +11,9 @@
     </div>
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="td">
+            <col class="td">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -26,10 +26,10 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Full name
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_first_name}} {{first_reference_last_name}}
             </td>
             <td class="change-answer">
@@ -39,10 +39,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 How they know you
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_relationship}}
             </td>
             <td class="change-answer">
@@ -52,10 +52,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Known for
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_years_known}} years, {{first_reference_months_known}} months
             </td>
             <td class="change-answer">
@@ -65,11 +65,11 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Address
             </td>
             {% if first_reference_street_line2 and first_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_street_line1}}
                 </br>
                 {{first_reference_street_line2}}
@@ -83,7 +83,7 @@
                 {{first_reference_country}}
             </td>
             {% elif first_reference_street_line2 and not first_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_street_line1}}
                 </br>
                 {{first_reference_street_line2}}
@@ -95,7 +95,7 @@
                 {{first_reference_country}}
             </td>
             {% elif not first_reference_street_line2 and first_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_street_line1}}
                 </br>
                 {{first_reference_town}}
@@ -107,7 +107,7 @@
                 {{first_reference_country}}
             </td>
             {% elif not first_reference_street_line2 and not first_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_street_line1}}
                 </br>
                 {{first_reference_town}}
@@ -124,10 +124,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Phone number
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_phone_number}}
             </td>
             <td class="change-answer">
@@ -137,10 +137,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Email address
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{first_reference_email}}
             </td>
             <td class="change-answer">
@@ -153,9 +153,9 @@
     </table>
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="check-your-answers">
+            <col class="check-your-answers">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -168,10 +168,10 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Full name
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_first_name}} {{second_reference_last_name}}
             </td>
             <td class="change-answer">
@@ -181,10 +181,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 How they know you
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_relationship}}
             </td>
             <td class="change-answer">
@@ -194,10 +194,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Known for
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_years_known}} years, {{second_reference_months_known}} months
             </td>
             <td class="change-answer">
@@ -207,11 +207,11 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Address
             </td>
             {% if second_reference_street_line2 and second_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_street_line1}}
                 </br>
                 {{second_reference_street_line2}}
@@ -225,7 +225,7 @@
                 {{second_reference_country}}
             </td>
             {% elif second_reference_street_line2 and not second_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_street_line1}}
                 </br>
                 {{second_reference_street_line2}}
@@ -237,7 +237,7 @@
                 {{second_reference_country}}
             </td>
             {% elif not second_reference_street_line2 and second_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_street_line1}}
                 </br>
                 {{second_reference_town}}
@@ -249,7 +249,7 @@
                 {{second_reference_country}}
             </td>
             {% elif not second_reference_street_line2 and not second_reference_county %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_street_line1}}
                 </br>
                 {{second_reference_town}}
@@ -266,10 +266,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Phone number
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_phone_number}}
             </td>
             <td class="change-answer">
@@ -279,10 +279,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="word-wrap: break-word" class=summary-column>
                 Email address
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class=summary-column>
                 {{second_reference_email}}
             </td>
             <td class="change-answer">

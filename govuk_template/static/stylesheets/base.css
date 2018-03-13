@@ -2176,7 +2176,9 @@ input[type=number] {
   text-align: right;
   font-weight: bold;
   padding-right: 0;
+  width: 20%;
 }
+
 
 @media (min-width: 641px) {
   .column-minimum {
@@ -2628,4 +2630,8 @@ a.section-link:active {
        margin-top: 10px;
        margin-left: 0;
     }
+}
+
+.summary-column {
+    width: 40%;
 }

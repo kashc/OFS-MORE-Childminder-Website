@@ -11,9 +11,9 @@
     </div>
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -26,10 +26,10 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td class="summary-column">
                 Training organisation
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class="summary-column">
                 {{training_organisation}}
             </td>
             <td class="change-answer">
@@ -40,10 +40,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="summary-column">
                 Title of training course
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class="summary-column">
                 {{training_course}}
             </td>
             <td class="change-answer">
@@ -54,23 +54,23 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td  class="summary-column">
                 Date you completed course
             </td>
             {% if certificate_month < 10 and certificate_day < 10 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class="summary-column">
                 0{{certificate_day}}/0{{certificate_month}}/{{certificate_year}}
             </td>
             {% elif certificate_month < 10 and certificate_day >= 10 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class="summary-column">
                 {{certificate_day}}/0{{certificate_month}}/{{certificate_year}}
             </td>
             {% elif certificate_month >= 10 and certificate_day < 10 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class="summary-column">
                 0{{certificate_day}}/{{certificate_month}}/{{certificate_year}}
             </td>
             {% elif certificate_month >= 10 and certificate_day >= 10 %}
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class="summary-column">
                 {{certificate_day}}/{{certificate_month}}/{{certificate_year}}
             </td>
             {% endif %}
@@ -83,10 +83,10 @@
         </tr>
         {% if show_certificate is True %}
         <tr>
-            <td>
+            <td class="summary-column">
                 Will you show a copy of your certificate to an inspector?
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class="summary-column">
                 Yes
             </td>
             <td class="change-answer">
@@ -99,10 +99,10 @@
         {% endif %}
         {% if renew_certificate is True %}
         <tr>
-            <td>
+            <td class="summary-column">
                 Will you renew your certificate in the next few months?
             </td>
-            <td style="word-wrap: break-word">
+            <td style="word-wrap: break-word" class="summary-column">
                 Yes
             </td>
             <td class="change-answer">
