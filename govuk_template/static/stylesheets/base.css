@@ -2176,7 +2176,9 @@ input[type=number] {
   text-align: right;
   font-weight: bold;
   padding-right: 0;
+  width: 20%;
 }
+
 
 @media (min-width: 641px) {
   .column-minimum {
@@ -2629,7 +2631,10 @@ a.section-link:active {
        margin-left: 0;
     }
 }
-.find-address-button {
+
+.summary-column {
+    width: 40%;
+}.find-address-button {
    margin-left: 10px;
 }
 

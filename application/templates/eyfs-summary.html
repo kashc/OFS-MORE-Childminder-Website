@@ -18,9 +18,9 @@
     </div>
     <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
         <colgroup>
-            <col style="width:40%">
-            <col style="width:40%">
-            <col style="width:20%">
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
         </colgroup>
         <thead>
         <tr>
@@ -33,11 +33,11 @@
         </thead>
         <tbody>
         <tr>
-            <td>
+            <td class="summary-column">
                 Do you understand the EYFS?
             </td>
             {% if eyfs_understand is True %}
-            <td style="word-wrap: break-word">
+            <td class="summary-column" style="word-wrap: break-word">
                 Yes
             </td>
             {% elif eyfs_understand is False %}
