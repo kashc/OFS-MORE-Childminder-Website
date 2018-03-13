@@ -65,7 +65,6 @@ def task_list(request):
         context = {
             'id': application_id,
             'all_complete': False,
-            'confirm_details': False,
             'registers': registers,
             'fee': fee,
             'tasks': [
@@ -73,7 +72,7 @@ def task_list(request):
                     'name': 'account_details',                                      # This is CSS class (Not recommended to store it here)
                     'status': application.login_details_status,
                     'description': "Your login details",
-                    'status_url': None,                                             # Will be filled later                        
+                    'status_url': None,                                             # Will be filled later
                     'status_urls': [                                                # Available urls for each status
                          {'status': 'COMPLETED',  'url': 'Contact-Summary-View'},
                          {'status': 'OTHER',      'url': 'Contact-Email-View'},     # For all other statuses
@@ -151,49 +150,40 @@ def task_list(request):
                 },
                 {
                     'name': 'review',
-                    'status': application.declarations_status,
+                    'status': None,
                     'description': "Declaration and payment",
                     'status_url': None,
                     'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'Declaration-Summary-View'},
+                        {'status': 'COMPLETED', 'url': 'Declaration-Declaration-View'},
                         {'status': 'OTHER',     'url': 'Declaration-Summary-View'}
                     ],
                 },
             ]
     }
 
-    """
-    Prepare task links
-    """
+    # Declaratations state
 
-    for task in context.get('tasks'):              # Iterating through tasks
+    context['all_complete'] = not len([task for task in context['tasks'] if task['status'] in ['IN_PROGRESS', 'NOT_STARTED']])
+
+    if context['all_complete']:
+        # Set declaration status to NOT_STARTED
+        for task in context['tasks']:
+            if task['name'] == 'review':
+                task['status'] = 'NOT_STARTED'
         
+    # Prepare task links
+
+    for task in context['tasks']:             
+        
+         # Iterating through tasks
+
         for url in task.get('status_urls'):        # Iterating through task available urls
             if url['status'] == task['status']:    # Match current task status with url which is in status_urls
                 task['status_url'] = url['url']    # Set main task primary url to the one which matched
-        
-        if not task['status_url']:                 # In case no matches were found by task status 
+
+        if not task['status_url']:                 # In case no matches were found by task status
             for url in task.get('status_urls'):    # Search for link with has status "OTHER"
-                if url['status'] == "OTHER":         
+                if url['status'] == "OTHER":
                     task['status_url'] = url['url']
 
-    """
-    Declaratations state
-    """
-
-    # Set declarations state and confirm your details tasks depending on task completion
-    if (task['status'] in ['NOT_STARTED', 'IN_PROGRESS'] for task in context['tasks']):
-        context['all_complete'] = False
-    else:
-        context['all_complete'] = True
-
-        # Status is changed by Arc when payment went well
-        if(task['name'] == 'review' for task in context['tasks']):
-            
-            if task['status'] == 'COMPLETED':
-                context['confirm_details'] = True
-            else:
-                context['confirm_details'] = False
-
     return render(request, 'task-list.html', context)
-
