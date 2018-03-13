@@ -23,11 +23,12 @@
             <p>Please enter your email address so we can find your application.</p>
             {% csrf_token %}
             {{form.as_div}}
-        </div>
-        <div class="form-group grid-row">
+
             <input type="submit" class="button" value="Continue">
             <input type="hidden" name="id" value="Save and continue" />
+
         </div>
+
     </form>
 </div>
 	
