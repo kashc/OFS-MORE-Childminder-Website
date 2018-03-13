@@ -11,7 +11,7 @@ from datetime import date
 from django import forms
 from django.conf import settings
 from govuk_forms.forms import GOVUKForm
-from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect, NumberInput
+from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect
 from govuk_forms.fields import SplitDateField
 
 from .customfields import TimeKnownField, SelectDateWidget, ExpirySplitDateField, CustomSplitDateFieldDOB, \
@@ -1085,10 +1085,6 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
-    #Overrides standard NumberInput widget too give wider field
-    widget_instance = NumberInput()
-    widget_instance.input_classes = 'form-control form-control-1-4'
-
     options = (
         ('True', 'Yes'),
         ('False', 'No')
@@ -1096,8 +1092,7 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
     dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
                                                 help_text='12-digit number on your certificate',
                                                 required=True,
-                                                error_messages={'required': 'Please enter your DBS certificate number'},
-                                                widget=widget_instance)
+                                                error_messages={'required': 'Please enter your DBS certificate number'})
 
     convictions = forms.ChoiceField(label='Do you have any cautions or convictions?',
                                     help_text='Include any information recorded on your certificate',
@@ -1105,6 +1100,7 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
                                     required=True,
                                     error_messages={'required': 'Please say if you have any cautions or convictions'})
 
+    dbs_certificate_number.widget.attrs.update({'style': 'width: 8.4em;'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -1960,14 +1956,11 @@ class OtherPeopleAdultDBSForm(GOVUKForm):
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
-    widget_instance = NumberInput()
-    widget_instance.input_classes = 'form-control form-control-1-4'
-
     dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
                                                 help_text='12-digit number on their certificate',
-                                                required=True,
-                                                widget=widget_instance)
+                                                required=True)
 
+    dbs_certificate_number.widget.attrs.update({'style': 'width: 8.4em;'})
 
     def __init__(self, *args, **kwargs):
         """
