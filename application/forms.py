@@ -100,6 +100,7 @@ class ContactPhoneForm(GOVUKForm):
         """
         self.application_id_local = kwargs.pop('id')
         super(ContactPhoneForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
             this_user = Application.objects.get(pk=self.application_id_local)
@@ -1465,6 +1466,7 @@ class ReferenceFirstReferenceAddressLookupForm(GOVUKForm):
         self.application_id_local = kwargs.pop('id')
         self.choices = kwargs.pop('choices')
         super(ReferenceFirstReferenceAddressLookupForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
         self.fields['address'].choices = self.choices
 
 
