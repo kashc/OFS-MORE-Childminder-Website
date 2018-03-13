@@ -2115,7 +2115,7 @@ def references_first_reference_address_select(request):
             application.save()
             if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
                 status.update(application_id_local, 'references_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/references/enter-first-reference-address?id=' +
+            return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-contact-details?id=' +
                                         application_id_local)
         else:
             form.error_summary_title = "There was a problem finding the referee's address"
@@ -2376,7 +2376,7 @@ def references_second_reference_address_select(request):
             application.save()
             if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
                 status.update(application_id_local, 'references_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/references/enter-second-reference-address?id=' +
+            return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-contact-details?id=' +
                                         application_id_local)
         else:
             form.error_summary_title = "There was a problem finding the referee's address"
