@@ -1059,7 +1059,7 @@ def personal_details_childcare_address_select(request):
             application.save()
             if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
                 status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/enter-childcare-address?id=' +
+            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/check-answers?id=' +
                                         application_id_local)
         else:
             form.error_summary_title = 'There was a problem finding your address'
